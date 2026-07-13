@@ -2,7 +2,9 @@ import { PrismaInterviewRepository } from "@/modules/interviews/infrastructure/P
 import { GetOrStartInterviewUseCase } from "@/modules/interviews/application/GetOrStartInterviewUseCase";
 import { SaveAnswerUseCase } from "@/modules/interviews/application/SaveAnswerUseCase";
 import { CompleteInterviewUseCase } from "@/modules/interviews/application/CompleteInterviewUseCase";
+import { GenerateFollowUpUseCase } from "@/modules/interviews/application/GenerateFollowUpUseCase";
 import { projectRepositoryInstance } from "@/modules/projects/container";
+import { resolveTextCompletionProvider } from "@/shared/ai/textCompletionRouter";
 
 const interviewRepository = new PrismaInterviewRepository();
 
@@ -15,5 +17,10 @@ export const interviewsContainer = {
   completeInterviewUseCase: new CompleteInterviewUseCase(
     projectRepositoryInstance,
     interviewRepository,
+  ),
+  generateFollowUpUseCase: new GenerateFollowUpUseCase(
+    projectRepositoryInstance,
+    interviewRepository,
+    resolveTextCompletionProvider(),
   ),
 };

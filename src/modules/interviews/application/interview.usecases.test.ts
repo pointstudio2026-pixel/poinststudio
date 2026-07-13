@@ -97,8 +97,8 @@ describe("SaveAnswerUseCase", () => {
       answer: "Aster Coffee",
     });
 
-    expect(result.currentQuestionIndex).toBe(2); // stayed at the furthest point reached
-    expect(result.answers.find((a) => a.questionKey === "brandName")?.answer).toBe(
+    expect(result.interview.currentQuestionIndex).toBe(2); // stayed at the furthest point reached
+    expect(result.interview.answers.find((a) => a.questionKey === "brandName")?.answer).toBe(
       "Aster Coffee",
     );
   });

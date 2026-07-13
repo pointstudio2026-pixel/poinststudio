@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import {
   completeInterview,
   fetchInterview,
+  generateFollowUpQuestion,
   saveInterviewAnswer,
+  type InterviewQuestionDto,
 } from "@/services/interview-service";
 import { Spinner } from "@/components/Spinner";
 
@@ -22,10 +24,12 @@ export function InterviewView({ projectId }: { projectId: string }) {
     queryFn: () => fetchInterview(projectId),
   });
 
+  const [questions, setQuestions] = useState<InterviewQuestionDto[]>([]);
   const [displayIndex, setDisplayIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [showSummary, setShowSummary] = useState(false);
+  const [isCheckingFollowUp, setIsCheckingFollowUp] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [completeError, setCompleteError] = useState<string | null>(null);
   const [isCompleting, setIsCompleting] = useState(false);
@@ -40,10 +44,9 @@ export function InterviewView({ projectId }: { projectId: string }) {
       if (a.answer) initialAnswers[a.questionKey] = a.answer;
     }
     setAnswers(initialAnswers);
+    setQuestions(data.questions);
     // 새로고침 후 복원: 서버에 저장된 진행 지점으로 이동한다.
-    setDisplayIndex(
-      Math.min(data.interview.currentQuestionIndex, data.questions.length - 1),
-    );
+    setDisplayIndex(Math.min(data.interview.currentQuestionIndex, data.questions.length - 1));
   }, [data]);
 
   useEffect(() => {
@@ -52,19 +55,15 @@ export function InterviewView({ projectId }: { projectId: string }) {
     };
   }, []);
 
-  const questions = useMemo(() => data?.questions ?? [], [data]);
   const currentQuestion = questions[displayIndex];
   const progress = questions.length > 0 ? Math.round(((displayIndex + 1) / questions.length) * 100) : 0;
-
-  const missingRequired = useMemo(
-    () => questions.filter((q) => q.required && !(answers[q.key] ?? "").trim()),
-    [questions, answers],
-  );
+  const missingRequired = questions.filter((q) => q.required && !(answers[q.key] ?? "").trim());
 
   async function persist(questionKey: string, value: string) {
     setSaveStatus("saving");
     try {
-      await saveInterviewAnswer(projectId, questionKey, value);
+      const result = await saveInterviewAnswer(projectId, questionKey, value);
+      setQuestions(result.questions);
       setSaveStatus("saved");
     } catch {
       setSaveStatus("error");
@@ -91,8 +90,24 @@ export function InterviewView({ projectId }: { projectId: string }) {
 
     if (displayIndex < questions.length - 1) {
       setDisplayIndex((i) => i + 1);
-    } else {
+      return;
+    }
+
+    // 마지막 질문까지 답했다 — 부족한 답변이 있으면 AI 후속 질문을 하나 더
+    // 받아온다(최대 3개, 이미 물어본 항목은 다시 묻지 않는다).
+    setIsCheckingFollowUp(true);
+    try {
+      const result = await generateFollowUpQuestion(projectId);
+      setQuestions(result.questions);
+      if (result.followUpGenerated) {
+        setDisplayIndex(result.questions.length - 1);
+      } else {
+        setShowSummary(true);
+      }
+    } catch {
       setShowSummary(true);
+    } finally {
+      setIsCheckingFollowUp(false);
     }
   }
 
@@ -168,10 +183,22 @@ export function InterviewView({ projectId }: { projectId: string }) {
         />
       </div>
 
-      {!showSummary && currentQuestion && (
+      {isCheckingFollowUp && (
+        <div className="flex items-center justify-center gap-2 text-sm text-neutral-500">
+          <Spinner />
+          답변을 검토하고 있어요...
+        </div>
+      )}
+
+      {!isCheckingFollowUp && !showSummary && currentQuestion && (
         <section className="flex flex-col gap-3">
           <p className="text-xs text-neutral-400">
             {displayIndex + 1} / {questions.length}
+            {currentQuestion.key.startsWith("followUp_") && (
+              <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-amber-700">
+                AI 추가 질문
+              </span>
+            )}
           </p>
           <h1 className="text-lg font-medium">
             {currentQuestion.text}
@@ -218,7 +245,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
         </section>
       )}
 
-      {showSummary && (
+      {!isCheckingFollowUp && showSummary && (
         <section className="flex flex-col gap-4">
           <h1 className="text-lg font-medium">답변 검토</h1>
           <ul className="flex flex-col gap-3">

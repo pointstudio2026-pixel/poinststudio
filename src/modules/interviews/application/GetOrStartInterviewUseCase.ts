@@ -1,13 +1,15 @@
 import type { ProjectRepository } from "@/modules/projects/domain/ProjectRepository";
 import type { InterviewRepository } from "@/modules/interviews/domain/InterviewRepository";
 import type { Interview } from "@/modules/interviews/domain/Interview";
-import { INTERVIEW_QUESTIONS, type InterviewQuestionDef } from "@/modules/interviews/domain/interviewQuestions";
+import type { InterviewQuestionDef } from "@/modules/interviews/domain/interviewQuestions";
+import { getMissingRequiredQuestions, selectQuestions } from "@/modules/interviews/domain/QuestionSelector";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { NotFoundError } from "@/shared/errors/AppError";
 
 export interface GetOrStartInterviewOutput {
   interview: Interview;
   questions: InterviewQuestionDef[];
+  readyToComplete: boolean;
 }
 
 export class GetOrStartInterviewUseCase {
@@ -34,6 +36,11 @@ export class GetOrStartInterviewUseCase {
       });
     }
 
-    return { interview, questions: INTERVIEW_QUESTIONS };
+    const questions = selectQuestions(interview);
+    const readyToComplete =
+      interview.status === "completed" ||
+      getMissingRequiredQuestions(questions, interview.answers).length === 0;
+
+    return { interview, questions, readyToComplete };
   }
 }

@@ -9,6 +9,7 @@ import { POST as createProjectHandler } from "@/app/api/projects/route";
 import { GET as getInterviewHandler } from "@/app/api/interview/[projectId]/route";
 import { POST as saveAnswerHandler } from "@/app/api/interview/answer/route";
 import { POST as completeHandler } from "@/app/api/interview/complete/route";
+import { POST as followUpHandler } from "@/app/api/interview/follow-up/route";
 import { INTERVIEW_QUESTIONS } from "@/modules/interviews/domain/interviewQuestions";
 
 const TEST_EMAIL_PREFIX = "task007-route";
@@ -99,6 +100,60 @@ describe("Interview API routes", () => {
 
     const res = await completeHandler(postRequest("/api/interview/complete", { projectId }, cookie));
     expect(res.status).toBe(400);
+  });
+
+  it("unlocks industry-specific questions once industry is answered (카페 업종)", async () => {
+    const { cookie } = await createSessionCookie();
+    const projectId = await createProject(cookie);
+    await getInterviewHandler(
+      new NextRequest(`http://localhost/api/interview/${projectId}`, { headers: { cookie } }),
+      { params: Promise.resolve({ projectId }) },
+    );
+
+    const res = await saveAnswerHandler(
+      postRequest("/api/interview/answer", { projectId, questionKey: "industry", answer: "동네 카페" }, cookie),
+    );
+    const body = await res.json();
+
+    expect(body.data.questions.map((q: { key: string }) => q.key)).toContain("cafeAtmosphere");
+  });
+
+  it("generates an AI follow-up (mock provider) for a weak answer and blocks completion until it's answered", async () => {
+    const { cookie } = await createSessionCookie();
+    const projectId = await createProject(cookie);
+    await getInterviewHandler(
+      new NextRequest(`http://localhost/api/interview/${projectId}`, { headers: { cookie } }),
+      { params: Promise.resolve({ projectId }) },
+    );
+
+    for (const q of INTERVIEW_QUESTIONS.filter((q) => q.required)) {
+      await saveAnswerHandler(
+        postRequest("/api/interview/answer", { projectId, questionKey: q.key, answer: "짧음" }, cookie),
+      );
+    }
+
+    const followUpRes = await followUpHandler(postRequest("/api/interview/follow-up", { projectId }, cookie));
+    const followUpBody = await followUpRes.json();
+    expect(followUpRes.status).toBe(200);
+    expect(followUpBody.data.followUpGenerated).toBe(true);
+
+    const followUpKey = followUpBody.data.questions.at(-1).key as string;
+    expect(followUpKey).toMatch(/^followUp_/);
+
+    // Still missing the follow-up's own answer.
+    const tooSoon = await completeHandler(postRequest("/api/interview/complete", { projectId }, cookie));
+    expect(tooSoon.status).toBe(400);
+
+    await saveAnswerHandler(
+      postRequest(
+        "/api/interview/answer",
+        { projectId, questionKey: followUpKey, answer: "충분히 구체적인 후속 답변입니다." },
+        cookie,
+      ),
+    );
+
+    const completeRes = await completeHandler(postRequest("/api/interview/complete", { projectId }, cookie));
+    expect(completeRes.status).toBe(200);
   });
 
   it("rejects access to another user's interview", async () => {

@@ -22,17 +22,28 @@ export interface InterviewDto {
   answers: InterviewAnswerDto[];
 }
 
+export interface InterviewStateDto {
+  interview: InterviewDto;
+  questions: InterviewQuestionDto[];
+  readyToComplete: boolean;
+}
+
 export function fetchInterview(projectId: string) {
-  return apiFetch<{ interview: InterviewDto; questions: InterviewQuestionDto[] }>(
-    `/api/interview/${projectId}`,
-  );
+  return apiFetch<InterviewStateDto>(`/api/interview/${projectId}`);
 }
 
 export function saveInterviewAnswer(projectId: string, questionKey: string, answer: string) {
-  return apiFetch<{ interview: InterviewDto }>("/api/interview/answer", {
+  return apiFetch<InterviewStateDto>("/api/interview/answer", {
     method: "POST",
     body: JSON.stringify({ projectId, questionKey, answer }),
   });
+}
+
+export function generateFollowUpQuestion(projectId: string) {
+  return apiFetch<InterviewStateDto & { followUpGenerated: boolean }>(
+    "/api/interview/follow-up",
+    { method: "POST", body: JSON.stringify({ projectId }) },
+  );
 }
 
 export function completeInterview(projectId: string) {

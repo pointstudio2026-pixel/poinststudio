@@ -1,7 +1,7 @@
 import type { ProjectRepository } from "@/modules/projects/domain/ProjectRepository";
 import type { InterviewRepository } from "@/modules/interviews/domain/InterviewRepository";
 import type { Interview } from "@/modules/interviews/domain/Interview";
-import { INTERVIEW_QUESTIONS } from "@/modules/interviews/domain/interviewQuestions";
+import { getMissingRequiredQuestions, selectQuestions } from "@/modules/interviews/domain/QuestionSelector";
 import { WORKSPACE_STEPS } from "@/modules/projects/domain/Project";
 import { getOrCreateActiveInterview } from "@/modules/interviews/application/getOrCreateActiveInterview";
 import { recordActivity } from "@/shared/activity/activityLogger";
@@ -21,10 +21,8 @@ export class CompleteInterviewUseCase {
 
     const interview = await getOrCreateActiveInterview(this.interviewRepository, input.projectId);
 
-    const missing = INTERVIEW_QUESTIONS.filter((q) => q.required).filter((q) => {
-      const found = interview.answers.find((a) => a.questionKey === q.key);
-      return !found || !found.answer?.trim();
-    });
+    const questions = selectQuestions(interview);
+    const missing = getMissingRequiredQuestions(questions, interview.answers);
     if (missing.length > 0) {
       throw new ValidationError(
         `필수 질문에 답변하지 않았습니다: ${missing.map((q) => q.text).join(", ")}`,
