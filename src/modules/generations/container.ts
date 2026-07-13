@@ -11,7 +11,8 @@ import { BullMqImageGenerationQueue } from "@/shared/queue/imageGenerationQueue"
 import { resolveImageGenerationProvider } from "@/shared/ai/imageGenerationRouter";
 import { startImageGenerationWorker } from "@/workers/imageGenerationWorker";
 
-const generationRepository = new PrismaGenerationRepository();
+export const generationRepositoryInstance = new PrismaGenerationRepository();
+const generationRepository = generationRepositoryInstance;
 const queue = new BullMqImageGenerationQueue();
 
 export const generationsContainer = {

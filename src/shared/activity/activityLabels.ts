@@ -15,6 +15,10 @@ const ACTIVITY_LABELS: Record<string, string> = {
   GENERATION_COMPLETED: "이미지 생성 완료",
   GENERATION_FAILED: "이미지 생성 실패",
   GENERATION_RETRIED: "이미지 생성 재시도",
+  EDIT_REQUESTED: "원클릭 수정 요청",
+  EDIT_COMPLETED: "원클릭 수정 완료",
+  EDIT_FAILED: "원클릭 수정 실패",
+  EDIT_RETRIED: "원클릭 수정 재시도",
 };
 
 export function activityLabel(eventType: string): string {

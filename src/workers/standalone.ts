@@ -7,6 +7,7 @@
  * that side-effect can be triggered without also booting Next.js.
  */
 import "@/modules/generations/container";
+import "@/modules/edits/container";
 import { logger } from "@/shared/logging/logger";
 
-logger.info("Image generation worker started (standalone).");
+logger.info("Image generation and edit workers started (standalone).");

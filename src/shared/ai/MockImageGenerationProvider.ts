@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import type {
   GeneratedImageResult,
+  ImageEditRequest,
   ImageGenerationProvider,
   ImageGenerationRequest,
   ImageGenerationResult,
@@ -67,6 +68,22 @@ export class MockImageGenerationProvider implements ImageGenerationProvider {
     }
 
     return { images, provider: this.name, model: "template-svg-v1", costAmount: 0 };
+  }
+
+  async edit(request: ImageEditRequest): Promise<ImageGenerationResult> {
+    if (request.editInstruction.includes(FORCE_FAILURE_MARKER)) {
+      throw new ProviderError("Mock provider: 강제 실패 트리거(테스트 전용)");
+    }
+
+    // Seeded from the source image + instruction (not the original prompt)
+    // so the result is deterministic yet visibly different from the source.
+    const seed = seedFrom(`${request.sourceImageUrl}:${request.editInstruction}`, 1);
+    const image: GeneratedImageResult = {
+      url: buildSvgDataUri(seed, 512, "Edited"),
+      thumbnailUrl: buildSvgDataUri(seed, 128, "Edit"),
+    };
+
+    return { images: [image], provider: this.name, model: "template-svg-edit-v1", costAmount: 0 };
   }
 
   async health(): Promise<boolean> {

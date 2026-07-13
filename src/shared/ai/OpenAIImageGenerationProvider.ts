@@ -1,5 +1,6 @@
 import type {
   GeneratedImageResult,
+  ImageEditRequest,
   ImageGenerationProvider,
   ImageGenerationRequest,
   ImageGenerationResult,
@@ -36,6 +37,26 @@ export class OpenAIImageGenerationProvider implements ImageGenerationProvider {
       provider: this.name,
       model: this.model,
       costAmount: ESTIMATED_COST_PER_IMAGE_USD * request.count,
+    };
+  }
+
+  /**
+   * True image-to-image editing (OpenAI's /images/edits endpoint) needs an
+   * uploaded source file + mask, which doesn't fit this pipeline -- Mock
+   * images are inline data URIs, not stored binaries, and OpenAI-hosted
+   * generation URLs expire. As a pragmatic simplification (documented,
+   * revisit once real file storage exists), an edit becomes a fresh
+   * generation call whose prompt describes the requested change relative
+   * to the original concept, rather than true pixel-level editing.
+   */
+  async edit(request: ImageEditRequest): Promise<ImageGenerationResult> {
+    const prompt = `${request.editInstruction}\n\n(기존 컨셉의 변형입니다: ${request.sourceImageUrl})`;
+    const url = await this.generateOne(prompt);
+    return {
+      images: [{ url, thumbnailUrl: url }],
+      provider: this.name,
+      model: this.model,
+      costAmount: ESTIMATED_COST_PER_IMAGE_USD,
     };
   }
 

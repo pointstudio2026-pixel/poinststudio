@@ -280,6 +280,7 @@ model Generation {
   updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
 
   versions GenerationVersion[]
+  edits    EditHistory[]
 
   @@map("generations")
 }
@@ -300,6 +301,28 @@ model GenerationVersion {
 
   @@unique([generationId, versionNumber])
   @@map("generation_versions")
+}
+
+// "원본 이미지 보존": edits never mutate a GenerationVersion's images --
+// each edit appends a brand-new GenerationVersion (reusing the exact same
+// versioning machinery as a fresh generation) and this table only records
+// the edit-specific lineage: which source image, which preset, which
+// resulting version.
+model EditHistory {
+  id               String    @id @default(uuid()) @db.Uuid
+  generationId     String    @map("generation_id") @db.Uuid
+  generation       Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  sourceVersionId  String    @map("source_version_id") @db.Uuid
+  sourceImageIndex Int       @map("source_image_index")
+  presetKey        String    @map("preset_key") @db.VarChar(40)
+  resultVersionId  String    @map("result_version_id") @db.Uuid
+  status           String    @default("pending") @db.VarChar(20)
+  errorMessage     String?   @map("error_message")
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  completedAt      DateTime? @map("completed_at") @db.Timestamptz()
+
+  @@index([generationId, createdAt(sort: Desc)])
+  @@map("edit_history")
 }
 
 model RefreshToken {
