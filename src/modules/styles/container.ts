@@ -10,8 +10,10 @@ import { ListFavoriteStylesUseCase } from "@/modules/styles/application/ListFavo
 import { projectRepositoryInstance } from "@/modules/projects/container";
 import { brandStrategyRepositoryInstance } from "@/modules/brandStrategies/container";
 
-const styleRepository = new PrismaStyleRepository();
-const styleSelectionRepository = new PrismaStyleSelectionRepository();
+export const styleRepositoryInstance = new PrismaStyleRepository();
+export const styleSelectionRepositoryInstance = new PrismaStyleSelectionRepository();
+const styleRepository = styleRepositoryInstance;
+const styleSelectionRepository = styleSelectionRepositoryInstance;
 const styleFavoriteRepository = new PrismaStyleFavoriteRepository();
 
 export const stylesContainer = {
