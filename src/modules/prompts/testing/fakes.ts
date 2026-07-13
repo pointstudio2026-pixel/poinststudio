@@ -54,4 +54,8 @@ export class FakePromptRepository implements PromptRepository {
       .filter((v) => v.promptId === promptId)
       .sort((a, b) => b.versionNumber - a.versionNumber);
   }
+
+  async getVersionById(versionId: string): Promise<PromptVersion | null> {
+    return this.versions.find((v) => v.id === versionId) ?? null;
+  }
 }

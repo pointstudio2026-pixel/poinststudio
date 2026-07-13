@@ -14,7 +14,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "prisma:seed-styles": "tsx prisma/seedStyles.ts"
+    "prisma:seed-styles": "tsx prisma/seedStyles.ts",
+    "worker": "tsx src/workers/standalone.ts"
   },
   "keywords": [],
   "author": "",

@@ -91,4 +91,9 @@ export class PrismaPromptRepository implements PromptRepository {
     });
     return rows.map(toVersion);
   }
+
+  async getVersionById(versionId: string): Promise<PromptVersion | null> {
+    const row = await prisma.promptVersion.findUnique({ where: { id: versionId } });
+    return row ? toVersion(row) : null;
+  }
 }

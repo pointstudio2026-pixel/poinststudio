@@ -7,7 +7,8 @@ import { brandBriefRepositoryInstance } from "@/modules/brandBriefs/container";
 import { brandStrategyRepositoryInstance } from "@/modules/brandStrategies/container";
 import { styleRepositoryInstance, styleSelectionRepositoryInstance } from "@/modules/styles/container";
 
-const promptRepository = new PrismaPromptRepository();
+export const promptRepositoryInstance = new PrismaPromptRepository();
+const promptRepository = promptRepositoryInstance;
 const styleRepository = styleRepositoryInstance;
 const styleSelectionRepository = styleSelectionRepositoryInstance;
 

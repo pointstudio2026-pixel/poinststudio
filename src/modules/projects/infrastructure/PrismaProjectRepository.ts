@@ -12,6 +12,10 @@ export class PrismaProjectRepository implements ProjectRepository {
     });
   }
 
+  async findById(projectId: string): Promise<Project | null> {
+    return prisma.project.findFirst({ where: { id: projectId, deletedAt: null } });
+  }
+
   async listForUser(userId: string, options?: ListProjectsOptions): Promise<Project[]> {
     // A user actively searching wants to find a project, not just skim
     // recents, so search isn't capped to the "recent 10" dashboard default.

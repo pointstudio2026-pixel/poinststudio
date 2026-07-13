@@ -16,4 +16,6 @@ export interface PromptRepository {
   /** Appends a new version and makes it current -- never overwrites a prior version. */
   addVersion(promptId: string, input: PromptVersionInput): Promise<Prompt>;
   listVersions(promptId: string): Promise<PromptVersion[]>;
+  /** Fetches one specific version by id -- used by the generation worker to lock onto the exact prompt referenced at request time. */
+  getVersionById(versionId: string): Promise<PromptVersion | null>;
 }

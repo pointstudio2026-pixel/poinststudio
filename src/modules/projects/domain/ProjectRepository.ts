@@ -10,6 +10,8 @@ export interface ListProjectsOptions {
 // added for Task-005 (Dashboard).
 export interface ProjectRepository {
   findByIdForUser(projectId: string, userId: string): Promise<Project | null>;
+  /** Unscoped lookup for background/worker contexts with no requesting user (e.g. the generation worker). */
+  findById(projectId: string): Promise<Project | null>;
   listForUser(userId: string, options?: ListProjectsOptions): Promise<Project[]>;
   save(project: Project): Promise<void>;
   delete(projectId: string, userId: string): Promise<void>;

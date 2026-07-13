@@ -11,6 +11,10 @@ const ACTIVITY_LABELS: Record<string, string> = {
   BRAND_STRATEGY_REBUILT: "Brand Strategy 재분석",
   STYLE_SELECTED: "스타일 선택",
   PROMPT_BUILT: "Prompt 생성",
+  GENERATION_REQUESTED: "이미지 생성 요청",
+  GENERATION_COMPLETED: "이미지 생성 완료",
+  GENERATION_FAILED: "이미지 생성 실패",
+  GENERATION_RETRIED: "이미지 생성 재시도",
 };
 
 export function activityLabel(eventType: string): string {

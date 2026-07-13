@@ -8,6 +8,10 @@ export class FakeProjectRepository implements ProjectRepository {
     return this.projects.find((p) => p.id === projectId && p.userId === userId) ?? null;
   }
 
+  async findById(projectId: string) {
+    return this.projects.find((p) => p.id === projectId) ?? null;
+  }
+
   async listForUser(userId: string, options?: ListProjectsOptions) {
     const limit = options?.limit ?? (options?.search ? 50 : 10);
     return this.projects
