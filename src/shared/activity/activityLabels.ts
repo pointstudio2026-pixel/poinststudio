@@ -25,6 +25,9 @@ const ACTIVITY_LABELS: Record<string, string> = {
   MOCKUP_REQUESTED: "목업 생성 요청",
   MOCKUP_COMPLETED: "목업 생성 완료",
   MOCKUP_FAILED: "목업 생성 실패",
+  EXPORT_REQUESTED: "Export 요청",
+  EXPORT_COMPLETED: "Export 완료",
+  EXPORT_FAILED: "Export 실패",
 };
 
 export function activityLabel(eventType: string): string {

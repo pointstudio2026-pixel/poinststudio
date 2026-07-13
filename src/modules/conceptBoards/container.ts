@@ -9,7 +9,8 @@ import { brandStrategyRepositoryInstance } from "@/modules/brandStrategies/conta
 import { styleRepositoryInstance, styleSelectionRepositoryInstance } from "@/modules/styles/container";
 import { generationRepositoryInstance } from "@/modules/generations/container";
 
-const conceptBoardRepository = new PrismaConceptBoardRepository();
+export const conceptBoardRepositoryInstance = new PrismaConceptBoardRepository();
+const conceptBoardRepository = conceptBoardRepositoryInstance;
 
 export const conceptBoardsContainer = {
   buildConceptBoardUseCase: new BuildConceptBoardUseCase(

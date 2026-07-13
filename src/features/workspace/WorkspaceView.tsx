@@ -129,6 +129,12 @@ export function WorkspaceView({ project: initialProject }: { project: ProjectDto
             </span>
           ))}
         </nav>
+        <Link
+          href={`/projects/${project.id}/export`}
+          className="mt-4 block rounded-md border border-neutral-300 px-3 py-2 text-center text-sm"
+        >
+          Export Center
+        </Link>
       </aside>
 
       <main className="flex-1">

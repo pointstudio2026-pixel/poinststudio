@@ -2,6 +2,8 @@ export type PlanCode = "free" | "pro" | "studio";
 
 /** The only usage event type this task enforces a limit against so far. */
 export const GENERATION_EVENT_TYPE = "image_generation";
+/** Tracked for analytics/usage history, not quota-gated (Export Center's plan effect is the watermark, not a hard limit). */
+export const EXPORT_EVENT_TYPE = "export";
 
 export interface PlanLimits {
   monthlyGenerationLimit: number;

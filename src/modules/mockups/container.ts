@@ -13,7 +13,8 @@ import { BullMqMockupRenderQueue } from "@/shared/queue/mockupRenderQueue";
 import { resolveMockupRenderProvider } from "@/shared/ai/mockupRenderRouter";
 import { startMockupRenderWorker } from "@/workers/mockupRenderWorker";
 
-const mockupRepository = new PrismaMockupRepository();
+export const mockupRepositoryInstance = new PrismaMockupRepository();
+const mockupRepository = mockupRepositoryInstance;
 const templateRepository = new PrismaMockupTemplateRepository();
 const queue = new BullMqMockupRenderQueue();
 
