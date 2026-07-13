@@ -9,7 +9,7 @@ import { NewProjectButton } from "@/features/projects/NewProjectButton";
 import { UsageWidget } from "@/features/subscription/UsageWidget";
 import { ProjectCard } from "@/features/dashboard/ProjectCard";
 import { DashboardSkeleton } from "@/features/dashboard/DashboardSkeleton";
-import { activityLabel } from "@/features/dashboard/activityLabels";
+import { activityLabel } from "@/shared/activity/activityLabels";
 
 const PLAN_LABELS: Record<string, string> = { free: "Free", pro: "Pro", studio: "Studio" };
 

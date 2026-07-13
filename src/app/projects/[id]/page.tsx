@@ -3,6 +3,8 @@ import { requireSessionOrRedirect } from "@/shared/auth/session";
 import { projectsContainer } from "@/modules/projects/container";
 import { NotFoundError } from "@/shared/errors/AppError";
 import type { Project } from "@/modules/projects/domain/Project";
+import { WorkspaceView } from "@/features/workspace/WorkspaceView";
+import type { ProjectDto } from "@/services/project-service";
 
 async function loadProject(projectId: string, userId: string): Promise<Project> {
   try {
@@ -15,10 +17,18 @@ async function loadProject(projectId: string, userId: string): Promise<Project> 
   }
 }
 
-// Task-006(Project Workspace)에서 실제 허브 화면(Stepper, Brand Interview
-// 등)으로 대체된다. 지금은 Task-001 "프로젝트 생성 성공 시 이동" 흐름과
-// 소유권 검증(다른 사용자 프로젝트 접근 불가)이 실제로 동작함을 보여주는
-// placeholder.
+function toDto(project: Project): ProjectDto {
+  return {
+    id: project.id,
+    name: project.name,
+    status: project.status,
+    currentStep: project.currentStep,
+    isFavorite: project.isFavorite,
+    archivedAt: project.archivedAt ? project.archivedAt.toISOString() : null,
+    updatedAt: project.updatedAt.toISOString(),
+  };
+}
+
 export default async function ProjectWorkspacePage({
   params,
 }: {
@@ -28,10 +38,5 @@ export default async function ProjectWorkspacePage({
   const { id } = await params;
   const project = await loadProject(id, session.sub);
 
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-2 p-8">
-      <h1 className="text-xl font-semibold">{project.name}</h1>
-      <p className="text-sm text-neutral-500">현재 단계: {project.currentStep}</p>
-    </main>
-  );
+  return <WorkspaceView project={toDto(project)} />;
 }

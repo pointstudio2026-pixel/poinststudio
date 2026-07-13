@@ -18,6 +18,7 @@ export class CreateProjectUseCase {
       status: "draft",
       currentStep: "brand_interview",
       isFavorite: false,
+      archivedAt: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

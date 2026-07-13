@@ -39,12 +39,14 @@ export class PrismaProjectRepository implements ProjectRepository {
         status: project.status,
         currentStep: project.currentStep,
         isFavorite: project.isFavorite,
+        archivedAt: project.archivedAt,
       },
       update: {
         name: project.name,
         status: project.status,
         currentStep: project.currentStep,
         isFavorite: project.isFavorite,
+        archivedAt: project.archivedAt,
       },
     });
   }

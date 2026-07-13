@@ -57,3 +57,23 @@ export async function getRecentActivity(userId: string, limit = 10): Promise<Act
     createdAt: row.createdAt,
   }));
 }
+
+/** Project-scoped read, used by Task-006's Activity Timeline. */
+export async function getActivityForProject(
+  projectId: string,
+  limit = 20,
+): Promise<ActivityLogEntry[]> {
+  const rows = await prisma.activityLog.findMany({
+    where: { projectId },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
+
+  return rows.map((row) => ({
+    id: row.id,
+    eventType: row.eventType,
+    projectId: row.projectId,
+    payload: row.payload as Record<string, unknown>,
+    createdAt: row.createdAt,
+  }));
+}
