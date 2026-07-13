@@ -9,6 +9,7 @@ const ACTIVITY_LABELS: Record<string, string> = {
   BRAND_BRIEF_GENERATED: "Brand Brief 생성",
   BRAND_STRATEGY_GENERATED: "Brand Strategy 생성",
   BRAND_STRATEGY_REBUILT: "Brand Strategy 재분석",
+  STYLE_SELECTED: "스타일 선택",
 };
 
 export function activityLabel(eventType: string): string {

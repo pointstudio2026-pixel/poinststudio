@@ -28,6 +28,7 @@ const STEP_ROUTES: Partial<Record<string, string>> = {
   brand_interview: "/interview",
   brand_brief: "/brand-brief",
   brand_strategy: "/aster-brain",
+  style: "/styles",
 };
 
 const AUTOSAVE_DELAY_MS = 1500;
