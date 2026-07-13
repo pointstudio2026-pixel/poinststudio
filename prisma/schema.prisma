@@ -446,6 +446,18 @@ model DesignMemorySettings {
   @@map("design_memory_settings")
 }
 
+model SystemAnnouncement {
+  id            String    @id @default(uuid()) @db.Uuid
+  message       String
+  active        Boolean   @default(true)
+  createdBy     String    @map("created_by") @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  deactivatedAt DateTime? @map("deactivated_at") @db.Timestamptz()
+
+  @@index([active, createdAt(sort: Desc)])
+  @@map("system_announcements")
+}
+
 model RefreshToken {
   id                String    @id @default(uuid()) @db.Uuid
   userId            String    @map("user_id") @db.Uuid

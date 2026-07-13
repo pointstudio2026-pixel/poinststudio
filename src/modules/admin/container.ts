@@ -1,0 +1,49 @@
+import { PrismaAdminRepository } from "@/modules/admin/infrastructure/PrismaAdminRepository";
+import { PrismaAnnouncementRepository } from "@/modules/admin/infrastructure/PrismaAnnouncementRepository";
+import { GetAdminDashboardUseCase } from "@/modules/admin/application/GetAdminDashboardUseCase";
+import { GetAdminAnalyticsUseCase } from "@/modules/admin/application/GetAdminAnalyticsUseCase";
+import { SearchAdminUsersUseCase } from "@/modules/admin/application/SearchAdminUsersUseCase";
+import { GetAuditLogsUseCase } from "@/modules/admin/application/GetAuditLogsUseCase";
+import { GetProviderHealthUseCase } from "@/modules/admin/application/GetProviderHealthUseCase";
+import {
+  CreateAnnouncementUseCase,
+  DeactivateAnnouncementUseCase,
+  ListAnnouncementsUseCase,
+} from "@/modules/admin/application/AnnouncementUseCases";
+import { resolveTextCompletionProvider } from "@/shared/ai/textCompletionRouter";
+import { resolveImageGenerationProvider } from "@/shared/ai/imageGenerationRouter";
+import { resolveMockupRenderProvider } from "@/shared/ai/mockupRenderRouter";
+import { imageGenerationQueue } from "@/shared/queue/imageGenerationQueue";
+import { imageEditQueue } from "@/shared/queue/imageEditQueue";
+import { mockupRenderQueue } from "@/shared/queue/mockupRenderQueue";
+import { exportQueue } from "@/shared/queue/exportQueue";
+
+const adminRepository = new PrismaAdminRepository();
+const announcementRepository = new PrismaAnnouncementRepository();
+const textCompletionProvider = resolveTextCompletionProvider();
+const imageGenerationProvider = resolveImageGenerationProvider();
+const mockupRenderProvider = resolveMockupRenderProvider();
+
+export const adminContainer = {
+  getAdminDashboardUseCase: new GetAdminDashboardUseCase(
+    adminRepository,
+    textCompletionProvider,
+    imageGenerationProvider,
+    mockupRenderProvider,
+    imageGenerationQueue,
+    imageEditQueue,
+    mockupRenderQueue,
+    exportQueue,
+  ),
+  getAdminAnalyticsUseCase: new GetAdminAnalyticsUseCase(adminRepository),
+  searchAdminUsersUseCase: new SearchAdminUsersUseCase(adminRepository),
+  getAuditLogsUseCase: new GetAuditLogsUseCase(adminRepository),
+  getProviderHealthUseCase: new GetProviderHealthUseCase(
+    textCompletionProvider,
+    imageGenerationProvider,
+    mockupRenderProvider,
+  ),
+  createAnnouncementUseCase: new CreateAnnouncementUseCase(announcementRepository),
+  listAnnouncementsUseCase: new ListAnnouncementsUseCase(announcementRepository),
+  deactivateAnnouncementUseCase: new DeactivateAnnouncementUseCase(announcementRepository),
+};

@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ACCESS_TOKEN_COOKIE } from "@/shared/auth/cookies";
 import { verifyAccessToken, type AccessTokenPayload } from "@/shared/auth/jwt";
-import { AuthenticationError } from "@/shared/errors/AppError";
+import { AuthenticationError, AuthorizationError } from "@/shared/errors/AppError";
 
 /**
  * Auth middleware for Route Handlers: throws AuthenticationError (401) when
@@ -16,6 +16,20 @@ export function requireUser(request: NextRequest): AccessTokenPayload {
     throw new AuthenticationError("Authentication required", "AUTH-006");
   }
   return verifyAccessToken(token);
+}
+
+/**
+ * Admin-only Route Handler guard (Task-020): "관리자 권한 검증" -- every
+ * /api/admin/* route calls this instead of requireUser, so a non-admin
+ * (or unauthenticated) request gets a clear 401/403 before touching any
+ * admin Use Case.
+ */
+export function requireAdmin(request: NextRequest): AccessTokenPayload {
+  const session = requireUser(request);
+  if (session.role !== "admin") {
+    throw new AuthorizationError("관리자 권한이 필요합니다.", "ADMIN-001");
+  }
+  return session;
 }
 
 /**
