@@ -35,6 +35,7 @@ model User {
   usageLogs          UsageLog[]
   brandBriefVersions BrandBriefVersion[]
   styleFavorites     StyleFavorite[]
+  designMemorySettings DesignMemorySettings?
 
   @@map("users")
 }
@@ -425,6 +426,24 @@ model ExportJob {
 
   @@index([projectId, createdAt(sort: Desc)])
   @@map("export_jobs")
+}
+
+// "메모리 초기화" never deletes the underlying signal rows (StyleSelection/
+// EditHistory/etc. are other features' own project history) -- resetAt is
+// a cutoff timestamp: recommendations only look at signals created after
+// it. "비활성화" is enforced at read time (GetDesignMemoryUseCase returns
+// an empty profile), not by blocking writes in four already-shipped
+// modules.
+model DesignMemorySettings {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @unique @map("user_id") @db.Uuid
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enabled   Boolean   @default(true)
+  resetAt   DateTime? @map("reset_at") @db.Timestamptz()
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+
+  @@map("design_memory_settings")
 }
 
 model RefreshToken {

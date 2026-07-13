@@ -28,6 +28,10 @@ const ACTIVITY_LABELS: Record<string, string> = {
   EXPORT_REQUESTED: "Export 요청",
   EXPORT_COMPLETED: "Export 완료",
   EXPORT_FAILED: "Export 실패",
+  DESIGN_MEMORY_UPDATED: "Design Memory 갱신",
+  DESIGN_MEMORY_RESET: "Design Memory 초기화",
+  DESIGN_MEMORY_ENABLED: "Design Memory 활성화",
+  DESIGN_MEMORY_DISABLED: "Design Memory 비활성화",
 };
 
 export function activityLabel(eventType: string): string {

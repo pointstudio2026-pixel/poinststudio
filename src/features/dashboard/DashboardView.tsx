@@ -29,6 +29,9 @@ export function DashboardView({ email }: { email: string }) {
           <p className="text-sm text-neutral-500">{email}님, 환영합니다.</p>
         </div>
         <div className="flex gap-2">
+          <Link href="/design-memory" className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm">
+            Design Memory
+          </Link>
           <NewProjectButton />
           <LogoutButton />
         </div>

@@ -14,7 +14,8 @@ export const styleRepositoryInstance = new PrismaStyleRepository();
 export const styleSelectionRepositoryInstance = new PrismaStyleSelectionRepository();
 const styleRepository = styleRepositoryInstance;
 const styleSelectionRepository = styleSelectionRepositoryInstance;
-const styleFavoriteRepository = new PrismaStyleFavoriteRepository();
+export const styleFavoriteRepositoryInstance = new PrismaStyleFavoriteRepository();
+const styleFavoriteRepository = styleFavoriteRepositoryInstance;
 
 export const stylesContainer = {
   recommendStylesUseCase: new RecommendStylesUseCase(
