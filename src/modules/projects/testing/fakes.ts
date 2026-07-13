@@ -1,11 +1,24 @@
 import type { Project } from "@/modules/projects/domain/Project";
-import type { ProjectRepository } from "@/modules/projects/domain/ProjectRepository";
+import type { ListProjectsOptions, ProjectRepository } from "@/modules/projects/domain/ProjectRepository";
 
 export class FakeProjectRepository implements ProjectRepository {
   projects: Project[] = [];
 
   async findByIdForUser(projectId: string, userId: string) {
     return this.projects.find((p) => p.id === projectId && p.userId === userId) ?? null;
+  }
+
+  async listForUser(userId: string, options?: ListProjectsOptions) {
+    const limit = options?.limit ?? (options?.search ? 50 : 10);
+    return this.projects
+      .filter((p) => p.userId === userId)
+      .filter((p) =>
+        options?.search
+          ? p.name.toLowerCase().includes(options.search.toLowerCase())
+          : true,
+      )
+      .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+      .slice(0, limit);
   }
 
   async save(project: Project) {

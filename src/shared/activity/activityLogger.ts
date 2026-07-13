@@ -32,3 +32,28 @@ export async function recordActivity(input: RecordActivityInput): Promise<void> 
     });
   }
 }
+
+export interface ActivityLogEntry {
+  id: string;
+  eventType: string;
+  projectId: string | null;
+  payload: Record<string, unknown>;
+  createdAt: Date;
+}
+
+/** Read-side of activity_logs, used by Task-005's "최근 활동" widget. */
+export async function getRecentActivity(userId: string, limit = 10): Promise<ActivityLogEntry[]> {
+  const rows = await prisma.activityLog.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
+
+  return rows.map((row) => ({
+    id: row.id,
+    eventType: row.eventType,
+    projectId: row.projectId,
+    payload: row.payload as Record<string, unknown>,
+    createdAt: row.createdAt,
+  }));
+}

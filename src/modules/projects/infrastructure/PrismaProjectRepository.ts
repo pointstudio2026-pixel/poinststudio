@@ -1,11 +1,31 @@
 import { prisma } from "@/shared/database/prisma";
 import type { Project } from "@/modules/projects/domain/Project";
-import type { ProjectRepository } from "@/modules/projects/domain/ProjectRepository";
+import type {
+  ListProjectsOptions,
+  ProjectRepository,
+} from "@/modules/projects/domain/ProjectRepository";
 
 export class PrismaProjectRepository implements ProjectRepository {
   async findByIdForUser(projectId: string, userId: string): Promise<Project | null> {
     return prisma.project.findFirst({
       where: { id: projectId, userId, deletedAt: null },
+    });
+  }
+
+  async listForUser(userId: string, options?: ListProjectsOptions): Promise<Project[]> {
+    // A user actively searching wants to find a project, not just skim
+    // recents, so search isn't capped to the "recent 10" dashboard default.
+    const limit = options?.limit ?? (options?.search ? 50 : 10);
+    return prisma.project.findMany({
+      where: {
+        userId,
+        deletedAt: null,
+        ...(options?.search
+          ? { name: { contains: options.search, mode: "insensitive" } }
+          : {}),
+      },
+      orderBy: { updatedAt: "desc" },
+      take: limit,
     });
   }
 
