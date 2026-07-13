@@ -91,10 +91,41 @@ model Project {
   updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
   deletedAt   DateTime? @map("deleted_at") @db.Timestamptz()
 
-  usageLogs UsageLog[]
+  usageLogs       UsageLog[]
+  brandInterviews BrandInterview[]
 
   @@index([userId, updatedAt(sort: Desc)])
   @@map("projects")
+}
+
+model BrandInterview {
+  id                   String    @id @default(uuid()) @db.Uuid
+  projectId            String    @map("project_id") @db.Uuid
+  project              Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  status               String    @default("in_progress") @db.VarChar(20)
+  currentQuestionIndex Int       @default(0) @map("current_question_index")
+  startedAt            DateTime  @default(now()) @map("started_at") @db.Timestamptz()
+  completedAt          DateTime? @map("completed_at") @db.Timestamptz()
+
+  answers InterviewAnswer[]
+
+  @@index([projectId])
+  @@map("brand_interviews")
+}
+
+model InterviewAnswer {
+  id           String         @id @default(uuid()) @db.Uuid
+  interviewId  String         @map("interview_id") @db.Uuid
+  interview    BrandInterview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  questionKey  String         @map("question_key") @db.VarChar(100)
+  questionText String         @map("question_text")
+  answer       Json?
+  sequence     Int
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt    DateTime       @updatedAt @map("updated_at") @db.Timestamptz()
+
+  @@unique([interviewId, questionKey])
+  @@map("interview_answers")
 }
 
 model RefreshToken {

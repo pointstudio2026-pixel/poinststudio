@@ -6,7 +6,8 @@ import { UpdateProjectUseCase } from "@/modules/projects/application/UpdateProje
 import { DeleteProjectUseCase } from "@/modules/projects/application/DeleteProjectUseCase";
 import { GetProjectActivityUseCase } from "@/modules/projects/application/GetProjectActivityUseCase";
 
-const projectRepository = new PrismaProjectRepository();
+export const projectRepositoryInstance = new PrismaProjectRepository();
+const projectRepository = projectRepositoryInstance;
 
 export const projectsContainer = {
   createProjectUseCase: new CreateProjectUseCase(projectRepository),

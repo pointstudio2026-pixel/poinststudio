@@ -149,8 +149,20 @@ export function WorkspaceView({ project: initialProject }: { project: ProjectDto
           현재 단계: {WORKSPACE_STEPS[currentStepIndex]?.label ?? project.currentStep} (
           {currentStepIndex + 1}/{WORKSPACE_STEPS.length})
         </p>
-        <div className="mt-4 rounded-md border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-400">
-          Brand Interview 화면은 다음 작업(Task-007)에서 구현됩니다.
+        <div className="mt-4 rounded-md border border-dashed border-neutral-300 p-8 text-center text-sm">
+          {project.currentStep === "brand_interview" ? (
+            <Link
+              href={`/projects/${project.id}/interview`}
+              className="rounded-md bg-neutral-900 px-4 py-2 text-white"
+            >
+              Brand Interview 시작하기
+            </Link>
+          ) : (
+            <p className="text-neutral-400">
+              {WORKSPACE_STEPS[currentStepIndex]?.label ?? project.currentStep} 화면은 다음 작업에서
+              구현됩니다.
+            </p>
+          )}
         </div>
 
         <div className="mt-6 flex gap-2">
