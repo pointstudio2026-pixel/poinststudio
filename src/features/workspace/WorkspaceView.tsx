@@ -27,6 +27,7 @@ const SAVE_STATUS_LABELS: Record<SaveStatus, string> = {
 const STEP_ROUTES: Partial<Record<string, string>> = {
   brand_interview: "/interview",
   brand_brief: "/brand-brief",
+  brand_strategy: "/aster-brain",
 };
 
 const AUTOSAVE_DELAY_MS = 1500;

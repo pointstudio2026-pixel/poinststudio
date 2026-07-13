@@ -6,6 +6,9 @@ const ACTIVITY_LABELS: Record<string, string> = {
   PROJECT_CREATED: "프로젝트 생성",
   PROJECT_UPDATED: "프로젝트 수정",
   PROJECT_DELETED: "프로젝트 삭제",
+  BRAND_BRIEF_GENERATED: "Brand Brief 생성",
+  BRAND_STRATEGY_GENERATED: "Brand Strategy 생성",
+  BRAND_STRATEGY_REBUILT: "Brand Strategy 재분석",
 };
 
 export function activityLabel(eventType: string): string {

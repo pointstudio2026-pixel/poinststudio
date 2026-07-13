@@ -8,7 +8,8 @@ import { projectRepositoryInstance } from "@/modules/projects/container";
 import { interviewRepositoryInstance } from "@/modules/interviews/container";
 import { resolveTextCompletionProvider } from "@/shared/ai/textCompletionRouter";
 
-const brandBriefRepository = new PrismaBrandBriefRepository();
+export const brandBriefRepositoryInstance = new PrismaBrandBriefRepository();
+const brandBriefRepository = brandBriefRepositoryInstance;
 const composer = new BrandBriefComposer(resolveTextCompletionProvider());
 
 export const brandBriefsContainer = {

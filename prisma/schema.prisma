@@ -95,6 +95,7 @@ model Project {
   usageLogs       UsageLog[]
   brandInterviews BrandInterview[]
   brandBrief      BrandBrief?
+  brandStrategy   BrandStrategy?
 
   @@index([userId, updatedAt(sort: Desc)])
   @@map("projects")
@@ -156,6 +157,34 @@ model BrandBriefVersion {
 
   @@unique([brandBriefId, versionNumber])
   @@map("brand_brief_versions")
+}
+
+model BrandStrategy {
+  id               String    @id @default(uuid()) @db.Uuid
+  projectId        String    @unique @map("project_id") @db.Uuid
+  project          Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  currentVersionId String?   @map("current_version_id") @db.Uuid
+  approvedAt       DateTime? @map("approved_at") @db.Timestamptz()
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+
+  versions BrandStrategyVersion[]
+
+  @@map("brand_strategies")
+}
+
+model BrandStrategyVersion {
+  id               String        @id @default(uuid()) @db.Uuid
+  brandStrategyId  String        @map("brand_strategy_id") @db.Uuid
+  brandStrategy    BrandStrategy @relation(fields: [brandStrategyId], references: [id], onDelete: Cascade)
+  versionNumber    Int           @map("version_number")
+  data             Json
+  reasoningSummary String?       @map("reasoning_summary")
+  confidence       String        @db.VarChar(10)
+  createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@unique([brandStrategyId, versionNumber])
+  @@map("brand_strategy_versions")
 }
 
 model RefreshToken {
