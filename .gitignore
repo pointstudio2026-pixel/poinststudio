@@ -1,0 +1,30 @@
+# dependencies
+node_modules
+
+# environment variables
+.env
+.env.local
+
+# prisma generated client
+/generated/prisma
+
+# next.js
+/.next/
+/out/
+
+# build
+/build
+
+# testing / coverage
+/coverage
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# misc
+.DS_Store
+*.log
+npm-debug.log*
+
+# local docker volumes
+/.docker-data
