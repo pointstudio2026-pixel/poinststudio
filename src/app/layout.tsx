@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Providers } from "./providers";
 import { SessionBootstrap } from "@/features/auth/SessionBootstrap";
 
 export const metadata: Metadata = {
@@ -13,8 +14,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        <SessionBootstrap />
-        {children}
+        <Providers>
+          <SessionBootstrap />
+          {children}
+        </Providers>
       </body>
     </html>
   );
