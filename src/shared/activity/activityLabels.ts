@@ -19,6 +19,9 @@ const ACTIVITY_LABELS: Record<string, string> = {
   EDIT_COMPLETED: "원클릭 수정 완료",
   EDIT_FAILED: "원클릭 수정 실패",
   EDIT_RETRIED: "원클릭 수정 재시도",
+  CONCEPT_BOARD_GENERATED: "Concept Board 생성",
+  CONCEPT_BOARD_UPDATED: "Concept Board 수정",
+  CONCEPT_BOARD_RESTORED: "Concept Board 버전 복원",
 };
 
 export function activityLabel(eventType: string): string {
