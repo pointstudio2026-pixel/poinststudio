@@ -12,10 +12,19 @@ Next.js (App Router) · React · TypeScript(Strict) · Tailwind CSS · Prisma(Po
 ## 개발 환경 준비
 
 1. 의존성 설치: `npm install`
-2. 로컬 인프라(Postgres/Redis/MinIO) 실행: `docker compose up -d`
-3. `.env` 확인 (docker-compose 기본값과 일치하도록 이미 채워져 있음)
+2. 로컬 DB/Redis 실행 (택 1)
+   - **Docker 사용 가능 시(권장, 운영 환경과 동일)**: `docker compose up -d` → Postgres/Redis/MinIO 실행
+   - **Docker 미사용 시(이 개발 PC의 현재 상태)**: PostgreSQL 17, Memurai(Redis 호환)을
+     Windows 서비스로 네이티브 설치해 사용 중. `aster`/`aster_dev_password` 계정으로
+     `aster` DB 생성 완료, Memurai는 인증 없이 6379 포트에서 동작.
+     Object Storage(MinIO)는 Task-013/019 시점에 별도로 준비.
+3. `.env` 확인 (위 설정과 일치하도록 이미 채워져 있음)
 4. Prisma Client 생성: `npm run prisma:generate`
 5. 개발 서버: `npm run dev`
+
+Docker Desktop은 설치되어 있으나 이 PC에서 WSL2 커널 구성 요소 다운로드가 막혀
+아직 실행되지 않는다. 나중에 `wsl --update`가 성공하면 docker-compose 경로로
+전환 가능하다.
 
 ## 스크립트
 
