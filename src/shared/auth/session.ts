@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { ACCESS_TOKEN_COOKIE } from "@/shared/auth/cookies";
 import { verifyAccessToken, type AccessTokenPayload } from "@/shared/auth/jwt";
 import { AuthenticationError } from "@/shared/errors/AppError";
@@ -29,4 +30,17 @@ export async function getCurrentSession(): Promise<AccessTokenPayload | null> {
   } catch {
     return null;
   }
+}
+
+/**
+ * Common Auth Guard for protected Server Component pages: redirects to
+ * /login when there is no valid session, otherwise returns it. Every
+ * protected page calls this instead of re-implementing the check.
+ */
+export async function requireSessionOrRedirect(): Promise<AccessTokenPayload> {
+  const session = await getCurrentSession();
+  if (!session) {
+    redirect("/login");
+  }
+  return session;
 }

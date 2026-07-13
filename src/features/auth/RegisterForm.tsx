@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterInput } from "@/modules/auth/schemas/auth.schemas";
 import { registerUser } from "@/services/auth-service";
 import { useAuthStore } from "@/stores/auth-store";
+import { Spinner } from "@/components/Spinner";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -78,8 +79,9 @@ export function RegisterForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="rounded-md bg-neutral-900 px-4 py-2 text-white disabled:opacity-50"
+        className="flex items-center justify-center gap-2 rounded-md bg-neutral-900 px-4 py-2 text-white disabled:opacity-50"
       >
+        {isSubmitting && <Spinner />}
         {isSubmitting ? "가입 중..." : "회원가입"}
       </button>
     </form>

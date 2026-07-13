@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginInput } from "@/modules/auth/schemas/auth.schemas";
 import { loginUser } from "@/services/auth-service";
 import { useAuthStore } from "@/stores/auth-store";
+import { Spinner } from "@/components/Spinner";
 
 export function LoginForm() {
   const router = useRouter();
@@ -65,8 +66,9 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="rounded-md bg-neutral-900 px-4 py-2 text-white disabled:opacity-50"
+        className="flex items-center justify-center gap-2 rounded-md bg-neutral-900 px-4 py-2 text-white disabled:opacity-50"
       >
+        {isSubmitting && <Spinner />}
         {isSubmitting ? "로그인 중..." : "로그인"}
       </button>
     </form>
