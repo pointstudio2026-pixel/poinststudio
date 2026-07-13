@@ -29,32 +29,32 @@ export class AppError extends Error implements AppErrorShape {
 }
 
 export class ValidationError extends AppError {
-  constructor(message: string, details?: unknown) {
-    super({ code: "VALIDATION_ERROR", message, httpStatus: 400, details });
+  constructor(message: string, details?: unknown, code = "VALIDATION_ERROR") {
+    super({ code, message, httpStatus: 400, details });
   }
 }
 
 export class AuthenticationError extends AppError {
-  constructor(message = "Authentication required") {
-    super({ code: "AUTHENTICATION_ERROR", message, httpStatus: 401 });
+  constructor(message = "Authentication required", code = "AUTHENTICATION_ERROR") {
+    super({ code, message, httpStatus: 401 });
   }
 }
 
 export class AuthorizationError extends AppError {
-  constructor(message = "Not authorized") {
-    super({ code: "AUTHORIZATION_ERROR", message, httpStatus: 403 });
+  constructor(message = "Not authorized", code = "AUTHORIZATION_ERROR") {
+    super({ code, message, httpStatus: 403 });
   }
 }
 
 export class NotFoundError extends AppError {
-  constructor(message = "Resource not found") {
-    super({ code: "NOT_FOUND", message, httpStatus: 404 });
+  constructor(message = "Resource not found", code = "NOT_FOUND") {
+    super({ code, message, httpStatus: 404 });
   }
 }
 
 export class ConflictError extends AppError {
-  constructor(message = "Conflicting state") {
-    super({ code: "CONFLICT", message, httpStatus: 409 });
+  constructor(message = "Conflicting state", code = "CONFLICT") {
+    super({ code, message, httpStatus: 409 });
   }
 }
 
