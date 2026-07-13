@@ -4,6 +4,7 @@ import { prisma } from "@/shared/database/prisma";
 import { POST as registerHandler } from "@/app/api/auth/register/route";
 import { POST as loginHandler } from "@/app/api/auth/login/route";
 import { POST as logoutHandler } from "@/app/api/auth/logout/route";
+import { POST as refreshHandler } from "@/app/api/auth/refresh/route";
 import { GET as meHandler } from "@/app/api/auth/me/route";
 
 const TEST_EMAIL_PREFIX = "task002-route";
@@ -88,5 +89,63 @@ describe("Auth API routes", () => {
 
     expect(secondRes.status).toBe(409);
     expect(body.error.code).toBe("EMAIL_ALREADY_EXISTS");
+  });
+
+  it("refreshes the session via the refresh cookie and rejects reuse of the old one", async () => {
+    const email = uniqueEmail();
+    const registerRes = await registerHandler(
+      jsonRequest("/api/auth/register", { email, password: "password123" }),
+    );
+    const originalCookies = cookieHeader(registerRes);
+
+    const refreshRes = await refreshHandler(
+      new NextRequest("http://localhost/api/auth/refresh", {
+        method: "POST",
+        headers: { cookie: originalCookies },
+      }),
+    );
+    expect(refreshRes.status).toBe(200);
+    const newCookies = cookieHeader(refreshRes);
+    expect(newCookies).not.toBe(originalCookies);
+
+    // New access token works.
+    const meRes = await meHandler(
+      new NextRequest("http://localhost/api/auth/me", { headers: { cookie: newCookies } }),
+    );
+    expect(meRes.status).toBe(200);
+
+    // The original (now-rotated-out) refresh cookie must be rejected.
+    const reuseRes = await refreshHandler(
+      new NextRequest("http://localhost/api/auth/refresh", {
+        method: "POST",
+        headers: { cookie: originalCookies },
+      }),
+    );
+    const reuseBody = await reuseRes.json();
+    expect(reuseRes.status).toBe(401);
+    expect(reuseBody.error.code).toBe("AUTH-008");
+  });
+
+  it("invalidates the refresh token on logout", async () => {
+    const email = uniqueEmail();
+    const registerRes = await registerHandler(
+      jsonRequest("/api/auth/register", { email, password: "password123" }),
+    );
+    const cookies = cookieHeader(registerRes);
+
+    await logoutHandler(
+      new NextRequest("http://localhost/api/auth/logout", {
+        method: "POST",
+        headers: { cookie: cookies },
+      }),
+    );
+
+    const refreshAfterLogout = await refreshHandler(
+      new NextRequest("http://localhost/api/auth/refresh", {
+        method: "POST",
+        headers: { cookie: cookies },
+      }),
+    );
+    expect(refreshAfterLogout.status).toBe(401);
   });
 });

@@ -1,7 +1,9 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { prisma } from "@/shared/database/prisma";
 import { PrismaUserRepository } from "@/modules/auth/infrastructure/PrismaUserRepository";
+import { PrismaRefreshTokenRepository } from "@/modules/auth/infrastructure/PrismaRefreshTokenRepository";
 import { Argon2PasswordHasher } from "@/modules/auth/infrastructure/Argon2PasswordHasher";
+import { TokenService } from "@/modules/auth/application/TokenService";
 import { RegisterUseCase } from "@/modules/auth/application/RegisterUseCase";
 import { LoginUseCase } from "@/modules/auth/application/LoginUseCase";
 import { AuthenticationError, ConflictError } from "@/shared/errors/AppError";
@@ -15,6 +17,19 @@ function uniqueEmail() {
 afterEach(async () => {
   await prisma.user.deleteMany({ where: { email: { startsWith: TEST_EMAIL_PREFIX } } });
 });
+
+function buildContainer() {
+  const userRepository = new PrismaUserRepository();
+  const refreshTokenRepository = new PrismaRefreshTokenRepository();
+  const tokenService = new TokenService(refreshTokenRepository);
+  const hasher = new Argon2PasswordHasher();
+  return {
+    userRepository,
+    tokenService,
+    registerUseCase: new RegisterUseCase(userRepository, hasher, tokenService),
+    loginUseCase: new LoginUseCase(userRepository, hasher, tokenService),
+  };
+}
 
 describe("Auth module (real Postgres)", () => {
   it("PrismaUserRepository persists and retrieves a user", async () => {
@@ -32,10 +47,7 @@ describe("Auth module (real Postgres)", () => {
   });
 
   it("registers then logs in a real user end-to-end", async () => {
-    const repo = new PrismaUserRepository();
-    const hasher = new Argon2PasswordHasher();
-    const registerUseCase = new RegisterUseCase(repo, hasher);
-    const loginUseCase = new LoginUseCase(repo, hasher);
+    const { registerUseCase, loginUseCase } = buildContainer();
     const email = uniqueEmail();
 
     const registered = await registerUseCase.execute({ email, password: "password123" });
@@ -51,5 +63,34 @@ describe("Auth module (real Postgres)", () => {
     await expect(
       registerUseCase.execute({ email, password: "password123" }),
     ).rejects.toBeInstanceOf(ConflictError);
+  });
+
+  it("rotates a real refresh token and rejects reuse of the old one", async () => {
+    const { registerUseCase, tokenService } = buildContainer();
+    const email = uniqueEmail();
+
+    const registered = await registerUseCase.execute({ email, password: "password123" });
+    const rotated = await tokenService.rotate(registered.refreshToken);
+    expect(rotated.userId).toBe(registered.user.id);
+
+    await expect(
+      tokenService.rotate(registered.refreshToken),
+    ).rejects.toMatchObject({ code: "AUTH-008" });
+  });
+
+  it("only lets one of two truly concurrent rotations win against real Postgres", async () => {
+    const { registerUseCase, tokenService } = buildContainer();
+    const email = uniqueEmail();
+    const registered = await registerUseCase.execute({ email, password: "password123" });
+
+    const results = await Promise.allSettled([
+      tokenService.rotate(registered.refreshToken),
+      tokenService.rotate(registered.refreshToken),
+    ]);
+
+    const fulfilled = results.filter((r) => r.status === "fulfilled");
+    const rejected = results.filter((r) => r.status === "rejected");
+    expect(fulfilled).toHaveLength(1);
+    expect(rejected).toHaveLength(1);
   });
 });

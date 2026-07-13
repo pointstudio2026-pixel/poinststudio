@@ -2,7 +2,7 @@ import type { UserRepository } from "@/modules/auth/domain/UserRepository";
 import type { PasswordHasher } from "@/modules/auth/domain/PasswordHasher";
 import type { RegisterInput } from "@/modules/auth/schemas/auth.schemas";
 import { toPublicUser, type PublicUser } from "@/modules/auth/application/publicUser";
-import { signAccessToken, signRefreshToken } from "@/shared/auth/jwt";
+import type { TokenService } from "@/modules/auth/application/TokenService";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { ConflictError } from "@/shared/errors/AppError";
 
@@ -16,6 +16,7 @@ export class RegisterUseCase {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly passwordHasher: PasswordHasher,
+    private readonly tokenService: TokenService,
   ) {}
 
   async execute(input: RegisterInput): Promise<RegisterOutput> {
@@ -33,10 +34,8 @@ export class RegisterUseCase {
 
     await recordActivity({ userId: user.id, eventType: "USER_REGISTERED" });
 
-    return {
-      user: toPublicUser(user),
-      accessToken: signAccessToken({ sub: user.id, role: user.role }),
-      refreshToken: signRefreshToken({ sub: user.id }),
-    };
+    const tokens = await this.tokenService.issueTokenPair({ id: user.id, role: user.role });
+
+    return { user: toPublicUser(user), ...tokens };
   }
 }

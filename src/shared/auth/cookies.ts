@@ -1,10 +1,8 @@
 import type { NextResponse } from "next/server";
+import { ACCESS_TOKEN_TTL_SECONDS, REFRESH_TOKEN_TTL_SECONDS } from "@/shared/auth/constants";
 
 export const ACCESS_TOKEN_COOKIE = "aster_access_token";
 export const REFRESH_TOKEN_COOKIE = "aster_refresh_token";
-
-const ACCESS_TOKEN_MAX_AGE_SECONDS = 15 * 60;
-const REFRESH_TOKEN_MAX_AGE_SECONDS = 30 * 24 * 60 * 60;
 
 function baseCookieOptions() {
   return {
@@ -21,11 +19,11 @@ export function setAuthCookies(
 ): void {
   res.cookies.set(ACCESS_TOKEN_COOKIE, tokens.accessToken, {
     ...baseCookieOptions(),
-    maxAge: ACCESS_TOKEN_MAX_AGE_SECONDS,
+    maxAge: ACCESS_TOKEN_TTL_SECONDS,
   });
   res.cookies.set(REFRESH_TOKEN_COOKIE, tokens.refreshToken, {
     ...baseCookieOptions(),
-    maxAge: REFRESH_TOKEN_MAX_AGE_SECONDS,
+    maxAge: REFRESH_TOKEN_TTL_SECONDS,
   });
 }
 

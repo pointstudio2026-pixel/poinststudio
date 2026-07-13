@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SessionBootstrap } from "@/features/auth/SessionBootstrap";
 
 export const metadata: Metadata = {
   title: "ASTER",
@@ -11,7 +12,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body>
+        <SessionBootstrap />
+        {children}
+      </body>
     </html>
   );
 }
