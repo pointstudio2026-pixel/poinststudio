@@ -6,7 +6,8 @@ import { GenerateFollowUpUseCase } from "@/modules/interviews/application/Genera
 import { projectRepositoryInstance } from "@/modules/projects/container";
 import { resolveTextCompletionProvider } from "@/shared/ai/textCompletionRouter";
 
-const interviewRepository = new PrismaInterviewRepository();
+export const interviewRepositoryInstance = new PrismaInterviewRepository();
+const interviewRepository = interviewRepositoryInstance;
 
 export const interviewsContainer = {
   getOrStartInterviewUseCase: new GetOrStartInterviewUseCase(

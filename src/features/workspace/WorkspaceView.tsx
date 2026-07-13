@@ -23,6 +23,12 @@ const SAVE_STATUS_LABELS: Record<SaveStatus, string> = {
   error: "저장 실패",
 };
 
+// 아직 구현되지 않은 단계는 여기 없으면 자동으로 "다음 작업에서 구현됩니다"로 표시된다.
+const STEP_ROUTES: Partial<Record<string, string>> = {
+  brand_interview: "/interview",
+  brand_brief: "/brand-brief",
+};
+
 const AUTOSAVE_DELAY_MS = 1500;
 
 export function WorkspaceView({ project: initialProject }: { project: ProjectDto }) {
@@ -150,12 +156,12 @@ export function WorkspaceView({ project: initialProject }: { project: ProjectDto
           {currentStepIndex + 1}/{WORKSPACE_STEPS.length})
         </p>
         <div className="mt-4 rounded-md border border-dashed border-neutral-300 p-8 text-center text-sm">
-          {project.currentStep === "brand_interview" ? (
+          {STEP_ROUTES[project.currentStep] ? (
             <Link
-              href={`/projects/${project.id}/interview`}
+              href={`/projects/${project.id}${STEP_ROUTES[project.currentStep]}`}
               className="rounded-md bg-neutral-900 px-4 py-2 text-white"
             >
-              Brand Interview 시작하기
+              {WORKSPACE_STEPS[currentStepIndex]?.label ?? project.currentStep} 이동
             </Link>
           ) : (
             <p className="text-neutral-400">

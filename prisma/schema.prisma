@@ -28,11 +28,12 @@ model User {
   updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
   deletedAt       DateTime? @map("deleted_at") @db.Timestamptz()
 
-  activityLogs  ActivityLog[]
-  refreshTokens RefreshToken[]
-  projects      Project[]
-  subscription  Subscription?
-  usageLogs     UsageLog[]
+  activityLogs       ActivityLog[]
+  refreshTokens      RefreshToken[]
+  projects           Project[]
+  subscription       Subscription?
+  usageLogs          UsageLog[]
+  brandBriefVersions BrandBriefVersion[]
 
   @@map("users")
 }
@@ -93,6 +94,7 @@ model Project {
 
   usageLogs       UsageLog[]
   brandInterviews BrandInterview[]
+  brandBrief      BrandBrief?
 
   @@index([userId, updatedAt(sort: Desc)])
   @@map("projects")
@@ -126,6 +128,34 @@ model InterviewAnswer {
 
   @@unique([interviewId, questionKey])
   @@map("interview_answers")
+}
+
+model BrandBrief {
+  id               String    @id @default(uuid()) @db.Uuid
+  projectId        String    @unique @map("project_id") @db.Uuid
+  project          Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  currentVersionId String?   @map("current_version_id") @db.Uuid
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+
+  versions BrandBriefVersion[]
+
+  @@map("brand_briefs")
+}
+
+model BrandBriefVersion {
+  id            String     @id @default(uuid()) @db.Uuid
+  brandBriefId  String     @map("brand_brief_id") @db.Uuid
+  brandBrief    BrandBrief @relation(fields: [brandBriefId], references: [id], onDelete: Cascade)
+  versionNumber Int        @map("version_number")
+  data          Json
+  source        String     @default("ai") @db.VarChar(30)
+  createdBy     String?    @map("created_by") @db.Uuid
+  createdByUser User?      @relation(fields: [createdBy], references: [id])
+  createdAt     DateTime   @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@unique([brandBriefId, versionNumber])
+  @@map("brand_brief_versions")
 }
 
 model RefreshToken {
