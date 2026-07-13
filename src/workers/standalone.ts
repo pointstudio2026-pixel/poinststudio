@@ -8,6 +8,7 @@
  */
 import "@/modules/generations/container";
 import "@/modules/edits/container";
+import "@/modules/mockups/container";
 import { logger } from "@/shared/logging/logger";
 
-logger.info("Image generation and edit workers started (standalone).");
+logger.info("Image generation, edit, and mockup render workers started (standalone).");

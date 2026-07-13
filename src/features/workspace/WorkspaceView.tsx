@@ -31,6 +31,7 @@ const STEP_ROUTES: Partial<Record<string, string>> = {
   style: "/styles",
   generation: "/generation",
   concept_board: "/concept-board",
+  mockup: "/mockups",
 };
 
 const AUTOSAVE_DELAY_MS = 1500;

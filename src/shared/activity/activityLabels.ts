@@ -22,6 +22,9 @@ const ACTIVITY_LABELS: Record<string, string> = {
   CONCEPT_BOARD_GENERATED: "Concept Board 생성",
   CONCEPT_BOARD_UPDATED: "Concept Board 수정",
   CONCEPT_BOARD_RESTORED: "Concept Board 버전 복원",
+  MOCKUP_REQUESTED: "목업 생성 요청",
+  MOCKUP_COMPLETED: "목업 생성 완료",
+  MOCKUP_FAILED: "목업 생성 실패",
 };
 
 export function activityLabel(eventType: string): string {
