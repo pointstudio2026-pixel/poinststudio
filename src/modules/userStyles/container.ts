@@ -9,13 +9,13 @@ import { ReanalyzeUserStyleCategoryUseCase } from "@/modules/userStyles/applicat
 import { SelectProjectUserStyleUseCase } from "@/modules/userStyles/application/SelectProjectUserStyleUseCase";
 import { GetUserStyleReferenceImageUseCase } from "@/modules/userStyles/application/GetUserStyleReferenceImageUseCase";
 import { projectRepositoryInstance } from "@/modules/projects/container";
-import { LocalFileStorage } from "@/shared/storage/LocalFileStorage";
+import { resolveFileStorage } from "@/shared/storage/fileStorageRouter";
 import { resolveTextCompletionProvider } from "@/shared/ai/textCompletionRouter";
 
 export const userStyleCategoryRepositoryInstance = new PrismaUserStyleCategoryRepository();
 export const userStyleReferenceRepositoryInstance = new PrismaUserStyleReferenceRepository();
 export const projectUserStyleSelectionRepositoryInstance = new PrismaProjectUserStyleSelectionRepository();
-const fileStorage = new LocalFileStorage();
+const fileStorage = resolveFileStorage();
 
 export const userStylesContainer = {
   createUserStyleCategoryUseCase: new CreateUserStyleCategoryUseCase(userStyleCategoryRepositoryInstance),

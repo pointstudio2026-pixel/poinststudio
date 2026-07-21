@@ -10,13 +10,13 @@ import { conceptBoardRepositoryInstance } from "@/modules/conceptBoards/containe
 import { generationRepositoryInstance } from "@/modules/generations/container";
 import { mockupRepositoryInstance } from "@/modules/mockups/container";
 import { subscriptionsContainer } from "@/modules/subscriptions/container";
-import { LocalFileStorage } from "@/shared/storage/LocalFileStorage";
+import { resolveFileStorage } from "@/shared/storage/fileStorageRouter";
 import { BullMqExportQueue } from "@/shared/queue/exportQueue";
 import { startExportWorker } from "@/workers/exportWorker";
 
 const exportRepository = new PrismaExportRepository();
 const renderer = new PdfLibExportRenderer();
-const fileStorage = new LocalFileStorage();
+const fileStorage = resolveFileStorage();
 const queue = new BullMqExportQueue();
 
 export const exportsContainer = {
