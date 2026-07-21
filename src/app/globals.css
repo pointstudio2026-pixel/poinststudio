@@ -1,9 +1,53 @@
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&display=swap");
 @import "tailwindcss";
 
+@theme {
+  /* Editorial-warm palette: cream paper background, warm ink, thin warm-gray
+     dividers. Deliberately light-only (no dark-mode variant) to match the
+     brand's editorial print feel rather than a typical app UI. */
+  --color-paper: #f7f4ee;
+  --color-surface: #fbfaf6;
+  --color-ink: #1c1a16;
+  --color-muted: #8a8374;
+  --color-line: #e4dfd3;
+  --color-accent: #171512;
+  /* Sparingly-used accent tints (section backgrounds, small highlights) --
+     never for large blocks of text or primary buttons. */
+  --color-tint-blue: #eaf0f6;
+  --color-tint-beige: #f1ebdf;
+}
+
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
 body {
   min-height: 100vh;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  /* Korean text should never break mid-word at the viewport edge. */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.eyebrow {
+  font-family: ui-serif, Georgia, "Times New Roman", serif;
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+
+.font-script {
+  font-family: "Nanum Brush Script", cursive;
+}
+
+.shadow-soft {
+  box-shadow:
+    0 1px 2px rgba(28, 26, 22, 0.04),
+    0 12px 32px -16px rgba(28, 26, 22, 0.14);
+}
+
+.shadow-soft-lg {
+  box-shadow:
+    0 2px 4px rgba(28, 26, 22, 0.04),
+    0 24px 48px -20px rgba(28, 26, 22, 0.18);
 }

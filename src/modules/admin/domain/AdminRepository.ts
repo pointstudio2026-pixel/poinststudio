@@ -1,11 +1,13 @@
 import type {
   AdminUserSearchResult,
   AuditLogEntry,
+  CostBreakdownEntry,
   CostTrendPoint,
   ErrorRateEntry,
   PlanDistributionEntry,
   UsageTrendPoint,
 } from "@/modules/admin/domain/Admin";
+import type { AdminTier, UserRole } from "@/shared/auth/jwt";
 
 export interface AuditLogFilter {
   userId?: string;
@@ -29,6 +31,12 @@ export interface AdminRepository {
   usageTrend(eventType: string, days: number): Promise<UsageTrendPoint[]>;
   costTrend(days: number): Promise<CostTrendPoint[]>;
   totalCostSince(since: Date): Promise<number>;
+  costBreakdownSince(since: Date): Promise<CostBreakdownEntry[]>;
   searchUsers(query: string, limit: number): Promise<AdminUserSearchResult[]>;
+  getUserById(id: string): Promise<AdminUserSearchResult | null>;
   listAuditLogs(filter: AuditLogFilter): Promise<AuditLogEntry[]>;
+  suspendUser(id: string): Promise<void>;
+  unsuspendUser(id: string): Promise<void>;
+  softDeleteUser(id: string): Promise<void>;
+  changeUserRole(id: string, role: UserRole, adminTier: AdminTier | null): Promise<void>;
 }

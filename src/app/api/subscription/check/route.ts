@@ -21,6 +21,7 @@ export async function POST(request: NextRequest) {
     const result = await subscriptionsContainer.checkPlanUseCase.execute({
       userId: session.sub,
       eventType: parsed.data.eventType,
+      userRole: session.role,
     });
 
     return apiSuccess(result);

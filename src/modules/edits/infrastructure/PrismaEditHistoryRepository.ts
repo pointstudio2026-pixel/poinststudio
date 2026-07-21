@@ -13,7 +13,8 @@ function toEntry(row: {
   generationId: string;
   sourceVersionId: string;
   sourceImageIndex: number;
-  presetKey: string;
+  presetKey: string | null;
+  customInstruction: string | null;
   resultVersionId: string;
   status: string;
   errorMessage: string | null;
@@ -25,7 +26,8 @@ function toEntry(row: {
     generationId: row.generationId,
     sourceVersionId: row.sourceVersionId,
     sourceImageIndex: row.sourceImageIndex,
-    presetKey: row.presetKey as EditPresetKey,
+    presetKey: row.presetKey as EditPresetKey | null,
+    customInstruction: row.customInstruction,
     resultVersionId: row.resultVersionId,
     status: row.status as GenerationStatus,
     errorMessage: row.errorMessage,
@@ -42,6 +44,7 @@ export class PrismaEditHistoryRepository implements EditHistoryRepository {
         sourceVersionId: input.sourceVersionId,
         sourceImageIndex: input.sourceImageIndex,
         presetKey: input.presetKey,
+        customInstruction: input.customInstruction,
         resultVersionId: input.resultVersionId,
         status: "pending",
       },

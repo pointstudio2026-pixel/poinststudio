@@ -8,6 +8,7 @@ export interface StrategyRecommendationDto {
 }
 
 export interface BrandKnowledgeDto {
+  industry: string;
   mission: string;
   vision: string;
   values: string[];
@@ -18,6 +19,10 @@ export interface BrandKnowledgeDto {
   visualDirection: string;
   confidenceNotes: string;
   reasoningSummary: string;
+  tagline: string;
+  keywords: string[];
+  preferredColor: string;
+  typographyDirection: string;
 }
 
 export interface BrandStrategyProfileDto {
@@ -33,15 +38,9 @@ export interface BrandStrategyProfileDto {
   recommendedSymbols: StrategyRecommendationDto[];
 }
 
-export interface StyleCandidateDto {
-  name: string;
-  reason: string;
-}
-
 export interface BrandStrategyDataDto {
   brandKnowledge: BrandKnowledgeDto;
   brandStrategy: BrandStrategyProfileDto;
-  styleCandidates: StyleCandidateDto[];
   confidenceScore: number;
 }
 
@@ -49,6 +48,8 @@ export interface BrandStrategyVersionDto {
   id: string;
   versionNumber: number;
   data: BrandStrategyDataDto;
+  candidates: BrandStrategyDataDto[];
+  selectedIndex: number | null;
   reasoningSummary: string;
   confidenceLevel: ConfidenceLevel;
   createdAt: string;
@@ -60,17 +61,26 @@ export interface BrandStrategyDto {
   currentVersion: BrandStrategyVersionDto;
 }
 
-export function executeAsterBrain(projectId: string) {
+export type AiTextProvider = "openai" | "gemini" | "claude";
+
+export function executeAsterBrain(projectId: string, provider?: AiTextProvider) {
   return apiFetch<{ strategy: BrandStrategyDto }>("/api/aster-brain/execute", {
     method: "POST",
-    body: JSON.stringify({ projectId }),
+    body: JSON.stringify({ projectId, provider }),
   });
 }
 
-export function rebuildAsterBrain(projectId: string) {
+export function rebuildAsterBrain(projectId: string, provider?: AiTextProvider) {
   return apiFetch<{ strategy: BrandStrategyDto }>("/api/aster-brain/rebuild", {
     method: "POST",
-    body: JSON.stringify({ projectId }),
+    body: JSON.stringify({ projectId, provider }),
+  });
+}
+
+export function selectBrandStrategy(projectId: string, candidateIndex: number) {
+  return apiFetch<{ strategy: BrandStrategyDto }>("/api/aster-brain/select", {
+    method: "POST",
+    body: JSON.stringify({ projectId, candidateIndex }),
   });
 }
 

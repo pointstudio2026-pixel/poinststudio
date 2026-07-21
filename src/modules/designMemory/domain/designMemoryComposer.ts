@@ -2,7 +2,7 @@ import type { Style } from "@/modules/styles/domain/Style";
 import { EDIT_PRESETS, isEditPresetKey } from "@/modules/edits/domain/EditPresets";
 import { MOCKUP_CATEGORIES, type MockupCategory } from "@/modules/mockups/domain/Mockup";
 import type {
-  BrandBriefSignalRow,
+  BrandStrategySignalRow,
   EditPresetCount,
   MockupCategoryCount,
   StyleSelectionCount,
@@ -32,7 +32,7 @@ export function composeDesignMemoryProfile(input: {
   stylesById: Map<string, Style>;
   editPresetCounts: EditPresetCount[];
   favoriteStyles: Style[];
-  briefSignals: BrandBriefSignalRow[];
+  strategySignals: BrandStrategySignalRow[];
   mockupCategoryCounts: MockupCategoryCount[];
 }): DesignMemoryProfile {
   if (!input.enabled) {
@@ -86,7 +86,7 @@ export function composeDesignMemoryProfile(input: {
   const signalCount =
     input.styleCounts.reduce((sum, c) => sum + c.count, 0) +
     input.editPresetCounts.reduce((sum, c) => sum + c.count, 0) +
-    input.briefSignals.length;
+    input.strategySignals.length;
 
   return {
     enabled: true,
@@ -96,8 +96,8 @@ export function composeDesignMemoryProfile(input: {
     topEditPresets,
     favoriteStyles: input.favoriteStyles,
     favoriteMockupCategories,
-    preferredColors: countTextValues(input.briefSignals.map((b) => b.preferredColor)),
-    preferredTypography: countTextValues(input.briefSignals.map((b) => b.typographyDirection)),
-    topIndustries: countTextValues(input.briefSignals.map((b) => b.industry)),
+    preferredColors: countTextValues(input.strategySignals.map((b) => b.preferredColor)),
+    preferredTypography: countTextValues(input.strategySignals.map((b) => b.typographyDirection)),
+    topIndustries: countTextValues(input.strategySignals.map((b) => b.industry)),
   };
 }

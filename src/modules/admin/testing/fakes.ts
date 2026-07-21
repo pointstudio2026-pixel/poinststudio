@@ -1,6 +1,7 @@
 import type {
   AdminUserSearchResult,
   AuditLogEntry,
+  CostBreakdownEntry,
   CostTrendPoint,
   ErrorRateEntry,
   PlanDistributionEntry,
@@ -10,6 +11,7 @@ import type {
 import type { AdminRepository, AuditLogFilter } from "@/modules/admin/domain/AdminRepository";
 import type { AnnouncementRepository } from "@/modules/admin/domain/AnnouncementRepository";
 import type { QueueInspectable } from "@/modules/admin/domain/QueueInspectable";
+import type { AdminTier, UserRole } from "@/shared/auth/jwt";
 
 export class FakeAdminRepository implements AdminRepository {
   dailyActiveUsers = 0;
@@ -19,6 +21,7 @@ export class FakeAdminRepository implements AdminRepository {
   trend: UsageTrendPoint[] = [];
   costs: CostTrendPoint[] = [];
   totalCost = 0;
+  costBreakdown: CostBreakdownEntry[] = [];
   users: AdminUserSearchResult[] = [];
   auditLogs: AuditLogEntry[] = [];
   lastAuditLogFilter: AuditLogFilter | null = null;
@@ -44,12 +47,38 @@ export class FakeAdminRepository implements AdminRepository {
   async totalCostSince(): Promise<number> {
     return this.totalCost;
   }
+  async costBreakdownSince(): Promise<CostBreakdownEntry[]> {
+    return this.costBreakdown;
+  }
   async searchUsers(query: string): Promise<AdminUserSearchResult[]> {
-    return query ? this.users.filter((u) => u.email.includes(query)) : this.users;
+    const active = this.users.filter((u) => u.status !== "deleted");
+    return query ? active.filter((u) => u.email.includes(query)) : active;
+  }
+  async getUserById(id: string): Promise<AdminUserSearchResult | null> {
+    return this.users.find((u) => u.id === id) ?? null;
   }
   async listAuditLogs(filter: AuditLogFilter): Promise<AuditLogEntry[]> {
     this.lastAuditLogFilter = filter;
     return this.auditLogs;
+  }
+  async suspendUser(id: string): Promise<void> {
+    const user = this.users.find((u) => u.id === id);
+    if (user) user.status = "suspended";
+  }
+  async unsuspendUser(id: string): Promise<void> {
+    const user = this.users.find((u) => u.id === id);
+    if (user) user.status = "active";
+  }
+  async softDeleteUser(id: string): Promise<void> {
+    const user = this.users.find((u) => u.id === id);
+    if (user) user.status = "deleted";
+  }
+  async changeUserRole(id: string, role: UserRole, adminTier: AdminTier | null): Promise<void> {
+    const user = this.users.find((u) => u.id === id);
+    if (user) {
+      user.role = role;
+      user.adminTier = adminTier;
+    }
   }
 }
 

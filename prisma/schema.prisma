@@ -17,13 +17,26 @@ enum UserRole {
   @@map("user_role")
 }
 
+enum AdminTier {
+  super_admin
+  manager
+  support
+
+  @@map("admin_tier")
+}
+
 model User {
   id              String    @id @default(uuid()) @db.Uuid
   email           String    @unique @db.VarChar(255)
   passwordHash    String?   @map("password_hash")
   name            String?   @db.VarChar(120)
   role            UserRole  @default(designer)
+  adminTier       AdminTier? @map("admin_tier")
   emailVerifiedAt DateTime? @map("email_verified_at") @db.Timestamptz()
+  emailVerificationToken          String?   @unique @map("email_verification_token")
+  emailVerificationTokenExpiresAt DateTime? @map("email_verification_token_expires_at") @db.Timestamptz()
+  lastLoginAt     DateTime? @map("last_login_at") @db.Timestamptz()
+  suspendedAt     DateTime? @map("suspended_at") @db.Timestamptz()
   createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
   deletedAt       DateTime? @map("deleted_at") @db.Timestamptz()
@@ -33,11 +46,36 @@ model User {
   projects           Project[]
   subscription       Subscription?
   usageLogs          UsageLog[]
-  brandBriefVersions BrandBriefVersion[]
   styleFavorites     StyleFavorite[]
   designMemorySettings DesignMemorySettings?
+  oauthAccounts      OAuthAccount[]
+  userStyleCategories UserStyleCategory[]
+  inquiries          Inquiry[]
+  team               Team?
+  teamMemberships    TeamMembership[]
 
   @@map("users")
+}
+
+enum OAuthProviderCode {
+  google
+  kakao
+
+  @@map("oauth_provider")
+}
+
+// 소셜 로그인 연동 (Google/Kakao). 한 User가 여러 Provider를 연결할 수 있도록
+// User에 provider 컬럼을 직접 두지 않고 별도 테이블로 분리했다.
+model OAuthAccount {
+  id                String            @id @default(uuid()) @db.Uuid
+  userId            String            @map("user_id") @db.Uuid
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider          OAuthProviderCode
+  providerAccountId String            @map("provider_account_id") @db.VarChar(255)
+  createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@unique([provider, providerAccountId])
+  @@map("oauth_accounts")
 }
 
 enum PlanCode {
@@ -87,8 +125,10 @@ model Project {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   name        String    @db.VarChar(255)
   status      String    @default("draft") @db.VarChar(30)
-  currentStep String    @default("brand_interview") @map("current_step") @db.VarChar(50)
+  deliverableType String? @map("deliverable_type") @db.VarChar(30)
+  currentStep String    @default("deliverable_type") @map("current_step") @db.VarChar(50)
   isFavorite  Boolean   @default(false) @map("is_favorite")
+  sharedWithTeam Boolean @default(false) @map("shared_with_team")
   archivedAt  DateTime? @map("archived_at") @db.Timestamptz()
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
@@ -96,14 +136,16 @@ model Project {
 
   usageLogs       UsageLog[]
   brandInterviews BrandInterview[]
-  brandBrief      BrandBrief?
   brandStrategy   BrandStrategy?
   styleSelections StyleSelection[]
+  logoStyleSelections LogoStyleSelection[]
   prompt          Prompt?
   generation      Generation?
   conceptBoard    ConceptBoard?
   mockupProjects  MockupProject[]
   exportJobs      ExportJob[]
+  userStyleSelections ProjectUserStyleSelection[]
+  colorPaletteSelections ColorPaletteSelection[]
 
   @@index([userId, updatedAt(sort: Desc)])
   @@map("projects")
@@ -139,34 +181,6 @@ model InterviewAnswer {
   @@map("interview_answers")
 }
 
-model BrandBrief {
-  id               String    @id @default(uuid()) @db.Uuid
-  projectId        String    @unique @map("project_id") @db.Uuid
-  project          Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  currentVersionId String?   @map("current_version_id") @db.Uuid
-  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
-
-  versions BrandBriefVersion[]
-
-  @@map("brand_briefs")
-}
-
-model BrandBriefVersion {
-  id            String     @id @default(uuid()) @db.Uuid
-  brandBriefId  String     @map("brand_brief_id") @db.Uuid
-  brandBrief    BrandBrief @relation(fields: [brandBriefId], references: [id], onDelete: Cascade)
-  versionNumber Int        @map("version_number")
-  data          Json
-  source        String     @default("ai") @db.VarChar(30)
-  createdBy     String?    @map("created_by") @db.Uuid
-  createdByUser User?      @relation(fields: [createdBy], references: [id])
-  createdAt     DateTime   @default(now()) @map("created_at") @db.Timestamptz()
-
-  @@unique([brandBriefId, versionNumber])
-  @@map("brand_brief_versions")
-}
-
 model BrandStrategy {
   id               String    @id @default(uuid()) @db.Uuid
   projectId        String    @unique @map("project_id") @db.Uuid
@@ -187,6 +201,8 @@ model BrandStrategyVersion {
   brandStrategy    BrandStrategy @relation(fields: [brandStrategyId], references: [id], onDelete: Cascade)
   versionNumber    Int           @map("version_number")
   data             Json
+  candidates       Json          @default("[]")
+  selectedIndex    Int?          @map("selected_index")
   reasoningSummary String?       @map("reasoning_summary")
   confidence       String        @db.VarChar(10)
   createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz()
@@ -232,6 +248,23 @@ model StyleSelection {
   @@map("style_selections")
 }
 
+// 프리셋 팔레트 선택이면 presetSlug가 채워지고 swatches는 그 카탈로그 항목을
+// 복사한 값, 커스텀 hex 입력이면 presetSlug가 null이고 swatches가 사용자
+// 입력값 -- 소비 측(promptBuilder/conceptBoardComposer)은 어느 쪽이든 항상
+// swatches만 읽으면 되므로 분기가 필요 없다. StyleSelection과 동일하게
+// append-only(재선택 시 새 행 추가, latest-wins).
+model ColorPaletteSelection {
+  id         String   @id @default(uuid()) @db.Uuid
+  projectId  String   @map("project_id") @db.Uuid
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  presetSlug String?  @map("preset_slug") @db.VarChar(60)
+  swatches   Json
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@index([projectId, createdAt(sort: Desc)])
+  @@map("color_palette_selections")
+}
+
 model StyleFavorite {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @map("user_id") @db.Uuid
@@ -242,6 +275,88 @@ model StyleFavorite {
 
   @@unique([userId, styleId])
   @@map("style_favorites")
+}
+
+// 로고 "구조 형태"(워드마크/심볼/일러스트/조합형/프리미엄) 카테고리 -- 위
+// Style(무드: 모던/미니멀/럭셔리...)과는 별개 축이라 별도 모델로 분리했다.
+// seeded reference data (see prisma/seedLogoStyles.ts), Style Engine과
+// 동일한 관리 가능한 구조 원칙을 따른다. "AI 추천" 카드는 DB 행이 아니라
+// 이 5개 카테고리를 규칙 기반으로 랭킹한 화면 위젯이다.
+model LogoStyleCategory {
+  id             String   @id @default(uuid()) @db.Uuid
+  slug           String   @unique @db.VarChar(60)
+  name           String   @db.VarChar(60)
+  description    String
+  subStyles      String[] @map("sub_styles")
+  keywords       String[]
+  sampleImageUrl String   @map("sample_image_url")
+  sortOrder      Int      @default(0) @map("sort_order")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  selections LogoStyleSelection[]
+
+  @@map("logo_style_categories")
+}
+
+model LogoStyleSelection {
+  id           String              @id @default(uuid()) @db.Uuid
+  projectId    String              @map("project_id") @db.Uuid
+  project      Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  // 1~3개("고급 옵션" 다중 선택) -- Style의 secondaryStyleIds와 동일하게
+  // 배열 자체에는 FK 참조 무결성을 걸지 않는다.
+  categoryIds  String[]            @map("category_ids")
+  primaryCategoryId String         @map("primary_category_id") @db.Uuid
+  primaryCategory   LogoStyleCategory @relation(fields: [primaryCategoryId], references: [id])
+  createdAt    DateTime            @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@index([projectId, createdAt(sort: Desc)])
+  @@map("logo_style_selections")
+}
+
+// "내 스타일" -- 사용자가 직접 올린 참고 이미지 카테고리. 계정 전체에서
+// 재사용 가능(StyleFavorite/DesignMemory와 동일하게 userId 단위, projectId
+// 없음). description은 업로드 시 1회 비전 분석 AI 호출로 뽑은 시각적 스타일
+// 텍스트 -- 원본 이미지는 프롬프트에 절대 직접 섞지 않고 이 텍스트만 쓴다.
+model UserStyleCategory {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String   @db.VarChar(100)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  references        UserStyleReference[]
+  projectSelections ProjectUserStyleSelection[]
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("user_style_categories")
+}
+
+model UserStyleReference {
+  id          String            @id @default(uuid()) @db.Uuid
+  categoryId  String            @map("category_id") @db.Uuid
+  category    UserStyleCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  storageKey  String            @map("storage_key") @db.VarChar(255)
+  contentType String            @map("content_type") @db.VarChar(50)
+  createdAt   DateTime          @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@map("user_style_references")
+}
+
+// StyleSelection/LogoStyleSelection과 동일한 append-only 이력 패턴 --
+// 프로젝트당 0개(내 스타일 미사용)거나 여러 개(재선택 이력), 최신 것이 유효.
+// 어떤 워크스페이스 단계도 게이팅하지 않는 순수 부가 선택이다.
+model ProjectUserStyleSelection {
+  id                  String            @id @default(uuid()) @db.Uuid
+  projectId           String            @map("project_id") @db.Uuid
+  project             Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userStyleCategoryId String            @map("user_style_category_id") @db.Uuid
+  userStyleCategory   UserStyleCategory @relation(fields: [userStyleCategoryId], references: [id], onDelete: Cascade)
+  createdAt           DateTime          @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@index([projectId, createdAt(sort: Desc)])
+  @@map("project_user_style_selections")
 }
 
 model Prompt {
@@ -297,6 +412,7 @@ model GenerationVersion {
   promptVersionId String    @map("prompt_version_id") @db.Uuid
   status          String    @default("pending") @db.VarChar(20)
   provider        String?   @db.VarChar(30)
+  providerPreference String? @map("provider_preference") @db.VarChar(30)
   images          Json      @default("[]")
   errorMessage    String?   @map("error_message")
   costAmount      Decimal?  @map("cost_amount") @db.Decimal(12, 6)
@@ -318,7 +434,8 @@ model EditHistory {
   generation       Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
   sourceVersionId  String    @map("source_version_id") @db.Uuid
   sourceImageIndex Int       @map("source_image_index")
-  presetKey        String    @map("preset_key") @db.VarChar(40)
+  presetKey        String?   @map("preset_key") @db.VarChar(40)
+  customInstruction String?  @map("custom_instruction")
   resultVersionId  String    @map("result_version_id") @db.Uuid
   status           String    @default("pending") @db.VarChar(20)
   errorMessage     String?   @map("error_message")
@@ -483,4 +600,44 @@ model ActivityLog {
 
   @@index([userId, createdAt])
   @@map("activity_logs")
+}
+
+model Inquiry {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject   String   @db.VarChar(200)
+  message   String   @db.Text
+  isPublic  Boolean  @default(false) @map("is_public")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([isPublic, createdAt(sort: Desc)])
+  @@map("inquiries")
+}
+
+// Studio 전용: 소유자당 팀 최대 1개, 가입 시 발급된 6자리 코드로 다른
+// 사용자가 참여한다. 참여 자체엔 승인 절차가 없다(JoinTeamUseCase).
+model Team {
+  id          String   @id @default(uuid()) @db.Uuid
+  ownerId     String   @unique @map("owner_id") @db.Uuid
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  code        String   @unique @db.VarChar(6)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  memberships TeamMembership[]
+
+  @@map("teams")
+}
+
+model TeamMembership {
+  id        String   @id @default(uuid()) @db.Uuid
+  teamId    String   @map("team_id") @db.Uuid
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@unique([teamId, userId])
+  @@map("team_memberships")
 }

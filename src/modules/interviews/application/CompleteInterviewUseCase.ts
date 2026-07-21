@@ -2,7 +2,7 @@ import type { ProjectRepository } from "@/modules/projects/domain/ProjectReposit
 import type { InterviewRepository } from "@/modules/interviews/domain/InterviewRepository";
 import type { Interview } from "@/modules/interviews/domain/Interview";
 import { getMissingRequiredQuestions, selectQuestions } from "@/modules/interviews/domain/QuestionSelector";
-import { WORKSPACE_STEPS } from "@/modules/projects/domain/Project";
+import { getWorkspaceSteps } from "@/modules/projects/domain/Project";
 import { getOrCreateActiveInterview } from "@/modules/interviews/application/getOrCreateActiveInterview";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { NotFoundError, ValidationError } from "@/shared/errors/AppError";
@@ -21,7 +21,7 @@ export class CompleteInterviewUseCase {
 
     const interview = await getOrCreateActiveInterview(this.interviewRepository, input.projectId);
 
-    const questions = selectQuestions(interview);
+    const questions = selectQuestions(interview, project.deliverableType);
     const missing = getMissingRequiredQuestions(questions, interview.answers);
     if (missing.length > 0) {
       throw new ValidationError(
@@ -33,10 +33,11 @@ export class CompleteInterviewUseCase {
 
     const completed = await this.interviewRepository.complete(interview.id);
 
-    const nextStepIndex = WORKSPACE_STEPS.findIndex((s) => s.key === "brand_brief");
+    const steps = getWorkspaceSteps(project.deliverableType);
+    const nextStepIndex = steps.findIndex((s) => s.key === "style");
     await this.projectRepository.save({
       ...project,
-      currentStep: WORKSPACE_STEPS[nextStepIndex]!.key,
+      currentStep: steps[nextStepIndex]!.key,
       updatedAt: new Date(),
     });
 

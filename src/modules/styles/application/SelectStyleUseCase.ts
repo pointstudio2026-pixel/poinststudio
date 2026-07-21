@@ -3,7 +3,7 @@ import type { StyleRepository } from "@/modules/styles/domain/StyleRepository";
 import type { StyleSelectionRepository } from "@/modules/styles/domain/StyleSelectionRepository";
 import type { StyleSelection } from "@/modules/styles/domain/Style";
 import { MAX_SECONDARY_STYLES, findConflict } from "@/modules/styles/domain/styleRules";
-import { WORKSPACE_STEPS } from "@/modules/projects/domain/Project";
+import { getWorkspaceSteps } from "@/modules/projects/domain/Project";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { NotFoundError, ValidationError } from "@/shared/errors/AppError";
 
@@ -57,8 +57,12 @@ export class SelectStyleUseCase {
       input.secondaryStyleIds,
     );
 
-    const stepIndex = WORKSPACE_STEPS.findIndex((s) => s.key === "style");
-    const nextStep = WORKSPACE_STEPS[stepIndex + 1];
+    // "style" 다음 단계는 유형에 따라 갈린다: 브랜딩 & 로고는 브랜드 전략으로,
+    // 그 외 유형은 곧바로 이미지 생성으로 -- getWorkspaceSteps()가 알아서
+    // 올바른 목록을 골라주므로 여기서 별도 분기 코드는 필요 없다.
+    const steps = getWorkspaceSteps(project.deliverableType);
+    const stepIndex = steps.findIndex((s) => s.key === "style");
+    const nextStep = steps[stepIndex + 1];
     if (nextStep && project.currentStep === "style") {
       await this.projectRepository.save({ ...project, currentStep: nextStep.key, updatedAt: new Date() });
     }

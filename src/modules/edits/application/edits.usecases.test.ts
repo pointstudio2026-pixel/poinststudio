@@ -25,7 +25,14 @@ const PROMPT_INPUT: PromptVersionInput = {
   systemPrompt: "system",
   userPrompt: "brand user prompt",
   hash: "hash-1",
-  payload: { provider: "openai", model: "gpt-image-1", systemPrompt: "system", userPrompt: "brand user prompt", parameters: {} },
+  payload: {
+    provider: "openai",
+    model: "gpt-image-1",
+    systemPrompt: "system",
+    userPrompt: "brand user prompt",
+    sizePreset: "square",
+    parameters: {},
+  },
   flaggedTerms: [],
 };
 
@@ -67,6 +74,7 @@ async function setup() {
     queue,
     subs,
     usage,
+    provider,
     create: new CreateEditUseCase(projects, generations, checkPlan, edits, queue),
     retry: new RetryEditUseCase(projects, generations, checkPlan, edits, queue),
     getHistory: new GetEditHistoryUseCase(projects, generations, edits),
@@ -131,7 +139,7 @@ describe("CreateEditUseCase", () => {
 
     expect(edit.status).toBe("pending");
     expect(edit.resultVersionId).not.toBe(ctx.sourceVersion.id);
-    expect(ctx.queue.enqueued).toEqual([{ editHistoryId: edit.id }]);
+    expect(ctx.queue.enqueued).toEqual([{ editHistoryId: edit.id, requestedByUserId: "user-1" }]);
 
     const untouchedSource = await ctx.generations.getVersionById(ctx.sourceVersion.id);
     expect(untouchedSource?.images).toHaveLength(2);
@@ -156,6 +164,81 @@ describe("CreateEditUseCase", () => {
       }),
     ).rejects.toBeInstanceOf(UsageLimitError);
   });
+
+  it("rejects a new edit once the project already has 3 results (프로젝트당 결과 3개 캡)", async () => {
+    const ctx = await setup();
+    ctx.generations.versions.push(
+      { ...ctx.sourceVersion, id: "v-extra-1", versionNumber: 2, status: "completed" },
+      { ...ctx.sourceVersion, id: "v-extra-2", versionNumber: 3, status: "completed" },
+    );
+
+    await expect(
+      ctx.create.execute({
+        projectId: ctx.projectId,
+        userId: "user-1",
+        sourceVersionId: ctx.sourceVersion.id,
+        sourceImageIndex: 0,
+        presetKey: "simpler",
+      }),
+    ).rejects.toBeInstanceOf(UsageLimitError);
+  });
+
+  it("rejects when neither presetKey nor customInstruction is given (대화형 입력 XOR)", async () => {
+    const ctx = await setup();
+    await expect(
+      ctx.create.execute({
+        projectId: ctx.projectId,
+        userId: "user-1",
+        sourceVersionId: ctx.sourceVersion.id,
+        sourceImageIndex: 0,
+      }),
+    ).rejects.toBeInstanceOf(ValidationError);
+  });
+
+  it("rejects when both presetKey and customInstruction are given (대화형 입력 XOR)", async () => {
+    const ctx = await setup();
+    await expect(
+      ctx.create.execute({
+        projectId: ctx.projectId,
+        userId: "user-1",
+        sourceVersionId: ctx.sourceVersion.id,
+        sourceImageIndex: 0,
+        presetKey: "simpler",
+        customInstruction: "로고를 더 둥글게 만들어줘",
+      }),
+    ).rejects.toBeInstanceOf(ValidationError);
+  });
+
+  it("creates an edit from free-text instead of a preset (대화형 입력)", async () => {
+    const ctx = await setup();
+    const edit = await ctx.create.execute({
+      projectId: ctx.projectId,
+      userId: "user-1",
+      sourceVersionId: ctx.sourceVersion.id,
+      sourceImageIndex: 0,
+      customInstruction: "  로고를 더 둥글게 만들어줘  ",
+    });
+
+    expect(edit.presetKey).toBeNull();
+    expect(edit.customInstruction).toBe("로고를 더 둥글게 만들어줘");
+  });
+
+  it("does not count a failed result against the 3-result cap (실패는 캡에 안 잡힘)", async () => {
+    const ctx = await setup();
+    ctx.generations.versions.push(
+      { ...ctx.sourceVersion, id: "v-extra-1", versionNumber: 2, status: "completed" },
+      { ...ctx.sourceVersion, id: "v-extra-2", versionNumber: 3, status: "failed" },
+    );
+
+    const edit = await ctx.create.execute({
+      projectId: ctx.projectId,
+      userId: "user-1",
+      sourceVersionId: ctx.sourceVersion.id,
+      sourceImageIndex: 0,
+      presetKey: "simpler",
+    });
+    expect(edit.status).toBe("pending");
+  });
 });
 
 describe("ProcessEditJobUseCase", () => {
@@ -169,7 +252,7 @@ describe("ProcessEditJobUseCase", () => {
       presetKey: "layout_change",
     });
 
-    await ctx.process.execute({ editHistoryId: edit.id, isFinalAttempt: true });
+    await ctx.process.execute({ editHistoryId: edit.id, requestedByUserId: "user-1", isFinalAttempt: true });
 
     const completedEdit = await ctx.edits.getById(edit.id);
     expect(completedEdit?.status).toBe("completed");
@@ -204,16 +287,34 @@ describe("ProcessEditJobUseCase", () => {
       presetKey: "simpler",
     });
 
-    await expect(ctx.process.execute({ editHistoryId: edit.id, isFinalAttempt: false })).rejects.toThrow();
+    await expect(ctx.process.execute({ editHistoryId: edit.id, requestedByUserId: "user-1", isFinalAttempt: false })).rejects.toThrow();
     let current = await ctx.edits.getById(edit.id);
     expect(current?.status).toBe("processing");
 
-    await ctx.process.execute({ editHistoryId: edit.id, isFinalAttempt: true });
+    await ctx.process.execute({ editHistoryId: edit.id, requestedByUserId: "user-1", isFinalAttempt: true });
     current = await ctx.edits.getById(edit.id);
     expect(current?.status).toBe("failed");
     expect(current?.errorMessage).toBeTruthy();
     const resultVersion = await ctx.generations.getVersionById(edit.resultVersionId);
     expect(resultVersion?.status).toBe("failed");
+  });
+
+  it("sends the free-text instruction to the image provider (대화형 입력이 실제 editInstruction에 반영됨)", async () => {
+    const ctx = await setup();
+    const editSpy = vi.spyOn(ctx.provider, "edit");
+    const edit = await ctx.create.execute({
+      projectId: ctx.projectId,
+      userId: "user-1",
+      sourceVersionId: ctx.sourceVersion.id,
+      sourceImageIndex: 0,
+      customInstruction: "로고를 더 둥글게 만들어줘",
+    });
+
+    await ctx.process.execute({ editHistoryId: edit.id, requestedByUserId: "user-1", isFinalAttempt: true });
+
+    expect(editSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ editInstruction: expect.stringContaining("로고를 더 둥글게 만들어줘") }),
+    );
   });
 });
 
@@ -227,7 +328,7 @@ describe("RetryEditUseCase / GetEditHistoryUseCase", () => {
       sourceImageIndex: 1,
       presetKey: "change_color",
     });
-    await ctx.process.execute({ editHistoryId: first.id, isFinalAttempt: true });
+    await ctx.process.execute({ editHistoryId: first.id, requestedByUserId: "user-1", isFinalAttempt: true });
 
     const retried = await ctx.retry.execute({ editHistoryId: first.id, userId: "user-1" });
     expect(retried.id).not.toBe(first.id);
@@ -236,6 +337,22 @@ describe("RetryEditUseCase / GetEditHistoryUseCase", () => {
 
     const history = await ctx.getHistory.execute({ generationId: ctx.generationId, userId: "user-1" });
     expect(history).toHaveLength(2);
+  });
+
+  it("carries the free-text instruction forward on retry (대화형 입력 재시도)", async () => {
+    const ctx = await setup();
+    const first = await ctx.create.execute({
+      projectId: ctx.projectId,
+      userId: "user-1",
+      sourceVersionId: ctx.sourceVersion.id,
+      sourceImageIndex: 0,
+      customInstruction: "배경을 더 밝게 해줘",
+    });
+    await ctx.process.execute({ editHistoryId: first.id, requestedByUserId: "user-1", isFinalAttempt: true });
+
+    const retried = await ctx.retry.execute({ editHistoryId: first.id, userId: "user-1" });
+    expect(retried.presetKey).toBeNull();
+    expect(retried.customInstruction).toBe("배경을 더 밝게 해줘");
   });
 
   it("rejects retry from a user who doesn't own the project (권한 검증)", async () => {
@@ -253,6 +370,22 @@ describe("RetryEditUseCase / GetEditHistoryUseCase", () => {
     );
   });
 
+  it("rejects retry once the project already has 3 results (프로젝트당 결과 3개 캡)", async () => {
+    const ctx = await setup();
+    const edit = await ctx.create.execute({
+      projectId: ctx.projectId,
+      userId: "user-1",
+      sourceVersionId: ctx.sourceVersion.id,
+      sourceImageIndex: 0,
+      presetKey: "simpler",
+    });
+    ctx.generations.versions.push({ ...ctx.sourceVersion, id: "v-extra-1", versionNumber: 3, status: "completed" });
+
+    await expect(ctx.retry.execute({ editHistoryId: edit.id, userId: "user-1" })).rejects.toBeInstanceOf(
+      UsageLimitError,
+    );
+  });
+
   it("returns each entry with its resolved result version (버전 비교)", async () => {
     const ctx = await setup();
     const edit = await ctx.create.execute({
@@ -262,7 +395,7 @@ describe("RetryEditUseCase / GetEditHistoryUseCase", () => {
       sourceImageIndex: 0,
       presetKey: "icon_only",
     });
-    await ctx.process.execute({ editHistoryId: edit.id, isFinalAttempt: true });
+    await ctx.process.execute({ editHistoryId: edit.id, requestedByUserId: "user-1", isFinalAttempt: true });
 
     const history = await ctx.getHistory.execute({ generationId: ctx.generationId, userId: "user-1" });
     expect(history[0]?.resultVersion?.status).toBe("completed");

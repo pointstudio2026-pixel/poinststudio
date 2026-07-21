@@ -6,11 +6,10 @@ import { PrismaRefreshTokenRepository } from "@/modules/auth/infrastructure/Pris
 import { Argon2PasswordHasher } from "@/modules/auth/infrastructure/Argon2PasswordHasher";
 import { TokenService } from "@/modules/auth/application/TokenService";
 import { POST as createProjectHandler } from "@/app/api/projects/route";
+import { POST as selectDeliverableTypeHandler } from "@/app/api/projects/[id]/deliverable-type/route";
 import { GET as getInterviewHandler } from "@/app/api/interview/[projectId]/route";
 import { POST as saveAnswerHandler } from "@/app/api/interview/answer/route";
 import { POST as completeInterviewHandler } from "@/app/api/interview/complete/route";
-import { POST as generateBriefHandler } from "@/app/api/brand-brief/generate/route";
-import { POST as executeAsterBrainHandler } from "@/app/api/aster-brain/execute/route";
 import { GET as listStylesHandler } from "@/app/api/styles/route";
 import { POST as recommendStylesHandler } from "@/app/api/styles/recommend/route";
 import { POST as selectStyleHandler } from "@/app/api/styles/select/route";
@@ -48,10 +47,15 @@ function postRequest(path: string, body: unknown, cookie?: string) {
   });
 }
 
-async function createProjectWithStrategy(cookie: string) {
+async function createProjectWithCompletedInterview(cookie: string) {
   const createRes = await createProjectHandler(postRequest("/api/projects", { name: "Bakery" }, cookie));
   const { data } = await createRes.json();
   const projectId = data.projectId as string;
+
+  await selectDeliverableTypeHandler(
+    postRequest(`/api/projects/${projectId}/deliverable-type`, { deliverableType: "브랜딩 & 로고" }, cookie),
+    { params: Promise.resolve({ id: projectId }) },
+  );
 
   await getInterviewHandler(
     new NextRequest(`http://localhost/api/interview/${projectId}`, { headers: { cookie } }),
@@ -63,8 +67,6 @@ async function createProjectWithStrategy(cookie: string) {
     );
   }
   await completeInterviewHandler(postRequest("/api/interview/complete", { projectId }, cookie));
-  await generateBriefHandler(postRequest("/api/brand-brief/generate", { projectId }, cookie));
-  await executeAsterBrainHandler(postRequest("/api/aster-brain/execute", { projectId }, cookie));
 
   return projectId;
 }
@@ -73,30 +75,30 @@ describe("Style Engine API routes", () => {
   it("lists seeded styles and category tree (GET /styles)", async () => {
     const { cookie } = await createSessionCookie();
     const res = await listStylesHandler(
-      new NextRequest("http://localhost/api/styles?category=Minimal", { headers: { cookie } }),
+      new NextRequest("http://localhost/api/styles?category=미니멀", { headers: { cookie } }),
     );
     const body = await res.json();
 
     expect(res.status).toBe(200);
     expect(body.data.styles.length).toBeGreaterThan(0);
     expect(body.data.categories.length).toBeGreaterThanOrEqual(8);
-    expect(body.data.styles.every((s: { category: string }) => s.category === "Minimal")).toBe(true);
+    expect(body.data.styles.every((s: { category: string }) => s.category === "미니멀")).toBe(true);
   });
 
-  it("recommends styles from a Brand Strategy (정상 분석)", async () => {
+  it("recommends styles from completed Interview answers (정상 분석)", async () => {
     const { cookie } = await createSessionCookie();
-    const projectId = await createProjectWithStrategy(cookie);
+    const projectId = await createProjectWithCompletedInterview(cookie);
 
     const res = await recommendStylesHandler(postRequest("/api/styles/recommend", { projectId }, cookie));
     const body = await res.json();
 
     expect(res.status).toBe(200);
     expect(body.data.recommendations.length).toBeGreaterThan(0);
-    expect(body.data.recommendations.length).toBeLessThanOrEqual(12);
+    expect(body.data.recommendations.length).toBeLessThanOrEqual(6);
     expect(body.data.recommendations[0].reason).toBeTruthy();
   });
 
-  it("rejects recommendation before a Brand Strategy exists", async () => {
+  it("rejects recommendation before the Interview is completed", async () => {
     const { cookie } = await createSessionCookie();
     const createRes = await createProjectHandler(postRequest("/api/projects", { name: "Bakery" }, cookie));
     const { data } = await createRes.json();
@@ -109,7 +111,7 @@ describe("Style Engine API routes", () => {
 
   it("selects a style, advances the project, and records history (정상 선택 / 재선택)", async () => {
     const { cookie } = await createSessionCookie();
-    const projectId = await createProjectWithStrategy(cookie);
+    const projectId = await createProjectWithCompletedInterview(cookie);
 
     const recommendRes = await recommendStylesHandler(
       postRequest("/api/styles/recommend", { projectId }, cookie),
@@ -123,7 +125,7 @@ describe("Style Engine API routes", () => {
     expect(selectRes.status).toBe(201);
 
     const project = await prisma.project.findUnique({ where: { id: projectId } });
-    expect(project?.currentStep).toBe("generation");
+    expect(project?.currentStep).toBe("brand_strategy");
 
     // 재선택 -> 히스토리에 2건 남는다.
     await selectStyleHandler(
@@ -140,13 +142,13 @@ describe("Style Engine API routes", () => {
 
   it("rejects a conflicting Primary/Secondary combination (STYLE-002)", async () => {
     const { cookie } = await createSessionCookie();
-    const projectId = await createProjectWithStrategy(cookie);
+    const projectId = await createProjectWithCompletedInterview(cookie);
 
     const minimalRes = await listStylesHandler(
-      new NextRequest("http://localhost/api/styles?category=Minimal", { headers: { cookie } }),
+      new NextRequest("http://localhost/api/styles?category=미니멀", { headers: { cookie } }),
     );
     const playfulRes = await listStylesHandler(
-      new NextRequest("http://localhost/api/styles?category=Playful", { headers: { cookie } }),
+      new NextRequest("http://localhost/api/styles?category=플레이풀", { headers: { cookie } }),
     );
     const minimal = (await minimalRes.json()).data.styles[0];
     const playful = (await playfulRes.json()).data.styles[0];
@@ -164,7 +166,7 @@ describe("Style Engine API routes", () => {
   it("supports favoriting and listing favorite styles (즐겨찾기)", async () => {
     const { cookie } = await createSessionCookie();
     const listRes = await listStylesHandler(
-      new NextRequest("http://localhost/api/styles?category=Tech", { headers: { cookie } }),
+      new NextRequest("http://localhost/api/styles?category=테크", { headers: { cookie } }),
     );
     const style = (await listRes.json()).data.styles[0];
 
@@ -186,7 +188,7 @@ describe("Style Engine API routes", () => {
   it("rejects access from a user who doesn't own the project (권한 없는 접근)", async () => {
     const owner = await createSessionCookie();
     const other = await createSessionCookie();
-    const projectId = await createProjectWithStrategy(owner.cookie);
+    const projectId = await createProjectWithCompletedInterview(owner.cookie);
 
     const res = await getStyleHistoryHandler(
       new NextRequest(`http://localhost/api/styles/history/${projectId}`, {

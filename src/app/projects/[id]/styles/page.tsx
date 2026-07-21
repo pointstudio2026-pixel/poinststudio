@@ -1,4 +1,5 @@
 import { requireSessionOrRedirect } from "@/shared/auth/session";
+import { projectsContainer } from "@/modules/projects/container";
 import { StylesView } from "@/features/styles/StylesView";
 
 export default async function StylesPage({
@@ -6,8 +7,9 @@ export default async function StylesPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requireSessionOrRedirect();
+  const session = await requireSessionOrRedirect();
   const { id } = await params;
+  const project = await projectsContainer.getProjectUseCase.execute({ projectId: id, userId: session.sub });
 
-  return <StylesView projectId={id} />;
+  return <StylesView projectId={id} deliverableType={project.deliverableType} />;
 }

@@ -1,7 +1,7 @@
 import { prisma } from "@/shared/database/prisma";
-import type { BrandBriefData } from "@/modules/brandBriefs/domain/BrandBrief";
+import type { BrandStrategyData } from "@/modules/brandStrategies/domain/BrandStrategy";
 import type {
-  BrandBriefSignalRow,
+  BrandStrategySignalRow,
   DesignMemorySignalsRepository,
   EditPresetCount,
   MockupCategoryCount,
@@ -21,31 +21,42 @@ export class PrismaDesignMemorySignalsRepository implements DesignMemorySignalsR
   }
 
   async topEditPresets(userId: string, since: Date, limit: number): Promise<EditPresetCount[]> {
+    // 대화형(자유 텍스트) 수정은 preset_key가 null이라 "즐겨 쓰는 프리셋"
+    // 집계 대상이 아니다 -- 여기서 명시적으로 제외한다.
     const rows = await prisma.editHistory.groupBy({
       by: ["presetKey"],
-      where: { generation: { project: { userId } }, createdAt: { gte: since }, status: "completed" },
+      where: {
+        generation: { project: { userId } },
+        createdAt: { gte: since },
+        status: "completed",
+        presetKey: { not: null },
+      },
       _count: { presetKey: true },
       orderBy: { _count: { presetKey: "desc" } },
       take: limit,
     });
-    return rows.map((r) => ({ presetKey: r.presetKey, count: r._count.presetKey }));
+    return rows
+      .filter((r): r is typeof r & { presetKey: string } => r.presetKey !== null)
+      .map((r) => ({ presetKey: r.presetKey, count: r._count.presetKey }));
   }
 
-  async listBrandBriefSignals(userId: string, since: Date): Promise<BrandBriefSignalRow[]> {
-    const briefs = await prisma.brandBrief.findMany({
+  async listBrandStrategySignals(userId: string, since: Date): Promise<BrandStrategySignalRow[]> {
+    const strategies = await prisma.brandStrategy.findMany({
       where: { project: { userId }, createdAt: { gte: since } },
       select: { currentVersionId: true },
     });
-    const versionIds = briefs.map((b) => b.currentVersionId).filter((id): id is string => Boolean(id));
+    const versionIds = strategies.map((s) => s.currentVersionId).filter((id): id is string => Boolean(id));
     if (versionIds.length === 0) return [];
 
-    const versions = await prisma.brandBriefVersion.findMany({ where: { id: { in: versionIds } } });
+    const versions = await prisma.brandStrategyVersion.findMany({
+      where: { id: { in: versionIds }, selectedIndex: { not: null } },
+    });
     return versions.map((v) => {
-      const data = v.data as unknown as BrandBriefData;
+      const data = v.data as unknown as BrandStrategyData;
       return {
-        industry: data.industry ?? "",
-        preferredColor: data.preferredColor ?? "",
-        typographyDirection: data.typographyDirection ?? "",
+        industry: data.brandKnowledge.industry ?? "",
+        preferredColor: data.brandKnowledge.preferredColor ?? "",
+        typographyDirection: data.brandKnowledge.typographyDirection ?? "",
       };
     });
   }

@@ -2,7 +2,10 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { FileStorage, SavedFile } from "@/shared/storage/FileStorage";
 
-const STORAGE_ROOT = path.join(process.cwd(), "var", "exports");
+// Shared by every FileStorage consumer (Export Center render output, User
+// Styles reference image uploads, ...) -- "key" prefixes (e.g. "user-styles/")
+// namespace the subdirectories, not separate storage roots.
+const STORAGE_ROOT = path.join(process.cwd(), "var", "storage");
 
 const EXTENSION_BY_CONTENT_TYPE: Record<string, string> = {
   "application/pdf": "pdf",

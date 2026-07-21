@@ -6,11 +6,12 @@ import { PrismaRefreshTokenRepository } from "@/modules/auth/infrastructure/Pris
 import { Argon2PasswordHasher } from "@/modules/auth/infrastructure/Argon2PasswordHasher";
 import { TokenService } from "@/modules/auth/application/TokenService";
 import { POST as createProjectHandler } from "@/app/api/projects/route";
+import { POST as selectDeliverableTypeHandler } from "@/app/api/projects/[id]/deliverable-type/route";
 import { GET as getInterviewHandler } from "@/app/api/interview/[projectId]/route";
 import { POST as saveAnswerHandler } from "@/app/api/interview/answer/route";
 import { POST as completeHandler } from "@/app/api/interview/complete/route";
 import { POST as followUpHandler } from "@/app/api/interview/follow-up/route";
-import { INTERVIEW_QUESTIONS } from "@/modules/interviews/domain/interviewQuestions";
+import { INTERVIEW_QUESTIONS, OTHER_ANSWER_PREFIX } from "@/modules/interviews/domain/interviewQuestions";
 
 const TEST_EMAIL_PREFIX = "task007-route";
 
@@ -33,6 +34,14 @@ async function createSessionCookie() {
   return { userId: user.id, cookie: `aster_access_token=${tokens.accessToken}` };
 }
 
+function postRequest(path: string, body: unknown, cookie: string) {
+  return new NextRequest(`http://localhost${path}`, {
+    method: "POST",
+    headers: { "content-type": "application/json", cookie },
+    body: JSON.stringify(body),
+  });
+}
+
 async function createProject(cookie: string) {
   const res = await createProjectHandler(
     new NextRequest("http://localhost/api/projects", {
@@ -42,15 +51,14 @@ async function createProject(cookie: string) {
     }),
   );
   const { data } = await res.json();
-  return data.projectId as string;
-}
+  const projectId = data.projectId as string;
 
-function postRequest(path: string, body: unknown, cookie: string) {
-  return new NextRequest(`http://localhost${path}`, {
-    method: "POST",
-    headers: { "content-type": "application/json", cookie },
-    body: JSON.stringify(body),
-  });
+  await selectDeliverableTypeHandler(
+    postRequest(`/api/projects/${projectId}/deliverable-type`, { deliverableType: "브랜딩 & 로고" }, cookie),
+    { params: Promise.resolve({ id: projectId }) },
+  );
+
+  return projectId;
 }
 
 describe("Interview API routes", () => {
@@ -87,7 +95,7 @@ describe("Interview API routes", () => {
     expect(reEntryBody.data.interview.status).toBe("completed");
 
     const project = await prisma.project.findUnique({ where: { id: projectId } });
-    expect(project?.currentStep).toBe("brand_brief");
+    expect(project?.currentStep).toBe("style");
   });
 
   it("blocks a required-question completion attempt with missing answers", async () => {
@@ -126,9 +134,12 @@ describe("Interview API routes", () => {
       { params: Promise.resolve({ projectId }) },
     );
 
+    // select+allowOther 질문은 "기타(직접 입력)" 모드로 답해야 findWeakAnswer가
+    // 검사 대상으로 본다 -- 닫힌 보기를 그대로 고른 답변은 아무리 짧아도 검사하지 않는다.
     for (const q of INTERVIEW_QUESTIONS.filter((q) => q.required)) {
+      const answer = q.allowOther ? `${OTHER_ANSWER_PREFIX}짧음` : "짧음";
       await saveAnswerHandler(
-        postRequest("/api/interview/answer", { projectId, questionKey: q.key, answer: "짧음" }, cookie),
+        postRequest("/api/interview/answer", { projectId, questionKey: q.key, answer }, cookie),
       );
     }
 

@@ -4,7 +4,7 @@ import type { Interview } from "@/modules/interviews/domain/Interview";
 import type { InterviewQuestionDef } from "@/modules/interviews/domain/interviewQuestions";
 import { getMissingRequiredQuestions, selectQuestions } from "@/modules/interviews/domain/QuestionSelector";
 import { recordActivity } from "@/shared/activity/activityLogger";
-import { NotFoundError } from "@/shared/errors/AppError";
+import { ConflictError, NotFoundError } from "@/shared/errors/AppError";
 
 export interface GetOrStartInterviewOutput {
   interview: Interview;
@@ -23,6 +23,9 @@ export class GetOrStartInterviewUseCase {
     if (!project) {
       throw new NotFoundError("프로젝트를 찾을 수 없습니다.", "PROJECT_NOT_FOUND");
     }
+    if (project.deliverableType === null) {
+      throw new ConflictError("작업물 유형을 먼저 선택해야 인터뷰를 시작할 수 있습니다.", "DELIVERABLE_TYPE_REQUIRED");
+    }
 
     // Returns the completed interview as-is if one exists ("완료 후 재진입"
     // must show the finished state, not silently start a new one).
@@ -36,7 +39,7 @@ export class GetOrStartInterviewUseCase {
       });
     }
 
-    const questions = selectQuestions(interview);
+    const questions = selectQuestions(interview, project.deliverableType);
     const readyToComplete =
       interview.status === "completed" ||
       getMissingRequiredQuestions(questions, interview.answers).length === 0;

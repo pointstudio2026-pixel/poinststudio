@@ -5,7 +5,9 @@ import type { EditHistoryRepository } from "@/modules/edits/domain/EditHistoryRe
 import type { ImageEditQueuePort } from "@/modules/edits/domain/ImageEditQueuePort";
 import type { EditHistoryEntry } from "@/modules/edits/domain/EditHistory";
 import { isEditPresetKey, type EditPresetKey } from "@/modules/edits/domain/EditPresets";
+import type { UserRole } from "@/shared/auth/jwt";
 import { GENERATION_EVENT_TYPE } from "@/modules/subscriptions/domain/planLimits";
+import { hasReachedResultCap, MAX_PROJECT_RESULTS } from "@/modules/generations/domain/resultCap";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { ConflictError, NotFoundError, UsageLimitError, ValidationError } from "@/shared/errors/AppError";
 
@@ -23,17 +25,28 @@ export class CreateEditUseCase {
     userId: string;
     sourceVersionId: string;
     sourceImageIndex: number;
-    presetKey: string;
+    /** presetKey/customInstruction 중 정확히 하나만 채워져야 한다(라우트의 Zod XOR 검증과 동일한 규칙을 여기서도 방어적으로 재확인). */
+    presetKey?: string;
+    customInstruction?: string;
+    userRole?: UserRole;
   }): Promise<EditHistoryEntry> {
     const project = await this.projectRepository.findByIdForUser(input.projectId, input.userId);
     if (!project) {
       throw new NotFoundError("프로젝트를 찾을 수 없습니다.", "PROJECT_NOT_FOUND");
     }
 
-    if (!isEditPresetKey(input.presetKey)) {
-      throw new ValidationError("존재하지 않는 수정 옵션입니다.", { presetKey: input.presetKey });
+    const trimmedCustomInstruction = input.customInstruction?.trim() || undefined;
+    if (Boolean(input.presetKey) === Boolean(trimmedCustomInstruction)) {
+      throw new ValidationError("수정 옵션을 하나 선택하거나 직접 입력해야 합니다.");
     }
-    const presetKey: EditPresetKey = input.presetKey;
+
+    let presetKey: EditPresetKey | null = null;
+    if (input.presetKey) {
+      if (!isEditPresetKey(input.presetKey)) {
+        throw new ValidationError("존재하지 않는 수정 옵션입니다.", { presetKey: input.presetKey });
+      }
+      presetKey = input.presetKey;
+    }
 
     const generation = await this.generationRepository.findByProjectId(input.projectId);
     if (!generation) {
@@ -54,11 +67,17 @@ export class CreateEditUseCase {
     const plan = await this.checkPlanUseCase.execute({
       userId: input.userId,
       eventType: GENERATION_EVENT_TYPE,
+      userRole: input.userRole,
     });
     if (!plan.allowed) {
       throw new UsageLimitError(
         `이번 달 이미지 생성 한도(${plan.limit}회)를 모두 사용했습니다. (${plan.used}/${plan.limit})`,
       );
+    }
+
+    const versions = await this.generationRepository.listVersions(generation.id);
+    if (hasReachedResultCap(versions)) {
+      throw new UsageLimitError(`이 프로젝트에서 생성 가능한 결과는 최대 ${MAX_PROJECT_RESULTS}개입니다.`);
     }
 
     // 원본은 그대로 두고, 결과를 담을 새 GenerationVersion을 pending으로
@@ -72,16 +91,17 @@ export class CreateEditUseCase {
       sourceVersionId: sourceVersion.id,
       sourceImageIndex: input.sourceImageIndex,
       presetKey,
+      customInstruction: trimmedCustomInstruction ?? null,
       resultVersionId: updatedGeneration.currentVersion.id,
     });
 
-    await this.queue.enqueue({ editHistoryId: editEntry.id });
+    await this.queue.enqueue({ editHistoryId: editEntry.id, requestedByUserId: input.userId });
 
     await recordActivity({
       userId: input.userId,
       projectId: input.projectId,
       eventType: "EDIT_REQUESTED",
-      payload: { editId: editEntry.id, presetKey },
+      payload: { editId: editEntry.id, presetKey, customInstruction: trimmedCustomInstruction ?? null },
     });
 
     return editEntry;

@@ -12,13 +12,14 @@ export class GetAdminAnalyticsUseCase {
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
 
-    const [usageTrend, costTrend, planDistribution, totalCostThisMonth] = await Promise.all([
+    const [usageTrend, costTrend, costBreakdown, planDistribution, totalCostThisMonth] = await Promise.all([
       this.adminRepository.usageTrend(GENERATION_EVENT_TYPE, TREND_DAYS),
       this.adminRepository.costTrend(TREND_DAYS),
+      this.adminRepository.costBreakdownSince(startOfMonth),
       this.adminRepository.planDistribution(),
       this.adminRepository.totalCostSince(startOfMonth),
     ]);
 
-    return { usageTrend, costTrend, planDistribution, totalCostThisMonth };
+    return { usageTrend, costTrend, costBreakdown, planDistribution, totalCostThisMonth };
   }
 }

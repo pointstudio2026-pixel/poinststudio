@@ -11,47 +11,19 @@ import {
   FakeStyleSelectionRepository,
 } from "@/modules/styles/testing/fakes";
 import type { Style } from "@/modules/styles/domain/Style";
-import { FakeBrandStrategyRepository } from "@/modules/brandStrategies/testing/fakes";
-import type { BrandStrategyData } from "@/modules/brandStrategies/domain/BrandStrategy";
+import { FakeInterviewRepository } from "@/modules/interviews/testing/fakes";
+import { GetOrStartInterviewUseCase } from "@/modules/interviews/application/GetOrStartInterviewUseCase";
+import { SaveAnswerUseCase } from "@/modules/interviews/application/SaveAnswerUseCase";
+import { CompleteInterviewUseCase } from "@/modules/interviews/application/CompleteInterviewUseCase";
+import { INTERVIEW_QUESTIONS } from "@/modules/interviews/domain/interviewQuestions";
 import { CreateProjectUseCase } from "@/modules/projects/application/CreateProjectUseCase";
+import { SelectDeliverableTypeUseCase } from "@/modules/projects/application/SelectDeliverableTypeUseCase";
 import { FakeProjectRepository } from "@/modules/projects/testing/fakes";
 import { ConflictError, NotFoundError, ValidationError } from "@/shared/errors/AppError";
 
 vi.mock("@/shared/activity/activityLogger", () => ({
   recordActivity: vi.fn().mockResolvedValue(undefined),
 }));
-
-const STRATEGY_DATA: BrandStrategyData = {
-  brandKnowledge: {
-    mission: "신선한 빵을 제공한다",
-    vision: "동네에서 가장 신뢰받는 베이커리",
-    values: ["품질", "따뜻함"],
-    positioning: "친근한 동네 베이커리",
-    audience: "지역 주민",
-    tone: "친근하고 따뜻한",
-    personality: "친근하고 따뜻한",
-    visualDirection: "미니멀, 중성 컬러",
-    confidenceNotes: "",
-    reasoningSummary: "",
-  },
-  brandStrategy: {
-    positioning: "친근한 동네 베이커리",
-    coreMessage: "매일 아침 신선하게",
-    toneAndManner: "친근하고 따뜻한",
-    personality: "친근하고 따뜻한",
-    brandArchetype: "동반자 (The Everyman)",
-    visualDirection: "미니멀, 중성 컬러",
-    recommendedStyles: [],
-    recommendedColors: [],
-    recommendedTypography: [],
-    recommendedSymbols: [],
-  },
-  styleCandidates: [
-    { name: "Minimal", reason: "브랜드 톤과 어울립니다." },
-    { name: "Modern", reason: "보완 후보입니다." },
-  ],
-  confidenceScore: 0.7,
-};
 
 function makeStyle(overrides: Partial<Style>): Style {
   return {
@@ -68,27 +40,50 @@ function makeStyle(overrides: Partial<Style>): Style {
 
 async function setup() {
   const projects = new FakeProjectRepository();
-  const strategies = new FakeBrandStrategyRepository();
+  const interviews = new FakeInterviewRepository();
   const styles = new FakeStyleRepository();
   const selections = new FakeStyleSelectionRepository();
   const favorites = new FakeStyleFavoriteRepository();
 
   const { projectId } = await new CreateProjectUseCase(projects).execute({ userId: "user-1", name: "Bakery" });
+  await new SelectDeliverableTypeUseCase(projects).execute({
+    projectId,
+    userId: "user-1",
+    deliverableType: "브랜딩 & 로고",
+  });
 
   return {
     projectId,
     projects,
-    strategies,
+    interviews,
     styles,
     selections,
     favorites,
     list: new ListStylesUseCase(styles),
-    recommend: new RecommendStylesUseCase(projects, strategies, styles),
+    recommend: new RecommendStylesUseCase(projects, interviews, styles),
     select: new SelectStyleUseCase(projects, styles, selections),
     history: new GetStyleSelectionHistoryUseCase(projects, selections),
     toggleFavorite: new ToggleStyleFavoriteUseCase(styles, favorites),
     listFavorites: new ListFavoriteStylesUseCase(favorites),
   };
+}
+
+async function completeInterview(
+  projects: FakeProjectRepository,
+  interviews: FakeInterviewRepository,
+  projectId: string,
+  purpose = "미니멀하고 심플한 느낌의 브랜드를 만들고 싶습니다",
+) {
+  const getOrStart = new GetOrStartInterviewUseCase(projects, interviews);
+  const saveAnswer = new SaveAnswerUseCase(projects, interviews);
+  const complete = new CompleteInterviewUseCase(projects, interviews);
+
+  await getOrStart.execute({ projectId, userId: "user-1" });
+  for (const q of INTERVIEW_QUESTIONS.filter((q) => q.required)) {
+    const answer = q.key === "purpose" ? purpose : `충분히 구체적인 ${q.key} 답변입니다.`;
+    await saveAnswer.execute({ projectId, userId: "user-1", questionKey: q.key, answer });
+  }
+  await complete.execute({ projectId, userId: "user-1" });
 }
 
 describe("ListStylesUseCase", () => {
@@ -104,20 +99,33 @@ describe("ListStylesUseCase", () => {
     expect(result).toHaveLength(1);
     expect(result[0]?.id).toBe("l3");
   });
+
+  it("scopes results to a specific parent for 대분류→중분류→소분류 drill-down (parentId 필터)", async () => {
+    const { styles, list } = await setup();
+    styles.styles = [
+      makeStyle({ id: "l2-a", level: 2, parentId: "l1-x", category: "Minimal" }),
+      makeStyle({ id: "l2-b", level: 2, parentId: "l1-y", category: "Minimal" }),
+    ];
+
+    const { styles: result } = await list.execute({ level: 2, parentId: "l1-x" });
+
+    expect(result).toHaveLength(1);
+    expect(result[0]?.id).toBe("l2-a");
+  });
 });
 
 describe("RecommendStylesUseCase", () => {
-  it("blocks recommendations until a Brand Strategy exists (Brand Strategy 누락)", async () => {
+  it("blocks recommendations until the Interview is completed (인터뷰 미완료)", async () => {
     const { projectId, recommend } = await setup();
     await expect(recommend.execute({ projectId, userId: "user-1" })).rejects.toBeInstanceOf(ConflictError);
   });
 
-  it("ranks styles whose category matches the primary candidate first (업종별 추천)", async () => {
-    const { projectId, strategies, styles, recommend } = await setup();
-    await strategies.createWithFirstVersion(projectId, STRATEGY_DATA, "", "medium");
+  it("ranks styles whose category matches the interview-inferred candidate first (업종별 추천)", async () => {
+    const { projectId, projects, interviews, styles, recommend } = await setup();
+    await completeInterview(projects, interviews, projectId);
     styles.styles = [
-      makeStyle({ id: "minimal-1", category: "Minimal", keywords: ["미니멀"] }),
-      makeStyle({ id: "luxury-1", category: "Luxury", keywords: ["고급"] }),
+      makeStyle({ id: "minimal-1", category: "미니멀", keywords: ["미니멀"] }),
+      makeStyle({ id: "luxury-1", category: "럭셔리", keywords: ["고급"] }),
     ];
 
     const recommendations = await recommend.execute({ projectId, userId: "user-1" });
@@ -127,8 +135,8 @@ describe("RecommendStylesUseCase", () => {
   });
 
   it("returns an empty list gracefully when no styles are seeded (추천 결과 없음)", async () => {
-    const { projectId, strategies, recommend } = await setup();
-    await strategies.createWithFirstVersion(projectId, STRATEGY_DATA, "", "medium");
+    const { projectId, projects, interviews, recommend } = await setup();
+    await completeInterview(projects, interviews, projectId);
 
     const recommendations = await recommend.execute({ projectId, userId: "user-1" });
     expect(recommendations).toEqual([]);
@@ -136,7 +144,7 @@ describe("RecommendStylesUseCase", () => {
 });
 
 describe("SelectStyleUseCase", () => {
-  it("persists a selection and advances the project to the generation step (정상 선택)", async () => {
+  it("persists a selection and advances the project to the brand_strategy step (정상 선택)", async () => {
     const { projectId, projects, styles, select } = await setup();
     styles.styles = [makeStyle({ id: "minimal-1", category: "Minimal" })];
     const project = projects.projects.find((p) => p.id === projectId)!;
@@ -151,14 +159,17 @@ describe("SelectStyleUseCase", () => {
 
     expect(selection.primaryStyleId).toBe("minimal-1");
     const updated = await projects.findByIdForUser(projectId, "user-1");
-    expect(updated?.currentStep).toBe("generation");
+    expect(updated?.currentStep).toBe("brand_strategy");
   });
 
   it("rejects a conflicting Primary/Secondary combination (STYLE-002)", async () => {
     const { projectId, styles, select } = await setup();
     styles.styles = [
-      makeStyle({ id: "minimal-1", category: "Minimal" }),
-      makeStyle({ id: "playful-1", category: "Playful" }),
+      // 실제 충돌 규칙(styleRules.ts)이 한글 대분류명으로 정의돼 있어
+      // 이 테스트만은 그 값을 그대로 써야 한다 -- 파일의 다른 테스트는
+      // 임의의 자체 일관적인 라벨이라 영문이어도 무방하다.
+      makeStyle({ id: "minimal-1", category: "미니멀" }),
+      makeStyle({ id: "playful-1", category: "플레이풀" }),
     ];
 
     await expect(

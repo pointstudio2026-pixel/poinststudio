@@ -10,8 +10,6 @@ import { FakeFileStorage } from "@/shared/storage/testing/FakeFileStorage";
 import { FakeConceptBoardRepository } from "@/modules/conceptBoards/testing/fakes";
 import type { ConceptBoardData } from "@/modules/conceptBoards/domain/ConceptBoard";
 import { CONCEPT_BOARD_SECTIONS } from "@/modules/conceptBoards/domain/ConceptBoard";
-import { FakeBrandBriefRepository } from "@/modules/brandBriefs/testing/fakes";
-import type { BrandBriefData } from "@/modules/brandBriefs/domain/BrandBrief";
 import { FakeGenerationRepository } from "@/modules/generations/testing/fakes";
 import { FakeMockupRepository } from "@/modules/mockups/testing/fakes";
 import { GetSubscriptionUseCase } from "@/modules/subscriptions/application/GetSubscriptionUseCase";
@@ -32,29 +30,6 @@ const SAMPLE_IMAGE =
     "base64",
   );
 
-const BRIEF_DATA: BrandBriefData = {
-  brandName: "Aster Bakery",
-  industry: "bakery",
-  tagline: "cozy",
-  description: "fresh bread",
-  mission: "fresh bread",
-  vision: "trusted",
-  coreValues: ["quality"],
-  positioning: "friendly bakery",
-  primaryAudience: "local families",
-  secondaryAudience: "",
-  customerProblems: "",
-  desiredImpression: "cozy",
-  brandTone: "따뜻한",
-  brandPersonality: "친근한",
-  keywords: ["bakery"],
-  avoidKeywords: [],
-  preferredStyle: "미니멀",
-  preferredColor: "중성",
-  preferredSymbol: "심플",
-  typographyDirection: "산세리프",
-};
-
 const BOARD_DATA: ConceptBoardData = {
   heroImageUrl: SAMPLE_IMAGE,
   brandSummary: "요약",
@@ -70,7 +45,6 @@ const BOARD_DATA: ConceptBoardData = {
 async function setup() {
   const projects = new FakeProjectRepository();
   const boards = new FakeConceptBoardRepository();
-  const briefs = new FakeBrandBriefRepository();
   const generations = new FakeGenerationRepository();
   const mockups = new FakeMockupRepository();
   const exportsRepo = new FakeExportRepository();
@@ -83,7 +57,6 @@ async function setup() {
   const fileStorage = new FakeFileStorage();
 
   const { projectId } = await new CreateProjectUseCase(projects).execute({ userId: "user-1", name: "Bakery" });
-  await briefs.createWithFirstVersion(projectId, BRIEF_DATA, "ai");
   await boards.createWithFirstVersion(projectId, BOARD_DATA, "ai");
   const generation = await generations.createWithFirstVersion(projectId, { promptVersionId: "prompt-1" });
   await generations.updateVersionResult(generation.currentVersion.id, {
@@ -96,7 +69,6 @@ async function setup() {
     projectId,
     projects,
     boards,
-    briefs,
     generations,
     mockups,
     exportsRepo,
@@ -111,7 +83,6 @@ async function setup() {
     process: new ProcessExportJobUseCase(
       projects,
       boards,
-      briefs,
       generations,
       mockups,
       exportsRepo,
@@ -152,7 +123,7 @@ describe("CreateExportUseCase", () => {
 
     expect(job.status).toBe("pending");
     expect(job.sections).toEqual(CONCEPT_BOARD_SECTIONS);
-    expect(ctx.queue.enqueued).toEqual([{ exportId: job.id }]);
+    expect(ctx.queue.enqueued).toEqual([{ exportId: job.id, requestedByUserId: "user-1" }]);
   });
 
   it("creates a pending PNG export for a generation image (PNG Export)", async () => {
@@ -208,7 +179,7 @@ describe("ProcessExportJobUseCase / DownloadExportUseCase", () => {
       format: "pdf",
     });
 
-    await ctx.process.execute({ exportId: job.id, isFinalAttempt: true });
+    await ctx.process.execute({ exportId: job.id, requestedByUserId: "user-1", isFinalAttempt: true });
 
     const completed = await ctx.exportsRepo.getById(job.id);
     expect(completed?.status).toBe("completed");

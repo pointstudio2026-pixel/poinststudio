@@ -17,6 +17,7 @@ export class FakeEditHistoryRepository implements EditHistoryRepository {
       sourceVersionId: input.sourceVersionId,
       sourceImageIndex: input.sourceImageIndex,
       presetKey: input.presetKey,
+      customInstruction: input.customInstruction,
       resultVersionId: input.resultVersionId,
       status: "pending",
       errorMessage: null,

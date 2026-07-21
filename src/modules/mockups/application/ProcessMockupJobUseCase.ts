@@ -19,7 +19,7 @@ export class ProcessMockupJobUseCase {
     private readonly mockupRenderProvider: MockupRenderProvider,
   ) {}
 
-  async execute(input: { mockupId: string; isFinalAttempt: boolean }): Promise<void> {
+  async execute(input: { mockupId: string; isFinalAttempt: boolean; requestedByUserId: string }): Promise<void> {
     const mockup = await this.mockupRepository.getById(input.mockupId);
     if (!mockup) return;
 
@@ -57,14 +57,15 @@ export class ProcessMockupJobUseCase {
       const project = await this.projectRepository.findById(mockup.projectId);
       if (project) {
         await this.recordUsageUseCase.execute({
-          userId: project.userId,
+          userId: input.requestedByUserId,
           projectId: mockup.projectId,
           eventType: GENERATION_EVENT_TYPE,
           quantity: 1,
           costAmount: result.costAmount,
+          metadata: { source: "mockup", provider: result.provider },
         });
         await recordActivity({
-          userId: project.userId,
+          userId: input.requestedByUserId,
           projectId: mockup.projectId,
           eventType: "MOCKUP_COMPLETED",
           payload: { mockupId: mockup.id, templateId: mockup.templateId },
@@ -87,7 +88,7 @@ export class ProcessMockupJobUseCase {
       const project = await this.projectRepository.findById(mockup.projectId);
       if (project) {
         await recordActivity({
-          userId: project.userId,
+          userId: input.requestedByUserId,
           projectId: mockup.projectId,
           eventType: "MOCKUP_FAILED",
           payload: { mockupId: mockup.id },

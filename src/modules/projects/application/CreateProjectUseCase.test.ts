@@ -9,7 +9,7 @@ vi.mock("@/shared/activity/activityLogger", () => ({
 }));
 
 describe("CreateProjectUseCase", () => {
-  it("creates a project owned by the requesting user, in draft/brand_interview", async () => {
+  it("creates a project owned by the requesting user, in draft/deliverable_type", async () => {
     const repo = new FakeProjectRepository();
     const useCase = new CreateProjectUseCase(repo);
 
@@ -22,7 +22,8 @@ describe("CreateProjectUseCase", () => {
       userId: "user-1",
       name: "My Brand",
       status: "draft",
-      currentStep: "brand_interview",
+      deliverableType: null,
+      currentStep: "deliverable_type",
     });
   });
 });

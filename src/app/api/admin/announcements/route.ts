@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { apiSuccess, toApiError } from "@/shared/http/response";
-import { requireAdmin } from "@/shared/auth/session";
+import { requireAdmin, requireAdminTier } from "@/shared/auth/session";
 import { ValidationError } from "@/shared/errors/AppError";
 import { adminContainer } from "@/modules/admin/container";
 
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = requireAdmin(request);
+    const session = requireAdminTier(request, ["super_admin", "manager"]);
     const body = await request.json().catch(() => null);
     const parsed = bodySchema.safeParse(body);
     if (!parsed.success) {

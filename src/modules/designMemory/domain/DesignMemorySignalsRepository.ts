@@ -8,7 +8,7 @@ export interface EditPresetCount {
   count: number;
 }
 
-export interface BrandBriefSignalRow {
+export interface BrandStrategySignalRow {
   industry: string;
   preferredColor: string;
   typographyDirection: string;
@@ -29,6 +29,6 @@ export interface MockupCategoryCount {
 export interface DesignMemorySignalsRepository {
   topStyleSelections(userId: string, since: Date, limit: number): Promise<StyleSelectionCount[]>;
   topEditPresets(userId: string, since: Date, limit: number): Promise<EditPresetCount[]>;
-  listBrandBriefSignals(userId: string, since: Date): Promise<BrandBriefSignalRow[]>;
+  listBrandStrategySignals(userId: string, since: Date): Promise<BrandStrategySignalRow[]>;
   favoriteMockupCategories(userId: string): Promise<MockupCategoryCount[]>;
 }

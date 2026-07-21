@@ -5,7 +5,10 @@ import { requireUser } from "@/shared/auth/session";
 import { ValidationError } from "@/shared/errors/AppError";
 import { brandStrategiesContainer } from "@/modules/brandStrategies/container";
 
-const bodySchema = z.object({ projectId: z.string().min(1) });
+const bodySchema = z.object({
+  projectId: z.string().min(1),
+  provider: z.enum(["openai", "gemini", "claude"]).optional(),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,6 +23,7 @@ export async function POST(request: NextRequest) {
       projectId: parsed.data.projectId,
       userId: session.sub,
       mode: "rebuild",
+      provider: parsed.data.provider,
     });
 
     return apiSuccess({ strategy }, { status: 201 });

@@ -1,15 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   executeAsterBrain,
   fetchBrandStrategy,
   rebuildAsterBrain,
+  selectBrandStrategy,
+  type AiTextProvider,
+  type BrandStrategyDataDto,
   type ConfidenceLevel,
 } from "@/services/aster-brain-service";
 import { Spinner } from "@/components/Spinner";
+import { NextStepButton } from "@/features/workspace/NextStepButton";
+import { AiProviderSelect } from "@/components/AiProviderSelect";
+
+const TEXT_PROVIDERS: AiTextProvider[] = ["openai", "gemini", "claude"];
 
 const CONFIDENCE_LABELS: Record<ConfidenceLevel, { label: string; className: string }> = {
   high: { label: "신뢰도 높음", className: "bg-green-100 text-green-700" },
@@ -27,12 +33,15 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analyzeError, setAnalyzeError] = useState<string | null>(null);
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [selectError, setSelectError] = useState<string | null>(null);
+  const [provider, setProvider] = useState<string>("");
 
   async function handleExecute() {
     setIsAnalyzing(true);
     setAnalyzeError(null);
     try {
-      await executeAsterBrain(projectId);
+      await executeAsterBrain(projectId, provider ? (provider as AiTextProvider) : undefined);
       await queryClient.invalidateQueries({ queryKey: ["aster-brain", projectId] });
     } catch (err) {
       setAnalyzeError(err instanceof Error ? err.message : "분석에 실패했습니다.");
@@ -45,7 +54,7 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
     setIsAnalyzing(true);
     setAnalyzeError(null);
     try {
-      await rebuildAsterBrain(projectId);
+      await rebuildAsterBrain(projectId, provider ? (provider as AiTextProvider) : undefined);
       await queryClient.invalidateQueries({ queryKey: ["aster-brain", projectId] });
     } catch (err) {
       setAnalyzeError(err instanceof Error ? err.message : "재분석에 실패했습니다.");
@@ -54,9 +63,22 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
     }
   }
 
+  async function handleSelect(candidateIndex: number) {
+    setIsSelecting(true);
+    setSelectError(null);
+    try {
+      await selectBrandStrategy(projectId, candidateIndex);
+      await queryClient.invalidateQueries({ queryKey: ["aster-brain", projectId] });
+    } catch (err) {
+      setSelectError(err instanceof Error ? err.message : "선택에 실패했습니다.");
+    } finally {
+      setIsSelecting(false);
+    }
+  }
+
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex items-center justify-center py-24">
         <Spinner />
       </div>
     );
@@ -64,23 +86,24 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
 
   if (isAnalyzing) {
     return (
-      <main className="mx-auto flex min-h-screen max-w-xl flex-col items-center justify-center gap-4 p-8 text-center">
+      <div className="flex flex-col items-center gap-4 py-16 text-center">
         <Spinner />
         <h1 className="text-lg font-medium">Aster Brain이 브랜드를 분석하고 있습니다...</h1>
-        <p className="text-sm text-neutral-500">
-          Brand Brief를 바탕으로 브랜드 지식과 전략 초안을 구성하는 중입니다.
+        <p className="text-sm text-muted">
+          인터뷰 답변과 선택한 스타일을 바탕으로 브랜드 전략 3가지 방향을 구성하는 중입니다.
         </p>
-      </main>
+      </div>
     );
   }
 
   if (isError || !data) {
     const notGenerated = error instanceof Error && error.message.includes("생성되지 않았");
     return (
-      <main className="mx-auto flex min-h-screen max-w-xl flex-col items-center justify-center gap-4 p-8 text-center">
+      <div className="flex flex-col items-center gap-4 py-16 text-center">
         <h1 className="text-lg font-medium">
-          {notGenerated ? "아직 Brand Strategy 분석이 없습니다" : "Brand Strategy를 불러오지 못했습니다"}
+          {notGenerated ? "아직 브랜드 전략 분석이 없습니다" : "브랜드 전략을 불러오지 못했습니다"}
         </h1>
+        <AiProviderSelect value={provider} onChange={setProvider} providers={TEXT_PROVIDERS} />
         <button
           type="button"
           onClick={handleExecute}
@@ -89,22 +112,59 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
           Aster Brain 분석 시작
         </button>
         {analyzeError && <p className="text-sm text-red-600">{analyzeError}</p>}
-        <Link href={`/projects/${projectId}`} className="text-sm underline">
-          프로젝트로 돌아가기
-        </Link>
-      </main>
+      </div>
     );
   }
 
   const { strategy, versions } = data;
-  const { brandKnowledge, brandStrategy, styleCandidates } = strategy.currentVersion.data;
+  const { candidates, selectedIndex } = strategy.currentVersion;
+
+  if (selectedIndex === null) {
+    return (
+      <div className="flex flex-col gap-6">
+        <header>
+          <h1 className="text-xl font-semibold">브랜드 전략 (Aster Brain)</h1>
+          <p className="mt-1 text-sm text-muted">
+            AI가 제안한 3가지 브랜드 전략 방향 중 하나를 선택해주세요.
+          </p>
+        </header>
+
+        {selectError && <p className="text-sm text-red-600">{selectError}</p>}
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          {candidates.map((candidate, index) => (
+            <StrategyCandidateCard
+              key={index}
+              candidate={candidate}
+              onSelect={() => handleSelect(index)}
+              disabled={isSelecting}
+            />
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <AiProviderSelect value={provider} onChange={setProvider} providers={TEXT_PROVIDERS} disabled={isSelecting} />
+          <button
+            type="button"
+            onClick={handleRebuild}
+            disabled={isSelecting}
+            className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm disabled:opacity-50"
+          >
+            다른 방향으로 다시 생성
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const { brandKnowledge, brandStrategy } = strategy.currentVersion.data;
   const confidence = CONFIDENCE_LABELS[strategy.currentVersion.confidenceLevel];
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-8">
+    <div className="flex flex-col gap-6">
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold">Brand Strategy (Aster Brain)</h1>
+          <h1 className="text-xl font-semibold">브랜드 전략 (Aster Brain)</h1>
           <p className="mt-1 flex items-center gap-2 text-xs text-neutral-400">
             v{strategy.currentVersion.versionNumber} · {versions.length}개 버전
             <span className={`rounded-full px-2 py-0.5 font-medium ${confidence.className}`}>
@@ -113,9 +173,7 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Link href={`/projects/${projectId}`} className="text-sm underline">
-            프로젝트로
-          </Link>
+          <AiProviderSelect value={provider} onChange={setProvider} providers={TEXT_PROVIDERS} />
           <button
             type="button"
             onClick={handleRebuild}
@@ -123,20 +181,21 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
           >
             재분석
           </button>
+          <NextStepButton projectId={projectId} currentStepKey="brand_strategy" />
         </div>
       </header>
 
       {analyzeError && <p className="text-sm text-red-600">{analyzeError}</p>}
 
       <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">분석 요약</h2>
+        <h2 className="text-sm font-medium text-neutral-700">선택한 전략 방향: {brandStrategy.brandArchetype}</h2>
         <p className="mt-2 text-sm">{strategy.currentVersion.reasoningSummary}</p>
         <p className="mt-2 text-xs text-neutral-400">{brandKnowledge.confidenceNotes}</p>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-md border border-neutral-200 p-4">
-          <h2 className="text-sm font-medium text-neutral-700">Brand Knowledge</h2>
+          <h2 className="text-sm font-medium text-neutral-700">브랜드 지식</h2>
           <dl className="mt-2 flex flex-col gap-2 text-sm">
             <div>
               <dt className="text-xs text-neutral-400">미션</dt>
@@ -158,21 +217,19 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
               <dt className="text-xs text-neutral-400">타깃 고객</dt>
               <dd>{brandKnowledge.audience || "—"}</dd>
             </div>
-            <div>
-              <dt className="text-xs text-neutral-400">톤 & 성격</dt>
-              <dd>
-                {brandKnowledge.tone} / {brandKnowledge.personality}
-              </dd>
-            </div>
           </dl>
         </div>
 
         <div className="rounded-md border border-neutral-200 p-4">
-          <h2 className="text-sm font-medium text-neutral-700">Brand Strategy 초안</h2>
+          <h2 className="text-sm font-medium text-neutral-700">브랜드 전략 초안</h2>
           <dl className="mt-2 flex flex-col gap-2 text-sm">
             <div>
               <dt className="text-xs text-neutral-400">브랜드 아키타입</dt>
               <dd>{brandStrategy.brandArchetype}</dd>
+            </div>
+            <div>
+              <dt className="text-xs text-neutral-400">톤 & 매너</dt>
+              <dd>{brandStrategy.toneAndManner}</dd>
             </div>
             <div>
               <dt className="text-xs text-neutral-400">핵심 메시지</dt>
@@ -199,18 +256,36 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
           </dl>
         </div>
       </section>
+    </div>
+  );
+}
 
-      <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">Style 후보</h2>
-        <ul className="mt-2 flex flex-col gap-2 text-sm">
-          {styleCandidates.map((candidate) => (
-            <li key={candidate.name}>
-              <span className="font-medium">{candidate.name}</span>
-              <span className="ml-2 text-xs text-neutral-400">{candidate.reason}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </main>
+function StrategyCandidateCard({
+  candidate,
+  onSelect,
+  disabled,
+}: {
+  candidate: BrandStrategyDataDto;
+  onSelect: () => void;
+  disabled: boolean;
+}) {
+  const { brandKnowledge, brandStrategy } = candidate;
+  return (
+    <div className="flex flex-col gap-3 rounded-md border border-neutral-200 p-4">
+      <div>
+        <h3 className="text-sm font-semibold">{brandStrategy.brandArchetype}</h3>
+        <p className="mt-1 text-xs text-neutral-500">{brandStrategy.toneAndManner}</p>
+      </div>
+      <p className="text-sm">{brandStrategy.positioning}</p>
+      <p className="text-xs text-neutral-500">{brandKnowledge.reasoningSummary}</p>
+      <button
+        type="button"
+        onClick={onSelect}
+        disabled={disabled}
+        className="mt-auto rounded-md bg-neutral-900 px-3 py-1.5 text-sm text-white disabled:opacity-50"
+      >
+        이 전략으로 선택 확정
+      </button>
+    </div>
   );
 }

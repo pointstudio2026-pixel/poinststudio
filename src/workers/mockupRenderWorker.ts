@@ -6,6 +6,7 @@ import { logger } from "@/shared/logging/logger";
 
 interface MockupRenderJobData {
   mockupId: string;
+  requestedByUserId: string;
 }
 
 /** Mirrors imageGenerationWorker.ts/imageEditWorker.ts's shape. */
@@ -15,7 +16,11 @@ export function startMockupRenderWorker(processUseCase: ProcessMockupJobUseCase)
     async (job: Job<MockupRenderJobData>) => {
       const maxAttempts = job.opts.attempts ?? 1;
       const isFinalAttempt = job.attemptsMade + 1 >= maxAttempts;
-      await processUseCase.execute({ mockupId: job.data.mockupId, isFinalAttempt });
+      await processUseCase.execute({
+        mockupId: job.data.mockupId,
+        requestedByUserId: job.data.requestedByUserId,
+        isFinalAttempt,
+      });
     },
     { connection: bullMqConnectionOptions, concurrency: 2 },
   );
@@ -24,6 +29,16 @@ export function startMockupRenderWorker(processUseCase: ProcessMockupJobUseCase)
     logger.error("Mockup render worker job failed", {
       jobId: job?.id,
       attemptsMade: job?.attemptsMade,
+      details: err instanceof Error ? err.message : String(err),
+    });
+  });
+
+  // BullMQ Workers are EventEmitters -- an unhandled "error" event (e.g. a
+  // transient Redis reconnect) throws and crashes the whole process, which
+  // orphans every job the worker currently holds a lock on ("active"
+  // forever, never picked back up). Must always have a listener.
+  worker.on("error", (err) => {
+    logger.error("Mockup render worker connection error", {
       details: err instanceof Error ? err.message : String(err),
     });
   });

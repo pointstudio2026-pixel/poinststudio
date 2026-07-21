@@ -24,12 +24,12 @@ async function buildUseCaseWithUser() {
     passwordHash: await hasher.hash("password123"),
   });
   const tokenService = new TokenService(new FakeRefreshTokenRepository());
-  return new LoginUseCase(userRepository, hasher, tokenService);
+  return { useCase: new LoginUseCase(userRepository, hasher, tokenService), userRepository };
 }
 
 describe("LoginUseCase", () => {
   it("logs in with correct credentials", async () => {
-    const useCase = await buildUseCaseWithUser();
+    const { useCase } = await buildUseCaseWithUser();
 
     const result = await useCase.execute({
       email: "designer@aster.dev",
@@ -55,7 +55,7 @@ describe("LoginUseCase", () => {
   });
 
   it("rejects a wrong password with AUTH-002", async () => {
-    const useCase = await buildUseCaseWithUser();
+    const { useCase } = await buildUseCaseWithUser();
 
     await expect(
       useCase.execute({ email: "designer@aster.dev", password: "wrong-password" }),
@@ -63,5 +63,45 @@ describe("LoginUseCase", () => {
     await expect(
       useCase.execute({ email: "designer@aster.dev", password: "wrong-password" }),
     ).rejects.toMatchObject({ code: "AUTH-002" });
+  });
+
+  it("rejects a deleted account with AUTH-010 even with correct credentials", async () => {
+    const userRepository = new FakeUserRepository();
+    const hasher = new FakePasswordHasher();
+    await userRepository.create({
+      email: "deleted@aster.dev",
+      passwordHash: await hasher.hash("password123"),
+    });
+    userRepository.users[0]!.deletedAt = new Date();
+    const tokenService = new TokenService(new FakeRefreshTokenRepository());
+    const useCase = new LoginUseCase(userRepository, hasher, tokenService);
+
+    await expect(
+      useCase.execute({ email: "deleted@aster.dev", password: "password123" }),
+    ).rejects.toMatchObject({ code: "AUTH-010" });
+  });
+
+  it("rejects a suspended account with AUTH-011 even with correct credentials", async () => {
+    const userRepository = new FakeUserRepository();
+    const hasher = new FakePasswordHasher();
+    await userRepository.create({
+      email: "suspended@aster.dev",
+      passwordHash: await hasher.hash("password123"),
+    });
+    userRepository.users[0]!.suspendedAt = new Date();
+    const tokenService = new TokenService(new FakeRefreshTokenRepository());
+    const useCase = new LoginUseCase(userRepository, hasher, tokenService);
+
+    await expect(
+      useCase.execute({ email: "suspended@aster.dev", password: "password123" }),
+    ).rejects.toMatchObject({ code: "AUTH-011" });
+  });
+
+  it("updates lastLoginAt on a successful login", async () => {
+    const { useCase, userRepository } = await buildUseCaseWithUser();
+
+    expect(userRepository.users[0]!.lastLoginAt).toBeNull();
+    await useCase.execute({ email: "designer@aster.dev", password: "password123" });
+    expect(userRepository.users[0]!.lastLoginAt).toBeInstanceOf(Date);
   });
 });

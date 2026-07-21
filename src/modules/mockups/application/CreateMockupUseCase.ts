@@ -5,6 +5,7 @@ import type { MockupRepository } from "@/modules/mockups/domain/MockupRepository
 import type { MockupTemplateRepository } from "@/modules/mockups/domain/MockupTemplateRepository";
 import type { MockupRenderQueuePort } from "@/modules/mockups/domain/MockupRenderQueuePort";
 import type { MockupProject } from "@/modules/mockups/domain/Mockup";
+import type { UserRole } from "@/shared/auth/jwt";
 import { GENERATION_EVENT_TYPE } from "@/modules/subscriptions/domain/planLimits";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { ConflictError, NotFoundError, UsageLimitError, ValidationError } from "@/shared/errors/AppError";
@@ -25,6 +26,7 @@ export class CreateMockupUseCase {
     generationVersionId: string;
     sourceImageIndex: number;
     templateId: string;
+    userRole?: UserRole;
   }): Promise<MockupProject> {
     const project = await this.projectRepository.findByIdForUser(input.projectId, input.userId);
     if (!project) {
@@ -51,6 +53,7 @@ export class CreateMockupUseCase {
     const plan = await this.checkPlanUseCase.execute({
       userId: input.userId,
       eventType: GENERATION_EVENT_TYPE,
+      userRole: input.userRole,
     });
     if (!plan.allowed) {
       throw new UsageLimitError(
@@ -65,7 +68,7 @@ export class CreateMockupUseCase {
       templateId: input.templateId,
     });
 
-    await this.queue.enqueue({ mockupId: mockup.id });
+    await this.queue.enqueue({ mockupId: mockup.id, requestedByUserId: input.userId });
 
     await recordActivity({
       userId: input.userId,

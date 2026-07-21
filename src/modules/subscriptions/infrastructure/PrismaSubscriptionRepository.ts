@@ -2,6 +2,7 @@ import { Prisma } from "../../../../generated/prisma/client";
 import { prisma } from "@/shared/database/prisma";
 import type { Subscription } from "@/modules/subscriptions/domain/Subscription";
 import type { SubscriptionRepository } from "@/modules/subscriptions/domain/SubscriptionRepository";
+import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 
 export class PrismaSubscriptionRepository implements SubscriptionRepository {
   async findByUserId(userId: string): Promise<Subscription | null> {
@@ -25,5 +26,9 @@ export class PrismaSubscriptionRepository implements SubscriptionRepository {
       }
       throw err;
     }
+  }
+
+  async updatePlan(userId: string, planCode: PlanCode): Promise<Subscription> {
+    return prisma.subscription.update({ where: { userId }, data: { planCode } });
   }
 }

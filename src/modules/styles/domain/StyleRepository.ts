@@ -4,6 +4,8 @@ export interface StyleListFilter {
   category?: string;
   level?: number;
   search?: string;
+  /** Scope to direct children of this style (대분류→중분류→소분류 drill-down). */
+  parentId?: string;
 }
 
 export interface StyleRepository {

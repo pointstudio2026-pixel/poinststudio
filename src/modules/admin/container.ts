@@ -10,6 +10,11 @@ import {
   DeactivateAnnouncementUseCase,
   ListAnnouncementsUseCase,
 } from "@/modules/admin/application/AnnouncementUseCases";
+import { SuspendUserUseCase } from "@/modules/admin/application/SuspendUserUseCase";
+import { UnsuspendUserUseCase } from "@/modules/admin/application/UnsuspendUserUseCase";
+import { DeleteUserUseCase } from "@/modules/admin/application/DeleteUserUseCase";
+import { ChangeUserRoleUseCase } from "@/modules/admin/application/ChangeUserRoleUseCase";
+import { GetUserDetailUseCase } from "@/modules/admin/application/GetUserDetailUseCase";
 import { resolveTextCompletionProvider } from "@/shared/ai/textCompletionRouter";
 import { resolveImageGenerationProvider } from "@/shared/ai/imageGenerationRouter";
 import { resolveMockupRenderProvider } from "@/shared/ai/mockupRenderRouter";
@@ -17,12 +22,14 @@ import { imageGenerationQueue } from "@/shared/queue/imageGenerationQueue";
 import { imageEditQueue } from "@/shared/queue/imageEditQueue";
 import { mockupRenderQueue } from "@/shared/queue/mockupRenderQueue";
 import { exportQueue } from "@/shared/queue/exportQueue";
+import { subscriptionsContainer } from "@/modules/subscriptions/container";
 
 const adminRepository = new PrismaAdminRepository();
 const announcementRepository = new PrismaAnnouncementRepository();
 const textCompletionProvider = resolveTextCompletionProvider();
 const imageGenerationProvider = resolveImageGenerationProvider();
 const mockupRenderProvider = resolveMockupRenderProvider();
+const getAuditLogsUseCase = new GetAuditLogsUseCase(adminRepository);
 
 export const adminContainer = {
   getAdminDashboardUseCase: new GetAdminDashboardUseCase(
@@ -37,7 +44,7 @@ export const adminContainer = {
   ),
   getAdminAnalyticsUseCase: new GetAdminAnalyticsUseCase(adminRepository),
   searchAdminUsersUseCase: new SearchAdminUsersUseCase(adminRepository),
-  getAuditLogsUseCase: new GetAuditLogsUseCase(adminRepository),
+  getAuditLogsUseCase,
   getProviderHealthUseCase: new GetProviderHealthUseCase(
     textCompletionProvider,
     imageGenerationProvider,
@@ -46,4 +53,13 @@ export const adminContainer = {
   createAnnouncementUseCase: new CreateAnnouncementUseCase(announcementRepository),
   listAnnouncementsUseCase: new ListAnnouncementsUseCase(announcementRepository),
   deactivateAnnouncementUseCase: new DeactivateAnnouncementUseCase(announcementRepository),
+  suspendUserUseCase: new SuspendUserUseCase(adminRepository),
+  unsuspendUserUseCase: new UnsuspendUserUseCase(adminRepository),
+  deleteUserUseCase: new DeleteUserUseCase(adminRepository),
+  changeUserRoleUseCase: new ChangeUserRoleUseCase(adminRepository),
+  getUserDetailUseCase: new GetUserDetailUseCase(
+    adminRepository,
+    getAuditLogsUseCase,
+    subscriptionsContainer.getUsageSummaryUseCase,
+  ),
 };

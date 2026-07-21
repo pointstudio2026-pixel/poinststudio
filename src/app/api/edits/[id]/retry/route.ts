@@ -15,6 +15,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     const edit = await editsContainer.retryEditUseCase.execute({
       editHistoryId,
       userId: session.sub,
+      userRole: session.role,
     });
     return apiSuccess({ edit }, { status: 202 });
   } catch (err) {

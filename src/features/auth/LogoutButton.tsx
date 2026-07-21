@@ -6,7 +6,11 @@ import { logoutUser } from "@/services/auth-service";
 import { useAuthStore } from "@/stores/auth-store";
 import { Spinner } from "@/components/Spinner";
 
-export function LogoutButton() {
+export function LogoutButton({
+  className = "flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-sm transition hover:border-ink disabled:opacity-50",
+}: {
+  className?: string;
+}) {
   const router = useRouter();
   const clear = useAuthStore((s) => s.clear);
   const [isPending, setIsPending] = useState(false);
@@ -25,12 +29,7 @@ export function LogoutButton() {
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleLogout}
-      disabled={isPending}
-      className="flex items-center gap-2 rounded-md border border-neutral-300 px-3 py-1.5 text-sm disabled:opacity-50"
-    >
+    <button type="button" onClick={handleLogout} disabled={isPending} className={className}>
       {isPending && <Spinner />}
       {isPending ? "로그아웃 중..." : "로그아웃"}
     </button>

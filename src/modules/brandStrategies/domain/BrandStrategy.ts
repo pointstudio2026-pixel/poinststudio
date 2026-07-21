@@ -1,6 +1,7 @@
 export type ConfidenceLevel = "high" | "medium" | "low";
 
 export interface BrandKnowledge {
+  industry: string;
   mission: string;
   vision: string;
   values: string[];
@@ -11,6 +12,10 @@ export interface BrandKnowledge {
   visualDirection: string;
   confidenceNotes: string;
   reasoningSummary: string;
+  tagline: string;
+  keywords: string[];
+  preferredColor: string;
+  typographyDirection: string;
 }
 
 export interface StrategyRecommendation {
@@ -31,15 +36,9 @@ export interface BrandStrategyProfile {
   recommendedSymbols: StrategyRecommendation[];
 }
 
-export interface StyleCandidate {
-  name: string;
-  reason: string;
-}
-
 export interface BrandStrategyData {
   brandKnowledge: BrandKnowledge;
   brandStrategy: BrandStrategyProfile;
-  styleCandidates: StyleCandidate[];
   confidenceScore: number;
 }
 
@@ -48,6 +47,9 @@ export interface BrandStrategyVersion {
   brandStrategyId: string;
   versionNumber: number;
   data: BrandStrategyData;
+  /** 3 AI-generated candidates; `data` mirrors `candidates[selectedIndex]` once selected. */
+  candidates: BrandStrategyData[];
+  selectedIndex: number | null;
   reasoningSummary: string;
   confidenceLevel: ConfidenceLevel;
   createdAt: Date;

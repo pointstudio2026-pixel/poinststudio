@@ -7,12 +7,15 @@ import type {
   ConfidenceLevel,
 } from "@/modules/brandStrategies/domain/BrandStrategy";
 import type { BrandStrategyRepository } from "@/modules/brandStrategies/domain/BrandStrategyRepository";
+import { NotFoundError } from "@/shared/errors/AppError";
 
 function toVersion(row: {
   id: string;
   brandStrategyId: string;
   versionNumber: number;
   data: unknown;
+  candidates: unknown;
+  selectedIndex: number | null;
   reasoningSummary: string | null;
   confidence: string;
   createdAt: Date;
@@ -22,6 +25,8 @@ function toVersion(row: {
     brandStrategyId: row.brandStrategyId,
     versionNumber: row.versionNumber,
     data: row.data as unknown as BrandStrategyData,
+    candidates: row.candidates as unknown as BrandStrategyData[],
+    selectedIndex: row.selectedIndex,
     reasoningSummary: row.reasoningSummary ?? "",
     confidenceLevel: row.confidence as ConfidenceLevel,
     createdAt: row.createdAt,
@@ -43,7 +48,7 @@ export class PrismaBrandStrategyRepository implements BrandStrategyRepository {
 
   async createWithFirstVersion(
     projectId: string,
-    data: BrandStrategyData,
+    candidates: BrandStrategyData[],
     reasoningSummary: string,
     confidenceLevel: ConfidenceLevel,
   ): Promise<BrandStrategy> {
@@ -52,7 +57,9 @@ export class PrismaBrandStrategyRepository implements BrandStrategyRepository {
       data: {
         brandStrategyId: strategy.id,
         versionNumber: 1,
-        data: data as unknown as Prisma.InputJsonValue,
+        data: candidates[0] as unknown as Prisma.InputJsonValue,
+        candidates: candidates as unknown as Prisma.InputJsonValue,
+        selectedIndex: null,
         reasoningSummary,
         confidence: confidenceLevel,
       },
@@ -67,7 +74,7 @@ export class PrismaBrandStrategyRepository implements BrandStrategyRepository {
 
   async addVersion(
     brandStrategyId: string,
-    data: BrandStrategyData,
+    candidates: BrandStrategyData[],
     reasoningSummary: string,
     confidenceLevel: ConfidenceLevel,
   ): Promise<BrandStrategy> {
@@ -82,7 +89,9 @@ export class PrismaBrandStrategyRepository implements BrandStrategyRepository {
       data: {
         brandStrategyId,
         versionNumber: nextVersionNumber,
-        data: data as unknown as Prisma.InputJsonValue,
+        data: candidates[0] as unknown as Prisma.InputJsonValue,
+        candidates: candidates as unknown as Prisma.InputJsonValue,
+        selectedIndex: null,
         reasoningSummary,
         confidence: confidenceLevel,
       },
@@ -90,6 +99,29 @@ export class PrismaBrandStrategyRepository implements BrandStrategyRepository {
     await prisma.brandStrategy.update({
       where: { id: brandStrategyId },
       data: { currentVersionId: version.id },
+    });
+
+    return { id: brandStrategyId, projectId: strategy.projectId, currentVersion: toVersion(version) };
+  }
+
+  async selectCandidate(brandStrategyId: string, candidateIndex: number): Promise<BrandStrategy> {
+    const strategy = await prisma.brandStrategy.findUniqueOrThrow({ where: { id: brandStrategyId } });
+    if (!strategy.currentVersionId) {
+      throw new NotFoundError("Brand Strategy 버전을 찾을 수 없습니다.", "BRAND_STRATEGY_VERSION_NOT_FOUND");
+    }
+    const currentVersionRow = await prisma.brandStrategyVersion.findUniqueOrThrow({
+      where: { id: strategy.currentVersionId },
+    });
+    const candidates = currentVersionRow.candidates as unknown as BrandStrategyData[];
+    const selected = candidates[candidateIndex]!;
+
+    const version = await prisma.brandStrategyVersion.update({
+      where: { id: currentVersionRow.id },
+      data: {
+        data: selected as unknown as Prisma.InputJsonValue,
+        selectedIndex: candidateIndex,
+        reasoningSummary: selected.brandKnowledge.reasoningSummary,
+      },
     });
 
     return { id: brandStrategyId, projectId: strategy.projectId, currentVersion: toVersion(version) };

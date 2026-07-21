@@ -1,6 +1,5 @@
 import type { ProjectRepository } from "@/modules/projects/domain/ProjectRepository";
 import type { ConceptBoardRepository } from "@/modules/conceptBoards/domain/ConceptBoardRepository";
-import type { BrandBriefRepository } from "@/modules/brandBriefs/domain/BrandBriefRepository";
 import type { GenerationRepository } from "@/modules/generations/domain/GenerationRepository";
 import type { MockupRepository } from "@/modules/mockups/domain/MockupRepository";
 import type { ExportRepository } from "@/modules/exports/domain/ExportRepository";
@@ -17,7 +16,6 @@ export class ProcessExportJobUseCase {
   constructor(
     private readonly projectRepository: ProjectRepository,
     private readonly conceptBoardRepository: ConceptBoardRepository,
-    private readonly brandBriefRepository: BrandBriefRepository,
     private readonly generationRepository: GenerationRepository,
     private readonly mockupRepository: MockupRepository,
     private readonly exportRepository: ExportRepository,
@@ -26,7 +24,7 @@ export class ProcessExportJobUseCase {
     private readonly recordUsageUseCase: RecordUsageUseCase,
   ) {}
 
-  async execute(input: { exportId: string; isFinalAttempt: boolean }): Promise<void> {
+  async execute(input: { exportId: string; isFinalAttempt: boolean; requestedByUserId: string }): Promise<void> {
     const job = await this.exportRepository.getById(input.exportId);
     if (!job) return;
     const project = await this.projectRepository.findById(job.projectId);
@@ -35,7 +33,7 @@ export class ProcessExportJobUseCase {
     await this.exportRepository.updateResult(job.id, { status: "processing" });
 
     try {
-      const file = await this.renderContent(job);
+      const file = await this.renderContent(job, project.name);
 
       const saved = await this.fileStorage.save(`exports/${job.projectId}/${job.id}`, file.buffer, file.contentType);
 
@@ -47,14 +45,14 @@ export class ProcessExportJobUseCase {
       });
 
       await this.recordUsageUseCase.execute({
-        userId: project.userId,
+        userId: input.requestedByUserId,
         projectId: job.projectId,
         eventType: EXPORT_EVENT_TYPE,
         quantity: 1,
       });
 
       await recordActivity({
-        userId: project.userId,
+        userId: input.requestedByUserId,
         projectId: job.projectId,
         eventType: "EXPORT_COMPLETED",
         payload: { exportId: job.id, source: job.source, format: job.format },
@@ -73,7 +71,7 @@ export class ProcessExportJobUseCase {
       const errorMessage = err instanceof Error ? err.message : "Export에 실패했습니다.";
       await this.exportRepository.updateResult(job.id, { status: "failed", errorMessage });
       await recordActivity({
-        userId: project.userId,
+        userId: input.requestedByUserId,
         projectId: job.projectId,
         eventType: "EXPORT_FAILED",
         payload: { exportId: job.id },
@@ -81,16 +79,15 @@ export class ProcessExportJobUseCase {
     }
   }
 
-  private async renderContent(job: ExportJob): Promise<RenderedFile> {
+  private async renderContent(job: ExportJob, brandName: string): Promise<RenderedFile> {
     if (job.source === "concept_board") {
       const board = await this.conceptBoardRepository.findByProjectId(job.projectId);
-      const brief = await this.brandBriefRepository.findByProjectId(job.projectId);
-      if (!board || !brief) {
-        throw new Error("Concept Board 또는 Brand Brief를 찾을 수 없습니다.");
+      if (!board) {
+        throw new Error("Concept Board를 찾을 수 없습니다.");
       }
       return this.renderer.renderConceptBoardPdf({
         data: board.currentVersion.data,
-        brandName: brief.currentVersion.data.brandName,
+        brandName,
         sections: job.sections,
         includeBrandInfo: job.includeBrandInfo,
         watermark: job.watermarked,

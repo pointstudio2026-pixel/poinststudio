@@ -1,5 +1,7 @@
 export interface EnqueueImageGenerationInput {
   generationVersionId: string;
+  /** Who actually triggered this attempt (owner or team member) -- carried through the job so ProcessGenerationJobUseCase records usage/activity against the real actor, not the project owner. */
+  requestedByUserId: string;
 }
 
 /**

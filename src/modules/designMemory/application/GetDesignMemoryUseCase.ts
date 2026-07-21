@@ -29,17 +29,17 @@ export class GetDesignMemoryUseCase {
         stylesById: new Map(),
         editPresetCounts: [],
         favoriteStyles: [],
-        briefSignals: [],
+        strategySignals: [],
         mockupCategoryCounts: [],
       });
     }
 
     const since = settings.resetAt ?? EPOCH;
 
-    const [styleCounts, editPresetCounts, briefSignals, mockupCategoryCounts, favoriteStyles] = await Promise.all([
+    const [styleCounts, editPresetCounts, strategySignals, mockupCategoryCounts, favoriteStyles] = await Promise.all([
       this.signalsRepository.topStyleSelections(input.userId, since, TOP_SIGNAL_LIMIT),
       this.signalsRepository.topEditPresets(input.userId, since, TOP_SIGNAL_LIMIT),
-      this.signalsRepository.listBrandBriefSignals(input.userId, since),
+      this.signalsRepository.listBrandStrategySignals(input.userId, since),
       this.signalsRepository.favoriteMockupCategories(input.userId),
       this.styleFavoriteRepository.listByUserId(input.userId),
     ]);
@@ -54,7 +54,7 @@ export class GetDesignMemoryUseCase {
       stylesById,
       editPresetCounts,
       favoriteStyles,
-      briefSignals,
+      strategySignals,
       mockupCategoryCounts,
     });
   }

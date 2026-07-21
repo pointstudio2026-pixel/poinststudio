@@ -38,4 +38,26 @@ describe("DeleteProjectUseCase", () => {
       deleteUseCase.execute({ projectId, userId: "someone-else" }),
     ).rejects.toBeInstanceOf(NotFoundError);
   });
+
+  it("rejects deleting a team-shared project even though the member can otherwise access it (삭제는 소유자 전용)", async () => {
+    const repo = new FakeProjectRepository();
+    const { projectId } = await new CreateProjectUseCase(repo).execute({
+      userId: "owner",
+      name: "Brand",
+    });
+    const project = repo.projects.find((p) => p.id === projectId)!;
+    project.sharedWithTeam = true;
+    repo.sharedMemberships.push({ projectId, userId: "team-member" });
+    const deleteUseCase = new DeleteProjectUseCase(repo);
+    const getUseCase = new GetProjectUseCase(repo);
+
+    // 팀원은 findByIdForUser로 이 프로젝트에 접근 가능하지만(공유됨)
+    await expect(getUseCase.execute({ projectId, userId: "team-member" })).resolves.toBeTruthy();
+    // 삭제는 여전히 거부되어야 한다.
+    await expect(
+      deleteUseCase.execute({ projectId, userId: "team-member" }),
+    ).rejects.toBeInstanceOf(NotFoundError);
+    // 그리고 실제로 삭제되지 않았어야 한다.
+    await expect(getUseCase.execute({ projectId, userId: "owner" })).resolves.toBeTruthy();
+  });
 });

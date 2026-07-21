@@ -1,7 +1,7 @@
 import type { DesignMemorySettings } from "@/modules/designMemory/domain/DesignMemory";
 import type { DesignMemorySettingsRepository } from "@/modules/designMemory/domain/DesignMemorySettingsRepository";
 import type {
-  BrandBriefSignalRow,
+  BrandStrategySignalRow,
   DesignMemorySignalsRepository,
   EditPresetCount,
   MockupCategoryCount,
@@ -41,7 +41,7 @@ export class FakeDesignMemorySettingsRepository implements DesignMemorySettingsR
 export class FakeDesignMemorySignalsRepository implements DesignMemorySignalsRepository {
   styleCounts: StyleSelectionCount[] = [];
   editPresetCounts: EditPresetCount[] = [];
-  briefSignals: BrandBriefSignalRow[] = [];
+  strategySignals: BrandStrategySignalRow[] = [];
   mockupCategoryCounts: MockupCategoryCount[] = [];
 
   async topStyleSelections(_userId: string, _since: Date, limit: number): Promise<StyleSelectionCount[]> {
@@ -52,8 +52,8 @@ export class FakeDesignMemorySignalsRepository implements DesignMemorySignalsRep
     return this.editPresetCounts.slice(0, limit);
   }
 
-  async listBrandBriefSignals(_userId: string, _since: Date): Promise<BrandBriefSignalRow[]> {
-    return this.briefSignals;
+  async listBrandStrategySignals(_userId: string, _since: Date): Promise<BrandStrategySignalRow[]> {
+    return this.strategySignals;
   }
 
   async favoriteMockupCategories(_userId: string): Promise<MockupCategoryCount[]> {

@@ -4,10 +4,11 @@ import { GetConceptBoardUseCase } from "@/modules/conceptBoards/application/GetC
 import { UpdateConceptBoardUseCase } from "@/modules/conceptBoards/application/UpdateConceptBoardUseCase";
 import { RestoreConceptBoardVersionUseCase } from "@/modules/conceptBoards/application/RestoreConceptBoardVersionUseCase";
 import { projectRepositoryInstance } from "@/modules/projects/container";
-import { brandBriefRepositoryInstance } from "@/modules/brandBriefs/container";
+import { interviewRepositoryInstance } from "@/modules/interviews/container";
 import { brandStrategyRepositoryInstance } from "@/modules/brandStrategies/container";
 import { styleRepositoryInstance, styleSelectionRepositoryInstance } from "@/modules/styles/container";
 import { generationRepositoryInstance } from "@/modules/generations/container";
+import { colorPaletteSelectionRepositoryInstance } from "@/modules/colorPalettes/container";
 
 export const conceptBoardRepositoryInstance = new PrismaConceptBoardRepository();
 const conceptBoardRepository = conceptBoardRepositoryInstance;
@@ -15,11 +16,12 @@ const conceptBoardRepository = conceptBoardRepositoryInstance;
 export const conceptBoardsContainer = {
   buildConceptBoardUseCase: new BuildConceptBoardUseCase(
     projectRepositoryInstance,
-    brandBriefRepositoryInstance,
+    interviewRepositoryInstance,
     brandStrategyRepositoryInstance,
     styleRepositoryInstance,
     styleSelectionRepositoryInstance,
     generationRepositoryInstance,
+    colorPaletteSelectionRepositoryInstance,
     conceptBoardRepository,
   ),
   getConceptBoardUseCase: new GetConceptBoardUseCase(projectRepositoryInstance, conceptBoardRepository),

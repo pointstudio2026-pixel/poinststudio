@@ -31,7 +31,9 @@ export interface EditHistoryEntryDto {
   generationId: string;
   sourceVersionId: string;
   sourceImageIndex: number;
-  presetKey: EditPresetKeyDto;
+  presetKey: EditPresetKeyDto | null;
+  /** 프리셋 대신 사용자가 대화형으로 직접 입력한 수정 지시. presetKey와 정확히 하나만 채워진다. */
+  customInstruction: string | null;
   resultVersionId: string;
   status: GenerationStatusDto;
   errorMessage: string | null;
@@ -44,11 +46,11 @@ export function createEdit(
   projectId: string,
   sourceVersionId: string,
   sourceImageIndex: number,
-  presetKey: EditPresetKeyDto,
+  input: { presetKey: EditPresetKeyDto } | { customInstruction: string },
 ) {
   return apiFetch<{ edit: EditHistoryEntryDto }>("/api/edits", {
     method: "POST",
-    body: JSON.stringify({ projectId, sourceVersionId, sourceImageIndex, presetKey }),
+    body: JSON.stringify({ projectId, sourceVersionId, sourceImageIndex, ...input }),
   });
 }
 

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createExport,
@@ -94,12 +93,9 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
     source === "concept_board" ? Boolean(boardData?.board) && sections.length > 0 : Boolean(sourceRefId);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-8">
-      <header className="flex items-center justify-between">
+    <div className="flex flex-col gap-6">
+      <header>
         <h1 className="text-xl font-semibold">Export Center</h1>
-        <Link href={`/projects/${projectId}`} className="text-sm underline">
-          프로젝트로
-        </Link>
       </header>
 
       <section className="rounded-md border border-neutral-200 p-4">
@@ -256,6 +252,6 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
           )}
         </ul>
       </section>
-    </main>
+    </div>
   );
 }

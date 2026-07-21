@@ -1,4 +1,3 @@
-import type { BrandBriefData } from "@/modules/brandBriefs/domain/BrandBrief";
 import type { BrandStrategyData } from "@/modules/brandStrategies/domain/BrandStrategy";
 import type { GeneratedImage } from "@/modules/generations/domain/Generation";
 import type { Style } from "@/modules/styles/domain/Style";
@@ -57,25 +56,33 @@ function dedupe(values: string[]): string[] {
 
 /**
  * "Concept Board는 단순 이미지 갤러리가 아니라 브랜드 제안서이다. 모든 요소는
- * Brand Brief와 Brand Strategy를 기준으로 구성한다." -- purely rule-based
- * aggregation of already-AI-derived upstream data (Brand Brief/Strategy/
- * Style/Generation), no additional AI call needed here.
+ * Brand Strategy를 기준으로 구성한다." -- purely rule-based aggregation of
+ * already-AI-derived upstream data (Interview/Strategy/Style/Generation),
+ * no additional AI call needed here.
  */
 export function composeConceptBoardData(input: {
-  brief: BrandBriefData;
+  answers: Record<string, string>;
   strategy: BrandStrategyData;
   primaryStyle: Style | null;
   secondaryStyles: Style[];
   latestGenerationImages: GeneratedImage[] | null;
+  /** 스타일 화면에서 미리 선택한 컬러(있으면 최우선 -- 실제 프롬프트와 100% 일치). */
+  selectedColorPalette: ColorSwatch[] | null;
+  /** 선택이 없을 때, 실제 생성된 히어로 이미지에서 뽑아낸 지배색. */
+  extractedColorPalette: ColorSwatch[] | null;
 }): ConceptBoardData {
-  const { brief, strategy } = input;
+  const { strategy, answers } = input;
+  const knowledge = strategy.brandKnowledge;
+  const brandName = answers.brandName ?? "";
+  const industry = answers.industry ?? "";
+
   const brandSummary =
-    `${brief.brandName}는 ${brief.industry} 분야에서 ${strategy.brandStrategy.brandArchetype} 정체성을 바탕으로, ` +
-    `${strategy.brandStrategy.toneAndManner} 톤으로 ${brief.primaryAudience || "타깃 고객"}에게 다가가는 브랜드입니다. ` +
-    `${brief.tagline}`;
+    `${brandName}는 ${industry} 분야에서 ${strategy.brandStrategy.brandArchetype} 정체성을 바탕으로, ` +
+    `${strategy.brandStrategy.toneAndManner} 톤으로 ${knowledge.audience || "타깃 고객"}에게 다가가는 브랜드입니다. ` +
+    `${knowledge.tagline}`;
 
   const styleKeywords = dedupe([
-    ...brief.keywords,
+    ...knowledge.keywords,
     ...(input.primaryStyle ? [input.primaryStyle.name] : []),
     ...input.secondaryStyles.map((s) => s.name),
   ]);
@@ -85,12 +92,15 @@ export function composeConceptBoardData(input: {
   return {
     heroImageUrl: images[0]?.url ?? null,
     brandSummary,
-    coreValues: brief.coreValues,
+    coreValues: knowledge.values,
     styleKeywords,
-    colorPalette: buildColorPalette(brief.preferredColor, brief.brandTone),
-    typographyDirection: brief.typographyDirection,
+    colorPalette:
+      input.selectedColorPalette ??
+      input.extractedColorPalette ??
+      buildColorPalette(knowledge.preferredColor, knowledge.tone),
+    typographyDirection: knowledge.typographyDirection,
     logoConceptImageUrls: images.slice(0, 3).map((img) => img.url),
-    designNotes: strategy.brandKnowledge.reasoningSummary,
+    designNotes: knowledge.reasoningSummary,
     sectionOrder: [...CONCEPT_BOARD_SECTIONS],
   };
 }

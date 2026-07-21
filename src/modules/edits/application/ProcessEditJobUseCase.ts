@@ -24,7 +24,11 @@ export class ProcessEditJobUseCase {
     private readonly imageGenerationProvider: ImageGenerationProvider,
   ) {}
 
-  async execute(input: { editHistoryId: string; isFinalAttempt: boolean }): Promise<void> {
+  async execute(input: {
+    editHistoryId: string;
+    isFinalAttempt: boolean;
+    requestedByUserId: string;
+  }): Promise<void> {
     const editEntry = await this.editHistoryRepository.getById(input.editHistoryId);
     if (!editEntry) return;
     const generation = await this.generationRepository.findById(editEntry.generationId);
@@ -52,8 +56,11 @@ export class ProcessEditJobUseCase {
     }
 
     try {
-      const preset = EDIT_PRESETS[editEntry.presetKey];
-      const editInstruction = `${promptVersion.userPrompt}\n\n추가 수정 지시: ${preset.instruction}`;
+      // presetKey/customInstruction 중 생성 시점에 정확히 하나만 채워지므로
+      // (CreateEditUseCase의 XOR 검증), 프리셋이 없으면 항상 자유 텍스트가
+      // 있다고 가정할 수 있다.
+      const instructionText = editEntry.customInstruction ?? EDIT_PRESETS[editEntry.presetKey!].instruction;
+      const editInstruction = `${promptVersion.userPrompt}\n\n추가 수정 지시: ${instructionText}`;
 
       const result = await this.imageGenerationProvider.edit({
         sourceImageUrl: sourceImage.url,
@@ -73,17 +80,18 @@ export class ProcessEditJobUseCase {
       const project = await this.projectRepository.findById(generation.projectId);
       if (project) {
         await this.recordUsageUseCase.execute({
-          userId: project.userId,
+          userId: input.requestedByUserId,
           projectId: generation.projectId,
           eventType: GENERATION_EVENT_TYPE,
           quantity: 1,
           costAmount: result.costAmount,
+          metadata: { source: "edit", provider: result.provider },
         });
         await recordActivity({
-          userId: project.userId,
+          userId: input.requestedByUserId,
           projectId: generation.projectId,
           eventType: "EDIT_COMPLETED",
-          payload: { editId: editEntry.id, presetKey: editEntry.presetKey },
+          payload: { editId: editEntry.id, presetKey: editEntry.presetKey, customInstruction: editEntry.customInstruction },
         });
       }
     } catch (err) {
@@ -107,7 +115,7 @@ export class ProcessEditJobUseCase {
       const project = await this.projectRepository.findById(generation.projectId);
       if (project) {
         await recordActivity({
-          userId: project.userId,
+          userId: input.requestedByUserId,
           projectId: generation.projectId,
           eventType: "EDIT_FAILED",
           payload: { editId: editEntry.id },

@@ -1,14 +1,19 @@
 import type { ProjectRepository } from "@/modules/projects/domain/ProjectRepository";
-import type { BrandStrategyRepository } from "@/modules/brandStrategies/domain/BrandStrategyRepository";
+import type { InterviewRepository } from "@/modules/interviews/domain/InterviewRepository";
 import type { StyleRepository } from "@/modules/styles/domain/StyleRepository";
 import type { StyleRecommendation } from "@/modules/styles/domain/Style";
-import { MAX_RECOMMENDATIONS, buildRecommendationReason, scoreStyle } from "@/modules/styles/domain/styleRules";
+import {
+  MAX_RECOMMENDATIONS,
+  buildRecommendationReason,
+  buildStyleCandidatesFromAnswers,
+  scoreStyle,
+} from "@/modules/styles/domain/styleRules";
 import { ConflictError, NotFoundError } from "@/shared/errors/AppError";
 
 export class RecommendStylesUseCase {
   constructor(
     private readonly projectRepository: ProjectRepository,
-    private readonly brandStrategyRepository: BrandStrategyRepository,
+    private readonly interviewRepository: InterviewRepository,
     private readonly styleRepository: StyleRepository,
   ) {}
 
@@ -18,23 +23,22 @@ export class RecommendStylesUseCase {
       throw new NotFoundError("프로젝트를 찾을 수 없습니다.", "PROJECT_NOT_FOUND");
     }
 
-    const strategy = await this.brandStrategyRepository.findByProjectId(input.projectId);
-    if (!strategy) {
+    const interview = await this.interviewRepository.findLatestByProjectId(input.projectId);
+    if (!interview || interview.status !== "completed") {
       throw new ConflictError(
-        "Brand Strategy를 먼저 생성해야 스타일을 추천받을 수 있습니다.",
-        "BRAND_STRATEGY_REQUIRED",
+        "Brand Interview를 먼저 완료해야 스타일을 추천받을 수 있습니다.",
+        "INTERVIEW_NOT_COMPLETED",
       );
     }
 
-    const { brandKnowledge, brandStrategy, styleCandidates } = strategy.currentVersion.data;
-    const candidateCategoryNames = styleCandidates.map((c) => c.name);
-    const keywordText = [
-      brandKnowledge.tone,
-      brandKnowledge.personality,
-      brandKnowledge.positioning,
-      brandKnowledge.values.join(" "),
-      brandStrategy.brandArchetype,
-    ].join(" ");
+    const answers = Object.fromEntries(
+      interview.answers.filter((a) => a.answer).map((a) => [a.questionKey, a.answer as string]),
+    );
+
+    const candidateCategoryNames = buildStyleCandidatesFromAnswers(answers);
+    const keywordText = [answers.purpose, answers.targetAudience, answers.industry, answers.desiredImpression]
+      .filter(Boolean)
+      .join(" ");
 
     const leafStyles = await this.styleRepository.list({ level: 3 });
     const scored = leafStyles

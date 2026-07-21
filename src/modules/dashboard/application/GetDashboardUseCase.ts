@@ -10,7 +10,7 @@ import { getRecentActivity, type ActivityLogEntry } from "@/shared/activity/acti
 import type { UserRole } from "@/shared/auth/jwt";
 
 export interface DashboardOutput {
-  projects: Project[];
+  projects: (Project & { isOwner: boolean })[];
   subscription: Subscription;
   usage: UsageSummary;
   recentActivity: ActivityLogEntry[];
@@ -40,6 +40,11 @@ export class GetDashboardUseCase {
       getRecentActivity(input.userId, 10),
     ]);
 
-    return { projects, subscription, usage, recentActivity };
+    return {
+      projects: projects.map((p) => ({ ...p, isOwner: p.userId === input.userId })),
+      subscription,
+      usage,
+      recentActivity,
+    };
   }
 }

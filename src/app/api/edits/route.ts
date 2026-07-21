@@ -5,12 +5,17 @@ import { requireUser } from "@/shared/auth/session";
 import { ValidationError } from "@/shared/errors/AppError";
 import { editsContainer } from "@/modules/edits/container";
 
-const bodySchema = z.object({
-  projectId: z.string().min(1),
-  sourceVersionId: z.string().min(1),
-  sourceImageIndex: z.number().int().min(0),
-  presetKey: z.string().min(1),
-});
+const bodySchema = z
+  .object({
+    projectId: z.string().min(1),
+    sourceVersionId: z.string().min(1),
+    sourceImageIndex: z.number().int().min(0),
+    presetKey: z.string().min(1).optional(),
+    customInstruction: z.string().min(1).max(500).optional(),
+  })
+  .refine((data) => Boolean(data.presetKey) !== Boolean(data.customInstruction), {
+    message: "presetKey 또는 customInstruction 중 하나만 지정해야 합니다.",
+  });
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,6 +32,8 @@ export async function POST(request: NextRequest) {
       sourceVersionId: parsed.data.sourceVersionId,
       sourceImageIndex: parsed.data.sourceImageIndex,
       presetKey: parsed.data.presetKey,
+      customInstruction: parsed.data.customInstruction,
+      userRole: session.role,
     });
 
     return apiSuccess({ edit }, { status: 202 });

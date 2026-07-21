@@ -60,6 +60,20 @@ describe("GetDashboardUseCase", () => {
     expect(result.projects).toEqual([]);
   });
 
+  it("marks isOwner false for a project shared in via a team (팀 공유 프로젝트 구분)", async () => {
+    const { useCase, projects, createProjectUseCase } = buildUseCase();
+    const { projectId } = await createProjectUseCase.execute({ userId: "owner", name: "Shared" });
+    const project = projects.projects.find((p) => p.id === projectId)!;
+    project.sharedWithTeam = true;
+    projects.sharedMemberships.push({ projectId, userId: "team-member" });
+
+    const ownerResult = await useCase.execute({ userId: "owner", role: "designer" });
+    expect(ownerResult.projects[0]?.isOwner).toBe(true);
+
+    const memberResult = await useCase.execute({ userId: "team-member", role: "designer" });
+    expect(memberResult.projects[0]?.isOwner).toBe(false);
+  });
+
   it("flags usage near the plan limit (사용량 한도 근접)", async () => {
     const { useCase, subs, usage } = buildUseCase();
     subs.setPlan("user-1", "free");

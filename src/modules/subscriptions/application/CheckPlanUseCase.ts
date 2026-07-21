@@ -1,5 +1,6 @@
 import type { SubscriptionRepository } from "@/modules/subscriptions/domain/SubscriptionRepository";
 import type { UsageRepository } from "@/modules/subscriptions/domain/UsageRepository";
+import type { UserRole } from "@/shared/auth/jwt";
 import { GENERATION_EVENT_TYPE, PLAN_LIMITS, type PlanCode } from "@/modules/subscriptions/domain/planLimits";
 import { getCurrentBillingPeriodStart } from "@/modules/subscriptions/domain/billingPeriod";
 
@@ -16,10 +17,15 @@ export class CheckPlanUseCase {
     private readonly usageRepository: UsageRepository,
   ) {}
 
-  async execute(input: { userId: string; eventType: string }): Promise<CheckPlanOutput> {
+  async execute(input: { userId: string; eventType: string; userRole?: UserRole }): Promise<CheckPlanOutput> {
     const subscription =
       (await this.subscriptionRepository.findByUserId(input.userId)) ??
       (await this.subscriptionRepository.createDefault(input.userId));
+
+    // 관리자 계정은 월간 생성 한도 없이 무제한 사용 (요청/QA/데모 목적).
+    if (input.userRole === "admin") {
+      return { allowed: true, planCode: subscription.planCode, used: 0, limit: Number.POSITIVE_INFINITY };
+    }
 
     if (input.eventType !== GENERATION_EVENT_TYPE) {
       // Only image generation has a defined limit so far (Task-013/014/016/019

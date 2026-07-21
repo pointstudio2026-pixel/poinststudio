@@ -5,6 +5,8 @@ import { ListProjectsUseCase } from "@/modules/projects/application/ListProjects
 import { UpdateProjectUseCase } from "@/modules/projects/application/UpdateProjectUseCase";
 import { DeleteProjectUseCase } from "@/modules/projects/application/DeleteProjectUseCase";
 import { GetProjectActivityUseCase } from "@/modules/projects/application/GetProjectActivityUseCase";
+import { SelectDeliverableTypeUseCase } from "@/modules/projects/application/SelectDeliverableTypeUseCase";
+import { ShareProjectWithTeamUseCase } from "@/modules/projects/application/ShareProjectWithTeamUseCase";
 
 export const projectRepositoryInstance = new PrismaProjectRepository();
 const projectRepository = projectRepositoryInstance;
@@ -16,4 +18,6 @@ export const projectsContainer = {
   updateProjectUseCase: new UpdateProjectUseCase(projectRepository),
   deleteProjectUseCase: new DeleteProjectUseCase(projectRepository),
   getProjectActivityUseCase: new GetProjectActivityUseCase(projectRepository),
+  selectDeliverableTypeUseCase: new SelectDeliverableTypeUseCase(projectRepository),
+  shareProjectWithTeamUseCase: new ShareProjectWithTeamUseCase(projectRepository),
 };

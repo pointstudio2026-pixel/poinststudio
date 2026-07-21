@@ -1,5 +1,5 @@
 import type { RefreshTokenRepository } from "@/modules/auth/domain/RefreshTokenRepository";
-import { signAccessToken, type UserRole } from "@/shared/auth/jwt";
+import { signAccessToken, type AdminTier, type UserRole } from "@/shared/auth/jwt";
 import { generateOpaqueToken, hashToken } from "@/shared/auth/opaqueToken";
 import { REFRESH_TOKEN_TTL_SECONDS } from "@/shared/auth/constants";
 import { AuthenticationError } from "@/shared/errors/AppError";
@@ -26,7 +26,7 @@ function refreshTokenExpiry(): Date {
 export class TokenService {
   constructor(private readonly refreshTokenRepository: RefreshTokenRepository) {}
 
-  async issueTokenPair(user: { id: string; role: UserRole }): Promise<TokenPair> {
+  async issueTokenPair(user: { id: string; role: UserRole; adminTier?: AdminTier | null }): Promise<TokenPair> {
     const rawRefreshToken = generateOpaqueToken();
     await this.refreshTokenRepository.create({
       userId: user.id,
@@ -35,7 +35,7 @@ export class TokenService {
     });
 
     return {
-      accessToken: signAccessToken({ sub: user.id, role: user.role }),
+      accessToken: signAccessToken({ sub: user.id, role: user.role, adminTier: user.adminTier ?? undefined }),
       refreshToken: rawRefreshToken,
     };
   }

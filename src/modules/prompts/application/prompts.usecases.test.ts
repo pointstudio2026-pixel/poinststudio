@@ -3,13 +3,21 @@ import { BuildPromptUseCase } from "@/modules/prompts/application/BuildPromptUse
 import { GetPromptUseCase } from "@/modules/prompts/application/GetPromptUseCase";
 import { GetPromptVersionsUseCase } from "@/modules/prompts/application/GetPromptVersionsUseCase";
 import { FakePromptRepository } from "@/modules/prompts/testing/fakes";
-import { FakeBrandBriefRepository } from "@/modules/brandBriefs/testing/fakes";
-import type { BrandBriefData } from "@/modules/brandBriefs/domain/BrandBrief";
+import { FakeInterviewRepository } from "@/modules/interviews/testing/fakes";
+import { GetOrStartInterviewUseCase } from "@/modules/interviews/application/GetOrStartInterviewUseCase";
+import { SaveAnswerUseCase } from "@/modules/interviews/application/SaveAnswerUseCase";
+import { CompleteInterviewUseCase } from "@/modules/interviews/application/CompleteInterviewUseCase";
+import { INTERVIEW_QUESTIONS } from "@/modules/interviews/domain/interviewQuestions";
 import { FakeBrandStrategyRepository } from "@/modules/brandStrategies/testing/fakes";
 import type { BrandStrategyData } from "@/modules/brandStrategies/domain/BrandStrategy";
 import { FakeStyleRepository, FakeStyleSelectionRepository } from "@/modules/styles/testing/fakes";
 import type { Style } from "@/modules/styles/domain/Style";
+import { FakeLogoStyleCategoryRepository, FakeLogoStyleSelectionRepository } from "@/modules/logoStyles/testing/fakes";
+import type { LogoStyleCategory } from "@/modules/logoStyles/domain/LogoStyle";
+import { FakeUserStyleCategoryRepository, FakeProjectUserStyleSelectionRepository } from "@/modules/userStyles/testing/fakes";
+import { FakeColorPaletteSelectionRepository } from "@/modules/colorPalettes/testing/fakes";
 import { CreateProjectUseCase } from "@/modules/projects/application/CreateProjectUseCase";
+import { SelectDeliverableTypeUseCase } from "@/modules/projects/application/SelectDeliverableTypeUseCase";
 import { FakeProjectRepository } from "@/modules/projects/testing/fakes";
 import { ConflictError, NotFoundError } from "@/shared/errors/AppError";
 
@@ -17,31 +25,9 @@ vi.mock("@/shared/activity/activityLogger", () => ({
   recordActivity: vi.fn().mockResolvedValue(undefined),
 }));
 
-const BRIEF_DATA: BrandBriefData = {
-  brandName: "Aster Bakery",
-  industry: "bakery",
-  tagline: "Aster Bakery — cozy",
-  description: "fresh bread",
-  mission: "fresh bread every morning",
-  vision: "trusted bakery",
-  coreValues: ["quality"],
-  positioning: "친근한 동네 베이커리",
-  primaryAudience: "local families",
-  secondaryAudience: "",
-  customerProblems: "",
-  desiredImpression: "cozy",
-  brandTone: "친근한",
-  brandPersonality: "친근한",
-  keywords: ["bakery"],
-  avoidKeywords: [],
-  preferredStyle: "미니멀",
-  preferredColor: "중성",
-  preferredSymbol: "심플",
-  typographyDirection: "산세리프",
-};
-
 const STRATEGY_DATA: BrandStrategyData = {
   brandKnowledge: {
+    industry: "bakery",
     mission: "fresh bread",
     vision: "trusted bakery",
     values: ["quality"],
@@ -52,6 +38,10 @@ const STRATEGY_DATA: BrandStrategyData = {
     visualDirection: "미니멀",
     confidenceNotes: "",
     reasoningSummary: "",
+    tagline: "Aster Bakery — cozy",
+    keywords: ["bakery"],
+    preferredColor: "중성",
+    typographyDirection: "산세리프",
   },
   brandStrategy: {
     positioning: "친근한 동네 베이커리",
@@ -65,7 +55,6 @@ const STRATEGY_DATA: BrandStrategyData = {
     recommendedTypography: [],
     recommendedSymbols: [],
   },
-  styleCandidates: [{ name: "Minimal", reason: "" }],
   confidenceScore: 0.7,
 };
 
@@ -80,41 +69,108 @@ const PRIMARY_STYLE: Style = {
   description: "설명",
 };
 
+const LOGO_STYLE_CATEGORY: LogoStyleCategory = {
+  id: "logo-style-1",
+  slug: "symbol-focused",
+  name: "심볼 중심",
+  description: "심플한 심볼을 중심으로 브랜드를 표현합니다.",
+  subStyles: ["미니멀심볼"],
+  keywords: ["심볼"],
+  sampleImageUrl: "/logo-styles/symbol.svg",
+  sortOrder: 1,
+};
+
 async function setup() {
   const projects = new FakeProjectRepository();
-  const briefs = new FakeBrandBriefRepository();
+  const interviews = new FakeInterviewRepository();
   const strategies = new FakeBrandStrategyRepository();
   const styles = new FakeStyleRepository();
   const selections = new FakeStyleSelectionRepository();
+  const logoStyleCategories = new FakeLogoStyleCategoryRepository();
+  const logoStyleSelections = new FakeLogoStyleSelectionRepository();
+  const userStyleCategories = new FakeUserStyleCategoryRepository();
+  const userStyleSelections = new FakeProjectUserStyleSelectionRepository();
+  const colorPaletteSelections = new FakeColorPaletteSelectionRepository();
   const prompts = new FakePromptRepository();
 
   const { projectId } = await new CreateProjectUseCase(projects).execute({ userId: "user-1", name: "Bakery" });
+  await new SelectDeliverableTypeUseCase(projects).execute({
+    projectId,
+    userId: "user-1",
+    deliverableType: "브랜딩 & 로고",
+  });
 
   return {
     projectId,
     projects,
-    briefs,
+    interviews,
     strategies,
     styles,
     selections,
+    logoStyleCategories,
+    logoStyleSelections,
+    userStyleCategories,
+    userStyleSelections,
+    colorPaletteSelections,
     prompts,
-    build: new BuildPromptUseCase(projects, briefs, strategies, styles, selections, prompts),
+    build: new BuildPromptUseCase(
+      projects,
+      interviews,
+      strategies,
+      styles,
+      selections,
+      logoStyleCategories,
+      logoStyleSelections,
+      userStyleCategories,
+      userStyleSelections,
+      colorPaletteSelections,
+      prompts,
+    ),
     get: new GetPromptUseCase(projects, prompts),
     getVersions: new GetPromptVersionsUseCase(projects, prompts),
   };
 }
 
 async function fullySetUp(
-  { projectId, briefs, strategies, styles, selections }: Awaited<ReturnType<typeof setup>>,
+  {
+    projectId,
+    projects,
+    interviews,
+    strategies,
+    styles,
+    selections,
+    logoStyleCategories,
+    logoStyleSelections,
+  }: Awaited<ReturnType<typeof setup>>,
 ) {
-  await briefs.createWithFirstVersion(projectId, BRIEF_DATA, "ai");
-  await strategies.createWithFirstVersion(projectId, STRATEGY_DATA, "", "medium");
+  const getOrStart = new GetOrStartInterviewUseCase(projects, interviews);
+  const saveAnswer = new SaveAnswerUseCase(projects, interviews);
+  const complete = new CompleteInterviewUseCase(projects, interviews);
+
+  await getOrStart.execute({ projectId, userId: "user-1" });
+  for (const q of INTERVIEW_QUESTIONS.filter((q) => q.required)) {
+    const answer = q.key === "brandName" ? "Aster Bakery" : `충분히 구체적인 ${q.key} 답변입니다.`;
+    await saveAnswer.execute({ projectId, userId: "user-1", questionKey: q.key, answer });
+  }
+  await complete.execute({ projectId, userId: "user-1" });
+
+  const strategy = await strategies.createWithFirstVersion(
+    projectId,
+    [STRATEGY_DATA, STRATEGY_DATA, STRATEGY_DATA],
+    "",
+    "medium",
+  );
+  await strategies.selectCandidate(strategy.id, 0);
+
   styles.styles = [PRIMARY_STYLE];
   await selections.create(projectId, PRIMARY_STYLE.id, []);
+
+  logoStyleCategories.categories = [LOGO_STYLE_CATEGORY];
+  await logoStyleSelections.create(projectId, [LOGO_STYLE_CATEGORY.id], LOGO_STYLE_CATEGORY.id);
 }
 
 describe("BuildPromptUseCase", () => {
-  it("blocks building until Brief, Strategy, and a Style selection all exist (PROMPT-001)", async () => {
+  it("blocks building until Interview, selected Strategy, and a Style selection all exist (PROMPT-001)", async () => {
     const ctx = await setup();
     await expect(ctx.build.execute({ projectId: ctx.projectId, userId: "user-1" })).rejects.toBeInstanceOf(
       ConflictError,

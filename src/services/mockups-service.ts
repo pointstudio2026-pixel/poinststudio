@@ -35,6 +35,12 @@ export interface MockupTemplateDto {
   placementArea: { xPct: number; yPct: number; widthPct: number; heightPct: number };
 }
 
+export interface MockupCategoryRecommendationDto {
+  category: MockupCategoryDto;
+  score: number;
+  reason: string;
+}
+
 export interface MockupProjectDto {
   id: string;
   projectId: string;
@@ -57,6 +63,13 @@ export function fetchMockupTemplates(category?: MockupCategoryDto) {
   return apiFetch<{ templates: MockupTemplateDto[]; categories: MockupCategoryDto[] }>(
     `/api/mockups/templates${qs}`,
   );
+}
+
+export function recommendMockupCategories(projectId: string) {
+  return apiFetch<{ recommendations: MockupCategoryRecommendationDto[] }>("/api/mockups/recommend", {
+    method: "POST",
+    body: JSON.stringify({ projectId }),
+  });
 }
 
 export function createMockup(

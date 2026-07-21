@@ -1,7 +1,12 @@
+/** 실제 인쇄/화면 비율에 대응하는 3가지 프리셋 -- 각 Provider 어댑터가 자기 API의 크기 표현으로 매핑한다. */
+export type SizePreset = "square" | "portrait" | "landscape";
+
 export interface ImageGenerationRequest {
   systemPrompt: string;
   userPrompt: string;
   count: number;
+  /** 생략 시 각 Provider가 "square"로 처리한다(기존 기본 동작과 동일). */
+  sizePreset?: SizePreset;
 }
 
 export interface GeneratedImageResult {

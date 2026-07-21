@@ -37,13 +37,18 @@ function refreshSession(): Promise<boolean> {
  */
 export async function apiFetch<T>(
   path: string,
-  init?: RequestInit,
+  init?: RequestInit & { skipAuthRedirect?: boolean },
   isRetry = false,
 ): Promise<T> {
+  const { skipAuthRedirect, ...fetchInit } = init ?? {};
+  // FormData 업로드는 Content-Type을 강제하면 안 된다 -- 브라우저가 자동으로
+  // multipart 경계(boundary)를 포함한 값을 설정해야 서버의 request.formData()가
+  // 파싱할 수 있다.
+  const isFormData = fetchInit.body instanceof FormData;
   const res = await fetch(path, {
-    ...init,
+    ...fetchInit,
     credentials: "include",
-    headers: { "Content-Type": "application/json", ...init?.headers },
+    headers: isFormData ? fetchInit.headers : { "Content-Type": "application/json", ...fetchInit.headers },
   });
 
   if (res.status === 401 && !isRetry) {
@@ -51,7 +56,7 @@ export async function apiFetch<T>(
     if (refreshed) {
       return apiFetch<T>(path, init, true);
     }
-    if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+    if (!skipAuthRedirect && typeof window !== "undefined" && window.location.pathname !== "/login") {
       window.location.href = "/login";
     }
   }

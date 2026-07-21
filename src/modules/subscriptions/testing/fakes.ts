@@ -43,6 +43,11 @@ export class FakeSubscriptionRepository implements SubscriptionRepository {
       });
     }
   }
+
+  async updatePlan(userId: string, planCode: PlanCode): Promise<Subscription> {
+    this.setPlan(userId, planCode);
+    return this.subscriptions.get(userId)!;
+  }
 }
 
 interface StoredUsage extends RecordUsageInput {

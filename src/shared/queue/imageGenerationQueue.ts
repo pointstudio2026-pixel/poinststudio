@@ -4,6 +4,7 @@ import type {
   EnqueueImageGenerationInput,
   ImageGenerationQueuePort,
 } from "@/modules/generations/domain/ImageGenerationQueuePort";
+import { logger } from "@/shared/logging/logger";
 
 export const IMAGE_GENERATION_QUEUE_NAME = "image-generation";
 
@@ -24,6 +25,14 @@ export const imageGenerationQueue =
 if (process.env.NODE_ENV !== "production") {
   globalForQueue.imageGenerationQueue = imageGenerationQueue;
 }
+
+// Same reasoning as the Worker's "error" listener (see imageGenerationWorker.ts):
+// an unhandled "error" event on this Queue's EventEmitter would crash the process.
+imageGenerationQueue.on("error", (err) => {
+  logger.error("Image generation queue connection error", {
+    details: err instanceof Error ? err.message : String(err),
+  });
+});
 
 /** BullMQ-backed implementation of the ImageGenerationQueuePort the application layer depends on. */
 export class BullMqImageGenerationQueue implements ImageGenerationQueuePort {

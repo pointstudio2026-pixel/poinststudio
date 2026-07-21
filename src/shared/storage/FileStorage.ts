@@ -9,7 +9,8 @@ export interface SavedFile {
  * (25_AIProviderArchitecture.md). No real Object Storage (S3/GCS)
  * credentials are configured for this MVP, so LocalFileStorage is the
  * only implementation; swapping in a real provider later only means
- * adding a new adapter here, not touching Export Center's Use Cases.
+ * adding a new adapter here, not touching any consumer's Use Cases
+ * (Export Center render output, User Styles reference image uploads, ...).
  */
 export interface FileStorage {
   save(key: string, data: Buffer, contentType: string): Promise<SavedFile>;

@@ -6,6 +6,7 @@ import { logger } from "@/shared/logging/logger";
 
 interface ImageGenerationJobData {
   generationVersionId: string;
+  requestedByUserId: string;
 }
 
 /**
@@ -24,6 +25,7 @@ export function startImageGenerationWorker(processUseCase: ProcessGenerationJobU
       const isFinalAttempt = job.attemptsMade + 1 >= maxAttempts;
       await processUseCase.execute({
         generationVersionId: job.data.generationVersionId,
+        requestedByUserId: job.data.requestedByUserId,
         isFinalAttempt,
       });
     },
@@ -34,6 +36,16 @@ export function startImageGenerationWorker(processUseCase: ProcessGenerationJobU
     logger.error("Image generation worker job failed", {
       jobId: job?.id,
       attemptsMade: job?.attemptsMade,
+      details: err instanceof Error ? err.message : String(err),
+    });
+  });
+
+  // BullMQ Workers are EventEmitters -- an unhandled "error" event (e.g. a
+  // transient Redis reconnect) throws and crashes the whole process, which
+  // orphans every job the worker currently holds a lock on ("active"
+  // forever, never picked back up). Must always have a listener.
+  worker.on("error", (err) => {
+    logger.error("Image generation worker connection error", {
       details: err instanceof Error ? err.message : String(err),
     });
   });

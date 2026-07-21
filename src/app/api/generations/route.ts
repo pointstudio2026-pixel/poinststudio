@@ -5,7 +5,10 @@ import { requireUser } from "@/shared/auth/session";
 import { ValidationError } from "@/shared/errors/AppError";
 import { generationsContainer } from "@/modules/generations/container";
 
-const bodySchema = z.object({ projectId: z.string().min(1) });
+const bodySchema = z.object({
+  projectId: z.string().min(1),
+  provider: z.enum(["openai", "gemini"]).optional(),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,6 +22,8 @@ export async function POST(request: NextRequest) {
     const version = await generationsContainer.createGenerationUseCase.execute({
       projectId: parsed.data.projectId,
       userId: session.sub,
+      provider: parsed.data.provider,
+      userRole: session.role,
     });
 
     return apiSuccess({ generation: version }, { status: 202 });

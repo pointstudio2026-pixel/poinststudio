@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   fetchConceptBoard,
@@ -12,6 +11,8 @@ import {
   type ConceptBoardSectionKeyDto,
 } from "@/services/concept-board-service";
 import { Spinner } from "@/components/Spinner";
+import { ImageLightbox } from "@/components/ImageLightbox";
+import { NextStepButton } from "@/features/workspace/NextStepButton";
 
 const SECTION_LABELS: Record<ConceptBoardSectionKeyDto, string> = {
   hero_image: "Hero Image",
@@ -39,6 +40,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
   );
   const [draft, setDraft] = useState("");
   const [showVersions, setShowVersions] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState<{ url: string; alt: string } | null>(null);
 
   async function handleGenerate() {
     setIsGenerating(true);
@@ -47,7 +49,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
       await generateConceptBoard(projectId);
       await queryClient.invalidateQueries({ queryKey: ["concept-board", projectId] });
     } catch (err) {
-      setGenerateError(err instanceof Error ? err.message : "Concept Board 생성에 실패했습니다.");
+      setGenerateError(err instanceof Error ? err.message : "컨셉 보드 생성에 실패했습니다.");
     } finally {
       setIsGenerating(false);
     }
@@ -84,7 +86,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex items-center justify-center py-24">
         <Spinner />
       </div>
     );
@@ -93,9 +95,9 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
   if (isError || !data) {
     const notGenerated = error instanceof Error && error.message.includes("생성되지 않았");
     return (
-      <main className="mx-auto flex min-h-screen max-w-xl flex-col items-center justify-center gap-4 p-8 text-center">
+      <div className="flex flex-col items-center gap-4 py-16 text-center">
         <h1 className="text-lg font-medium">
-          {notGenerated ? "아직 Concept Board가 없습니다" : "Concept Board를 불러오지 못했습니다"}
+          {notGenerated ? "아직 컨셉 보드가 없습니다" : "컨셉 보드를 불러오지 못했습니다"}
         </h1>
         <button
           type="button"
@@ -104,13 +106,10 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
           className="flex items-center gap-2 rounded-md bg-neutral-900 px-4 py-2 text-sm text-white disabled:opacity-50"
         >
           {isGenerating && <Spinner />}
-          Concept Board 생성하기
+          컨셉 보드 생성하기
         </button>
         {generateError && <p className="text-sm text-red-600">{generateError}</p>}
-        <Link href={`/projects/${projectId}`} className="text-sm underline">
-          프로젝트로 돌아가기
-        </Link>
-      </main>
+      </div>
     );
   }
 
@@ -118,18 +117,15 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
   const d = board.currentVersion.data;
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-8">
+    <div className="flex flex-col gap-6">
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold">Concept Board</h1>
+          <h1 className="text-xl font-semibold">컨셉 보드</h1>
           <p className="text-xs text-neutral-400">
             v{board.currentVersion.versionNumber} · {board.currentVersion.source === "ai" ? "AI 생성" : "사용자 수정"}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Link href={`/projects/${projectId}`} className="text-sm underline">
-            프로젝트로
-          </Link>
           <button
             type="button"
             onClick={() => setShowVersions(!showVersions)}
@@ -145,6 +141,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
           >
             {isGenerating ? "재생성 중..." : "다시 생성"}
           </button>
+          <NextStepButton projectId={projectId} currentStepKey="concept_board" />
         </div>
       </header>
 
@@ -203,8 +200,13 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
 
             {section === "hero_image" &&
               (d.heroImageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={d.heroImageUrl} alt="Hero" className="aspect-video w-full rounded-md object-cover" />
+                <div
+                  onClick={() => setLightboxImage({ url: d.heroImageUrl!, alt: "Hero" })}
+                  className="w-full cursor-pointer overflow-hidden rounded-md"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={d.heroImageUrl} alt="Hero" className="block h-auto w-full" />
+                </div>
               ) : (
                 <p className="text-sm text-neutral-400">아직 생성된 이미지가 없습니다.</p>
               ))}
@@ -276,8 +278,14 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
               <div className="grid grid-cols-3 gap-2">
                 {d.logoConceptImageUrls.length > 0 ? (
                   d.logoConceptImageUrls.map((url, i) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img key={i} src={url} alt={`Logo concept ${i + 1}`} className="aspect-square w-full rounded-md object-cover" />
+                    <div
+                      key={i}
+                      onClick={() => setLightboxImage({ url, alt: `Logo concept ${i + 1}` })}
+                      className="w-full cursor-pointer overflow-hidden rounded-md"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={url} alt={`Logo concept ${i + 1}`} className="block h-auto w-full" />
+                    </div>
                   ))
                 ) : (
                   <p className="text-sm text-neutral-400">아직 생성된 이미지가 없습니다.</p>
@@ -306,6 +314,10 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
           </section>
         ))}
       </div>
-    </main>
+
+      {lightboxImage && (
+        <ImageLightbox src={lightboxImage.url} alt={lightboxImage.alt} onClose={() => setLightboxImage(null)} />
+      )}
+    </div>
   );
 }

@@ -5,7 +5,7 @@ import { SessionBootstrap } from "@/features/auth/SessionBootstrap";
 
 export const metadata: Metadata = {
   title: "ASTER",
-  description: "Design Begins with Direction.",
+  description: "브랜드의 방향성에서 디자인이 시작됩니다.",
 };
 
 export default function RootLayout({

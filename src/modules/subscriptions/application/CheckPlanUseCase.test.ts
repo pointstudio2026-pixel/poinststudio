@@ -98,4 +98,20 @@ describe("CheckPlanUseCase", () => {
     const result = await useCase.execute({ userId: "user-1", eventType: "mockup_render" });
     expect(result.allowed).toBe(true);
   });
+
+  it("gives an admin unlimited generation regardless of usage (관리자 무제한)", async () => {
+    const subs = new FakeSubscriptionRepository();
+    const usage = new FakeUsageRepository();
+    subs.setPlan("admin-1", "free");
+    usage.seed(
+      { userId: "admin-1", eventType: GENERATION_EVENT_TYPE, quantity: PLAN_LIMITS.free.monthlyGenerationLimit * 10 },
+      new Date(),
+    );
+    const useCase = new CheckPlanUseCase(subs, usage);
+
+    const result = await useCase.execute({ userId: "admin-1", eventType: GENERATION_EVENT_TYPE, userRole: "admin" });
+
+    expect(result.allowed).toBe(true);
+    expect(result.limit).toBe(Number.POSITIVE_INFINITY);
+  });
 });

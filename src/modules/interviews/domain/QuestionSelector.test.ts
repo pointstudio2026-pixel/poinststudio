@@ -5,7 +5,8 @@ import {
   selectQuestions,
 } from "@/modules/interviews/domain/QuestionSelector";
 import { matchIndustryQuestions } from "@/modules/interviews/domain/industryQuestions";
-import { INTERVIEW_QUESTIONS } from "@/modules/interviews/domain/interviewQuestions";
+import { matchDeliverableTypeQuestions } from "@/modules/interviews/domain/deliverableTypeQuestions";
+import { INTERVIEW_QUESTIONS, OTHER_ANSWER_PREFIX } from "@/modules/interviews/domain/interviewQuestions";
 import type { Interview } from "@/modules/interviews/domain/Interview";
 
 function buildInterview(overrides: Partial<Interview> = {}): Interview {
@@ -46,7 +47,7 @@ describe("matchIndustryQuestions (업종별 질문 세트)", () => {
 describe("selectQuestions", () => {
   it("returns only the base questions before industry is answered", () => {
     const interview = buildInterview();
-    const questions = selectQuestions(interview);
+    const questions = selectQuestions(interview, null);
     expect(questions).toHaveLength(INTERVIEW_QUESTIONS.length);
   });
 
@@ -56,10 +57,50 @@ describe("selectQuestions", () => {
         { questionKey: "industry", questionText: "어떤 업종인가요?", answer: "카페", sequence: 1 },
       ],
     });
-    const questions = selectQuestions(interview);
+    const questions = selectQuestions(interview, null);
     const industryIdx = questions.findIndex((q) => q.key === "industry");
     expect(questions[industryIdx + 1]?.key).toBe("cafeAtmosphere");
     expect(questions).toHaveLength(INTERVIEW_QUESTIONS.length + 2);
+  });
+
+  it("inserts deliverable-type-specific questions right after brandName (작업물 유형별 질문)", () => {
+    const interview = buildInterview();
+    const questions = selectQuestions(interview, "포스터");
+    expect(questions[1]?.key).toBe("posterContext");
+    expect(questions).toHaveLength(
+      INTERVIEW_QUESTIONS.length + matchDeliverableTypeQuestions("포스터").length,
+    );
+  });
+
+  it("adds no extra question for 브랜딩 & 로고 or null (별도 단계로 깊이를 얻으므로)", () => {
+    const interview = buildInterview();
+    expect(selectQuestions(interview, "브랜딩 & 로고")).toHaveLength(INTERVIEW_QUESTIONS.length);
+    expect(selectQuestions(interview, null)).toHaveLength(INTERVIEW_QUESTIONS.length);
+  });
+
+  it("combines a deliverable-type question with an industry question correctly (이중 스플라이스)", () => {
+    const interview = buildInterview({
+      answers: [
+        { questionKey: "industry", questionText: "어떤 업종인가요?", answer: "카페", sequence: 1 },
+      ],
+    });
+    const questions = selectQuestions(interview, "포스터");
+    expect(questions.map((q) => q.key)).toEqual([
+      "brandName",
+      "posterContext",
+      "posterRequiredElements",
+      "deliverableOrientation",
+      "deliverableImageStyle",
+      "deliverableBackgroundStyle",
+      "deliverableAvoidElements",
+      "industry",
+      "cafeAtmosphere",
+      "cafeSignatureMenu",
+      "purpose",
+      "targetAudience",
+      "desiredImpression",
+      "additionalNotes",
+    ]);
   });
 
   it("appends persisted follow-up questions at the end, in order", () => {
@@ -73,36 +114,48 @@ describe("selectQuestions", () => {
         },
       ],
     });
-    const questions = selectQuestions(interview);
+    const questions = selectQuestions(interview, null);
     expect(questions.at(-1)?.key).toBe("followUp_purpose");
     expect(questions.at(-1)?.required).toBe(true);
   });
 });
 
 describe("findWeakAnswer (신뢰도가 낮으면 보충 질문)", () => {
-  it("flags a very short required answer as weak", () => {
-    const questions = selectQuestions(buildInterview());
-    const answers = [{ questionKey: "purpose", questionText: "x", answer: "그냥", sequence: 2 }];
+  // 이번 전환 후 base 질문 세트에는 필수 textarea가 하나도 남지 않는다 --
+  // 대신 select+allowOther 질문에서 "기타(직접 입력)"를 고른 자유 텍스트가
+  // 너무 짧을 때를 검사한다("purpose"는 multiple+allowOther).
+  it("flags a short '기타(직접 입력)' free-text answer as weak", () => {
+    const questions = selectQuestions(buildInterview(), null);
+    const answers = [
+      { questionKey: "purpose", questionText: "x", answer: `${OTHER_ANSWER_PREFIX}음`, sequence: 2 },
+    ];
     const weak = findWeakAnswer(questions, answers);
     expect(weak?.key).toBe("purpose");
+    expect(weak?.answer).toBe("음");
+  });
+
+  it("does not flag a plain closed-option answer, however short (닫힌 보기는 검사 대상 아님)", () => {
+    const questions = selectQuestions(buildInterview(), null);
+    const answers = [{ questionKey: "purpose", questionText: "x", answer: "창업/오픈", sequence: 2 }];
+    expect(findWeakAnswer(questions, answers)).toBeNull();
   });
 
   it("does not re-flag a question that already received a follow-up (같은 질문 반복 금지)", () => {
-    const questions = selectQuestions(buildInterview());
+    const questions = selectQuestions(buildInterview(), null);
     const answers = [
-      { questionKey: "purpose", questionText: "x", answer: "그냥", sequence: 2 },
+      { questionKey: "purpose", questionText: "x", answer: `${OTHER_ANSWER_PREFIX}음`, sequence: 2 },
       { questionKey: "followUp_purpose", questionText: "더 알려주세요", answer: "", sequence: 100 },
     ];
     expect(findWeakAnswer(questions, answers)).toBeNull();
   });
 
-  it("does not flag a sufficiently detailed answer", () => {
-    const questions = selectQuestions(buildInterview());
+  it("does not flag a sufficiently detailed '기타' answer", () => {
+    const questions = selectQuestions(buildInterview(), null);
     const answers = [
       {
         questionKey: "purpose",
         questionText: "x",
-        answer: "이 브랜드는 신선한 재료로 만든 빵을 지역 주민들에게 제공하는 것을 목표로 합니다.",
+        answer: `${OTHER_ANSWER_PREFIX}지역 주민들에게 신선한 빵을 매일 제공하기 위해 시작했습니다.`,
         sequence: 2,
       },
     ];
@@ -112,7 +165,7 @@ describe("findWeakAnswer (신뢰도가 낮으면 보충 질문)", () => {
 
 describe("getMissingRequiredQuestions", () => {
   it("lists required questions with no answer yet", () => {
-    const questions = selectQuestions(buildInterview());
+    const questions = selectQuestions(buildInterview(), null);
     const missing = getMissingRequiredQuestions(questions, []);
     expect(missing.length).toBeGreaterThan(0);
   });

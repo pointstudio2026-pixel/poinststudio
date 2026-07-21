@@ -7,8 +7,8 @@ import { ProcessGenerationJobUseCase } from "@/modules/generations/application/P
 import { projectRepositoryInstance } from "@/modules/projects/container";
 import { promptRepositoryInstance, promptsContainer } from "@/modules/prompts/container";
 import { subscriptionsContainer } from "@/modules/subscriptions/container";
+import { authContainer } from "@/modules/auth/container";
 import { BullMqImageGenerationQueue } from "@/shared/queue/imageGenerationQueue";
-import { resolveImageGenerationProvider } from "@/shared/ai/imageGenerationRouter";
 import { startImageGenerationWorker } from "@/workers/imageGenerationWorker";
 
 export const generationRepositoryInstance = new PrismaGenerationRepository();
@@ -21,6 +21,7 @@ export const generationsContainer = {
     promptRepositoryInstance,
     promptsContainer.buildPromptUseCase,
     subscriptionsContainer.checkPlanUseCase,
+    authContainer.ensureEmailVerifiedUseCase,
     generationRepository,
     queue,
   ),
@@ -40,7 +41,6 @@ const processGenerationJobUseCase = new ProcessGenerationJobUseCase(
   promptRepositoryInstance,
   generationRepository,
   subscriptionsContainer.recordUsageUseCase,
-  resolveImageGenerationProvider(),
 );
 
 // MVP monolith simplification: auto-start the Worker in-process instead of

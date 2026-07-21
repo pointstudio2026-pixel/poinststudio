@@ -6,12 +6,15 @@ import { PrismaRefreshTokenRepository } from "@/modules/auth/infrastructure/Pris
 import { Argon2PasswordHasher } from "@/modules/auth/infrastructure/Argon2PasswordHasher";
 import { TokenService } from "@/modules/auth/application/TokenService";
 import { POST as createProjectHandler } from "@/app/api/projects/route";
+import { POST as selectDeliverableTypeHandler } from "@/app/api/projects/[id]/deliverable-type/route";
 import { GET as getInterviewHandler } from "@/app/api/interview/[projectId]/route";
 import { POST as saveAnswerHandler } from "@/app/api/interview/answer/route";
 import { POST as completeInterviewHandler } from "@/app/api/interview/complete/route";
-import { POST as generateBriefHandler } from "@/app/api/brand-brief/generate/route";
+import { POST as recommendStylesHandler } from "@/app/api/styles/recommend/route";
+import { POST as selectStyleHandler } from "@/app/api/styles/select/route";
 import { POST as executeAsterBrainHandler } from "@/app/api/aster-brain/execute/route";
 import { POST as rebuildAsterBrainHandler } from "@/app/api/aster-brain/rebuild/route";
+import { POST as selectAsterBrainHandler } from "@/app/api/aster-brain/select/route";
 import { GET as getAsterBrainHandler } from "@/app/api/aster-brain/[projectId]/route";
 import { INTERVIEW_QUESTIONS } from "@/modules/interviews/domain/interviewQuestions";
 
@@ -44,10 +47,15 @@ function postRequest(path: string, body: unknown, cookie?: string) {
   });
 }
 
-async function createProjectWithBrandBrief(cookie: string) {
+async function createProjectWithSelectedStyle(cookie: string) {
   const createRes = await createProjectHandler(postRequest("/api/projects", { name: "Brand" }, cookie));
   const { data } = await createRes.json();
   const projectId = data.projectId as string;
+
+  await selectDeliverableTypeHandler(
+    postRequest(`/api/projects/${projectId}/deliverable-type`, { deliverableType: "브랜딩 & 로고" }, cookie),
+    { params: Promise.resolve({ id: projectId }) },
+  );
 
   await getInterviewHandler(
     new NextRequest(`http://localhost/api/interview/${projectId}`, { headers: { cookie } }),
@@ -59,28 +67,36 @@ async function createProjectWithBrandBrief(cookie: string) {
     );
   }
   await completeInterviewHandler(postRequest("/api/interview/complete", { projectId }, cookie));
-  await generateBriefHandler(postRequest("/api/brand-brief/generate", { projectId }, cookie));
+
+  const recommendRes = await recommendStylesHandler(postRequest("/api/styles/recommend", { projectId }, cookie));
+  const { data: recommendData } = await recommendRes.json();
+  const styleId = recommendData.recommendations[0].style.id as string;
+  await selectStyleHandler(
+    postRequest("/api/styles/select", { projectId, primaryStyleId: styleId, secondaryStyleIds: [] }, cookie),
+  );
 
   return projectId;
 }
 
 describe("Aster Brain API routes", () => {
-  it("executes analysis after a Brand Brief exists (정상 분석)", async () => {
+  it("executes analysis after Interview + Style selection exist (정상 분석)", async () => {
     const { cookie } = await createSessionCookie();
-    const projectId = await createProjectWithBrandBrief(cookie);
+    const projectId = await createProjectWithSelectedStyle(cookie);
 
     const res = await executeAsterBrainHandler(postRequest("/api/aster-brain/execute", { projectId }, cookie));
     const body = await res.json();
 
     expect(res.status).toBe(201);
     expect(body.data.strategy.currentVersion.versionNumber).toBe(1);
+    expect(body.data.strategy.currentVersion.candidates).toHaveLength(3);
+    expect(body.data.strategy.currentVersion.selectedIndex).toBeNull();
     expect(body.data.strategy.currentVersion.data.brandKnowledge.mission).toBeTruthy();
 
     const project = await prisma.project.findUnique({ where: { id: projectId } });
-    expect(project?.currentStep).toBe("style");
+    expect(project?.currentStep).toBe("brand_strategy");
   });
 
-  it("rejects analysis before a Brand Brief exists (Brand Brief 누락)", async () => {
+  it("rejects analysis before a Style is selected (스타일 선택 누락)", async () => {
     const { cookie } = await createSessionCookie();
     const createRes = await createProjectHandler(postRequest("/api/projects", { name: "Brand" }, cookie));
     const { data } = await createRes.json();
@@ -91,9 +107,25 @@ describe("Aster Brain API routes", () => {
     expect(res.status).toBe(409);
   });
 
-  it("rebuild always creates a new version (재분석)", async () => {
+  it("selecting a candidate advances the project to the generation step (전략 선택)", async () => {
     const { cookie } = await createSessionCookie();
-    const projectId = await createProjectWithBrandBrief(cookie);
+    const projectId = await createProjectWithSelectedStyle(cookie);
+    await executeAsterBrainHandler(postRequest("/api/aster-brain/execute", { projectId }, cookie));
+
+    const selectRes = await selectAsterBrainHandler(
+      postRequest("/api/aster-brain/select", { projectId, candidateIndex: 0 }, cookie),
+    );
+    const selectBody = await selectRes.json();
+    expect(selectRes.status).toBe(201);
+    expect(selectBody.data.strategy.currentVersion.selectedIndex).toBe(0);
+
+    const project = await prisma.project.findUnique({ where: { id: projectId } });
+    expect(project?.currentStep).toBe("logo_style");
+  });
+
+  it("rebuild always creates a new version with a fresh candidate set (재분석)", async () => {
+    const { cookie } = await createSessionCookie();
+    const projectId = await createProjectWithSelectedStyle(cookie);
     await executeAsterBrainHandler(postRequest("/api/aster-brain/execute", { projectId }, cookie));
 
     const rebuildRes = await rebuildAsterBrainHandler(
@@ -101,6 +133,7 @@ describe("Aster Brain API routes", () => {
     );
     const rebuildBody = await rebuildRes.json();
     expect(rebuildBody.data.strategy.currentVersion.versionNumber).toBe(2);
+    expect(rebuildBody.data.strategy.currentVersion.selectedIndex).toBeNull();
 
     const getRes = await getAsterBrainHandler(
       new NextRequest(`http://localhost/api/aster-brain/${projectId}`, { headers: { cookie } }),
@@ -113,7 +146,7 @@ describe("Aster Brain API routes", () => {
   it("rejects access from a user who doesn't own the project (권한 없는 접근)", async () => {
     const owner = await createSessionCookie();
     const other = await createSessionCookie();
-    const projectId = await createProjectWithBrandBrief(owner.cookie);
+    const projectId = await createProjectWithSelectedStyle(owner.cookie);
     await executeAsterBrainHandler(postRequest("/api/aster-brain/execute", { projectId }, owner.cookie));
 
     const res = await getAsterBrainHandler(

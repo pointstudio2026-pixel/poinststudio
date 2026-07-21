@@ -11,8 +11,9 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search") ?? undefined;
     const levelParam = searchParams.get("level");
     const level = levelParam ? Number(levelParam) : undefined;
+    const parentId = searchParams.get("parentId") ?? undefined;
 
-    const result = await stylesContainer.listStylesUseCase.execute({ category, search, level });
+    const result = await stylesContainer.listStylesUseCase.execute({ category, search, level, parentId });
     return apiSuccess(result);
   } catch (err) {
     return toApiError(err);

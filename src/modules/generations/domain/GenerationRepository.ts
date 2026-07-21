@@ -2,6 +2,7 @@ import type { GeneratedImage, Generation, GenerationStatus, GenerationVersion } 
 
 export interface CreateGenerationVersionInput {
   promptVersionId: string;
+  providerPreference?: string | null;
 }
 
 export interface UpdateGenerationVersionResultInput {

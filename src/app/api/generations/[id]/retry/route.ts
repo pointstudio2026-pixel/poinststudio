@@ -15,6 +15,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     const version = await generationsContainer.retryGenerationUseCase.execute({
       generationVersionId,
       userId: session.sub,
+      userRole: session.role,
     });
     return apiSuccess({ generation: version }, { status: 202 });
   } catch (err) {

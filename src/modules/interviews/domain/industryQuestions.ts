@@ -15,10 +15,14 @@ const INDUSTRY_QUESTION_SETS: IndustryQuestionSet[] = [
       {
         key: "cafeAtmosphere",
         text: "어떤 분위기를 전달하고 싶습니까?",
-        type: "textarea",
+        type: "select",
         required: true,
+        multiple: true,
+        allowOther: true,
+        options: ["아늑한", "모던한", "빈티지", "미니멀", "화려한", "친환경·내추럴"],
       },
       {
+        // 대표 메뉴명은 매장마다 유일한 고유 명사라 그대로 자유 입력 유지.
         key: "cafeSignatureMenu",
         text: "대표 메뉴는 무엇입니까?",
         type: "text",
@@ -32,8 +36,11 @@ const INDUSTRY_QUESTION_SETS: IndustryQuestionSet[] = [
       {
         key: "hospitalTrustFactor",
         text: "가장 중요한 신뢰 요소는 무엇입니까?",
-        type: "textarea",
+        type: "select",
         required: true,
+        multiple: true,
+        allowOther: true,
+        options: ["전문성/의료진 경력", "청결/위생", "첨단 장비/기술", "친절한 상담", "편리한 접근성/시설", "합리적인 비용"],
       },
       {
         key: "hospitalPatientFocus",
@@ -49,8 +56,11 @@ const INDUSTRY_QUESTION_SETS: IndustryQuestionSet[] = [
       {
         key: "startupCoreFeature",
         text: "제품/서비스의 핵심 기능은 무엇인가요?",
-        type: "textarea",
+        type: "select",
         required: true,
+        multiple: true,
+        allowOther: true,
+        options: ["자동화/효율화", "데이터 분석", "협업/커뮤니케이션", "결제/거래", "AI/개인화 추천", "콘텐츠 제작·관리"],
       },
       {
         key: "startupCustomerType",

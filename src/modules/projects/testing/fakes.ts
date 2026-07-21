@@ -3,9 +3,21 @@ import type { ListProjectsOptions, ProjectRepository } from "@/modules/projects/
 
 export class FakeProjectRepository implements ProjectRepository {
   projects: Project[] = [];
+  /** Test-only: push {projectId, userId} to simulate a team member with access to a shared project. */
+  sharedMemberships: { projectId: string; userId: string }[] = [];
+
+  private isAccessible(project: Project, userId: string) {
+    if (project.userId === userId) return true;
+    return (
+      project.sharedWithTeam &&
+      this.sharedMemberships.some((m) => m.projectId === project.id && m.userId === userId)
+    );
+  }
 
   async findByIdForUser(projectId: string, userId: string) {
-    return this.projects.find((p) => p.id === projectId && p.userId === userId) ?? null;
+    const project = this.projects.find((p) => p.id === projectId);
+    if (!project || !this.isAccessible(project, userId)) return null;
+    return project;
   }
 
   async findById(projectId: string) {
@@ -15,7 +27,7 @@ export class FakeProjectRepository implements ProjectRepository {
   async listForUser(userId: string, options?: ListProjectsOptions) {
     const limit = options?.limit ?? (options?.search ? 50 : 10);
     return this.projects
-      .filter((p) => p.userId === userId)
+      .filter((p) => this.isAccessible(p, userId))
       .filter((p) =>
         options?.search
           ? p.name.toLowerCase().includes(options.search.toLowerCase())

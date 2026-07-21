@@ -8,8 +8,9 @@ export class FakeStyleRepository implements StyleRepository {
 
   async list(filter: StyleListFilter): Promise<Style[]> {
     return this.styles.filter((s) => {
-      if (filter.level && s.level !== filter.level) return false;
+      if (filter.level !== undefined && s.level !== filter.level) return false;
       if (filter.category && s.category !== filter.category) return false;
+      if (filter.parentId && s.parentId !== filter.parentId) return false;
       if (filter.search) {
         const term = filter.search.toLowerCase();
         const matchesName = s.name.toLowerCase().includes(term);

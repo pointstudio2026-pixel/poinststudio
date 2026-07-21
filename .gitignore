@@ -29,5 +29,6 @@ npm-debug.log*
 # local docker volumes
 /.docker-data
 
-# local file storage (Export Center) -- stand-in for real Object Storage
+# local file storage (Export Center render output, User Styles uploads) -- stand-in for real Object Storage
+/var/storage
 /var/exports

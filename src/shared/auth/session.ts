@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ACCESS_TOKEN_COOKIE } from "@/shared/auth/cookies";
-import { verifyAccessToken, type AccessTokenPayload } from "@/shared/auth/jwt";
+import { verifyAccessToken, type AccessTokenPayload, type AdminTier } from "@/shared/auth/jwt";
 import { AuthenticationError, AuthorizationError } from "@/shared/errors/AppError";
 
 /**
@@ -28,6 +28,20 @@ export function requireAdmin(request: NextRequest): AccessTokenPayload {
   const session = requireUser(request);
   if (session.role !== "admin") {
     throw new AuthorizationError("관리자 권한이 필요합니다.", "ADMIN-001");
+  }
+  return session;
+}
+
+/**
+ * 3단계 관리자 권한(Super Admin/Manager/Support) 중 지정된 등급만 통과시킨다
+ * -- requireAdmin()으로 "관리자인지"를 먼저 확인한 뒤, 그중에서도
+ * `allowed`에 속한 등급인지 추가로 검사한다. 예: 회원 삭제는
+ * `requireAdminTier(request, ["super_admin"])`.
+ */
+export function requireAdminTier(request: NextRequest, allowed: AdminTier[]): AccessTokenPayload {
+  const session = requireAdmin(request);
+  if (!session.adminTier || !allowed.includes(session.adminTier)) {
+    throw new AuthorizationError("이 작업을 수행할 권한이 없습니다.", "ADMIN-002");
   }
   return session;
 }

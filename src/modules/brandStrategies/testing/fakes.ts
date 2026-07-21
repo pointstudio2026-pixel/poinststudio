@@ -24,7 +24,7 @@ export class FakeBrandStrategyRepository implements BrandStrategyRepository {
 
   async createWithFirstVersion(
     projectId: string,
-    data: BrandStrategyData,
+    candidates: BrandStrategyData[],
     reasoningSummary: string,
     confidenceLevel: ConfidenceLevel,
   ): Promise<BrandStrategy> {
@@ -34,7 +34,9 @@ export class FakeBrandStrategyRepository implements BrandStrategyRepository {
       id: `strategy-version-${this.nextVersionId++}`,
       brandStrategyId: id,
       versionNumber: 1,
-      data,
+      data: candidates[0]!,
+      candidates,
+      selectedIndex: null,
       reasoningSummary,
       confidenceLevel,
       createdAt: new Date(),
@@ -45,7 +47,7 @@ export class FakeBrandStrategyRepository implements BrandStrategyRepository {
 
   async addVersion(
     brandStrategyId: string,
-    data: BrandStrategyData,
+    candidates: BrandStrategyData[],
     reasoningSummary: string,
     confidenceLevel: ConfidenceLevel,
   ): Promise<BrandStrategy> {
@@ -59,13 +61,29 @@ export class FakeBrandStrategyRepository implements BrandStrategyRepository {
       id: `strategy-version-${this.nextVersionId++}`,
       brandStrategyId,
       versionNumber: lastVersionNumber + 1,
-      data,
+      data: candidates[0]!,
+      candidates,
+      selectedIndex: null,
       reasoningSummary,
       confidenceLevel,
       createdAt: new Date(),
     };
     this.versions.push(version);
     return { id: brandStrategyId, projectId: strategy.projectId, currentVersion: version };
+  }
+
+  async selectCandidate(brandStrategyId: string, candidateIndex: number): Promise<BrandStrategy> {
+    const strategy = this.strategies.get(brandStrategyId);
+    if (!strategy) throw new Error("strategy not found");
+    const current = this.versions
+      .filter((v) => v.brandStrategyId === brandStrategyId)
+      .sort((a, b) => b.versionNumber - a.versionNumber)[0];
+    if (!current) throw new Error("no current version");
+    const selected = current.candidates[candidateIndex]!;
+    current.data = selected;
+    current.selectedIndex = candidateIndex;
+    current.reasoningSummary = selected.brandKnowledge.reasoningSummary;
+    return { id: brandStrategyId, projectId: strategy.projectId, currentVersion: current };
   }
 
   async listVersions(brandStrategyId: string): Promise<BrandStrategyVersion[]> {

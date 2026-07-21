@@ -12,6 +12,8 @@ export interface GenerationVersion {
   promptVersionId: string;
   status: GenerationStatus;
   provider: string | null;
+  /** User's requested provider ("openai"|"gemini") at creation time -- distinct from `provider`, which is the actual provider that produced the result. */
+  providerPreference: string | null;
   images: GeneratedImage[];
   errorMessage: string | null;
   costAmount: number | null;

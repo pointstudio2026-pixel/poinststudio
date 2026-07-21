@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
       generationVersionId: parsed.data.generationVersionId,
       sourceImageIndex: parsed.data.sourceImageIndex,
       templateId: parsed.data.templateId,
+      userRole: session.role,
     });
 
     return apiSuccess({ mockup }, { status: 202 });

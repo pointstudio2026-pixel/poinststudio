@@ -4,7 +4,7 @@ export interface StyleDto {
   id: string;
   name: string;
   slug: string;
-  level: 1 | 2 | 3;
+  level: 0 | 1 | 2 | 3;
   parentId: string | null;
   category: string;
   keywords: string[];
@@ -26,11 +26,14 @@ export interface StyleSelectionDto {
   createdAt: string;
 }
 
-export function fetchStyles(params: { category?: string; search?: string; level?: number } = {}) {
+export function fetchStyles(
+  params: { category?: string; search?: string; level?: number; parentId?: string } = {},
+) {
   const query = new URLSearchParams();
   if (params.category) query.set("category", params.category);
   if (params.search) query.set("search", params.search);
   if (params.level) query.set("level", String(params.level));
+  if (params.parentId) query.set("parentId", params.parentId);
   const qs = query.toString();
   return apiFetch<{ styles: StyleDto[]; categories: StyleDto[] }>(`/api/styles${qs ? `?${qs}` : ""}`);
 }

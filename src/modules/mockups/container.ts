@@ -6,7 +6,9 @@ import { GetMockupTemplatesUseCase } from "@/modules/mockups/application/GetMock
 import { ToggleMockupFavoriteUseCase } from "@/modules/mockups/application/ToggleMockupFavoriteUseCase";
 import { DeleteMockupUseCase } from "@/modules/mockups/application/DeleteMockupUseCase";
 import { ProcessMockupJobUseCase } from "@/modules/mockups/application/ProcessMockupJobUseCase";
+import { RecommendMockupCategoriesUseCase } from "@/modules/mockups/application/RecommendMockupCategoriesUseCase";
 import { projectRepositoryInstance } from "@/modules/projects/container";
+import { interviewRepositoryInstance } from "@/modules/interviews/container";
 import { generationRepositoryInstance } from "@/modules/generations/container";
 import { subscriptionsContainer } from "@/modules/subscriptions/container";
 import { BullMqMockupRenderQueue } from "@/shared/queue/mockupRenderQueue";
@@ -29,6 +31,10 @@ export const mockupsContainer = {
   ),
   getMockupsUseCase: new GetMockupsUseCase(projectRepositoryInstance, mockupRepository),
   getMockupTemplatesUseCase: new GetMockupTemplatesUseCase(templateRepository),
+  recommendMockupCategoriesUseCase: new RecommendMockupCategoriesUseCase(
+    projectRepositoryInstance,
+    interviewRepositoryInstance,
+  ),
   toggleMockupFavoriteUseCase: new ToggleMockupFavoriteUseCase(projectRepositoryInstance, mockupRepository),
   deleteMockupUseCase: new DeleteMockupUseCase(projectRepositoryInstance, mockupRepository),
 };

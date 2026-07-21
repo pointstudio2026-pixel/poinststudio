@@ -22,7 +22,7 @@ describe("composeDesignMemoryProfile", () => {
       stylesById: new Map([["style-1", STYLE]]),
       editPresetCounts: [],
       favoriteStyles: [],
-      briefSignals: [],
+      strategySignals: [],
       mockupCategoryCounts: [],
     });
 
@@ -39,7 +39,7 @@ describe("composeDesignMemoryProfile", () => {
       stylesById: new Map(),
       editPresetCounts: [],
       favoriteStyles: [],
-      briefSignals: [],
+      strategySignals: [],
       mockupCategoryCounts: [],
     });
 
@@ -58,7 +58,7 @@ describe("composeDesignMemoryProfile", () => {
       stylesById: new Map([["style-1", STYLE]]),
       editPresetCounts: [],
       favoriteStyles: [],
-      briefSignals: [],
+      strategySignals: [],
       mockupCategoryCounts: [],
     });
 
@@ -78,7 +78,7 @@ describe("composeDesignMemoryProfile", () => {
         { presetKey: "not-a-real-preset", count: 2 },
       ],
       favoriteStyles: [],
-      briefSignals: [],
+      strategySignals: [],
       mockupCategoryCounts: [],
     });
 
@@ -86,7 +86,7 @@ describe("composeDesignMemoryProfile", () => {
     expect(profile.topEditPresets[0]?.label).toBe("더 미니멀하게");
   });
 
-  it("aggregates preferred colors/typography/industries from brand brief signals", () => {
+  it("aggregates preferred colors/typography/industries from brand strategy signals", () => {
     const profile = composeDesignMemoryProfile({
       enabled: true,
       resetAt: null,
@@ -94,7 +94,7 @@ describe("composeDesignMemoryProfile", () => {
       stylesById: new Map(),
       editPresetCounts: [],
       favoriteStyles: [],
-      briefSignals: [
+      strategySignals: [
         { industry: "bakery", preferredColor: "웜톤", typographyDirection: "산세리프" },
         { industry: "bakery", preferredColor: "웜톤", typographyDirection: "세리프" },
         { industry: "cafe", preferredColor: "쿨톤", typographyDirection: "산세리프" },
@@ -115,7 +115,7 @@ describe("composeDesignMemoryProfile", () => {
       stylesById: new Map(),
       editPresetCounts: [],
       favoriteStyles: [],
-      briefSignals: [],
+      strategySignals: [],
       mockupCategoryCounts: [
         { category: "coffee_cup", count: 3 },
         { category: "not-a-category", count: 9 },

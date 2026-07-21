@@ -92,7 +92,7 @@ export class CreateExportUseCase {
       watermarked,
     });
 
-    await this.queue.enqueue({ exportId: job.id });
+    await this.queue.enqueue({ exportId: job.id, requestedByUserId: input.userId });
 
     await recordActivity({
       userId: input.userId,

@@ -67,6 +67,21 @@ describe("apiFetch (Task-003/004 silent refresh)", () => {
     expect(window.location.href).toBe("/login");
   });
 
+  it("does not redirect on a failed refresh when skipAuthRedirect is set (public-page session check)", async () => {
+    const { apiFetch } = await import("@/services/http-client");
+    const fetchMock = fetch as unknown as ReturnType<typeof vi.fn>;
+    fetchMock
+      .mockResolvedValueOnce(
+        jsonResponse({ success: false, data: null, error: { code: "AUTH-004", message: "no session" } }, 401),
+      )
+      .mockResolvedValueOnce(new Response(null, { status: 401 }));
+
+    await expect(
+      apiFetch("/api/auth/me", { method: "GET", skipAuthRedirect: true }),
+    ).rejects.toThrow();
+    expect(window.location.href).toBe("");
+  });
+
   it("de-duplicates concurrent 401s into a single POST /api/auth/refresh call", async () => {
     const { apiFetch } = await import("@/services/http-client");
     const fetchMock = fetch as unknown as ReturnType<typeof vi.fn>;

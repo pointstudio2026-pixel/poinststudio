@@ -37,7 +37,7 @@ export class SaveAnswerUseCase {
     // industry 답변에 따라 목록이 바뀌므로 매번 현재 상태 기준으로
     // 다시 계산한다 (이번 저장 대상 질문은 이미 목록에 포함되어 있다 —
     // 기본 질문은 항상 존재하고, follow-up은 생성 시점에 먼저 저장된다).
-    const questions = selectQuestions(interview);
+    const questions = selectQuestions(interview, project.deliverableType);
     const questionIndex = questions.findIndex((q) => q.key === input.questionKey);
     if (questionIndex === -1) {
       throw new ValidationError("알 수 없는 질문입니다.", undefined, "INT-002");
@@ -69,7 +69,7 @@ export class SaveAnswerUseCase {
     });
 
     const updated = (await this.interviewRepository.findActiveByProjectId(input.projectId))!;
-    const updatedQuestions = selectQuestions(updated);
+    const updatedQuestions = selectQuestions(updated, project.deliverableType);
 
     return {
       interview: updated,

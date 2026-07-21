@@ -49,4 +49,26 @@ describe("RefreshTokenUseCase", () => {
       AuthenticationError,
     );
   });
+
+  it("rejects with AUTH-011 when the account was suspended mid-session", async () => {
+    const userRepository = new FakeUserRepository();
+    const user = await userRepository.create({ email: "designer@aster.dev", passwordHash: "hashed:x" });
+    const tokenService = new TokenService(new FakeRefreshTokenRepository());
+    const { refreshToken } = await tokenService.issueTokenPair({ id: user.id, role: user.role });
+    userRepository.users[0]!.suspendedAt = new Date();
+    const useCase = new RefreshTokenUseCase(tokenService, userRepository);
+
+    await expect(useCase.execute({ refreshToken })).rejects.toMatchObject({ code: "AUTH-011" });
+  });
+
+  it("rejects with AUTH-010 when the account was deleted mid-session", async () => {
+    const userRepository = new FakeUserRepository();
+    const user = await userRepository.create({ email: "designer@aster.dev", passwordHash: "hashed:x" });
+    const tokenService = new TokenService(new FakeRefreshTokenRepository());
+    const { refreshToken } = await tokenService.issueTokenPair({ id: user.id, role: user.role });
+    userRepository.users[0]!.deletedAt = new Date();
+    const useCase = new RefreshTokenUseCase(tokenService, userRepository);
+
+    await expect(useCase.execute({ refreshToken })).rejects.toMatchObject({ code: "AUTH-010" });
+  });
 });

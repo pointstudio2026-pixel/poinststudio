@@ -3,10 +3,11 @@ import { GenerateFollowUpUseCase } from "@/modules/interviews/application/Genera
 import { GetOrStartInterviewUseCase } from "@/modules/interviews/application/GetOrStartInterviewUseCase";
 import { SaveAnswerUseCase } from "@/modules/interviews/application/SaveAnswerUseCase";
 import { CreateProjectUseCase } from "@/modules/projects/application/CreateProjectUseCase";
+import { SelectDeliverableTypeUseCase } from "@/modules/projects/application/SelectDeliverableTypeUseCase";
 import { FakeProjectRepository } from "@/modules/projects/testing/fakes";
 import { FakeInterviewRepository } from "@/modules/interviews/testing/fakes";
 import { MAX_FOLLOW_UP_QUESTIONS } from "@/modules/interviews/domain/QuestionSelector";
-import { INTERVIEW_QUESTIONS } from "@/modules/interviews/domain/interviewQuestions";
+import { OTHER_ANSWER_PREFIX } from "@/modules/interviews/domain/interviewQuestions";
 import type {
   TextCompletionProvider,
   TextCompletionRequest,
@@ -30,7 +31,11 @@ class FakeTextCompletionProvider implements TextCompletionProvider {
   }
 }
 
-async function setupWithWeakAnswers() {
+// desiredImpression은 allowOther가 없는 닫힌 5지선다라 findWeakAnswer가
+// 절대 검사하지 않는다 -- 항상 유효한 옵션 값으로 채운다.
+const VALID_DESIRED_IMPRESSION = "전문적이고 신뢰감 있는 느낌";
+
+async function buildContext() {
   const projects = new FakeProjectRepository();
   const interviews = new FakeInterviewRepository();
   const provider = new FakeTextCompletionProvider();
@@ -38,53 +43,72 @@ async function setupWithWeakAnswers() {
     userId: "user-1",
     name: "Brand",
   });
+  await new SelectDeliverableTypeUseCase(projects).execute({
+    projectId,
+    userId: "user-1",
+    deliverableType: "브랜딩 & 로고",
+  });
   const saveAnswer = new SaveAnswerUseCase(projects, interviews);
   const getOrStart = new GetOrStartInterviewUseCase(projects, interviews);
   const generateFollowUp = new GenerateFollowUpUseCase(projects, interviews, provider);
-
   await getOrStart.execute({ projectId, userId: "user-1" });
-  // Every required question gets a deliberately short (weak) answer.
-  for (const q of INTERVIEW_QUESTIONS.filter((q) => q.required)) {
-    await saveAnswer.execute({ projectId, userId: "user-1", questionKey: q.key, answer: "짧음" });
-  }
-
-  return { projectId, provider, generateFollowUp, interviews };
+  return { projectId, projects, interviews, provider, saveAnswer, generateFollowUp };
 }
 
 describe("GenerateFollowUpUseCase", () => {
-  it("generates an AI follow-up for the weakest answer (답변 부족)", async () => {
-    const { projectId, provider, generateFollowUp } = await setupWithWeakAnswers();
+  it("generates an AI follow-up for a weak '기타(직접 입력)' free-text answer (답변 부족)", async () => {
+    const { projectId, saveAnswer, provider, generateFollowUp } = await buildContext();
+    // "교육" industry deliberately doesn't match any branching set, so the
+    // question list stays exactly the 5 base questions. purpose is the
+    // first question (in list order) with a weak "기타" answer -- industry
+    // is a plain closed option (never weak), targetAudience and
+    // desiredImpression are answered normally (not weak).
+    await saveAnswer.execute({ projectId, userId: "user-1", questionKey: "brandName", answer: "Aster" });
+    await saveAnswer.execute({ projectId, userId: "user-1", questionKey: "industry", answer: "교육" });
+    await saveAnswer.execute({
+      projectId,
+      userId: "user-1",
+      questionKey: "purpose",
+      answer: `${OTHER_ANSWER_PREFIX}짧음`,
+    });
+    await saveAnswer.execute({ projectId, userId: "user-1", questionKey: "targetAudience", answer: "20대" });
+    await saveAnswer.execute({
+      projectId,
+      userId: "user-1",
+      questionKey: "desiredImpression",
+      answer: VALID_DESIRED_IMPRESSION,
+    });
 
     const result = await generateFollowUp.execute({ projectId, userId: "user-1" });
 
     expect(result.followUpGenerated).toBe(true);
     expect(provider.calls).toHaveLength(1);
-    // brandName is the first required question in list order, so it's the
-    // first weak answer found.
-    expect(result.questions.at(-1)?.key).toBe("followUp_brandName");
+    expect(result.questions.at(-1)?.key).toBe("followUp_purpose");
   });
 
   it("does not generate a follow-up when all answers are sufficient (답변 충분)", async () => {
-    const projects = new FakeProjectRepository();
-    const interviews = new FakeInterviewRepository();
-    const provider = new FakeTextCompletionProvider();
-    const { projectId } = await new CreateProjectUseCase(projects).execute({
-      userId: "user-1",
-      name: "Brand",
-    });
-    const saveAnswer = new SaveAnswerUseCase(projects, interviews);
-    const getOrStart = new GetOrStartInterviewUseCase(projects, interviews);
-    const generateFollowUp = new GenerateFollowUpUseCase(projects, interviews, provider);
-    await getOrStart.execute({ projectId, userId: "user-1" });
+    const { projectId, saveAnswer, provider, generateFollowUp } = await buildContext();
 
-    for (const q of INTERVIEW_QUESTIONS.filter((q) => q.required)) {
-      await saveAnswer.execute({
-        projectId,
-        userId: "user-1",
-        questionKey: q.key,
-        answer: "이 항목에 대한 충분히 길고 구체적인 답변입니다. 세부 사항을 포함하고 있습니다.",
-      });
-    }
+    await saveAnswer.execute({ projectId, userId: "user-1", questionKey: "brandName", answer: "Aster" });
+    await saveAnswer.execute({ projectId, userId: "user-1", questionKey: "industry", answer: "교육" });
+    await saveAnswer.execute({
+      projectId,
+      userId: "user-1",
+      questionKey: "purpose",
+      answer: `${OTHER_ANSWER_PREFIX}이 항목에 대한 충분히 길고 구체적인 답변입니다.`,
+    });
+    await saveAnswer.execute({
+      projectId,
+      userId: "user-1",
+      questionKey: "targetAudience",
+      answer: `${OTHER_ANSWER_PREFIX}세부 사항을 포함한 충분히 구체적인 답변입니다.`,
+    });
+    await saveAnswer.execute({
+      projectId,
+      userId: "user-1",
+      questionKey: "desiredImpression",
+      answer: VALID_DESIRED_IMPRESSION,
+    });
 
     const result = await generateFollowUp.execute({ projectId, userId: "user-1" });
     expect(result.followUpGenerated).toBe(false);
@@ -92,7 +116,37 @@ describe("GenerateFollowUpUseCase", () => {
   });
 
   it("never asks about the same weak field twice, and stops at 3 follow-ups (최대 질문 수 초과 방지)", async () => {
-    const { projectId, provider, generateFollowUp } = await setupWithWeakAnswers();
+    // "카페/커피" industry unlocks cafeAtmosphere(allowOther) on top of
+    // purpose/targetAudience(both allowOther), giving exactly
+    // MAX_FOLLOW_UP_QUESTIONS weak-capable fields to exercise the cap.
+    const { projectId, saveAnswer, provider, generateFollowUp } = await buildContext();
+
+    await saveAnswer.execute({ projectId, userId: "user-1", questionKey: "brandName", answer: "Aster" });
+    await saveAnswer.execute({ projectId, userId: "user-1", questionKey: "industry", answer: "카페/커피" });
+    await saveAnswer.execute({
+      projectId,
+      userId: "user-1",
+      questionKey: "purpose",
+      answer: `${OTHER_ANSWER_PREFIX}짧음`,
+    });
+    await saveAnswer.execute({
+      projectId,
+      userId: "user-1",
+      questionKey: "targetAudience",
+      answer: `${OTHER_ANSWER_PREFIX}짧음`,
+    });
+    await saveAnswer.execute({
+      projectId,
+      userId: "user-1",
+      questionKey: "desiredImpression",
+      answer: VALID_DESIRED_IMPRESSION,
+    });
+    await saveAnswer.execute({
+      projectId,
+      userId: "user-1",
+      questionKey: "cafeAtmosphere",
+      answer: `${OTHER_ANSWER_PREFIX}짧음`,
+    });
 
     const sourceKeys = new Set<string>();
     for (let i = 0; i < MAX_FOLLOW_UP_QUESTIONS; i++) {

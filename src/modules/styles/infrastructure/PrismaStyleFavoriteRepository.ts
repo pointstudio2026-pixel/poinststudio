@@ -30,7 +30,7 @@ export class PrismaStyleFavoriteRepository implements StyleFavoriteRepository {
       id: row.style.id,
       name: row.style.name,
       slug: row.style.slug,
-      level: row.style.level as 1 | 2 | 3,
+      level: row.style.level as 0 | 1 | 2 | 3,
       parentId: row.style.parentId,
       category: row.style.category,
       keywords: row.style.keywords,

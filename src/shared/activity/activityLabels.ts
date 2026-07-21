@@ -34,6 +34,10 @@ const ACTIVITY_LABELS: Record<string, string> = {
   DESIGN_MEMORY_DISABLED: "Design Memory 비활성화",
   ADMIN_ANNOUNCEMENT_CREATED: "관리자 공지 등록",
   ADMIN_ANNOUNCEMENT_DEACTIVATED: "관리자 공지 비활성화",
+  ADMIN_USER_SUSPENDED: "계정 정지",
+  ADMIN_USER_UNSUSPENDED: "계정 정지 해제",
+  ADMIN_USER_DELETED: "계정 삭제",
+  ADMIN_USER_ROLE_CHANGED: "권한 변경",
 };
 
 export function activityLabel(eventType: string): string {

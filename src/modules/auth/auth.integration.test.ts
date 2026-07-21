@@ -6,6 +6,7 @@ import { Argon2PasswordHasher } from "@/modules/auth/infrastructure/Argon2Passwo
 import { TokenService } from "@/modules/auth/application/TokenService";
 import { RegisterUseCase } from "@/modules/auth/application/RegisterUseCase";
 import { LoginUseCase } from "@/modules/auth/application/LoginUseCase";
+import { FakeEmailProvider } from "@/modules/auth/testing/fakes";
 import { AuthenticationError, ConflictError } from "@/shared/errors/AppError";
 
 const TEST_EMAIL_PREFIX = "task002-integration";
@@ -26,7 +27,7 @@ function buildContainer() {
   return {
     userRepository,
     tokenService,
-    registerUseCase: new RegisterUseCase(userRepository, hasher, tokenService),
+    registerUseCase: new RegisterUseCase(userRepository, hasher, tokenService, new FakeEmailProvider()),
     loginUseCase: new LoginUseCase(userRepository, hasher, tokenService),
   };
 }
@@ -50,7 +51,7 @@ describe("Auth module (real Postgres)", () => {
     const { registerUseCase, loginUseCase } = buildContainer();
     const email = uniqueEmail();
 
-    const registered = await registerUseCase.execute({ email, password: "password123" });
+    const registered = await registerUseCase.execute({ email, password: "password123", agreedToTerms: true });
     expect(registered.user.email).toBe(email);
 
     const loggedIn = await loginUseCase.execute({ email, password: "password123" });
@@ -61,7 +62,7 @@ describe("Auth module (real Postgres)", () => {
     ).rejects.toBeInstanceOf(AuthenticationError);
 
     await expect(
-      registerUseCase.execute({ email, password: "password123" }),
+      registerUseCase.execute({ email, password: "password123", agreedToTerms: true }),
     ).rejects.toBeInstanceOf(ConflictError);
   });
 
@@ -69,7 +70,7 @@ describe("Auth module (real Postgres)", () => {
     const { registerUseCase, tokenService } = buildContainer();
     const email = uniqueEmail();
 
-    const registered = await registerUseCase.execute({ email, password: "password123" });
+    const registered = await registerUseCase.execute({ email, password: "password123", agreedToTerms: true });
     const rotated = await tokenService.rotate(registered.refreshToken);
     expect(rotated.userId).toBe(registered.user.id);
 
@@ -81,7 +82,7 @@ describe("Auth module (real Postgres)", () => {
   it("only lets one of two truly concurrent rotations win against real Postgres", async () => {
     const { registerUseCase, tokenService } = buildContainer();
     const email = uniqueEmail();
-    const registered = await registerUseCase.execute({ email, password: "password123" });
+    const registered = await registerUseCase.execute({ email, password: "password123", agreedToTerms: true });
 
     const results = await Promise.allSettled([
       tokenService.rotate(registered.refreshToken),

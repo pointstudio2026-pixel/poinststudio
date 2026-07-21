@@ -6,7 +6,8 @@ export interface CreateEditHistoryInput {
   generationId: string;
   sourceVersionId: string;
   sourceImageIndex: number;
-  presetKey: EditPresetKey;
+  presetKey: EditPresetKey | null;
+  customInstruction: string | null;
   resultVersionId: string;
 }
 

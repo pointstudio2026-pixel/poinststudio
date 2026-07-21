@@ -3,6 +3,7 @@ import { GetOrStartInterviewUseCase } from "@/modules/interviews/application/Get
 import { SaveAnswerUseCase } from "@/modules/interviews/application/SaveAnswerUseCase";
 import { CompleteInterviewUseCase } from "@/modules/interviews/application/CompleteInterviewUseCase";
 import { CreateProjectUseCase } from "@/modules/projects/application/CreateProjectUseCase";
+import { SelectDeliverableTypeUseCase } from "@/modules/projects/application/SelectDeliverableTypeUseCase";
 import { FakeProjectRepository } from "@/modules/projects/testing/fakes";
 import { FakeInterviewRepository } from "@/modules/interviews/testing/fakes";
 import { INTERVIEW_QUESTIONS } from "@/modules/interviews/domain/interviewQuestions";
@@ -18,6 +19,11 @@ async function setup() {
   const { projectId } = await new CreateProjectUseCase(projects).execute({
     userId: "user-1",
     name: "Brand",
+  });
+  await new SelectDeliverableTypeUseCase(projects).execute({
+    projectId,
+    userId: "user-1",
+    deliverableType: "브랜딩 & 로고",
   });
   return {
     projectId,
@@ -97,7 +103,7 @@ describe("SaveAnswerUseCase", () => {
       answer: "Aster Coffee",
     });
 
-    expect(result.interview.currentQuestionIndex).toBe(2); // stayed at the furthest point reached
+    expect(result.interview.currentQuestionIndex).toBe(2); // stayed at the furthest point reached (industry is index 1)
     expect(result.interview.answers.find((a) => a.questionKey === "brandName")?.answer).toBe(
       "Aster Coffee",
     );
@@ -110,16 +116,16 @@ describe("SaveAnswerUseCase", () => {
     ).rejects.toBeInstanceOf(ValidationError);
   });
 
-  it("accepts an empty answer for an optional question", async () => {
+  it("rejects an answer for a question key outside the current question list", async () => {
     const { projectId, saveAnswer } = await setup();
     await expect(
       saveAnswer.execute({
         projectId,
         userId: "user-1",
-        questionKey: "competitiveContext",
-        answer: "",
+        questionKey: "notARealQuestion",
+        answer: "x",
       }),
-    ).resolves.toBeTruthy();
+    ).rejects.toBeInstanceOf(ValidationError);
   });
 
   it("rejects saving to an already-completed interview", async () => {
@@ -143,7 +149,7 @@ describe("CompleteInterviewUseCase", () => {
     );
   });
 
-  it("completes and advances the project to brand_brief", async () => {
+  it("completes and advances the project to style", async () => {
     const { projectId, projects, saveAnswer, complete } = await setup();
     await answerAllRequired(saveAnswer, projectId);
 
@@ -151,6 +157,6 @@ describe("CompleteInterviewUseCase", () => {
     expect(result.status).toBe("completed");
 
     const project = await projects.findByIdForUser(projectId, "user-1");
-    expect(project?.currentStep).toBe("brand_brief");
+    expect(project?.currentStep).toBe("style");
   });
 });

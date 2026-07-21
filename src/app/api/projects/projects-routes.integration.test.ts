@@ -56,7 +56,7 @@ describe("POST /api/projects", () => {
     const saved = await prisma.project.findUnique({ where: { id: body.data.projectId } });
     expect(saved?.userId).toBe(userId);
     expect(saved?.name).toBe("My Brand");
-    expect(saved?.currentStep).toBe("brand_interview");
+    expect(saved?.currentStep).toBe("deliverable_type");
   });
 
   it("rejects an empty name (이름 미입력)", async () => {

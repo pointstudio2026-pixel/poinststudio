@@ -132,7 +132,7 @@ describe("CreateMockupUseCase", () => {
 
     expect(mockup.status).toBe("pending");
     expect(mockup.sourceImageIndex).toBe(1);
-    expect(ctx.queue.enqueued).toEqual([{ mockupId: mockup.id }]);
+    expect(ctx.queue.enqueued).toEqual([{ mockupId: mockup.id, requestedByUserId: "user-1" }]);
   });
 
   it("supports creating multiple mockups for the same project (여러 Mockup 생성)", async () => {
@@ -187,7 +187,7 @@ describe("ProcessMockupJobUseCase", () => {
       templateId: TEMPLATE.id,
     });
 
-    await ctx.process.execute({ mockupId: mockup.id, isFinalAttempt: true });
+    await ctx.process.execute({ mockupId: mockup.id, requestedByUserId: "user-1", isFinalAttempt: true });
 
     const completed = await ctx.mockups.getById(mockup.id);
     expect(completed?.status).toBe("completed");
@@ -207,11 +207,11 @@ describe("ProcessMockupJobUseCase", () => {
       templateId: "template-fail",
     });
 
-    await expect(ctx.process.execute({ mockupId: mockup.id, isFinalAttempt: false })).rejects.toThrow();
+    await expect(ctx.process.execute({ mockupId: mockup.id, requestedByUserId: "user-1", isFinalAttempt: false })).rejects.toThrow();
     let current = await ctx.mockups.getById(mockup.id);
     expect(current?.status).toBe("processing");
 
-    await ctx.process.execute({ mockupId: mockup.id, isFinalAttempt: true });
+    await ctx.process.execute({ mockupId: mockup.id, requestedByUserId: "user-1", isFinalAttempt: true });
     current = await ctx.mockups.getById(mockup.id);
     expect(current?.status).toBe("failed");
     expect(current?.errorMessage).toBeTruthy();

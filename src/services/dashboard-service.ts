@@ -5,8 +5,11 @@ export interface DashboardProjectDto {
   id: string;
   name: string;
   status: string;
+  deliverableType: string | null;
   currentStep: string;
   isFavorite: boolean;
+  sharedWithTeam: boolean;
+  isOwner: boolean;
   updatedAt: string;
 }
 

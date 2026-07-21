@@ -19,6 +19,7 @@ function toVersion(row: {
   promptVersionId: string;
   status: string;
   provider: string | null;
+  providerPreference: string | null;
   images: unknown;
   errorMessage: string | null;
   costAmount: Prisma.Decimal | null;
@@ -32,6 +33,7 @@ function toVersion(row: {
     promptVersionId: row.promptVersionId,
     status: row.status as GenerationStatus,
     provider: row.provider,
+    providerPreference: row.providerPreference,
     images: row.images as unknown as GeneratedImage[],
     errorMessage: row.errorMessage,
     costAmount: row.costAmount ? row.costAmount.toNumber() : null,
@@ -67,6 +69,7 @@ export class PrismaGenerationRepository implements GenerationRepository {
         versionNumber: 1,
         promptVersionId: input.promptVersionId,
         status: "pending",
+        providerPreference: input.providerPreference ?? null,
         images: [],
       },
     });
@@ -92,6 +95,7 @@ export class PrismaGenerationRepository implements GenerationRepository {
         versionNumber: nextVersionNumber,
         promptVersionId: input.promptVersionId,
         status: "pending",
+        providerPreference: input.providerPreference ?? null,
         images: [],
       },
     });

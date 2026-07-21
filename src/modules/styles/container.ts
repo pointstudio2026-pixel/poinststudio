@@ -8,7 +8,7 @@ import { GetStyleSelectionHistoryUseCase } from "@/modules/styles/application/Ge
 import { ToggleStyleFavoriteUseCase } from "@/modules/styles/application/ToggleStyleFavoriteUseCase";
 import { ListFavoriteStylesUseCase } from "@/modules/styles/application/ListFavoriteStylesUseCase";
 import { projectRepositoryInstance } from "@/modules/projects/container";
-import { brandStrategyRepositoryInstance } from "@/modules/brandStrategies/container";
+import { interviewRepositoryInstance } from "@/modules/interviews/container";
 
 export const styleRepositoryInstance = new PrismaStyleRepository();
 export const styleSelectionRepositoryInstance = new PrismaStyleSelectionRepository();
@@ -20,7 +20,7 @@ const styleFavoriteRepository = styleFavoriteRepositoryInstance;
 export const stylesContainer = {
   recommendStylesUseCase: new RecommendStylesUseCase(
     projectRepositoryInstance,
-    brandStrategyRepositoryInstance,
+    interviewRepositoryInstance,
     styleRepository,
   ),
   listStylesUseCase: new ListStylesUseCase(styleRepository),

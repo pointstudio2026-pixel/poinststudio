@@ -9,9 +9,21 @@ import type {
   RefreshTokenRecord,
   RefreshTokenRepository,
 } from "@/modules/auth/domain/RefreshTokenRepository";
+import type {
+  CreateOAuthAccountInput,
+  OAuthAccount,
+  OAuthAccountRepository,
+  OAuthProviderCode,
+} from "@/modules/auth/domain/OAuthAccountRepository";
+import type { EmailProvider, SendEmailInput } from "@/shared/email/EmailProvider";
+
+interface FakeAuthUser extends AuthUser {
+  emailVerificationToken: string | null;
+  emailVerificationTokenExpiresAt: Date | null;
+}
 
 export class FakeUserRepository implements UserRepository {
-  users: AuthUser[] = [];
+  users: FakeAuthUser[] = [];
 
   async findByEmail(email: string) {
     return this.users.find((u) => u.email === email) ?? null;
@@ -22,16 +34,101 @@ export class FakeUserRepository implements UserRepository {
   }
 
   async create(input: CreateUserInput) {
-    const user: AuthUser = {
+    const user: FakeAuthUser = {
       id: `user-${this.users.length + 1}`,
       email: input.email,
-      passwordHash: input.passwordHash,
+      passwordHash: input.passwordHash ?? null,
       name: input.name ?? null,
       role: "designer",
+      adminTier: null,
+      emailVerifiedAt: input.emailVerifiedAt ?? null,
+      lastLoginAt: null,
+      suspendedAt: null,
+      deletedAt: null,
       createdAt: new Date(),
+      emailVerificationToken: null,
+      emailVerificationTokenExpiresAt: null,
     };
     this.users.push(user);
     return user;
+  }
+
+  async updateProfile(id: string, input: { name: string }) {
+    const user = this.users.find((u) => u.id === id);
+    if (!user) throw new Error(`FakeUserRepository: user ${id} not found`);
+    user.name = input.name;
+    return user;
+  }
+
+  async updatePassword(id: string, passwordHash: string) {
+    const user = this.users.find((u) => u.id === id);
+    if (!user) throw new Error(`FakeUserRepository: user ${id} not found`);
+    user.passwordHash = passwordHash;
+  }
+
+  async setEmailVerificationToken(id: string, token: string, expiresAt: Date) {
+    const user = this.users.find((u) => u.id === id);
+    if (!user) throw new Error(`FakeUserRepository: user ${id} not found`);
+    user.emailVerificationToken = token;
+    user.emailVerificationTokenExpiresAt = expiresAt;
+  }
+
+  async findByEmailVerificationToken(token: string) {
+    return (
+      this.users.find(
+        (u) =>
+          u.emailVerificationToken === token &&
+          u.emailVerificationTokenExpiresAt !== null &&
+          u.emailVerificationTokenExpiresAt.getTime() > Date.now(),
+      ) ?? null
+    );
+  }
+
+  async markEmailVerified(id: string) {
+    const user = this.users.find((u) => u.id === id);
+    if (!user) throw new Error(`FakeUserRepository: user ${id} not found`);
+    user.emailVerifiedAt = new Date();
+    user.emailVerificationToken = null;
+    user.emailVerificationTokenExpiresAt = null;
+  }
+
+  async updateLastLogin(id: string) {
+    const user = this.users.find((u) => u.id === id);
+    if (!user) throw new Error(`FakeUserRepository: user ${id} not found`);
+    user.lastLoginAt = new Date();
+  }
+}
+
+export class FakeEmailProvider implements EmailProvider {
+  readonly name = "fake";
+  sent: SendEmailInput[] = [];
+
+  async send(input: SendEmailInput) {
+    this.sent.push(input);
+  }
+}
+
+export class FakeOAuthAccountRepository implements OAuthAccountRepository {
+  accounts: OAuthAccount[] = [];
+
+  async findByProviderAccount(provider: OAuthProviderCode, providerAccountId: string) {
+    return (
+      this.accounts.find(
+        (a) => a.provider === provider && a.providerAccountId === providerAccountId,
+      ) ?? null
+    );
+  }
+
+  async create(input: CreateOAuthAccountInput) {
+    const account: OAuthAccount = {
+      id: `oauth-${this.accounts.length + 1}`,
+      userId: input.userId,
+      provider: input.provider,
+      providerAccountId: input.providerAccountId,
+      createdAt: new Date(),
+    };
+    this.accounts.push(account);
+    return account;
   }
 }
 

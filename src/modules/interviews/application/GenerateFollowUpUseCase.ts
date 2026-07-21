@@ -46,7 +46,7 @@ export class GenerateFollowUpUseCase {
     }
 
     const interview = await getOrCreateActiveInterview(this.interviewRepository, input.projectId);
-    const questions = selectQuestions(interview);
+    const questions = selectQuestions(interview, project.deliverableType);
 
     const readyToComplete = getMissingRequiredQuestions(questions, interview.answers).length === 0;
 
@@ -93,7 +93,7 @@ export class GenerateFollowUpUseCase {
     });
 
     const updated = (await this.interviewRepository.findActiveByProjectId(input.projectId))!;
-    const updatedQuestions = selectQuestions(updated);
+    const updatedQuestions = selectQuestions(updated, project.deliverableType);
     return {
       followUpGenerated: true,
       interview: updated,

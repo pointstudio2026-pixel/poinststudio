@@ -6,11 +6,16 @@ import { PrismaRefreshTokenRepository } from "@/modules/auth/infrastructure/Pris
 import { Argon2PasswordHasher } from "@/modules/auth/infrastructure/Argon2PasswordHasher";
 import { TokenService } from "@/modules/auth/application/TokenService";
 import { POST as createProjectHandler } from "@/app/api/projects/route";
+import { POST as selectDeliverableTypeHandler } from "@/app/api/projects/[id]/deliverable-type/route";
 import { GET as getInterviewHandler } from "@/app/api/interview/[projectId]/route";
 import { POST as saveAnswerHandler } from "@/app/api/interview/answer/route";
 import { POST as completeInterviewHandler } from "@/app/api/interview/complete/route";
-import { POST as generateBriefHandler } from "@/app/api/brand-brief/generate/route";
+import { POST as recommendStylesHandler } from "@/app/api/styles/recommend/route";
+import { POST as selectStyleHandler } from "@/app/api/styles/select/route";
 import { POST as executeAsterBrainHandler } from "@/app/api/aster-brain/execute/route";
+import { POST as selectAsterBrainHandler } from "@/app/api/aster-brain/select/route";
+import { POST as recommendLogoStyleHandler } from "@/app/api/logo-styles/recommend/route";
+import { POST as selectLogoStyleHandler } from "@/app/api/logo-styles/select/route";
 import { POST as generateConceptBoardHandler } from "@/app/api/concept-board/generate/route";
 import { GET as getConceptBoardHandler, PATCH as patchConceptBoardHandler } from "@/app/api/concept-board/[projectId]/route";
 import { POST as restoreConceptBoardHandler } from "@/app/api/concept-board/[projectId]/restore/route";
@@ -50,6 +55,11 @@ async function createProjectWithStrategy(cookie: string) {
   const { data } = await createRes.json();
   const projectId = data.projectId as string;
 
+  await selectDeliverableTypeHandler(
+    postRequest(`/api/projects/${projectId}/deliverable-type`, { deliverableType: "브랜딩 & 로고" }, cookie),
+    { params: Promise.resolve({ id: projectId }) },
+  );
+
   await getInterviewHandler(
     new NextRequest(`http://localhost/api/interview/${projectId}`, { headers: { cookie } }),
     { params: Promise.resolve({ projectId }) },
@@ -58,8 +68,23 @@ async function createProjectWithStrategy(cookie: string) {
     await saveAnswerHandler(postRequest("/api/interview/answer", { projectId, questionKey: q.key, answer: `구체적인 ${q.key} 답변` }, cookie));
   }
   await completeInterviewHandler(postRequest("/api/interview/complete", { projectId }, cookie));
-  await generateBriefHandler(postRequest("/api/brand-brief/generate", { projectId }, cookie));
+
+  const recommendRes = await recommendStylesHandler(postRequest("/api/styles/recommend", { projectId }, cookie));
+  const { data: recommendData } = await recommendRes.json();
+  const styleId = recommendData.recommendations[0].style.id as string;
+  await selectStyleHandler(
+    postRequest("/api/styles/select", { projectId, primaryStyleId: styleId, secondaryStyleIds: [] }, cookie),
+  );
+
   await executeAsterBrainHandler(postRequest("/api/aster-brain/execute", { projectId }, cookie));
+  await selectAsterBrainHandler(postRequest("/api/aster-brain/select", { projectId, candidateIndex: 0 }, cookie));
+
+  const recommendLogoRes = await recommendLogoStyleHandler(postRequest("/api/logo-styles/recommend", { projectId }, cookie));
+  const { data: recommendLogoData } = await recommendLogoRes.json();
+  const logoStyleCategoryId = recommendLogoData.recommendations[0].category.id as string;
+  await selectLogoStyleHandler(
+    postRequest("/api/logo-styles/select", { projectId, categoryIds: [logoStyleCategoryId] }, cookie),
+  );
 
   return projectId;
 }
@@ -77,7 +102,7 @@ describe("Concept Board API routes", () => {
     expect(body.data.board.currentVersion.data.brandSummary).toBeTruthy();
   });
 
-  it("rejects generation before Brand Brief/Strategy exist", async () => {
+  it("rejects generation before Interview/Strategy selection exist", async () => {
     const { cookie } = await createSessionCookie();
     const createRes = await createProjectHandler(postRequest("/api/projects", { name: "Bakery" }, cookie));
     const { data } = await createRes.json();
@@ -131,10 +156,10 @@ describe("Concept Board API routes", () => {
   it("advances the project to the mockup step (워크플로 진행)", async () => {
     const { cookie } = await createSessionCookie();
     const projectId = await createProjectWithStrategy(cookie);
-    // createProjectWithStrategy only runs the pipeline through Aster Brain
-    // (currentStep lands on "style"); jump straight to "concept_board" here
-    // rather than re-running style selection + a full async generation just
-    // to exercise this one currentStep transition.
+    // createProjectWithStrategy runs the pipeline through Aster Brain
+    // selection (currentStep lands on "generation"); jump straight to
+    // "concept_board" here rather than running a full async image
+    // generation just to exercise this one currentStep transition.
     await prisma.project.update({ where: { id: projectId }, data: { currentStep: "concept_board" } });
 
     await generateConceptBoardHandler(postRequest("/api/concept-board/generate", { projectId }, cookie));

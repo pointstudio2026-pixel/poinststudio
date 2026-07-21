@@ -22,6 +22,7 @@ function toDto(project: Project): ProjectDto {
     id: project.id,
     name: project.name,
     status: project.status,
+    deliverableType: project.deliverableType,
     currentStep: project.currentStep,
     isFavorite: project.isFavorite,
     archivedAt: project.archivedAt ? project.archivedAt.toISOString() : null,

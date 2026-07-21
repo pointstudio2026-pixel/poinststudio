@@ -25,35 +25,35 @@ export function LoginForm() {
     try {
       const { user } = await loginUser(values);
       setUser(user);
-      router.push("/dashboard");
+      router.push("/");
     } catch (err) {
       setServerError(err instanceof Error ? err.message : "로그인에 실패했습니다.");
     }
   });
 
   return (
-    <form onSubmit={onSubmit} className="flex w-full max-w-sm flex-col gap-4">
+    <form onSubmit={onSubmit} className="flex w-full flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <label htmlFor="email" className="text-sm font-medium">
+        <label htmlFor="email" className="text-sm font-medium text-ink">
           이메일
         </label>
         <input
           id="email"
           type="email"
-          className="rounded-md border border-neutral-300 px-3 py-2"
+          className="rounded-lg border border-line bg-paper px-3 py-2 text-sm outline-none transition focus:border-ink"
           {...register("email")}
         />
         {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="password" className="text-sm font-medium">
+        <label htmlFor="password" className="text-sm font-medium text-ink">
           비밀번호
         </label>
         <input
           id="password"
           type="password"
-          className="rounded-md border border-neutral-300 px-3 py-2"
+          className="rounded-lg border border-line bg-paper px-3 py-2 text-sm outline-none transition focus:border-ink"
           {...register("password")}
         />
         {errors.password && (
@@ -66,7 +66,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="flex items-center justify-center gap-2 rounded-md bg-neutral-900 px-4 py-2 text-white disabled:opacity-50"
+        className="mt-2 flex items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm text-paper transition hover:opacity-90 disabled:opacity-50"
       >
         {isSubmitting && <Spinner />}
         {isSubmitting ? "로그인 중..." : "로그인"}

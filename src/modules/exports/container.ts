@@ -7,7 +7,6 @@ import { DownloadExportUseCase } from "@/modules/exports/application/DownloadExp
 import { ProcessExportJobUseCase } from "@/modules/exports/application/ProcessExportJobUseCase";
 import { projectRepositoryInstance } from "@/modules/projects/container";
 import { conceptBoardRepositoryInstance } from "@/modules/conceptBoards/container";
-import { brandBriefRepositoryInstance } from "@/modules/brandBriefs/container";
 import { generationRepositoryInstance } from "@/modules/generations/container";
 import { mockupRepositoryInstance } from "@/modules/mockups/container";
 import { subscriptionsContainer } from "@/modules/subscriptions/container";
@@ -38,7 +37,6 @@ export const exportsContainer = {
 const processExportJobUseCase = new ProcessExportJobUseCase(
   projectRepositoryInstance,
   conceptBoardRepositoryInstance,
-  brandBriefRepositoryInstance,
   generationRepositoryInstance,
   mockupRepositoryInstance,
   exportRepository,

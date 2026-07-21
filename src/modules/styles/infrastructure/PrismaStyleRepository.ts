@@ -16,7 +16,7 @@ function toStyle(row: {
     id: row.id,
     name: row.name,
     slug: row.slug,
-    level: row.level as 1 | 2 | 3,
+    level: row.level as 0 | 1 | 2 | 3,
     parentId: row.parentId,
     category: row.category,
     keywords: row.keywords,
@@ -28,8 +28,9 @@ export class PrismaStyleRepository implements StyleRepository {
   async list(filter: StyleListFilter): Promise<Style[]> {
     const rows = await prisma.style.findMany({
       where: {
-        ...(filter.level ? { level: filter.level } : {}),
+        ...(filter.level !== undefined ? { level: filter.level } : {}),
         ...(filter.category ? { category: filter.category } : {}),
+        ...(filter.parentId ? { parentId: filter.parentId } : {}),
         ...(filter.search
           ? {
               OR: [

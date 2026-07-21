@@ -58,8 +58,8 @@ export function DesignMemoryView() {
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-8">
       <header className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Design Memory</h1>
-        <Link href="/dashboard" className="text-sm underline">
-          대시보드로
+        <Link href="/projects" className="text-sm underline">
+          내 프로젝트로
         </Link>
       </header>
 

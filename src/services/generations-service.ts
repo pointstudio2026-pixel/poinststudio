@@ -14,6 +14,7 @@ export interface GenerationVersionDto {
   promptVersionId: string;
   status: GenerationStatusDto;
   provider: string | null;
+  providerPreference: string | null;
   images: GeneratedImageDto[];
   errorMessage: string | null;
   costAmount: number | null;
@@ -21,10 +22,16 @@ export interface GenerationVersionDto {
   completedAt: string | null;
 }
 
-export function createGeneration(projectId: string) {
+export type AiImageProvider = "openai" | "gemini";
+
+// 백엔드 src/modules/generations/domain/resultCap.ts와 동일한 값 -- 프로젝트당
+// 누적 가능한 최대 결과 수(프론트에서 버튼 비활성화 판단에 사용).
+export const MAX_PROJECT_RESULTS = 3;
+
+export function createGeneration(projectId: string, provider?: AiImageProvider) {
   return apiFetch<{ generation: GenerationVersionDto }>("/api/generations", {
     method: "POST",
-    body: JSON.stringify({ projectId }),
+    body: JSON.stringify({ projectId, provider }),
   });
 }
 
