@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getOAuthProvider } from "@/shared/oauth/oauthRegistry";
 import { OAUTH_INTENT_COOKIE, OAUTH_STATE_COOKIE } from "@/shared/auth/cookies";
 import { generateOpaqueToken } from "@/shared/auth/opaqueToken";
+import { resolveAppOrigin } from "@/shared/http/appOrigin";
 
 const STATE_TTL_SECONDS = 600;
 
@@ -10,7 +11,7 @@ export async function GET(
   { params }: { params: Promise<{ provider: string }> },
 ) {
   const { provider } = await params;
-  const origin = new URL(request.url).origin;
+  const origin = resolveAppOrigin(request);
   const oauthProvider = getOAuthProvider(provider, origin);
 
   if (!oauthProvider) {

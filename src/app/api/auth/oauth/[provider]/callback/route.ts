@@ -10,6 +10,7 @@ import {
 } from "@/shared/auth/cookies";
 import { signOAuthPendingSignupToken } from "@/shared/auth/jwt";
 import { logger } from "@/shared/logging/logger";
+import { resolveAppOrigin } from "@/shared/http/appOrigin";
 
 function clearRoundTripCookies(res: NextResponse): void {
   res.cookies.set(OAUTH_STATE_COOKIE, "", { path: "/", maxAge: 0 });
@@ -21,7 +22,7 @@ export async function GET(
   { params }: { params: Promise<{ provider: string }> },
 ) {
   const { provider } = await params;
-  const origin = new URL(request.url).origin;
+  const origin = resolveAppOrigin(request);
   const loginErrorRedirect = (reason: string) => {
     const res = NextResponse.redirect(new URL(`/login?oauthError=${reason}`, origin));
     clearRoundTripCookies(res);
