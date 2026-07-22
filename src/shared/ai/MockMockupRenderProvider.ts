@@ -1,3 +1,5 @@
+import fs from "node:fs/promises";
+import path from "node:path";
 import type {
   MockupRenderProvider,
   MockupRenderRequest,
@@ -8,19 +10,49 @@ import { ProviderError } from "@/shared/errors/AppError";
 /** Test-only hook to deterministically exercise the failure/retry path. */
 export const FORCE_FAILURE_MARKER = "FORCE_FAIL_TEST";
 
-function buildCompositeSvgDataUri(request: MockupRenderRequest, size: number): string {
+const MIME_BY_EXTENSION: Record<string, string> = {
+  jpg: "jpeg",
+  jpeg: "jpeg",
+  png: "png",
+  webp: "webp",
+  svg: "svg+xml",
+};
+
+/**
+ * SVG `<image href>` compositing (below) only reliably works with data URIs --
+ * an `<image href="/mockup-templates/xxx.jpg">` root-relative path or even a
+ * full `http(s)://` URL is NOT fetched by every SVG renderer (confirmed: it's
+ * silently blank when rasterized). Seeded template backgrounds are stored as
+ * plain root-relative paths under public/ (readable, reusable elsewhere, same
+ * pattern as LogoStyleCategory.sampleImageUrl) -- so resolve them to a data
+ * URI here, at composite time, rather than storing giant base64 strings in
+ * the DB. `data:`/`http(s)://` values pass through unchanged for backward
+ * compatibility with anything already stored that way.
+ */
+async function resolveBackgroundDataUri(backgroundUrl: string): Promise<string> {
+  if (backgroundUrl.startsWith("data:") || /^https?:\/\//.test(backgroundUrl)) {
+    return backgroundUrl;
+  }
+  const filePath = path.join(process.cwd(), "public", backgroundUrl);
+  const buffer = await fs.readFile(filePath);
+  const extension = path.extname(backgroundUrl).slice(1).toLowerCase();
+  const mime = MIME_BY_EXTENSION[extension] ?? "png";
+  return `data:image/${mime};base64,${buffer.toString("base64")}`;
+}
+
+function buildCompositeSvgDataUri(request: MockupRenderRequest, resolvedBackgroundUrl: string, size: number): string {
   const { placementArea } = request;
   const x = (placementArea.xPct / 100) * size;
   const y = (placementArea.yPct / 100) * size;
   const width = (placementArea.widthPct / 100) * size;
   const height = (placementArea.heightPct / 100) * size;
 
-  // Both the background and the logo are already renderable image URIs
-  // (from MockImageGenerationProvider / seeded template assets), so real
-  // compositing is just layering two <image> refs -- no canvas/sharp needed.
+  // Both the background and the logo are already renderable data URIs at
+  // this point, so real compositing is just layering two <image> refs -- no
+  // canvas/sharp needed.
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">` +
-    `<image href="${request.backgroundUrl}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice"/>` +
+    `<image href="${resolvedBackgroundUrl}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice"/>` +
     `<image href="${request.logoImageUrl}" x="${x}" y="${y}" width="${width}" height="${height}" preserveAspectRatio="xMidYMid meet"/>` +
     `</svg>`;
   return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
@@ -40,9 +72,11 @@ export class MockMockupRenderProvider implements MockupRenderProvider {
       throw new ProviderError("Mock provider: 강제 실패 트리거(테스트 전용)");
     }
 
+    const resolvedBackgroundUrl = await resolveBackgroundDataUri(request.backgroundUrl);
+
     return {
-      imageUrl: buildCompositeSvgDataUri(request, 512),
-      thumbnailUrl: buildCompositeSvgDataUri(request, 128),
+      imageUrl: buildCompositeSvgDataUri(request, resolvedBackgroundUrl, 512),
+      thumbnailUrl: buildCompositeSvgDataUri(request, resolvedBackgroundUrl, 128),
       provider: this.name,
       costAmount: 0,
     };

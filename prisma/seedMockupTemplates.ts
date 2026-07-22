@@ -4,180 +4,108 @@ import { PrismaClient } from "../generated/prisma/client";
 
 /**
  * Seeds the Mockup Studio's template library (18_PRD_MockupStudio.md /
- * Task-016). "템플릿은 확장 가능한 구조로 설계한다" -- lives in Postgres like
- * the Style Engine's taxonomy, not an in-code constant. Backgrounds are
- * deterministic inline SVGs (no real photo assets / object storage needed
- * for the MVP); each has a placement rect (in percent) where a logo gets
- * composited. Re-run with `npm run prisma:seed-mockup-templates`; it's
- * idempotent (upsert by slug).
+ * Task-016). Each template is a real photographic reference image (committed
+ * as a static file under public/mockup-templates/, same pattern as
+ * public/logo-styles) with a placement rect (in percent) where a logo gets
+ * composited -- see MockMockupRenderProvider. Placement values are initial
+ * eyeballed estimates; adjust after a real render if a logo doesn't sit
+ * naturally. Re-run with `npm run prisma:seed-mockup-templates`; it wipes
+ * and recreates every row each time (safe -- mockup_projects has no rows
+ * referencing these templates as of this rewrite).
  */
 
-interface CategoryDef {
+interface TemplateDef {
   category: string;
-  label: string;
-  aspect: number; // width / height, drives the background rect shape
+  name: string;
+  slug: string;
+  description: string;
+  imagePath: string;
   placement: { xPct: number; yPct: number; widthPct: number; heightPct: number };
-  variants: { suffix: string; bg: string; fg: string }[];
 }
 
-const CATEGORIES: CategoryDef[] = [
+const TEMPLATES: TemplateDef[] = [
   {
     category: "business_card",
-    label: "Business Card",
-    aspect: 1.75,
-    placement: { xPct: 30, yPct: 35, widthPct: 40, heightPct: 30 },
-    variants: [
-      { suffix: "Cream", bg: "#fef3c7", fg: "#78350f" },
-      { suffix: "Charcoal", bg: "#1f2937", fg: "#f9fafb" },
-    ],
-  },
-  {
-    category: "stationery",
-    label: "Stationery",
-    aspect: 0.77,
-    placement: { xPct: 10, yPct: 8, widthPct: 30, heightPct: 15 },
-    variants: [
-      { suffix: "White", bg: "#ffffff", fg: "#111827" },
-      { suffix: "Ivory", bg: "#fffbeb", fg: "#78350f" },
-    ],
+    name: "명함",
+    slug: "business-card",
+    description: "명함 목업 템플릿 -- 카드 앞면에 로고를 자동 배치합니다.",
+    imagePath: "/mockup-templates/business-card.jpg",
+    placement: { xPct: 32, yPct: 22, widthPct: 20, heightPct: 20 },
   },
   {
     category: "signboard",
-    label: "Signboard",
-    aspect: 2.5,
-    placement: { xPct: 25, yPct: 25, widthPct: 50, heightPct: 50 },
-    variants: [
-      { suffix: "Navy", bg: "#0c1e3e", fg: "#f9fafb" },
-      { suffix: "Wood", bg: "#7c4a1e", fg: "#fef3c7" },
-    ],
-  },
-  {
-    category: "packaging",
-    label: "Packaging",
-    aspect: 1,
-    placement: { xPct: 25, yPct: 30, widthPct: 50, heightPct: 40 },
-    variants: [
-      { suffix: "Kraft", bg: "#b08968", fg: "#3f2a14" },
-      { suffix: "White Box", bg: "#f5f5f4", fg: "#1c1917" },
-    ],
-  },
-  {
-    category: "coffee_cup",
-    label: "Coffee Cup",
-    aspect: 0.55,
-    placement: { xPct: 25, yPct: 30, widthPct: 50, heightPct: 35 },
-    variants: [
-      { suffix: "White Cup", bg: "#fafaf9", fg: "#292524" },
-      { suffix: "Kraft Cup", bg: "#c9a679", fg: "#3f2a14" },
-    ],
-  },
-  {
-    category: "shopping_bag",
-    label: "Shopping Bag",
-    aspect: 0.8,
-    placement: { xPct: 25, yPct: 30, widthPct: 50, heightPct: 40 },
-    variants: [
-      { suffix: "Kraft Bag", bg: "#a9744f", fg: "#2b1a0e" },
-      { suffix: "White Bag", bg: "#f5f5f4", fg: "#111827" },
-    ],
-  },
-  {
-    category: "t_shirt",
-    label: "T-shirt",
-    aspect: 0.9,
-    placement: { xPct: 30, yPct: 25, widthPct: 40, heightPct: 30 },
-    variants: [
-      { suffix: "Light Gray", bg: "#e5e7eb", fg: "#111827" },
-      { suffix: "Black", bg: "#111827", fg: "#f9fafb" },
-    ],
+    name: "간판",
+    slug: "signboard",
+    description: "간판 목업 템플릿 -- 매장 사인에 로고를 자동 배치합니다.",
+    imagePath: "/mockup-templates/signboard.jpg",
+    placement: { xPct: 41, yPct: 20, widthPct: 30, heightPct: 38 },
   },
   {
     category: "mobile_app",
-    label: "Mobile App",
-    aspect: 0.5,
-    placement: { xPct: 30, yPct: 12, widthPct: 40, heightPct: 20 },
-    variants: [
-      { suffix: "Dark UI", bg: "#111827", fg: "#f9fafb" },
-      { suffix: "Light UI", bg: "#f9fafb", fg: "#111827" },
-    ],
+    name: "모바일 앱",
+    slug: "mobile-app",
+    description: "모바일 앱 목업 템플릿 -- 앱 화면에 로고를 자동 배치합니다.",
+    imagePath: "/mockup-templates/mobile-app.jpg",
+    placement: { xPct: 40, yPct: 18, widthPct: 8, heightPct: 8 },
   },
   {
     category: "website_hero",
-    label: "Website Hero",
-    aspect: 1.9,
-    placement: { xPct: 8, yPct: 10, widthPct: 25, heightPct: 25 },
-    variants: [
-      { suffix: "Light Section", bg: "#f3f4f6", fg: "#111827" },
-      { suffix: "Dark Section", bg: "#0f172a", fg: "#f9fafb" },
-    ],
+    name: "웹사이트",
+    slug: "website-hero",
+    description: "웹사이트 목업 템플릿 -- 내비게이션 바에 로고를 자동 배치합니다.",
+    imagePath: "/mockup-templates/website-hero.jpg",
+    placement: { xPct: 9, yPct: 12, widthPct: 12, heightPct: 5 },
   },
   {
-    category: "social_media",
-    label: "Social Media",
-    aspect: 1,
-    placement: { xPct: 30, yPct: 30, widthPct: 40, heightPct: 40 },
-    variants: [
-      { suffix: "Feed Square", bg: "#fef2f2", fg: "#7f1d1d" },
-      { suffix: "Story", bg: "#ede9fe", fg: "#4c1d95" },
-    ],
+    category: "brochure",
+    name: "브로슈어",
+    slug: "brochure",
+    description: "브로슈어 목업 템플릿 -- 표지에 로고를 자동 배치합니다.",
+    imagePath: "/mockup-templates/brochure.jpg",
+    placement: { xPct: 66, yPct: 16, widthPct: 26, heightPct: 12 },
+  },
+  {
+    category: "poster",
+    name: "포스터 (메디컬)",
+    slug: "poster-medical",
+    description: "포스터 목업 템플릿 -- 상단 브랜드 영역에 로고를 자동 배치합니다.",
+    imagePath: "/mockup-templates/poster-medical.jpg",
+    placement: { xPct: 28, yPct: 10, widthPct: 44, heightPct: 6 },
+  },
+  {
+    category: "poster",
+    name: "포스터 (카페)",
+    slug: "poster-cafe",
+    description: "포스터 목업 템플릿 -- 상단 브랜드 영역에 로고를 자동 배치합니다.",
+    imagePath: "/mockup-templates/poster-cafe.jpg",
+    placement: { xPct: 43, yPct: 11, widthPct: 35, heightPct: 18 },
   },
 ];
-
-const BASE_SIZE = 512;
-
-function slugify(...parts: string[]): string {
-  return parts
-    .join("-")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
-function buildBackgroundSvg(def: CategoryDef, variant: CategoryDef["variants"][number]): string {
-  const width = def.aspect >= 1 ? BASE_SIZE : Math.round(BASE_SIZE * def.aspect);
-  const height = def.aspect >= 1 ? Math.round(BASE_SIZE / def.aspect) : BASE_SIZE;
-  const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">` +
-    `<rect width="${width}" height="${height}" rx="${Math.round(Math.min(width, height) * 0.04)}" fill="${variant.bg}"/>` +
-    `<text x="50%" y="95%" text-anchor="middle" font-family="sans-serif" font-size="${Math.round(height * 0.05)}" fill="${variant.fg}" opacity="0.6">${def.label} · ${variant.suffix}</text>` +
-    `</svg>`;
-  return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
-}
 
 async function main() {
   const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
   const prisma = new PrismaClient({ adapter });
 
-  let count = 0;
-  for (const def of CATEGORIES) {
-    for (const variant of def.variants) {
-      const slug = slugify(def.category, variant.suffix);
-      await prisma.mockupTemplate.upsert({
-        where: { slug },
-        create: {
-          category: def.category,
-          name: `${def.label} (${variant.suffix})`,
-          slug,
-          description: `${def.label} 목업 템플릿 -- ${variant.suffix} 배경에 로고를 자동 배치합니다.`,
-          backgroundUrl: buildBackgroundSvg(def, variant),
-          placementXPct: def.placement.xPct,
-          placementYPct: def.placement.yPct,
-          placementWidthPct: def.placement.widthPct,
-          placementHeightPct: def.placement.heightPct,
-        },
-        update: {
-          backgroundUrl: buildBackgroundSvg(def, variant),
-          placementXPct: def.placement.xPct,
-          placementYPct: def.placement.yPct,
-          placementWidthPct: def.placement.widthPct,
-          placementHeightPct: def.placement.heightPct,
-        },
-      });
-      count++;
-    }
+  await prisma.mockupTemplate.deleteMany({});
+
+  for (const t of TEMPLATES) {
+    await prisma.mockupTemplate.create({
+      data: {
+        category: t.category,
+        name: t.name,
+        slug: t.slug,
+        description: t.description,
+        backgroundUrl: t.imagePath,
+        placementXPct: t.placement.xPct,
+        placementYPct: t.placement.yPct,
+        placementWidthPct: t.placement.widthPct,
+        placementHeightPct: t.placement.heightPct,
+      },
+    });
   }
 
-  console.log(`Seeded mockup templates: ${count} across ${CATEGORIES.length} categories`);
+  const categoryCount = new Set(TEMPLATES.map((t) => t.category)).size;
+  console.log(`Seeded mockup templates: ${TEMPLATES.length} across ${categoryCount} categories`);
   await prisma.$disconnect();
 }
 

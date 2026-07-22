@@ -3,24 +3,34 @@ import { MOCKUP_CATEGORIES } from "@/modules/mockups/domain/Mockup";
 import { rankMockupCategories, scoreMockupCategory } from "@/modules/mockups/domain/mockupRules";
 
 describe("mockupRules", () => {
-  it("ranks coffee_cup highest for a cafe-related keyword text", () => {
-    const ranked = rankMockupCategories([...MOCKUP_CATEGORIES], { keywordText: "카페 커피 로스터리" });
-    expect(ranked[0]!.category).toBe("coffee_cup");
+  it("ranks business_card highest for a B2B/consulting keyword text", () => {
+    const ranked = rankMockupCategories([...MOCKUP_CATEGORIES], { keywordText: "명함이 필요한 컨설팅 회사입니다" });
+    expect(ranked[0]!.category).toBe("business_card");
     expect(ranked[0]!.score).toBeGreaterThan(0);
   });
 
-  it("ranks packaging highest for a cosmetics-related keyword text", () => {
-    const ranked = rankMockupCategories([...MOCKUP_CATEGORIES], { keywordText: "화장품 스킨케어 코스메틱" });
-    expect(ranked[0]!.category).toBe("packaging");
+  it("ranks signboard highest for a storefront/cafe keyword text", () => {
+    const ranked = rankMockupCategories([...MOCKUP_CATEGORIES], { keywordText: "카페 매장 간판이 필요해요" });
+    expect(ranked[0]!.category).toBe("signboard");
   });
 
-  it("ranks mobile_app / website_hero highest for a tech startup keyword text", () => {
-    const ranked = rankMockupCategories([...MOCKUP_CATEGORIES], { keywordText: "IT 스타트업 앱 서비스" });
-    expect(["mobile_app", "website_hero"]).toContain(ranked[0]!.category);
+  it("ranks mobile_app highest for a tech startup keyword text", () => {
+    const ranked = rankMockupCategories([...MOCKUP_CATEGORIES], { keywordText: "IT 스타트업 앱 서비스 플랫폼" });
+    expect(ranked[0]!.category).toBe("mobile_app");
+  });
+
+  it("ranks brochure highest for a catalog/consulting keyword text", () => {
+    const ranked = rankMockupCategories([...MOCKUP_CATEGORIES], { keywordText: "브로슈어 카탈로그 인테리어 상담" });
+    expect(ranked[0]!.category).toBe("brochure");
+  });
+
+  it("ranks poster highest for an event/promo keyword text", () => {
+    const ranked = rankMockupCategories([...MOCKUP_CATEGORIES], { keywordText: "포스터 홍보 이벤트 캠페인" });
+    expect(ranked[0]!.category).toBe("poster");
   });
 
   it("scores 0 for unrelated text with no keyword matches", () => {
-    const score = scoreMockupCategory("coffee_cup", { keywordText: "xyz123 completely unrelated" });
+    const score = scoreMockupCategory("business_card", { keywordText: "xyz123 completely unrelated" });
     expect(score).toBe(0);
   });
 

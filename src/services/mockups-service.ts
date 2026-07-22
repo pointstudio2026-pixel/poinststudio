@@ -2,27 +2,19 @@ import { apiFetch } from "@/services/http-client";
 
 export type MockupCategoryDto =
   | "business_card"
-  | "stationery"
   | "signboard"
-  | "packaging"
-  | "coffee_cup"
-  | "shopping_bag"
-  | "t_shirt"
   | "mobile_app"
   | "website_hero"
-  | "social_media";
+  | "brochure"
+  | "poster";
 
 export const MOCKUP_CATEGORY_LABELS: Record<MockupCategoryDto, string> = {
   business_card: "Business Card",
-  stationery: "Stationery",
   signboard: "Signboard",
-  packaging: "Packaging",
-  coffee_cup: "Coffee Cup",
-  shopping_bag: "Shopping Bag",
-  t_shirt: "T-shirt",
   mobile_app: "Mobile App",
   website_hero: "Website Hero",
-  social_media: "Social Media",
+  brochure: "Brochure",
+  poster: "Poster",
 };
 
 export interface MockupTemplateDto {

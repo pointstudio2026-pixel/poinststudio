@@ -2,15 +2,11 @@ import type { GenerationStatus } from "@/modules/generations/domain/Generation";
 
 export const MOCKUP_CATEGORIES = [
   "business_card",
-  "stationery",
   "signboard",
-  "packaging",
-  "coffee_cup",
-  "shopping_bag",
-  "t_shirt",
   "mobile_app",
   "website_hero",
-  "social_media",
+  "brochure",
+  "poster",
 ] as const;
 
 export type MockupCategory = (typeof MOCKUP_CATEGORIES)[number];

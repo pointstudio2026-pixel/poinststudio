@@ -117,12 +117,12 @@ describe("composeDesignMemoryProfile", () => {
       favoriteStyles: [],
       strategySignals: [],
       mockupCategoryCounts: [
-        { category: "coffee_cup", count: 3 },
+        { category: "signboard", count: 3 },
         { category: "not-a-category", count: 9 },
       ],
     });
 
     expect(profile.favoriteMockupCategories).toHaveLength(1);
-    expect(profile.favoriteMockupCategories[0]?.category).toBe("coffee_cup");
+    expect(profile.favoriteMockupCategories[0]?.category).toBe("signboard");
   });
 });

@@ -20,12 +20,12 @@ async function setupWithAnswers(answers: Record<string, string>) {
 }
 
 describe("RecommendMockupCategoriesUseCase", () => {
-  it("recommends coffee_cup first for a cafe industry answer", async () => {
-    const { projectId, useCase } = await setupWithAnswers({ industry: "카페", purpose: "커피 전문점 브랜딩" });
+  it("recommends signboard first for a cafe storefront industry answer", async () => {
+    const { projectId, useCase } = await setupWithAnswers({ industry: "카페", purpose: "매장 간판 디자인" });
 
     const recommendations = await useCase.execute({ projectId, userId: "user-1" });
 
-    expect(recommendations[0]!.category).toBe("coffee_cup");
+    expect(recommendations[0]!.category).toBe("signboard");
   });
 
   it("returns categories in default order when there is no interview yet", async () => {

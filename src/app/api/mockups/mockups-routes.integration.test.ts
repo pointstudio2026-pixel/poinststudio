@@ -128,7 +128,7 @@ describe("Mockup Studio API routes", () => {
     expect(res.status).toBe(200);
     expect(body.data.templates.length).toBeGreaterThan(0);
     expect(body.data.templates.every((t: { category: string }) => t.category === "business_card")).toBe(true);
-    expect(body.data.categories.length).toBeGreaterThanOrEqual(10);
+    expect(body.data.categories.length).toBe(6);
   });
 
   it("renders a mockup end-to-end through the real Queue/Worker (Mockup 생성 성공 / Queue 기반 렌더링)", async () => {
@@ -136,7 +136,7 @@ describe("Mockup Studio API routes", () => {
     const { projectId, sourceVersion } = await createProjectWithCompletedGeneration(cookie);
 
     const templatesRes = await getTemplatesHandler(
-      new NextRequest("http://localhost/api/mockups/templates?category=coffee_cup", { headers: { cookie } }),
+      new NextRequest("http://localhost/api/mockups/templates?category=signboard", { headers: { cookie } }),
     );
     const template = (await templatesRes.json()).data.templates[0];
 
@@ -160,7 +160,7 @@ describe("Mockup Studio API routes", () => {
     const { cookie } = await createSessionCookie();
     const { projectId, sourceVersion } = await createProjectWithCompletedGeneration(cookie);
     const templatesRes = await getTemplatesHandler(
-      new NextRequest("http://localhost/api/mockups/templates?category=t_shirt", { headers: { cookie } }),
+      new NextRequest("http://localhost/api/mockups/templates?category=brochure", { headers: { cookie } }),
     );
     const template = (await templatesRes.json()).data.templates[0];
 
@@ -178,13 +178,13 @@ describe("Mockup Studio API routes", () => {
     expect((await favRes.json()).data.mockup.isFavorite).toBe(true);
 
     const listRes = await getMockupsHandler(
-      new NextRequest(`http://localhost/api/mockups/${projectId}?category=t_shirt`, { headers: { cookie } }),
+      new NextRequest(`http://localhost/api/mockups/${projectId}?category=brochure`, { headers: { cookie } }),
       { params: Promise.resolve({ id: projectId }) },
     );
     expect((await listRes.json()).data.mockups).toHaveLength(1);
 
     const emptyRes = await getMockupsHandler(
-      new NextRequest(`http://localhost/api/mockups/${projectId}?category=packaging`, { headers: { cookie } }),
+      new NextRequest(`http://localhost/api/mockups/${projectId}?category=poster`, { headers: { cookie } }),
       { params: Promise.resolve({ id: projectId }) },
     );
     expect((await emptyRes.json()).data.mockups).toHaveLength(0);
