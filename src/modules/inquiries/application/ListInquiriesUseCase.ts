@@ -9,8 +9,8 @@ import { PRIVATE_INQUIRY_PLACEHOLDER, type InquiryListItem } from "@/modules/inq
 export class ListInquiriesUseCase {
   constructor(private readonly inquiryRepository: InquiryRepository) {}
 
-  async execute(): Promise<InquiryListItem[]> {
-    const inquiries = await this.inquiryRepository.listAll();
+  async execute(input?: { locale?: string }): Promise<InquiryListItem[]> {
+    const inquiries = await this.inquiryRepository.listAll(input?.locale);
     return inquiries.map((inquiry) => ({
       id: inquiry.id,
       subject: inquiry.isPublic ? inquiry.subject : PRIVATE_INQUIRY_PLACEHOLDER,

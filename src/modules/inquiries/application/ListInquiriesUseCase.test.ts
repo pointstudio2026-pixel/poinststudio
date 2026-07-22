@@ -13,7 +13,7 @@ describe("ListInquiriesUseCase", () => {
     const repository = new FakeInquiryRepository();
     const submit = new SubmitInquiryUseCase(repository);
     const list = new ListInquiriesUseCase(repository);
-    await submit.execute({ userId: "user-1", subject: "공개 질문", message: "내용", isPublic: true });
+    await submit.execute({ userId: "user-1", locale: "ko", subject: "공개 질문", message: "내용", isPublic: true });
 
     const [item] = await list.execute();
 
@@ -25,7 +25,7 @@ describe("ListInquiriesUseCase", () => {
     const repository = new FakeInquiryRepository();
     const submit = new SubmitInquiryUseCase(repository);
     const list = new ListInquiriesUseCase(repository);
-    await submit.execute({ userId: "author", subject: "비밀 질문", message: "내용", isPublic: false });
+    await submit.execute({ userId: "author", locale: "ko", subject: "비밀 질문", message: "내용", isPublic: false });
 
     const [item] = await list.execute();
 
@@ -37,7 +37,7 @@ describe("ListInquiriesUseCase", () => {
     const repository = new FakeInquiryRepository();
     const submit = new SubmitInquiryUseCase(repository);
     const list = new ListInquiriesUseCase(repository);
-    await submit.execute({ userId: "user-1", subject: "제목", message: "민감한 내용", isPublic: true });
+    await submit.execute({ userId: "user-1", locale: "ko", subject: "제목", message: "민감한 내용", isPublic: true });
 
     const [item] = await list.execute();
 

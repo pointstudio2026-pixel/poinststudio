@@ -4,6 +4,7 @@ export interface Inquiry {
   subject: string;
   message: string;
   isPublic: boolean;
+  locale: string;
   createdAt: Date;
 }
 

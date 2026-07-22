@@ -24,6 +24,7 @@ describe("GetInquiryUseCase", () => {
     const getUseCase = new GetInquiryUseCase(repository);
     const created = await submit.execute({
       userId: "author",
+      locale: "ko",
       subject: "공개 질문",
       message: "자세한 내용",
       isPublic: true,
@@ -40,6 +41,7 @@ describe("GetInquiryUseCase", () => {
     const getUseCase = new GetInquiryUseCase(repository);
     const created = await submit.execute({
       userId: "author",
+      locale: "ko",
       subject: "비공개 질문",
       message: "민감한 내용",
       isPublic: false,
@@ -56,6 +58,7 @@ describe("GetInquiryUseCase", () => {
     const getUseCase = new GetInquiryUseCase(repository);
     const created = await submit.execute({
       userId: "author",
+      locale: "ko",
       subject: "비공개 질문",
       message: "민감한 내용",
       isPublic: false,
@@ -72,6 +75,7 @@ describe("GetInquiryUseCase", () => {
     const getUseCase = new GetInquiryUseCase(repository);
     const created = await submit.execute({
       userId: "author",
+      locale: "ko",
       subject: "비공개 질문",
       message: "민감한 내용",
       isPublic: false,

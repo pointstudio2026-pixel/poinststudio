@@ -6,12 +6,13 @@ import { recordActivity } from "@/shared/activity/activityLogger";
 export class SubmitInquiryUseCase {
   constructor(private readonly inquiryRepository: InquiryRepository) {}
 
-  async execute(input: { userId: string } & SubmitInquiryInput): Promise<Inquiry> {
+  async execute(input: { userId: string; locale: string } & SubmitInquiryInput): Promise<Inquiry> {
     const inquiry = await this.inquiryRepository.create({
       userId: input.userId,
       subject: input.subject.trim(),
       message: input.message.trim(),
       isPublic: input.isPublic,
+      locale: input.locale,
     });
 
     await recordActivity({

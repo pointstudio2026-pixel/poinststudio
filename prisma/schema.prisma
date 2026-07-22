@@ -609,10 +609,12 @@ model Inquiry {
   subject   String   @db.VarChar(200)
   message   String   @db.Text
   isPublic  Boolean  @default(false) @map("is_public")
+  locale    String   @default("ko") @db.VarChar(5)
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
   @@index([userId, createdAt(sort: Desc)])
   @@index([isPublic, createdAt(sort: Desc)])
+  @@index([locale, isPublic, createdAt(sort: Desc)])
   @@map("inquiries")
 }
 

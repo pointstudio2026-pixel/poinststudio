@@ -14,6 +14,7 @@ export class FakeInquiryRepository implements InquiryRepository {
       subject: input.subject,
       message: input.message,
       isPublic: input.isPublic,
+      locale: input.locale,
       createdAt: new Date(),
     };
     this.inquiries.push(inquiry);
@@ -24,7 +25,9 @@ export class FakeInquiryRepository implements InquiryRepository {
     return this.inquiries.find((i) => i.id === id) ?? null;
   }
 
-  async listAll(): Promise<Inquiry[]> {
-    return [...this.inquiries].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  async listAll(locale?: string): Promise<Inquiry[]> {
+    return [...this.inquiries]
+      .filter((i) => !locale || i.locale === locale)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 }

@@ -13,6 +13,7 @@ describe("SubmitInquiryUseCase", () => {
 
     const inquiry = await useCase.execute({
       userId: "user-1",
+      locale: "ko",
       subject: "질문 있어요",
       message: "내용입니다.",
       isPublic: false,
@@ -29,6 +30,7 @@ describe("SubmitInquiryUseCase", () => {
 
     const inquiry = await useCase.execute({
       userId: "user-1",
+      locale: "ko",
       subject: "  제목  ",
       message: "  내용  ",
       isPublic: false,
@@ -44,6 +46,7 @@ describe("SubmitInquiryUseCase", () => {
 
     const publicInquiry = await useCase.execute({
       userId: "user-1",
+      locale: "ko",
       subject: "공개 문의",
       message: "내용",
       isPublic: true,
@@ -52,6 +55,7 @@ describe("SubmitInquiryUseCase", () => {
 
     const privateInquiry = await useCase.execute({
       userId: "user-1",
+      locale: "ko",
       subject: "비공개 문의",
       message: "내용",
       isPublic: false,

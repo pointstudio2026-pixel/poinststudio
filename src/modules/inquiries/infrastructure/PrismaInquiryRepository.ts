@@ -13,6 +13,7 @@ export class PrismaInquiryRepository implements InquiryRepository {
         subject: input.subject,
         message: input.message,
         isPublic: input.isPublic,
+        locale: input.locale,
       },
     });
   }
@@ -21,7 +22,10 @@ export class PrismaInquiryRepository implements InquiryRepository {
     return prisma.inquiry.findUnique({ where: { id } });
   }
 
-  async listAll(): Promise<Inquiry[]> {
-    return prisma.inquiry.findMany({ orderBy: { createdAt: "desc" } });
+  async listAll(locale?: string): Promise<Inquiry[]> {
+    return prisma.inquiry.findMany({
+      where: locale ? { locale } : undefined,
+      orderBy: { createdAt: "desc" },
+    });
   }
 }

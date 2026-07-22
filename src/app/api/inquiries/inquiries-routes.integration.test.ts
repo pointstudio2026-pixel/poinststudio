@@ -49,9 +49,13 @@ function withParams(id: string) {
   return { params: Promise.resolve({ id }) };
 }
 
-async function submit(cookie: string, subject: string, isPublic: boolean) {
+function withLocale(cookie: string, locale?: string) {
+  return locale ? `${cookie}; aster_locale=${locale}` : cookie;
+}
+
+async function submit(cookie: string, subject: string, isPublic: boolean, locale?: string) {
   const res = await submitInquiryHandler(
-    postRequest("/api/inquiries", { subject, message: `${subject} 내용`, isPublic }, cookie),
+    postRequest("/api/inquiries", { subject, message: `${subject} 내용`, isPublic }, withLocale(cookie, locale)),
   );
   const { data } = await res.json();
   return data.inquiry.id as string;
@@ -71,6 +75,23 @@ describe("Inquiries routes (커뮤니티 문의사항)", () => {
     expect(subjects).toContain("공개 문의 제목");
     expect(subjects).toContain(PRIVATE_INQUIRY_PLACEHOLDER);
     expect(subjects).not.toContain("비공개 문의 제목");
+  });
+
+  it("only lists inquiries submitted in the viewer's own language (언어별 게시판 분리)", async () => {
+    const koAuthor = await createSessionCookie();
+    const enAuthor = await createSessionCookie();
+    await submit(koAuthor.cookie, "한국어 공개 문의", true, "ko");
+    await submit(enAuthor.cookie, "English public inquiry", true, "en");
+
+    const koRes = await listInquiriesHandler(getRequest("/api/inquiries", withLocale(koAuthor.cookie, "ko")));
+    const koSubjects = (await koRes.json()).data.inquiries.map((i: { subject: string }) => i.subject);
+    expect(koSubjects).toContain("한국어 공개 문의");
+    expect(koSubjects).not.toContain("English public inquiry");
+
+    const enRes = await listInquiriesHandler(getRequest("/api/inquiries", withLocale(enAuthor.cookie, "en")));
+    const enSubjects = (await enRes.json()).data.inquiries.map((i: { subject: string }) => i.subject);
+    expect(enSubjects).toContain("English public inquiry");
+    expect(enSubjects).not.toContain("한국어 공개 문의");
   });
 
   it("blocks a stranger from opening a private inquiry's detail (403)", async () => {
