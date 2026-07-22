@@ -1,6 +1,37 @@
 import type { Messages } from "@/shared/i18n/messages/types";
 
 export const fr: Messages = {
+  common: {
+    perMonth: "/mois",
+  },
+  mockupStudio: {
+    proOnlyBody: "La génération de maquettes est disponible à partir de l'offre Pro.",
+    upgradeLink: "Voir les offres d'abonnement",
+  },
+  subscription: {
+    title: "Offres d'abonnement",
+    backToProjects: "Retour à mes projets",
+    currentPlanLine: "Offre actuelle : {plan}",
+    currentPlanBadge: "Offre actuelle",
+    upgradeButton: "Passer à niveau supérieur",
+    highRes: "Haute résolution",
+    standardRes: "Résolution standard",
+    priorityQueue: "File d'attente prioritaire",
+    standardQueue: "File d'attente standard",
+    allowance: {
+      free: "{limit} générations / mois",
+      pro: "Générations mensuelles amplement suffisantes pour vos projets de marque",
+      studio: "Générations en grand volume, à l'aise même sur plusieurs projets",
+    },
+    paymentModal: {
+      title: "Choisissez un mode de paiement pour l'offre {plan}",
+      toss: "Toss Pay",
+      kakaopay: "Kakao Pay",
+      paypal: "PayPal",
+      notReady: "Le paiement sera disponible après le lancement officiel.",
+      close: "Fermer",
+    },
+  },
   nav: {
     myProjects: "Mes projets",
     myStyles: "Mes styles",

@@ -25,7 +25,6 @@ export function ProjectSidebar({
     <aside className="w-full flex-shrink-0 lg:sticky lg:top-16 lg:w-[220px] lg:self-start">
       <nav className="flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
         {steps.map((step, i) => {
-          if (step.key === "mockup" && planCode === "free") return null;
           const route = STEP_ROUTES[step.key];
           const href = route ? `/projects/${projectId}/${route}` : null;
           const isActive = Boolean(href && pathname === href);

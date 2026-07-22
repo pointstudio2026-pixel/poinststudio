@@ -52,7 +52,6 @@ const PLANS = [
   {
     code: "Free",
     price: "₩0",
-    period: "/월",
     descriptionKey: "home.pricing.free.description",
     featureKeys: ["home.pricing.free.feature1", "home.pricing.free.feature2"],
     ctaKey: "home.pricing.free.cta",
@@ -64,7 +63,6 @@ const PLANS = [
   {
     code: "Pro",
     price: "₩29,000",
-    period: "/월",
     descriptionKey: "home.pricing.pro.description",
     featureKeys: ["home.pricing.pro.feature1", "home.pricing.pro.feature2", "home.pricing.pro.feature3"],
     ctaKey: "home.pricing.pro.cta",
@@ -76,7 +74,6 @@ const PLANS = [
   {
     code: "Studio",
     price: "₩99,000",
-    period: "/월",
     descriptionKey: "home.pricing.studio.description",
     featureKeys: [
       "home.pricing.studio.feature1",
@@ -93,7 +90,6 @@ const PLANS = [
 ] as const satisfies {
   code: string;
   price: string;
-  period: string;
   descriptionKey: MessageKey;
   featureKeys: MessageKey[];
   ctaKey: MessageKey;
@@ -285,7 +281,7 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
                     </p>
                     <p className="mt-2 text-3xl font-semibold">
                       {plan.price}
-                      {plan.period && <span className="text-base font-normal">{plan.period}</span>}
+                      <span className="text-base font-normal">{t("common.perMonth")}</span>
                     </p>
                     <p className={`mt-1 text-sm ${plan.highlighted ? "text-paper/70" : "text-muted"}`}>
                       {t(plan.descriptionKey)}

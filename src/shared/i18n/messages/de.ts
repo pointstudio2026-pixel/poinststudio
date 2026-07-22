@@ -1,6 +1,37 @@
 import type { Messages } from "@/shared/i18n/messages/types";
 
 export const de: Messages = {
+  common: {
+    perMonth: "/Monat",
+  },
+  mockupStudio: {
+    proOnlyBody: "Die Mockup-Erstellung ist ab dem Pro-Plan verfügbar.",
+    upgradeLink: "Abo-Pläne ansehen",
+  },
+  subscription: {
+    title: "Abo-Pläne",
+    backToProjects: "Zurück zu meinen Projekten",
+    currentPlanLine: "Aktueller Plan: {plan}",
+    currentPlanBadge: "Aktueller Plan",
+    upgradeButton: "Upgrade",
+    highRes: "Hohe Auflösung",
+    standardRes: "Standardauflösung",
+    priorityQueue: "Bevorzugte Warteschlange",
+    standardQueue: "Standard-Warteschlange",
+    allowance: {
+      free: "{limit} Generierungen / Monat",
+      pro: "Ausreichend monatliche Generierungen für Markenprojekte",
+      studio: "Generierungen mit hohem Volumen, auch für mehrere Projekte",
+    },
+    paymentModal: {
+      title: "Zahlungsmethode für den {plan}-Plan wählen",
+      toss: "Toss Pay",
+      kakaopay: "Kakao Pay",
+      paypal: "PayPal",
+      notReady: "Die Zahlung ist nach dem offiziellen Launch verfügbar.",
+      close: "Schließen",
+    },
+  },
   nav: {
     myProjects: "Meine Projekte",
     myStyles: "Meine Stile",

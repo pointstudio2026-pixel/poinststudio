@@ -1,6 +1,37 @@
 import type { Messages } from "@/shared/i18n/messages/types";
 
 export const ja: Messages = {
+  common: {
+    perMonth: "/月",
+  },
+  mockupStudio: {
+    proOnlyBody: "モックアップ生成はProプラン以上でご利用いただける機能です。",
+    upgradeLink: "料金プランを見る",
+  },
+  subscription: {
+    title: "料金プラン",
+    backToProjects: "マイプロジェクトへ",
+    currentPlanLine: "現在のプラン: {plan}",
+    currentPlanBadge: "現在のプラン",
+    upgradeButton: "アップグレード",
+    highRes: "高解像度",
+    standardRes: "標準解像度",
+    priorityQueue: "優先処理キュー",
+    standardQueue: "通常キュー",
+    allowance: {
+      free: "月{limit}回の生成",
+      pro: "ブランドプロジェクトに十分な月間生成回数",
+      studio: "複数のプロジェクトにも余裕を持てる大容量の生成回数",
+    },
+    paymentModal: {
+      title: "{plan}プランのお支払い方法を選択",
+      toss: "Toss Pay",
+      kakaopay: "Kakao Pay",
+      paypal: "PayPal",
+      notReady: "正式サービス開始後にお支払いいただけます。",
+      close: "閉じる",
+    },
+  },
   nav: {
     myProjects: "マイプロジェクト",
     myStyles: "マイスタイル",

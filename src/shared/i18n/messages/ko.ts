@@ -1,4 +1,35 @@
 export const ko = {
+  common: {
+    perMonth: "/월",
+  },
+  mockupStudio: {
+    proOnlyBody: "목업 생성은 Pro 이상 플랜에서 이용할 수 있는 기능입니다.",
+    upgradeLink: "구독 플랜 보기",
+  },
+  subscription: {
+    title: "구독 플랜",
+    backToProjects: "내 프로젝트로",
+    currentPlanLine: "현재 플랜: {plan}",
+    currentPlanBadge: "현재 플랜",
+    upgradeButton: "업그레이드",
+    highRes: "고해상도",
+    standardRes: "기본 해상도",
+    priorityQueue: "우선 처리 큐",
+    standardQueue: "일반 큐",
+    allowance: {
+      free: "월 {limit}회 생성",
+      pro: "브랜드 프로젝트에 충분한 월간 생성 횟수",
+      studio: "여러 프로젝트도 여유롭게, 대용량 생성 횟수",
+    },
+    paymentModal: {
+      title: "{plan} 플랜 결제 수단 선택",
+      toss: "Toss페이",
+      kakaopay: "카카오페이",
+      paypal: "PayPal",
+      notReady: "정식 서비스 출시 이후 결제 가능합니다.",
+      close: "닫기",
+    },
+  },
   nav: {
     myProjects: "내 프로젝트",
     myStyles: "내 스타일",

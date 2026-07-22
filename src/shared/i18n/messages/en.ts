@@ -1,6 +1,37 @@
 import type { Messages } from "@/shared/i18n/messages/types";
 
 export const en: Messages = {
+  common: {
+    perMonth: "/mo",
+  },
+  mockupStudio: {
+    proOnlyBody: "Mockup generation is available on the Pro plan and above.",
+    upgradeLink: "View subscription plans",
+  },
+  subscription: {
+    title: "Subscription Plans",
+    backToProjects: "Back to my projects",
+    currentPlanLine: "Current plan: {plan}",
+    currentPlanBadge: "Current plan",
+    upgradeButton: "Upgrade",
+    highRes: "High resolution",
+    standardRes: "Standard resolution",
+    priorityQueue: "Priority queue",
+    standardQueue: "Standard queue",
+    allowance: {
+      free: "{limit} generations / month",
+      pro: "Ample monthly generations for brand projects",
+      studio: "High-volume generations, comfortable across multiple projects",
+    },
+    paymentModal: {
+      title: "Choose a payment method for {plan}",
+      toss: "Toss Pay",
+      kakaopay: "Kakao Pay",
+      paypal: "PayPal",
+      notReady: "Payment will be available after the official launch.",
+      close: "Close",
+    },
+  },
   nav: {
     myProjects: "My Projects",
     myStyles: "My Styles",
