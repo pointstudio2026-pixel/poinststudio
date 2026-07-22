@@ -14,6 +14,8 @@ import {
 import { fetchUserStyleCategories, selectProjectUserStyle, userStyleReferenceImageUrl } from "@/services/user-styles-service";
 import { fetchColorPalettes, selectColorPalette, type ColorSwatchDto } from "@/services/color-palette-service";
 import { cmykToHex } from "@/modules/colorPalettes/domain/cmykToHex";
+import { fetchInterview } from "@/services/interview-service";
+import { suggestColorSwatchesFromNotes } from "@/modules/colorPalettes/domain/interviewColorSuggestion";
 import { Spinner } from "@/components/Spinner";
 import { NextStepButton } from "@/features/workspace/NextStepButton";
 
@@ -167,6 +169,7 @@ export function StylesView({
   const [customSwatches, setCustomSwatches] = useState<ColorSwatchDto[]>(DEFAULT_CUSTOM_SWATCHES);
   const [colorError, setColorError] = useState<string | null>(null);
   const [isSelectingColor, setIsSelectingColor] = useState(false);
+  const [colorSuggestionDismissed, setColorSuggestionDismissed] = useState(false);
 
   const { data: recommendData, isLoading: isLoadingRecommendations } = useQuery({
     queryKey: ["style-recommendations", projectId],
@@ -217,6 +220,27 @@ export function StylesView({
     () => new Set((favoriteData?.styles ?? []).map((s) => s.id)),
     [favoriteData],
   );
+
+  // 인터뷰 서술형 답변(additionalNotes)에 색상이 언급되어 있으면 컬러
+  // 선택에 제안으로 띄운다 -- 이미 완료된 인터뷰를 다시 조회해도 부작용
+  // 없음(GetOrStartInterviewUseCase는 기존 인터뷰를 그대로 반환).
+  const { data: interviewData } = useQuery({
+    queryKey: ["interview", projectId],
+    queryFn: () => fetchInterview(projectId),
+  });
+  const additionalNotesText = useMemo(
+    () => interviewData?.interview.answers.find((a) => a.questionKey === "additionalNotes")?.answer ?? null,
+    [interviewData],
+  );
+  const suggestedColorSwatches = useMemo(
+    () => suggestColorSwatchesFromNotes(additionalNotesText),
+    [additionalNotesText],
+  );
+  const showColorSuggestion =
+    Boolean(suggestedColorSwatches) &&
+    !selectedPaletteSlug &&
+    !isCustomColorSelected &&
+    !colorSuggestionDismissed;
 
   async function handleToggleFavorite(styleId: string) {
     await toggleStyleFavorite(styleId, !favoriteIds.has(styleId));
@@ -301,6 +325,17 @@ export function StylesView({
 
   function updateCustomSwatch(index: number, patch: Partial<ColorSwatchDto>) {
     setCustomSwatches((prev) => prev.map((s, i) => (i === index ? { ...s, ...patch } : s)));
+  }
+
+  function handleApplyColorSuggestion() {
+    if (!suggestedColorSwatches) return;
+    setCustomSwatches(suggestedColorSwatches);
+    setShowCustomColorForm(true);
+    setColorSuggestionDismissed(true);
+  }
+
+  function handleDismissColorSuggestion() {
+    setColorSuggestionDismissed(true);
   }
 
   async function handleConfirmCustomColor() {
@@ -416,6 +451,42 @@ export function StylesView({
           팔레트도 이 색으로 표시됩니다.
         </p>
         {colorError && <p className="mt-2 text-sm text-red-600">{colorError}</p>}
+
+        {showColorSuggestion && suggestedColorSwatches && (
+          <div className="mt-3 rounded-md border border-dashed border-neutral-300 bg-neutral-50 p-3">
+            <p className="text-xs font-medium text-neutral-700">
+              인터뷰에 남겨주신 내용에서 이런 색상을 찾았어요. 적용하면 직접 수정할 수 있는 화면으로 이동합니다.
+            </p>
+            <div className="mt-2 flex gap-3">
+              {suggestedColorSwatches.map((swatch) => (
+                <div key={swatch.hex} className="flex flex-col items-center gap-1">
+                  <div
+                    className="h-8 w-8 rounded-sm border border-neutral-200"
+                    style={{ backgroundColor: swatch.hex }}
+                    title={swatch.label}
+                  />
+                  <span className="text-[10px] text-neutral-500">{swatch.label}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-2 flex gap-2">
+              <button
+                type="button"
+                onClick={handleApplyColorSuggestion}
+                className="rounded-md bg-neutral-900 px-2 py-1 text-xs text-white"
+              >
+                적용
+              </button>
+              <button
+                type="button"
+                onClick={handleDismissColorSuggestion}
+                className="rounded-md border border-neutral-300 px-2 py-1 text-xs"
+              >
+                무시
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           {colorPalettes.map((palette) => (
