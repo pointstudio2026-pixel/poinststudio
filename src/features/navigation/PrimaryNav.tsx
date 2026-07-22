@@ -106,8 +106,6 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode:
         {t("nav.support")}
       </Link>
 
-      <LanguageSwitcher />
-
       <div ref={profileRef} className="relative">
         <button
           type="button"
@@ -138,6 +136,8 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode:
           </div>
         )}
       </div>
+
+      <LanguageSwitcher />
     </div>
   );
 }

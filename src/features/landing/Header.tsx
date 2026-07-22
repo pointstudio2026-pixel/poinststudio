@@ -48,7 +48,6 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
             <PrimaryNav user={user} planCode={planCode ?? "free"} />
           ) : (
             <>
-              <LanguageSwitcher />
               <Link href="/login" className="px-3 py-2 text-sm text-muted transition hover:text-ink">
                 {t("home.header.login")}
               </Link>
@@ -58,6 +57,7 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
               >
                 {t("home.header.getStarted")}
               </Link>
+              <LanguageSwitcher />
             </>
           )}
         </div>
