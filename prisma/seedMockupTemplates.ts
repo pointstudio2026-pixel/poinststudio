@@ -9,9 +9,9 @@ import { PrismaClient } from "../generated/prisma/client";
  * public/logo-styles) with a placement rect (in percent) where a logo gets
  * composited -- see MockMockupRenderProvider. Placement values are initial
  * eyeballed estimates; adjust after a real render if a logo doesn't sit
- * naturally. Re-run with `npm run prisma:seed-mockup-templates`; it wipes
- * and recreates every row each time (safe -- mockup_projects has no rows
- * referencing these templates as of this rewrite).
+ * naturally. Re-run with `npm run prisma:seed-mockup-templates`; it upserts
+ * by slug, so existing rows keep their id (mockup_projects references stay
+ * valid) and just get their values refreshed.
  */
 
 interface PlacementRect {
@@ -101,25 +101,29 @@ async function main() {
   const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
   const prisma = new PrismaClient({ adapter });
 
-  await prisma.mockupTemplate.deleteMany({});
-
+  // deleteMany+create은 mockup_projects가 실제로 이 템플릿들을 참조하기
+  // 시작한 뒤로는 FK RESTRICT에 막힌다(운영에 실사용 데이터가 쌓인 뒤 처음
+  // 발견됨) -- slug 기준 upsert로 바꿔서 기존 행은 자리를 지키며 값만
+  // 갱신되게 한다(TEMPLATES에서 빠진 slug가 있어도 그 행은 그대로 둔다).
   for (const t of TEMPLATES) {
-    await prisma.mockupTemplate.create({
-      data: {
-        category: t.category,
-        name: t.name,
-        slug: t.slug,
-        description: t.description,
-        backgroundUrl: t.imagePath,
-        placementXPct: t.placement.xPct,
-        placementYPct: t.placement.yPct,
-        placementWidthPct: t.placement.widthPct,
-        placementHeightPct: t.placement.heightPct,
-        fullDesignPlacementXPct: t.fullDesignPlacement?.xPct,
-        fullDesignPlacementYPct: t.fullDesignPlacement?.yPct,
-        fullDesignPlacementWidthPct: t.fullDesignPlacement?.widthPct,
-        fullDesignPlacementHeightPct: t.fullDesignPlacement?.heightPct,
-      },
+    const data = {
+      category: t.category,
+      name: t.name,
+      description: t.description,
+      backgroundUrl: t.imagePath,
+      placementXPct: t.placement.xPct,
+      placementYPct: t.placement.yPct,
+      placementWidthPct: t.placement.widthPct,
+      placementHeightPct: t.placement.heightPct,
+      fullDesignPlacementXPct: t.fullDesignPlacement?.xPct,
+      fullDesignPlacementYPct: t.fullDesignPlacement?.yPct,
+      fullDesignPlacementWidthPct: t.fullDesignPlacement?.widthPct,
+      fullDesignPlacementHeightPct: t.fullDesignPlacement?.heightPct,
+    };
+    await prisma.mockupTemplate.upsert({
+      where: { slug: t.slug },
+      create: { slug: t.slug, ...data },
+      update: data,
     });
   }
 
