@@ -40,8 +40,10 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode:
   const displayName = user.name?.trim() || user.email.split("@")[0] || "";
   const initial = displayName.charAt(0).toUpperCase();
 
+  const PILL = "whitespace-nowrap rounded-full border border-line px-3 py-1.5 text-xs transition hover:border-ink";
+
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2">
       <div
         className="relative"
         onMouseEnter={() => setProjectsOpen(true)}
@@ -53,10 +55,7 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode:
           if (!newProjectModalOpen) setProjectsOpen(false);
         }}
       >
-        <Link
-          href="/projects"
-          className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-ink"
-        >
+        <Link href="/projects" className={PILL}>
           {t("nav.myProjects")}
         </Link>
         {projectsOpen && (
@@ -75,34 +74,22 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode:
       </div>
 
       {planCode !== "free" && (
-        <Link
-          href="/my-styles"
-          className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-ink"
-        >
+        <Link href="/my-styles" className={PILL}>
           {t("nav.myStyles")}
         </Link>
       )}
 
       {planCode === "studio" && (
-        <Link
-          href="/team"
-          className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-ink"
-        >
+        <Link href="/team" className={PILL}>
           {t("nav.team")}
         </Link>
       )}
 
-      <Link
-        href="/guide"
-        className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-ink"
-      >
+      <Link href="/guide" className={PILL}>
         {t("nav.guide")}
       </Link>
 
-      <Link
-        href="/support"
-        className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-ink"
-      >
+      <Link href="/support" className={PILL}>
         {t("nav.support")}
       </Link>
 
@@ -110,13 +97,13 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode:
         <button
           type="button"
           onClick={() => setProfileOpen((v) => !v)}
-          className="flex items-center gap-2 rounded-full border border-line py-1.5 pl-1.5 pr-3 text-sm transition hover:border-ink"
+          className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-line py-1 pl-1 pr-2.5 text-xs transition hover:border-ink"
           aria-expanded={profileOpen}
         >
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-ink text-xs font-medium text-paper">
+          <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-ink text-[11px] font-medium text-paper">
             {initial}
           </span>
-          {displayName}
+          <span className="max-w-[8rem] truncate">{displayName}</span>
         </button>
         {profileOpen && (
           <div className="absolute right-0 top-full mt-2 w-48 rounded-xl border border-line bg-surface p-1.5 shadow-soft">

@@ -35,25 +35,25 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
           ASTER.
         </Link>
 
-        <nav className="hidden items-center gap-7 text-sm text-muted lg:flex">
+        <nav className="hidden items-center gap-4 text-xs text-muted lg:flex">
           {NAV_LINKS.map((link) => (
-            <a key={link.href} href={link.href} className="transition hover:text-ink">
+            <a key={link.href} href={link.href} className="whitespace-nowrap transition hover:text-ink">
               {t(link.labelKey)}
             </a>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden items-center gap-2 lg:flex">
           {user ? (
             <PrimaryNav user={user} planCode={planCode ?? "free"} />
           ) : (
             <>
-              <Link href="/login" className="px-3 py-2 text-sm text-muted transition hover:text-ink">
+              <Link href="/login" className="whitespace-nowrap px-2.5 py-1.5 text-xs text-muted transition hover:text-ink">
                 {t("home.header.login")}
               </Link>
               <Link
                 href="/register"
-                className="rounded-full bg-ink px-5 py-2 text-sm text-paper transition hover:opacity-90"
+                className="whitespace-nowrap rounded-full bg-ink px-4 py-1.5 text-xs text-paper transition hover:opacity-90"
               >
                 {t("home.header.getStarted")}
               </Link>

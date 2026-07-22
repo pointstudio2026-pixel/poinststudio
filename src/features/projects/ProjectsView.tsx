@@ -58,7 +58,7 @@ export function ProjectsView({
         <div className="flex items-center gap-2">
           <Link
             href="/design-memory"
-            className="rounded-full border border-line px-3 py-1.5 text-sm transition hover:border-ink"
+            className="whitespace-nowrap rounded-full border border-line px-3 py-1.5 text-xs transition hover:border-ink"
           >
             {t("dashboard.designMemory")}
           </Link>
