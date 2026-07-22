@@ -487,6 +487,13 @@ model MockupTemplate {
   placementYPct      Float    @map("placement_y_pct")
   placementWidthPct  Float    @map("placement_width_pct")
   placementHeightPct Float    @map("placement_height_pct")
+  // 완성된 결과물(포스터/브로슈어 등)을 로고 마크가 아니라 통째로 크게
+  // 합성할 때 쓰는 두 번째 배치 영역 -- 매핑된 deliverableType이 없으면
+  // null이고, 그 경우 로직은 위 placementXPct 등(로고 마크용)으로 폴백한다.
+  fullDesignPlacementXPct      Float?   @map("full_design_placement_x_pct")
+  fullDesignPlacementYPct      Float?   @map("full_design_placement_y_pct")
+  fullDesignPlacementWidthPct  Float?   @map("full_design_placement_width_pct")
+  fullDesignPlacementHeightPct Float?   @map("full_design_placement_height_pct")
   createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
   mockups MockupProject[]

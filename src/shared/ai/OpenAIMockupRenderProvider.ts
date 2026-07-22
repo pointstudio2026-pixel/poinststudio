@@ -3,11 +3,12 @@ import type {
   MockupRenderRequest,
   MockupRenderResult,
 } from "@/shared/ai/MockupRenderProvider";
+import { resolveBackgroundDataUri, resolveImageBuffer } from "@/shared/ai/mockupAssets";
 import { ProviderError } from "@/shared/errors/AppError";
 import { logger } from "@/shared/logging/logger";
 import { isHealthEndpointReachable } from "@/shared/ai/providerHealthCheck";
 
-const OPENAI_IMAGES_URL = "https://api.openai.com/v1/images/generations";
+const OPENAI_EDITS_URL = "https://api.openai.com/v1/images/edits";
 const OPENAI_MODELS_URL = "https://api.openai.com/v1/models";
 // gpt-image-2 at "medium" quality (사용자 요청) -- note this model requires
 // the OpenAI org to have completed API Organization Verification; if it
@@ -20,12 +21,33 @@ const DEFAULT_QUALITY = "medium";
 const ESTIMATED_COST_PER_IMAGE_USD = 0.053;
 
 /**
- * Same documented simplification as OpenAIImageGenerationProvider.edit():
- * true logo-onto-photo compositing needs an uploaded base image, which
- * this pipeline doesn't store as a real file. Describes the desired
- * mockup in a text prompt and generates fresh rather than compositing
- * pixel-for-pixel -- revisit once real file storage exists.
+ * `/v1/images/edits` (multipart, `image[]` up to 16 real image files) actually
+ * references the attached pixels, unlike `/v1/images/generations`'s pure
+ * text->image path this used to call -- that's what makes the real logo/design
+ * show up unchanged instead of a reimagined one. gpt-image-2 has no
+ * `input_fidelity` param (it always processes inputs at high fidelity), but
+ * OpenAI's own docs note exact brand marks aren't pixel-guaranteed, so the
+ * prompt still explicitly repeats "keep it exactly as attached, don't redraw".
+ * `image[]` order: [design/logo image, template background] (매핑된
+ * 순서 -- 첫 번째가 실제 참조해야 할 대상, 두 번째가 합성될 배경).
  */
+function buildPrompt(request: MockupRenderRequest): string {
+  if (request.compositingMode === "fullDesign") {
+    return (
+      `첨부된 두 이미지 중 첫 번째(디자인 시안)를 다시 그리거나 새로 해석하지 말고 ` +
+      `정확히 그대로, ${request.templateName} 목업의 해당 영역에 자연스럽게 합성한 ` +
+      `사실적인 사진을 만들어줘. 시안에 있는 모든 텍스트, 레이아웃, 색상, 로고를 ` +
+      `완전히 동일하게 유지해줘 -- 문구나 심볼을 새로 만들어내면 안 돼.`
+    );
+  }
+  return (
+    `첨부된 두 이미지 중 첫 번째(브랜드 로고)를 다시 그리거나 새로 해석하지 말고 ` +
+    `정확히 그대로, ${request.templateName} 목업에 자연스럽게 배치한 사실적인 제품 ` +
+    `사진을 만들어줘. 로고의 텍스트, 심볼, 색상을 완전히 동일하게 유지하고, 배경과 ` +
+    `소품은 실제 사용 환경처럼 유지해줘.`
+  );
+}
+
 export class OpenAIMockupRenderProvider implements MockupRenderProvider {
   readonly name = "openai";
 
@@ -35,24 +57,26 @@ export class OpenAIMockupRenderProvider implements MockupRenderProvider {
   ) {}
 
   async render(request: MockupRenderRequest): Promise<MockupRenderResult> {
-    // `/v1/images/generations`는 순수 텍스트→이미지 엔드포인트라 이미지
-    // 입력 파라미터가 없다 -- logoImageUrl을 텍스트로 이어붙여도 OpenAI가
-    // 실제로 참조하지 못하므로 원래도 장식적인 문구였다. gpt-image 계열은
-    // URL 대신 base64 데이터 URI(수십만~수백만자)가 돌아오므로 그대로
-    // 이어붙이면 OpenAI의 32,000자 프롬프트 길이 제한을 넘겨 매번 400으로
-    // 실패한다 -- 아예 프롬프트에서 제외한다.
-    const prompt =
-      `${request.templateName} 목업에 브랜드 로고를 적용한 사실적인 제품 사진. ` +
-      `배경과 소품은 실제 사용 환경처럼 유지하고, 로고는 자연스럽게 배치한다.`;
+    const design = await resolveImageBuffer(request.logoImageUrl);
+    const background = await resolveImageBuffer(await resolveBackgroundDataUri(request.backgroundUrl));
+
+    const form = new FormData();
+    form.append("model", this.model);
+    form.append("prompt", buildPrompt(request));
+    form.append("quality", DEFAULT_QUALITY);
+    form.append("size", "1024x1024");
+    form.append("image[]", new Blob([new Uint8Array(design.buffer)], { type: design.mimeType }), "design.png");
+    form.append(
+      "image[]",
+      new Blob([new Uint8Array(background.buffer)], { type: background.mimeType }),
+      "background.png",
+    );
 
     const start = Date.now();
-    const res = await fetch(OPENAI_IMAGES_URL, {
+    const res = await fetch(OPENAI_EDITS_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.apiKey}`,
-      },
-      body: JSON.stringify({ model: this.model, prompt, n: 1, size: "1024x1024", quality: DEFAULT_QUALITY }),
+      headers: { Authorization: `Bearer ${this.apiKey}` },
+      body: form,
     });
 
     if (!res.ok) {

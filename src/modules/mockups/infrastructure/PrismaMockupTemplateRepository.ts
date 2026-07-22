@@ -13,7 +13,17 @@ function toTemplate(row: {
   placementYPct: number;
   placementWidthPct: number;
   placementHeightPct: number;
+  fullDesignPlacementXPct: number | null;
+  fullDesignPlacementYPct: number | null;
+  fullDesignPlacementWidthPct: number | null;
+  fullDesignPlacementHeightPct: number | null;
 }): MockupTemplate {
+  const hasFullDesignArea =
+    row.fullDesignPlacementXPct != null &&
+    row.fullDesignPlacementYPct != null &&
+    row.fullDesignPlacementWidthPct != null &&
+    row.fullDesignPlacementHeightPct != null;
+
   return {
     id: row.id,
     category: row.category as MockupCategory,
@@ -27,6 +37,14 @@ function toTemplate(row: {
       widthPct: row.placementWidthPct,
       heightPct: row.placementHeightPct,
     },
+    fullDesignPlacementArea: hasFullDesignArea
+      ? {
+          xPct: row.fullDesignPlacementXPct!,
+          yPct: row.fullDesignPlacementYPct!,
+          widthPct: row.fullDesignPlacementWidthPct!,
+          heightPct: row.fullDesignPlacementHeightPct!,
+        }
+      : null,
   };
 }
 

@@ -18,11 +18,25 @@ import { fetchGenerationHistory } from "@/services/generations-service";
 import { Spinner } from "@/components/Spinner";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
+import { DELIVERABLE_TYPE_TO_MOCKUP_CATEGORY } from "@/modules/mockups/domain/mockupRules";
 
 const ALL_CATEGORIES = Object.keys(MOCKUP_CATEGORY_LABELS) as MockupCategoryDto[];
 
-export function MockupStudioView({ projectId, planCode }: { projectId: string; planCode: PlanCode }) {
+export function MockupStudioView({
+  projectId,
+  planCode,
+  deliverableType,
+}: {
+  projectId: string;
+  planCode: PlanCode;
+  deliverableType: string | null;
+}) {
   const { t } = useTranslation();
+  // "완성된 결과물"(포스터/브로슈어 등) deliverableType은 대응하는 목업
+  // 카테고리 하나로 고정한다 -- 명함 프로젝트에 웹사이트 목업이 뜰 이유가
+  // 없다. 매핑이 없으면(브랜딩 & 로고, 리플렛, 패키지, 레거시 null) 기존
+  // 그대로 6개 카테고리를 전부 보여준다.
+  const lockedCategory = deliverableType ? DELIVERABLE_TYPE_TO_MOCKUP_CATEGORY[deliverableType] : undefined;
   const queryClient = useQueryClient();
   const [previewMockup, setPreviewMockup] = useState<MockupProjectDto | null>(null);
   const [selectedVersionId, setSelectedVersionId] = useState<string | null>(null);
@@ -53,10 +67,10 @@ export function MockupStudioView({ projectId, planCode }: { projectId: string; p
   const { data: recommendData } = useQuery({
     queryKey: ["mockup-category-recommendations", projectId],
     queryFn: () => recommendMockupCategories(projectId),
-    enabled: completedVersions.length > 0,
+    enabled: completedVersions.length > 0 && !lockedCategory,
   });
   const orderedCategories = recommendData?.recommendations.map((r) => r.category) ?? ALL_CATEGORIES;
-  const activeCategory = selectedCategory ?? orderedCategories[0] ?? null;
+  const activeCategory = lockedCategory ?? selectedCategory ?? orderedCategories[0] ?? null;
 
   const { data: templatesData } = useQuery({
     queryKey: ["mockup-templates", activeCategory],
@@ -184,25 +198,27 @@ export function MockupStudioView({ projectId, planCode }: { projectId: string; p
               </div>
             )}
 
-            <div>
-              <p className="mb-1.5 text-xs font-medium text-neutral-500">카테고리</p>
-              <div className="flex flex-wrap gap-2">
-                {orderedCategories.map((category) => (
-                  <button
-                    key={category}
-                    type="button"
-                    onClick={() => setSelectedCategory(category)}
-                    className={`rounded-full border px-3 py-1.5 text-xs transition ${
-                      activeCategory === category
-                        ? "border-neutral-900 bg-neutral-900 text-white"
-                        : "border-neutral-300 hover:border-neutral-900"
-                    }`}
-                  >
-                    {MOCKUP_CATEGORY_LABELS[category]}
-                  </button>
-                ))}
+            {!lockedCategory && (
+              <div>
+                <p className="mb-1.5 text-xs font-medium text-neutral-500">카테고리</p>
+                <div className="flex flex-wrap gap-2">
+                  {orderedCategories.map((category) => (
+                    <button
+                      key={category}
+                      type="button"
+                      onClick={() => setSelectedCategory(category)}
+                      className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                        activeCategory === category
+                          ? "border-neutral-900 bg-neutral-900 text-white"
+                          : "border-neutral-300 hover:border-neutral-900"
+                      }`}
+                    >
+                      {MOCKUP_CATEGORY_LABELS[category]}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {createError && <p className="text-sm text-red-600">{createError}</p>}
 

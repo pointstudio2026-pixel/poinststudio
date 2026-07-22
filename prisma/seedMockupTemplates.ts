@@ -14,13 +14,22 @@ import { PrismaClient } from "../generated/prisma/client";
  * referencing these templates as of this rewrite).
  */
 
+interface PlacementRect {
+  xPct: number;
+  yPct: number;
+  widthPct: number;
+  heightPct: number;
+}
+
 interface TemplateDef {
   category: string;
   name: string;
   slug: string;
   description: string;
   imagePath: string;
-  placement: { xPct: number; yPct: number; widthPct: number; heightPct: number };
+  placement: PlacementRect;
+  /** 완성된 결과물 전체(포스터/브로슈어 등)를 크게 합성할 영역 -- DELIVERABLE_TYPE_TO_MOCKUP_CATEGORY에 매핑된 카테고리만 채운다. */
+  fullDesignPlacement?: PlacementRect;
 }
 
 const TEMPLATES: TemplateDef[] = [
@@ -31,6 +40,7 @@ const TEMPLATES: TemplateDef[] = [
     description: "명함 목업 템플릿 -- 카드 앞면에 로고를 자동 배치합니다.",
     imagePath: "/mockup-templates/business-card.jpg",
     placement: { xPct: 32, yPct: 22, widthPct: 20, heightPct: 20 },
+    fullDesignPlacement: { xPct: 14, yPct: 12, widthPct: 56, heightPct: 60 },
   },
   {
     category: "signboard",
@@ -47,6 +57,7 @@ const TEMPLATES: TemplateDef[] = [
     description: "모바일 앱 목업 템플릿 -- 앱 화면에 로고를 자동 배치합니다.",
     imagePath: "/mockup-templates/mobile-app.jpg",
     placement: { xPct: 40, yPct: 18, widthPct: 8, heightPct: 8 },
+    fullDesignPlacement: { xPct: 20, yPct: 17, widthPct: 22, heightPct: 56 },
   },
   {
     category: "website_hero",
@@ -55,6 +66,7 @@ const TEMPLATES: TemplateDef[] = [
     description: "웹사이트 목업 템플릿 -- 내비게이션 바에 로고를 자동 배치합니다.",
     imagePath: "/mockup-templates/website-hero.jpg",
     placement: { xPct: 9, yPct: 12, widthPct: 12, heightPct: 5 },
+    fullDesignPlacement: { xPct: 8, yPct: 19, widthPct: 55, heightPct: 56 },
   },
   {
     category: "brochure",
@@ -63,6 +75,7 @@ const TEMPLATES: TemplateDef[] = [
     description: "브로슈어 목업 템플릿 -- 표지에 로고를 자동 배치합니다.",
     imagePath: "/mockup-templates/brochure.jpg",
     placement: { xPct: 66, yPct: 16, widthPct: 26, heightPct: 12 },
+    fullDesignPlacement: { xPct: 58, yPct: 8, widthPct: 38, heightPct: 82 },
   },
   {
     category: "poster",
@@ -71,6 +84,7 @@ const TEMPLATES: TemplateDef[] = [
     description: "포스터 목업 템플릿 -- 상단 브랜드 영역에 로고를 자동 배치합니다.",
     imagePath: "/mockup-templates/poster-medical.jpg",
     placement: { xPct: 28, yPct: 10, widthPct: 44, heightPct: 6 },
+    fullDesignPlacement: { xPct: 23, yPct: 8, widthPct: 60, heightPct: 82 },
   },
   {
     category: "poster",
@@ -79,6 +93,7 @@ const TEMPLATES: TemplateDef[] = [
     description: "포스터 목업 템플릿 -- 상단 브랜드 영역에 로고를 자동 배치합니다.",
     imagePath: "/mockup-templates/poster-cafe.jpg",
     placement: { xPct: 43, yPct: 11, widthPct: 35, heightPct: 18 },
+    fullDesignPlacement: { xPct: 36, yPct: 2, widthPct: 46, heightPct: 82 },
   },
 ];
 
@@ -100,6 +115,10 @@ async function main() {
         placementYPct: t.placement.yPct,
         placementWidthPct: t.placement.widthPct,
         placementHeightPct: t.placement.heightPct,
+        fullDesignPlacementXPct: t.fullDesignPlacement?.xPct,
+        fullDesignPlacementYPct: t.fullDesignPlacement?.yPct,
+        fullDesignPlacementWidthPct: t.fullDesignPlacement?.widthPct,
+        fullDesignPlacementHeightPct: t.fullDesignPlacement?.heightPct,
       },
     });
   }

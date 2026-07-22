@@ -5,11 +5,22 @@ export interface PlacementArea {
   heightPct: number;
 }
 
+/**
+ * "logo": a small brand mark composited into placementArea (branding-only
+ * projects -- the only thing that's ever generated for them IS a logo).
+ * "fullDesign": a complete, already-finished deliverable (poster, brochure,
+ * business card face, ...) composited large into placementArea, unchanged.
+ * Mock compositing treats both the same (it just draws logoImageUrl into
+ * placementArea); only the real OpenAI provider varies its prompt per mode.
+ */
+export type MockupCompositingMode = "logo" | "fullDesign";
+
 export interface MockupRenderRequest {
   logoImageUrl: string;
   backgroundUrl: string;
   placementArea: PlacementArea;
   templateName: string;
+  compositingMode: MockupCompositingMode;
 }
 
 export interface MockupRenderResult {

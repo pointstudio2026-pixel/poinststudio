@@ -1,44 +1,13 @@
-import fs from "node:fs/promises";
-import path from "node:path";
 import type {
   MockupRenderProvider,
   MockupRenderRequest,
   MockupRenderResult,
 } from "@/shared/ai/MockupRenderProvider";
+import { resolveBackgroundDataUri } from "@/shared/ai/mockupAssets";
 import { ProviderError } from "@/shared/errors/AppError";
 
 /** Test-only hook to deterministically exercise the failure/retry path. */
 export const FORCE_FAILURE_MARKER = "FORCE_FAIL_TEST";
-
-const MIME_BY_EXTENSION: Record<string, string> = {
-  jpg: "jpeg",
-  jpeg: "jpeg",
-  png: "png",
-  webp: "webp",
-  svg: "svg+xml",
-};
-
-/**
- * SVG `<image href>` compositing (below) only reliably works with data URIs --
- * an `<image href="/mockup-templates/xxx.jpg">` root-relative path or even a
- * full `http(s)://` URL is NOT fetched by every SVG renderer (confirmed: it's
- * silently blank when rasterized). Seeded template backgrounds are stored as
- * plain root-relative paths under public/ (readable, reusable elsewhere, same
- * pattern as LogoStyleCategory.sampleImageUrl) -- so resolve them to a data
- * URI here, at composite time, rather than storing giant base64 strings in
- * the DB. `data:`/`http(s)://` values pass through unchanged for backward
- * compatibility with anything already stored that way.
- */
-async function resolveBackgroundDataUri(backgroundUrl: string): Promise<string> {
-  if (backgroundUrl.startsWith("data:") || /^https?:\/\//.test(backgroundUrl)) {
-    return backgroundUrl;
-  }
-  const filePath = path.join(process.cwd(), "public", backgroundUrl);
-  const buffer = await fs.readFile(filePath);
-  const extension = path.extname(backgroundUrl).slice(1).toLowerCase();
-  const mime = MIME_BY_EXTENSION[extension] ?? "png";
-  return `data:image/${mime};base64,${buffer.toString("base64")}`;
-}
 
 function buildCompositeSvgDataUri(request: MockupRenderRequest, resolvedBackgroundUrl: string, size: number): string {
   const { placementArea } = request;

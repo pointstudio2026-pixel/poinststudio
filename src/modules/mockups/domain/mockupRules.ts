@@ -15,6 +15,21 @@ export const MOCKUP_CATEGORY_KEYWORDS: Record<MockupCategory, string[]> = {
   poster: ["포스터", "홍보", "이벤트", "병원", "클리닉", "카페", "공고", "안내문", "캠페인"],
 };
 
+/**
+ * "완성된 결과물"(포스터/브로슈어 등)을 만드는 deliverableType은 목업
+ * 스튜디오에서 대응하는 카테고리 하나만 보여준다(명함 프로젝트에 웹사이트
+ * 목업이 뜰 이유가 없음) -- 값이 없는 deliverableType(브랜딩 & 로고, 리플렛,
+ * 패키지, 또는 null/레거시 프로젝트)은 매핑하지 않고 기존처럼 6개 카테고리를
+ * 전부 노출한다(로고 마크만 만들어지므로 어느 목업에나 올릴 수 있다).
+ */
+export const DELIVERABLE_TYPE_TO_MOCKUP_CATEGORY: Partial<Record<string, MockupCategory>> = {
+  명함: "business_card",
+  웹사이트: "website_hero",
+  "앱 디자인": "mobile_app",
+  포스터: "poster",
+  브로슈어: "brochure",
+};
+
 export interface MockupCategoryScoreInput {
   /** 인터뷰 답변(industry/purpose/targetAudience) + deliverableType을 합친 자유 텍스트. */
   keywordText: string;
