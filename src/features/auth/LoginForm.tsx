@@ -8,11 +8,13 @@ import { loginSchema, type LoginInput } from "@/modules/auth/schemas/auth.schema
 import { loginUser } from "@/services/auth-service";
 import { useAuthStore } from "@/stores/auth-store";
 import { Spinner } from "@/components/Spinner";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
 export function LoginForm() {
   const router = useRouter();
   const setUser = useAuthStore((s) => s.setUser);
   const [serverError, setServerError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const {
     register,
@@ -27,7 +29,7 @@ export function LoginForm() {
       setUser(user);
       router.push("/");
     } catch (err) {
-      setServerError(err instanceof Error ? err.message : "로그인에 실패했습니다.");
+      setServerError(err instanceof Error ? err.message : t("login.genericError"));
     }
   });
 
@@ -35,7 +37,7 @@ export function LoginForm() {
     <form onSubmit={onSubmit} className="flex w-full flex-col gap-4">
       <div className="flex flex-col gap-1">
         <label htmlFor="email" className="text-sm font-medium text-ink">
-          이메일
+          {t("login.email")}
         </label>
         <input
           id="email"
@@ -48,7 +50,7 @@ export function LoginForm() {
 
       <div className="flex flex-col gap-1">
         <label htmlFor="password" className="text-sm font-medium text-ink">
-          비밀번호
+          {t("login.password")}
         </label>
         <input
           id="password"
@@ -69,7 +71,7 @@ export function LoginForm() {
         className="mt-2 flex items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm text-paper transition hover:opacity-90 disabled:opacity-50"
       >
         {isSubmitting && <Spinner />}
-        {isSubmitting ? "로그인 중..." : "로그인"}
+        {isSubmitting ? t("login.submitting") : t("login.submit")}
       </button>
     </form>
   );

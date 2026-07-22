@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { completeOAuthSignup } from "@/services/auth-service";
 import { useAuthStore } from "@/stores/auth-store";
 import { Spinner } from "@/components/Spinner";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
 export function OAuthConsentForm() {
   const router = useRouter();
@@ -13,11 +14,12 @@ export function OAuthConsentForm() {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreedToTerms) {
-      setServerError("이용약관 및 개인정보처리방침에 동의해야 가입할 수 있습니다.");
+      setServerError(t("oauthConsent.mustAgree"));
       return;
     }
     setServerError(null);
@@ -27,7 +29,7 @@ export function OAuthConsentForm() {
       setUser(user);
       router.push("/projects");
     } catch (err) {
-      setServerError(err instanceof Error ? err.message : "가입에 실패했습니다.");
+      setServerError(err instanceof Error ? err.message : t("oauthConsent.genericError"));
       setIsSubmitting(false);
     }
   };
@@ -44,13 +46,13 @@ export function OAuthConsentForm() {
           />
           <span>
             <Link href="/terms" target="_blank" className="underline underline-offset-4">
-              이용약관
+              {t("authTermsCheckbox.terms")}
             </Link>{" "}
-            및{" "}
+            {t("authTermsCheckbox.middle")}{" "}
             <Link href="/privacy" target="_blank" className="underline underline-offset-4">
-              개인정보처리방침
+              {t("authTermsCheckbox.privacy")}
             </Link>
-            에 동의합니다.
+            {t("authTermsCheckbox.suffix")}
           </span>
         </label>
       </div>
@@ -63,11 +65,11 @@ export function OAuthConsentForm() {
         className="mt-2 flex items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm text-paper transition hover:opacity-90 disabled:opacity-50"
       >
         {isSubmitting && <Spinner />}
-        {isSubmitting ? "가입 중..." : "동의하고 가입 완료"}
+        {isSubmitting ? t("oauthConsent.submitting") : t("oauthConsent.submit")}
       </button>
 
       <Link href="/login" className="text-center text-xs text-muted underline underline-offset-4">
-        취소하고 로그인으로 돌아가기
+        {t("oauthConsent.cancel")}
       </Link>
     </form>
   );

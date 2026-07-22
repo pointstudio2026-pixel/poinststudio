@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { logoutUser } from "@/services/auth-service";
 import { useAuthStore } from "@/stores/auth-store";
 import { Spinner } from "@/components/Spinner";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
 export function LogoutButton({
   className = "flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-sm transition hover:border-ink disabled:opacity-50",
@@ -14,6 +15,7 @@ export function LogoutButton({
   const router = useRouter();
   const clear = useAuthStore((s) => s.clear);
   const [isPending, setIsPending] = useState(false);
+  const { t } = useTranslation();
 
   async function handleLogout() {
     setIsPending(true);
@@ -31,7 +33,7 @@ export function LogoutButton({
   return (
     <button type="button" onClick={handleLogout} disabled={isPending} className={className}>
       {isPending && <Spinner />}
-      {isPending ? "로그아웃 중..." : "로그아웃"}
+      {isPending ? t("nav.loggingOut") : t("nav.logout")}
     </button>
   );
 }

@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { NewProjectButton } from "@/features/projects/NewProjectButton";
 import { LogoutButton } from "@/features/auth/LogoutButton";
+import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 
 export interface PrimaryNavUser {
@@ -19,6 +21,7 @@ export interface PrimaryNavUser {
  * 결제정보/로그아웃) 구조.
  */
 export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode: PlanCode }) {
+  const { t } = useTranslation();
   const [projectsOpen, setProjectsOpen] = useState(false);
   const [newProjectModalOpen, setNewProjectModalOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -54,7 +57,7 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode:
           href="/projects"
           className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-ink"
         >
-          내 프로젝트
+          {t("nav.myProjects")}
         </Link>
         {projectsOpen && (
           <div className="absolute left-0 top-full w-40 pt-2">
@@ -76,7 +79,7 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode:
           href="/my-styles"
           className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-ink"
         >
-          내 스타일
+          {t("nav.myStyles")}
         </Link>
       )}
 
@@ -85,7 +88,7 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode:
           href="/team"
           className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-ink"
         >
-          팀
+          {t("nav.team")}
         </Link>
       )}
 
@@ -93,15 +96,17 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode:
         href="/guide"
         className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-ink"
       >
-        사용방법
+        {t("nav.guide")}
       </Link>
 
       <Link
         href="/support"
         className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-ink"
       >
-        문의사항
+        {t("nav.support")}
       </Link>
+
+      <LanguageSwitcher />
 
       <div ref={profileRef} className="relative">
         <button
@@ -121,13 +126,13 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode:
               href="/my-info"
               className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper"
             >
-              내 정보
+              {t("nav.myInfo")}
             </Link>
             <Link
               href="/subscription"
               className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper"
             >
-              결제정보 (구독)
+              {t("nav.subscription")}
             </Link>
             <LogoutButton className="w-full rounded-lg px-3 py-2 text-left text-sm transition hover:bg-paper" />
           </div>

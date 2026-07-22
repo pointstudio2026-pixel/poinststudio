@@ -10,15 +10,17 @@ import { UsageWidget } from "@/features/subscription/UsageWidget";
 import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 import { ProjectCard } from "@/features/dashboard/ProjectCard";
 import { DashboardSkeleton } from "@/features/dashboard/DashboardSkeleton";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
+import type { MessageKey } from "@/shared/i18n/messages/types";
 
 const PLAN_LABELS: Record<string, string> = { free: "Free", pro: "Pro", studio: "Studio" };
 
-const FILTERS = [
-  { key: "all", label: "전체" },
-  { key: "progress", label: "진행 중" },
-  { key: "completed", label: "완료" },
-  { key: "favorite", label: "즐겨찾기" },
-] as const;
+const FILTERS: { key: "all" | "progress" | "completed" | "favorite"; labelKey: MessageKey }[] = [
+  { key: "all", labelKey: "dashboard.filters.all" },
+  { key: "progress", labelKey: "dashboard.filters.progress" },
+  { key: "completed", labelKey: "dashboard.filters.completed" },
+  { key: "favorite", labelKey: "dashboard.filters.favorite" },
+];
 
 type FilterKey = (typeof FILTERS)[number]["key"];
 
@@ -33,6 +35,7 @@ export function ProjectsView({
 }) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterKey>("all");
+  const { t } = useTranslation();
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["dashboard", search],
@@ -57,7 +60,7 @@ export function ProjectsView({
             href="/design-memory"
             className="rounded-full border border-line px-3 py-1.5 text-sm transition hover:border-ink"
           >
-            Design Memory
+            {t("dashboard.designMemory")}
           </Link>
           <PrimaryNav user={{ email, name }} planCode={data?.subscription.planCode ?? "free"} />
         </div>
@@ -68,9 +71,9 @@ export function ProjectsView({
       <main className="mx-auto flex max-w-5xl flex-col gap-8 px-8 py-10">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="eyebrow text-sm text-muted">My Projects</p>
-            <h1 className="mt-1 text-2xl font-semibold">{email}님의 프로젝트</h1>
-            <p className="font-script mt-1 text-sm text-muted">디자인 아이디어의 속도를 더 빠르게</p>
+            <p className="eyebrow text-sm text-muted">{t("dashboard.myProjects")}</p>
+            <h1 className="mt-1 text-2xl font-semibold">{t("dashboard.heading", { email })}</h1>
+            <p className="font-script mt-1 text-sm text-muted">{t("dashboard.tagline")}</p>
           </div>
           <NewProjectButton />
         </div>
@@ -79,9 +82,9 @@ export function ProjectsView({
 
         {isError && (
           <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-            <p>프로젝트를 불러오지 못했습니다.</p>
+            <p>{t("dashboard.loadError")}</p>
             <button type="button" onClick={() => refetch()} className="mt-2 underline">
-              다시 시도
+              {t("dashboard.retry")}
             </button>
           </div>
         )}
@@ -96,9 +99,11 @@ export function ProjectsView({
                 remaining={data.usage.generation.remaining}
               />
               <div className="rounded-2xl border border-line bg-surface px-4 py-3 text-sm">
-                <p className="font-medium">현재 플랜: {PLAN_LABELS[data.subscription.planCode]}</p>
+                <p className="font-medium">
+                  {t("dashboard.currentPlan", { plan: PLAN_LABELS[data.subscription.planCode] ?? data.subscription.planCode })}
+                </p>
                 <Link href="/subscription" className="text-muted underline underline-offset-4">
-                  플랜 관리
+                  {t("dashboard.managePlan")}
                 </Link>
               </div>
             </div>
@@ -115,7 +120,7 @@ export function ProjectsView({
                         filter === f.key ? "bg-ink text-paper" : "border border-line hover:border-ink"
                       }`}
                     >
-                      {f.label}
+                      {t(f.labelKey)}
                     </button>
                   ))}
                 </div>
@@ -123,21 +128,19 @@ export function ProjectsView({
                   type="search"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="프로젝트 검색"
+                  placeholder={t("dashboard.searchPlaceholder")}
                   className="rounded-full border border-line bg-surface px-3 py-1.5 text-sm outline-none transition focus:border-ink"
                 />
               </div>
 
               {projects.length === 0 && search && (
-                <p className="text-sm text-muted">&ldquo;{search}&rdquo; 검색 결과가 없습니다.</p>
+                <p className="text-sm text-muted">{t("dashboard.noSearchResults", { query: search })}</p>
               )}
               {projects.length === 0 && !search && data.projects.length === 0 && (
-                <p className="text-sm text-muted">
-                  아직 프로젝트가 없습니다. 새 프로젝트를 시작해보세요.
-                </p>
+                <p className="text-sm text-muted">{t("dashboard.emptyProjects")}</p>
               )}
               {projects.length === 0 && !search && data.projects.length > 0 && (
-                <p className="text-sm text-muted">해당하는 프로젝트가 없습니다.</p>
+                <p className="text-sm text-muted">{t("dashboard.noMatchingProjects")}</p>
               )}
 
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

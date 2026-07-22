@@ -6,11 +6,27 @@ import type { DashboardProjectDto } from "@/services/dashboard-service";
 import { deleteProject, shareProjectWithTeam } from "@/services/project-service";
 import { getWorkspaceSteps } from "@/modules/projects/domain/Project";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
+import type { MessageKey } from "@/shared/i18n/messages/types";
+import { INTL_LOCALE } from "@/shared/i18n/locale";
 
-const STATUS_LABELS: Record<string, string> = {
-  draft: "초안",
-  progress: "진행 중",
-  completed: "완료",
+const STATUS_LABEL_KEYS: Record<string, MessageKey> = {
+  draft: "dashboard.card.status.draft",
+  progress: "dashboard.card.status.progress",
+  completed: "dashboard.card.status.completed",
+};
+
+/** getWorkspaceSteps()의 도메인 라벨은 건드리지 않고, 이 카드의 표시용으로만
+ * step.key -> MessageKey를 로컬로 매핑한다. */
+const WORKSPACE_STEP_LABEL_KEYS: Record<string, MessageKey> = {
+  deliverable_type: "dashboard.card.steps.deliverableType",
+  brand_interview: "dashboard.card.steps.brandInterview",
+  style: "dashboard.card.steps.style",
+  brand_strategy: "dashboard.card.steps.brandStrategy",
+  logo_style: "dashboard.card.steps.logoStyle",
+  generation: "dashboard.card.steps.generation",
+  concept_board: "dashboard.card.steps.conceptBoard",
+  mockup: "dashboard.card.steps.mockup",
 };
 
 export function ProjectCard({
@@ -22,9 +38,11 @@ export function ProjectCard({
   planCode: PlanCode;
   onDeleted: () => void;
 }) {
+  const { t, locale } = useTranslation();
   const steps = getWorkspaceSteps(project.deliverableType);
   const stepIndex = steps.findIndex((s) => s.key === project.currentStep);
-  const stepLabel = steps[stepIndex]?.label ?? project.currentStep;
+  const stepLabelKey = WORKSPACE_STEP_LABEL_KEYS[project.currentStep];
+  const stepLabel = stepLabelKey ? t(stepLabelKey) : project.currentStep;
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -39,9 +57,7 @@ export function ProjectCard({
   async function handleDelete(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    const confirmed = window.confirm(
-      `"${project.name}" 프로젝트를 삭제하시겠습니까? 삭제된 프로젝트는 휴지통으로 이동합니다.`,
-    );
+    const confirmed = window.confirm(t("dashboard.card.deleteConfirm", { name: project.name }));
     if (!confirmed) return;
     setIsDeleting(true);
     setActionError(null);
@@ -50,7 +66,7 @@ export function ProjectCard({
       setMenuOpen(false);
       onDeleted();
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "삭제에 실패했습니다.");
+      setActionError(err instanceof Error ? err.message : t("dashboard.card.deleteFailed"));
       setIsDeleting(false);
     }
   }
@@ -65,7 +81,7 @@ export function ProjectCard({
       setMenuOpen(false);
       onDeleted();
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "공유 설정에 실패했습니다.");
+      setActionError(err instanceof Error ? err.message : t("dashboard.card.shareFailed"));
     } finally {
       setIsSharing(false);
     }
@@ -80,15 +96,15 @@ export function ProjectCard({
         <span className="flex items-center gap-1.5">
           <span className="font-medium">{project.name}</span>
           {!project.isOwner && (
-            <span className="rounded-full border border-line px-2 py-0.5 text-[11px] text-muted">공유됨</span>
+            <span className="rounded-full border border-line px-2 py-0.5 text-[11px] text-muted">{t("dashboard.card.shared")}</span>
           )}
         </span>
         <div className="flex items-center gap-1">
-          {project.isFavorite && <span aria-label="즐겨찾기">★</span>}
+          {project.isFavorite && <span aria-label={t("dashboard.card.favorite")}>★</span>}
           {project.isOwner && (
             <button
               type="button"
-              aria-label="프로젝트 메뉴"
+              aria-label={t("dashboard.card.menu")}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -121,7 +137,7 @@ export function ProjectCard({
                 disabled={isSharing}
                 className="w-full px-3 py-2 text-left text-sm transition hover:bg-line/20 disabled:opacity-50"
               >
-                {isSharing ? "처리 중..." : project.sharedWithTeam ? "팀 공유 끄기" : "팀에 공유"}
+                {isSharing ? t("dashboard.card.sharing") : project.sharedWithTeam ? t("dashboard.card.unshare") : t("dashboard.card.share")}
               </button>
             )}
             <button
@@ -130,7 +146,7 @@ export function ProjectCard({
               disabled={isDeleting}
               className="w-full px-3 py-2 text-left text-sm text-red-600 transition hover:bg-red-50 disabled:opacity-50"
             >
-              {isDeleting ? "삭제 중..." : "삭제"}
+              {isDeleting ? t("dashboard.card.deleting") : t("dashboard.card.delete")}
             </button>
           </div>
         </>
@@ -148,14 +164,17 @@ export function ProjectCard({
       </div>
 
       <div className="flex items-center justify-between text-xs text-muted">
-        <span>
-          {stepIndex + 1}/{steps.length} · {stepLabel}
-        </span>
+        <span>{t("dashboard.card.progress", { current: stepIndex + 1, total: steps.length, step: stepLabel })}</span>
         <span className="rounded-full border border-line px-2 py-0.5">
-          {STATUS_LABELS[project.status] ?? project.status}
+          {(() => {
+            const key = STATUS_LABEL_KEYS[project.status];
+            return key ? t(key) : project.status;
+          })()}
         </span>
       </div>
-      <span className="text-xs text-muted">{new Date(project.updatedAt).toLocaleDateString("ko-KR")} 수정</span>
+      <span className="text-xs text-muted">
+        {t("dashboard.card.updatedAt", { date: new Date(project.updatedAt).toLocaleDateString(INTL_LOCALE[locale]) })}
+      </span>
     </Link>
   );
 }

@@ -5,15 +5,18 @@ import Link from "next/link";
 import { NewProjectButton } from "@/features/projects/NewProjectButton";
 import { LogoutButton } from "@/features/auth/LogoutButton";
 import { PrimaryNav } from "@/features/navigation/PrimaryNav";
+import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
+import type { MessageKey } from "@/shared/i18n/messages/types";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 
-const NAV_LINKS = [
-  { href: "#top", label: "서비스" },
-  { href: "#how-it-works", label: "사용 방법" },
-  { href: "#preview", label: "결과 예시" },
-  { href: "#pricing", label: "요금제" },
-  { href: "#faq", label: "FAQ" },
-  { href: "/support", label: "문의하기" },
+const NAV_LINKS: { href: string; labelKey: MessageKey }[] = [
+  { href: "#top", labelKey: "home.header.navService" },
+  { href: "#how-it-works", labelKey: "home.header.navHowItWorks" },
+  { href: "#preview", labelKey: "home.header.navPreview" },
+  { href: "#pricing", labelKey: "home.header.navPricing" },
+  { href: "#faq", labelKey: "home.header.navFaq" },
+  { href: "/support", labelKey: "home.header.navSupport" },
 ];
 
 export interface HeaderUser {
@@ -23,6 +26,7 @@ export interface HeaderUser {
 
 export function Header({ user, planCode }: { user: HeaderUser | null; planCode: PlanCode | null }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <header className="sticky top-0 z-40 border-b border-line/80 bg-paper/80 backdrop-blur-md">
@@ -34,7 +38,7 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
         <nav className="hidden items-center gap-7 text-sm text-muted lg:flex">
           {NAV_LINKS.map((link) => (
             <a key={link.href} href={link.href} className="transition hover:text-ink">
-              {link.label}
+              {t(link.labelKey)}
             </a>
           ))}
         </nav>
@@ -44,24 +48,31 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
             <PrimaryNav user={user} planCode={planCode ?? "free"} />
           ) : (
             <>
+              <LanguageSwitcher />
               <Link href="/login" className="px-3 py-2 text-sm text-muted transition hover:text-ink">
-                로그인
+                {t("home.header.login")}
               </Link>
               <Link
                 href="/register"
                 className="rounded-full bg-ink px-5 py-2 text-sm text-paper transition hover:opacity-90"
               >
-                무료로 시작하기
+                {t("home.header.getStarted")}
               </Link>
             </>
           )}
         </div>
 
+        {!user && (
+          <div className="lg:hidden">
+            <LanguageSwitcher />
+          </div>
+        )}
+
         <button
           type="button"
           onClick={() => setMobileOpen((v) => !v)}
           className="flex h-10 w-10 items-center justify-center rounded-full border border-line lg:hidden"
-          aria-label="메뉴 열기"
+          aria-label={t("home.header.menuOpen")}
           aria-expanded={mobileOpen}
         >
           {mobileOpen ? (
@@ -86,7 +97,7 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
                 onClick={() => setMobileOpen(false)}
                 className="rounded-lg px-2 py-3 transition hover:bg-surface"
               >
-                {link.label}
+                {t(link.labelKey)}
               </a>
             ))}
           </nav>
@@ -94,18 +105,21 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
           <div className="mt-4 flex flex-col gap-2 border-t border-line pt-4">
             {user ? (
               <>
+                <div className="flex justify-center pb-1">
+                  <LanguageSwitcher />
+                </div>
                 <Link
                   href="/projects"
                   className="rounded-full border border-line px-4 py-3 text-center text-sm"
                 >
-                  내 프로젝트
+                  {t("nav.myProjects")}
                 </Link>
                 {planCode !== "free" && (
                   <Link
                     href="/my-styles"
                     className="rounded-full border border-line px-4 py-3 text-center text-sm"
                   >
-                    내 스타일
+                    {t("nav.myStyles")}
                   </Link>
                 )}
                 {planCode === "studio" && (
@@ -113,14 +127,14 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
                     href="/team"
                     className="rounded-full border border-line px-4 py-3 text-center text-sm"
                   >
-                    팀
+                    {t("nav.team")}
                   </Link>
                 )}
                 <Link
                   href="/guide"
                   className="rounded-full border border-line px-4 py-3 text-center text-sm"
                 >
-                  사용방법
+                  {t("nav.guide")}
                 </Link>
                 <div className="[&>button]:w-full [&>button]:justify-center [&>button]:py-3">
                   <NewProjectButton />
@@ -129,32 +143,32 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
                   href="/my-info"
                   className="rounded-full border border-line px-4 py-3 text-center text-sm"
                 >
-                  내 정보
+                  {t("nav.myInfo")}
                 </Link>
                 <Link
                   href="/subscription"
                   className="rounded-full border border-line px-4 py-3 text-center text-sm"
                 >
-                  결제정보 (구독)
+                  {t("nav.subscription")}
                 </Link>
                 <Link
                   href="/support"
                   className="rounded-full border border-line px-4 py-3 text-center text-sm"
                 >
-                  문의사항
+                  {t("nav.support")}
                 </Link>
                 <LogoutButton className="rounded-full border border-line px-4 py-3 text-center text-sm" />
               </>
             ) : (
               <>
                 <Link href="/login" className="rounded-full border border-line px-4 py-3 text-center text-sm">
-                  로그인
+                  {t("home.header.login")}
                 </Link>
                 <Link
                   href="/register"
                   className="rounded-full bg-ink px-4 py-3 text-center text-sm text-paper"
                 >
-                  무료로 시작하기
+                  {t("home.header.getStarted")}
                 </Link>
               </>
             )}

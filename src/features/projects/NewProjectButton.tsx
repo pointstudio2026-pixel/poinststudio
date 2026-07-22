@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createProjectSchema, type CreateProjectInput } from "@/modules/projects/schemas/project.schemas";
 import { createProject } from "@/services/project-service";
 import { Spinner } from "@/components/Spinner";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
 export function NewProjectButton({
   variant = "pill",
@@ -21,6 +22,7 @@ export function NewProjectButton({
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     onOpenChange?.(isOpen);
@@ -41,7 +43,7 @@ export function NewProjectButton({
       reset();
       router.push(`/projects/${projectId}`);
     } catch (err) {
-      setServerError(err instanceof Error ? err.message : "프로젝트 생성에 실패했습니다.");
+      setServerError(err instanceof Error ? err.message : t("dashboard.newProject.genericError"));
     }
   });
 
@@ -56,17 +58,17 @@ export function NewProjectButton({
             : "rounded-full bg-ink px-4 py-1.5 text-sm text-paper transition hover:opacity-90"
         }
       >
-        새 프로젝트
+        {t("dashboard.newProject.button")}
       </button>
 
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4">
           <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-6">
-            <h2 className="mb-4 text-lg font-semibold">새 프로젝트</h2>
+            <h2 className="mb-4 text-lg font-semibold">{t("dashboard.newProject.modalTitle")}</h2>
             <form onSubmit={onSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col gap-1">
                 <label htmlFor="project-name" className="text-sm font-medium text-ink">
-                  프로젝트 이름
+                  {t("dashboard.newProject.nameLabel")}
                 </label>
                 <input
                   id="project-name"
@@ -86,7 +88,7 @@ export function NewProjectButton({
                   onClick={() => setIsOpen(false)}
                   className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-ink"
                 >
-                  취소
+                  {t("dashboard.newProject.cancel")}
                 </button>
                 <button
                   type="submit"
@@ -94,7 +96,7 @@ export function NewProjectButton({
                   className="flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm text-paper transition hover:opacity-90 disabled:opacity-50"
                 >
                   {isSubmitting && <Spinner />}
-                  {isSubmitting ? "생성 중..." : "생성"}
+                  {isSubmitting ? t("dashboard.newProject.submitting") : t("dashboard.newProject.submit")}
                 </button>
               </div>
             </form>

@@ -1,48 +1,55 @@
+"use client";
+
 import Link from "next/link";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
 export function Footer() {
+  const { t } = useTranslation();
+
   return (
     <footer className="border-t border-line bg-surface px-5 py-14 sm:px-8">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 sm:flex-row sm:justify-between">
         <div className="flex flex-col gap-2">
           <span className="text-lg font-semibold tracking-tight">ASTER.</span>
-          <p className="max-w-xs text-sm text-muted">브랜드의 방향성에서 디자인이 시작됩니다.</p>
+          <p className="max-w-xs text-sm text-muted">{t("home.footer.tagline")}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
           <div className="flex flex-col gap-3">
-            <p className="text-sm font-medium">서비스</p>
+            <p className="text-sm font-medium">{t("home.footer.serviceHeading")}</p>
             <a href="#how-it-works" className="text-sm text-muted transition hover:text-ink">
-              서비스 소개
+              {t("home.footer.serviceIntro")}
             </a>
             <a href="#pricing" className="text-sm text-muted transition hover:text-ink">
-              요금제
+              {t("home.footer.pricing")}
             </a>
             <a href="#faq" className="text-sm text-muted transition hover:text-ink">
-              FAQ
+              {t("home.footer.faq")}
             </a>
           </div>
 
           <div className="flex flex-col gap-3">
-            <p className="text-sm font-medium">법적 고지</p>
+            <p className="text-sm font-medium">{t("home.footer.legalHeading")}</p>
             <Link href="/terms" className="text-sm text-muted transition hover:text-ink">
-              이용약관
+              {t("home.footer.terms")}
             </Link>
             <Link href="/privacy" className="text-sm text-muted transition hover:text-ink">
-              개인정보처리방침
+              {t("home.footer.privacy")}
             </Link>
           </div>
 
           <div className="flex flex-col gap-3">
-            <p className="text-sm font-medium">문의</p>
+            <p className="text-sm font-medium">{t("home.footer.contactHeading")}</p>
             <Link href="/support" className="text-sm text-muted transition hover:text-ink">
-              문의사항
+              {t("home.footer.contact")}
             </Link>
           </div>
         </div>
       </div>
 
-      <p className="mx-auto mt-12 max-w-6xl text-xs text-muted">© {new Date().getFullYear()} ASTER. All rights reserved.</p>
+      <p className="mx-auto mt-12 max-w-6xl text-xs text-muted">
+        {t("home.footer.copyright", { year: new Date().getFullYear() })}
+      </p>
     </footer>
   );
 }

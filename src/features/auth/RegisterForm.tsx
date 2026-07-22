@@ -9,11 +9,13 @@ import { registerSchema, type RegisterInput } from "@/modules/auth/schemas/auth.
 import { registerUser } from "@/services/auth-service";
 import { useAuthStore } from "@/stores/auth-store";
 import { Spinner } from "@/components/Spinner";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
 export function RegisterForm() {
   const router = useRouter();
   const setUser = useAuthStore((s) => s.setUser);
   const [serverError, setServerError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const {
     register,
@@ -28,7 +30,7 @@ export function RegisterForm() {
       setUser(user);
       router.push("/projects");
     } catch (err) {
-      setServerError(err instanceof Error ? err.message : "회원가입에 실패했습니다.");
+      setServerError(err instanceof Error ? err.message : t("register.genericError"));
     }
   });
 
@@ -36,7 +38,7 @@ export function RegisterForm() {
     <form onSubmit={onSubmit} className="flex w-full flex-col gap-4">
       <div className="flex flex-col gap-1">
         <label htmlFor="name" className="text-sm font-medium text-ink">
-          이름 (선택)
+          {t("register.nameOptional")}
         </label>
         <input
           id="name"
@@ -49,7 +51,7 @@ export function RegisterForm() {
 
       <div className="flex flex-col gap-1">
         <label htmlFor="email" className="text-sm font-medium text-ink">
-          이메일
+          {t("register.email")}
         </label>
         <input
           id="email"
@@ -62,7 +64,7 @@ export function RegisterForm() {
 
       <div className="flex flex-col gap-1">
         <label htmlFor="password" className="text-sm font-medium text-ink">
-          비밀번호
+          {t("register.password")}
         </label>
         <input
           id="password"
@@ -80,13 +82,13 @@ export function RegisterForm() {
           <input type="checkbox" className="mt-0.5" {...register("agreedToTerms")} />
           <span>
             <Link href="/terms" target="_blank" className="underline underline-offset-4">
-              이용약관
+              {t("authTermsCheckbox.terms")}
             </Link>{" "}
-            및{" "}
+            {t("authTermsCheckbox.middle")}{" "}
             <Link href="/privacy" target="_blank" className="underline underline-offset-4">
-              개인정보처리방침
+              {t("authTermsCheckbox.privacy")}
             </Link>
-            에 동의합니다.
+            {t("authTermsCheckbox.suffix")}
           </span>
         </label>
         {errors.agreedToTerms && <p className="text-sm text-red-600">{errors.agreedToTerms.message}</p>}
@@ -100,7 +102,7 @@ export function RegisterForm() {
         className="mt-2 flex items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm text-paper transition hover:opacity-90 disabled:opacity-50"
       >
         {isSubmitting && <Spinner />}
-        {isSubmitting ? "가입 중..." : "회원가입"}
+        {isSubmitting ? t("register.submitting") : t("register.submit")}
       </button>
     </form>
   );
