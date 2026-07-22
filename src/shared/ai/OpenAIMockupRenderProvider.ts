@@ -9,12 +9,15 @@ import { isHealthEndpointReachable } from "@/shared/ai/providerHealthCheck";
 
 const OPENAI_IMAGES_URL = "https://api.openai.com/v1/images/generations";
 const OPENAI_MODELS_URL = "https://api.openai.com/v1/models";
-// dall-e-3 has been retired on newer OpenAI projects ("The model 'dall-e-3'
-// does not exist") -- gpt-image-1 is the current model, and it doesn't
-// accept `response_format` at all (always returns base64). Same fix as
-// OpenAIImageGenerationProvider.ts; this sibling file was missed earlier.
-const DEFAULT_MODEL = "gpt-image-1";
-const ESTIMATED_COST_PER_IMAGE_USD = 0.04;
+// gpt-image-2 at "medium" quality (사용자 요청) -- note this model requires
+// the OpenAI org to have completed API Organization Verification; if it
+// hasn't, calls will fail until that's done.
+const DEFAULT_MODEL = "gpt-image-2";
+const DEFAULT_QUALITY = "medium";
+// ~$0.053/image at medium quality, 1024x1024 (third-party pricing trackers,
+// not confirmed against OpenAI's own pricing page directly -- re-check if
+// this needs to be billing-accurate rather than a rough usage estimate).
+const ESTIMATED_COST_PER_IMAGE_USD = 0.053;
 
 /**
  * Same documented simplification as OpenAIImageGenerationProvider.edit():
@@ -34,10 +37,10 @@ export class OpenAIMockupRenderProvider implements MockupRenderProvider {
   async render(request: MockupRenderRequest): Promise<MockupRenderResult> {
     // `/v1/images/generations`는 순수 텍스트→이미지 엔드포인트라 이미지
     // 입력 파라미터가 없다 -- logoImageUrl을 텍스트로 이어붙여도 OpenAI가
-    // 실제로 참조하지 못하므로 원래도 장식적인 문구였다. gpt-image-1로
-    // 바뀐 뒤로는 URL 대신 base64 데이터 URI(수십만~수백만자)가 돌아오므로
-    // 그대로 이어붙이면 OpenAI의 32,000자 프롬프트 길이 제한을 넘겨 매번
-    // 400으로 실패한다 -- 아예 프롬프트에서 제외한다.
+    // 실제로 참조하지 못하므로 원래도 장식적인 문구였다. gpt-image 계열은
+    // URL 대신 base64 데이터 URI(수십만~수백만자)가 돌아오므로 그대로
+    // 이어붙이면 OpenAI의 32,000자 프롬프트 길이 제한을 넘겨 매번 400으로
+    // 실패한다 -- 아예 프롬프트에서 제외한다.
     const prompt =
       `${request.templateName} 목업에 브랜드 로고를 적용한 사실적인 제품 사진. ` +
       `배경과 소품은 실제 사용 환경처럼 유지하고, 로고는 자연스럽게 배치한다.`;
@@ -49,7 +52,7 @@ export class OpenAIMockupRenderProvider implements MockupRenderProvider {
         "Content-Type": "application/json",
         Authorization: `Bearer ${this.apiKey}`,
       },
-      body: JSON.stringify({ model: this.model, prompt, n: 1, size: "1024x1024" }),
+      body: JSON.stringify({ model: this.model, prompt, n: 1, size: "1024x1024", quality: DEFAULT_QUALITY }),
     });
 
     if (!res.ok) {
