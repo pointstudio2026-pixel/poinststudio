@@ -178,7 +178,6 @@ export const fr: Messages = {
       eyebrow: "Pricing",
       title: "Tarifs",
       subtitle: "Vous pouvez démarrer dès maintenant avec l'offre Free, gratuitement.",
-      betaNote: "Inscrivez-vous pour bénéficier d'avantages en tant qu'utilisateur bêta",
       popular: "Le plus populaire",
       free: {
         description: "Pour les designers qui débutent",

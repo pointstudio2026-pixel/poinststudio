@@ -176,7 +176,6 @@ export const ko = {
       eyebrow: "Pricing",
       title: "요금제",
       subtitle: "Free 플랜은 지금 바로 무료로 시작할 수 있습니다.",
-      betaNote: "사전 알림 신청 시 베타 사용자 혜택 제공",
       popular: "가장 인기 있음",
       free: {
         description: "가볍게 시작하는 디자이너를 위한 플랜",

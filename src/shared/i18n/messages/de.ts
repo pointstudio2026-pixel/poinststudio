@@ -178,7 +178,6 @@ export const de: Messages = {
       eyebrow: "Pricing",
       title: "Preise",
       subtitle: "Mit dem Free-Plan können Sie sofort und kostenlos starten.",
-      betaNote: "Frühzeitig anmelden und Beta-Nutzer-Vorteile sichern",
       popular: "Am beliebtesten",
       free: {
         description: "Für Designer:innen, die gerade erst anfangen",

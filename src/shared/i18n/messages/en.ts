@@ -178,7 +178,6 @@ export const en: Messages = {
       eyebrow: "Pricing",
       title: "Pricing",
       subtitle: "You can start on the Free plan right now, at no cost.",
-      betaNote: "Sign up for early access to get beta-user perks",
       popular: "Most popular",
       free: {
         description: "For designers getting started",

@@ -303,11 +303,6 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
                     <p className={`mt-1 text-sm ${plan.highlighted ? "text-paper/70" : "text-muted"}`}>
                       {t(plan.descriptionKey)}
                     </p>
-                    {plan.comingSoon && (
-                      <p className={`mt-2 text-xs ${plan.highlighted ? "text-paper/70" : "text-muted"}`}>
-                        {t("home.pricing.betaNote")}
-                      </p>
-                    )}
                   </div>
                   <ul className="flex flex-1 flex-col gap-2 text-base">
                     {plan.featureKeys.map((key) => (

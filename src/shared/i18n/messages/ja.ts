@@ -178,7 +178,6 @@ export const ja: Messages = {
       eyebrow: "Pricing",
       title: "料金プラン",
       subtitle: "Freeプランなら今すぐ無料で始められます。",
-      betaNote: "事前登録でベータユーザー特典をご案内",
       popular: "一番人気",
       free: {
         description: "気軽に始めたいデザイナー向けプラン",
