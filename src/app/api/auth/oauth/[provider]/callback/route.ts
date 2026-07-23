@@ -11,6 +11,7 @@ import {
 import { signOAuthPendingSignupToken } from "@/shared/auth/jwt";
 import { logger } from "@/shared/logging/logger";
 import { resolveAppOrigin } from "@/shared/http/appOrigin";
+import { AppError } from "@/shared/errors/AppError";
 
 function clearRoundTripCookies(res: NextResponse): void {
   res.cookies.set(OAUTH_STATE_COOKIE, "", { path: "/", maxAge: 0 });
@@ -82,10 +83,15 @@ export async function GET(
       return res;
     }
 
+    // ProviderError(등 AppError 계열)는 message가 항상 고정된 한국어 문구라
+    // 실제 원인(Kakao/Google이 돌려준 error/error_description 등)은
+    // .details에만 있다 -- 지금까지 이게 로그에 안 찍혀서 토큰 교환 실패의
+    // 진짜 원인을 알 수 없었다.
     logger.error("OAuth callback failed", {
       errorCode: "OAUTH_CALLBACK_FAILED",
       provider,
       details: err instanceof Error ? err.message : String(err),
+      providerDetails: err instanceof AppError ? err.details : undefined,
     });
     return loginErrorRedirect("failed");
   }
