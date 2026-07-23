@@ -281,6 +281,8 @@ export const ko = {
   },
   authOauth: {
     or: "또는",
+    loginNotice: "Google로 로그인하시려면 먼저 회원가입을 진행해주셔야 정상적으로 로그인됩니다.",
+    kakaoNotReady: "정식 출시 이후 카카오 로그인을 이용하실 수 있습니다.",
     google: "Google로 계속하기",
     kakao: "Kakao로 계속하기",
     consentPrefix: "계속 진행하면",

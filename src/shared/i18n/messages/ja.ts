@@ -283,6 +283,8 @@ export const ja: Messages = {
   },
   authOauth: {
     or: "または",
+    loginNotice: "Googleでログインするには、先に会員登録が必要です。",
+    kakaoNotReady: "Kakaoログインは正式サービス開始後にご利用いただけます。",
     google: "Googleで続ける",
     kakao: "Kakaoで続ける",
     consentPrefix: "続行すると、",

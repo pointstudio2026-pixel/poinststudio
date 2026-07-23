@@ -283,6 +283,8 @@ export const fr: Messages = {
   },
   authOauth: {
     or: "ou",
+    loginNotice: "Pour vous connecter avec Google, vous devez d'abord vous inscrire.",
+    kakaoNotReady: "La connexion avec Kakao sera disponible après le lancement officiel.",
     google: "Continuer avec Google",
     kakao: "Continuer avec Kakao",
     consentPrefix: "En continuant, vous acceptez nos",
