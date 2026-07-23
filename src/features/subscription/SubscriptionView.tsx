@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
+import { PaymentMethodModal } from "@/features/subscription/PaymentMethodModal";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { MessageKey } from "@/shared/i18n/messages/types";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
@@ -14,13 +15,6 @@ const ALLOWANCE_KEYS: Record<PlanCode, MessageKey> = {
   pro: "subscription.allowance.pro",
   studio: "subscription.allowance.studio",
 };
-
-type PaymentMethod = "toss" | "kakaopay" | "paypal";
-const PAYMENT_METHODS: { key: PaymentMethod; labelKey: MessageKey }[] = [
-  { key: "toss", labelKey: "subscription.paymentModal.toss" },
-  { key: "kakaopay", labelKey: "subscription.paymentModal.kakaopay" },
-  { key: "paypal", labelKey: "subscription.paymentModal.paypal" },
-];
 
 interface PlanRow {
   planCode: PlanCode;
@@ -38,12 +32,6 @@ export function SubscriptionView({
 }) {
   const { t } = useTranslation();
   const [paymentModalPlan, setPaymentModalPlan] = useState<PlanCode | null>(null);
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
-
-  function closeModal() {
-    setPaymentModalPlan(null);
-    setSelectedMethod(null);
-  }
 
   return (
     <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 bg-paper p-8">
@@ -126,45 +114,7 @@ export function SubscriptionView({
       </div>
 
       {paymentModalPlan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-8" onClick={closeModal}>
-          <div
-            className="w-full max-w-sm rounded-2xl border border-line bg-paper p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-base font-semibold">
-              {t("subscription.paymentModal.title", { plan: PLAN_LABELS[paymentModalPlan] })}
-            </h2>
-
-            <div className="mt-4 flex flex-col gap-2">
-              {PAYMENT_METHODS.map((method) => (
-                <button
-                  key={method.key}
-                  type="button"
-                  onClick={() => setSelectedMethod(method.key)}
-                  className={`rounded-lg border px-4 py-2.5 text-left text-sm transition ${
-                    selectedMethod === method.key ? "border-ink bg-surface" : "border-line hover:border-ink"
-                  }`}
-                >
-                  {t(method.labelKey)}
-                </button>
-              ))}
-            </div>
-
-            {selectedMethod && (
-              <p className="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
-                {t("subscription.paymentModal.notReady")}
-              </p>
-            )}
-
-            <button
-              type="button"
-              onClick={closeModal}
-              className="mt-4 w-full rounded-lg border border-line px-4 py-2 text-sm"
-            >
-              {t("subscription.paymentModal.close")}
-            </button>
-          </div>
-        </div>
+        <PaymentMethodModal planLabel={PLAN_LABELS[paymentModalPlan]} onClose={() => setPaymentModalPlan(null)} />
       )}
     </main>
   );

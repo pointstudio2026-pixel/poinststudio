@@ -7,6 +7,7 @@ import { ProductMockup } from "@/features/landing/ProductMockup";
 import { ResultShowcase } from "@/features/landing/ResultShowcase";
 import { FaqAccordion } from "@/features/landing/FaqAccordion";
 import { Footer } from "@/features/landing/Footer";
+import { PaymentMethodModal } from "@/features/subscription/PaymentMethodModal";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { MessageKey } from "@/shared/i18n/messages/types";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
@@ -100,13 +101,6 @@ const PLANS = [
   comingSoon: boolean;
 }[];
 
-type PaymentMethod = "toss" | "kakaopay" | "paypal";
-const PAYMENT_METHODS: { key: PaymentMethod; labelKey: MessageKey }[] = [
-  { key: "toss", labelKey: "subscription.paymentModal.toss" },
-  { key: "kakaopay", labelKey: "subscription.paymentModal.kakaopay" },
-  { key: "paypal", labelKey: "subscription.paymentModal.paypal" },
-];
-
 export interface HomeViewUser {
   email: string;
   name: string | null;
@@ -122,11 +116,6 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
   // Pro/Studio는 아직 실제 결제 연동 전이라 "출시 알림 받기" 자리에 /subscription과
   // 동일한 결제 수단 선택 모달을 띄운다(실제 결제는 없음, 안내만).
   const [paymentModalPlan, setPaymentModalPlan] = useState<(typeof PLANS)[number]["code"] | null>(null);
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
-  function closePaymentModal() {
-    setPaymentModalPlan(null);
-    setSelectedMethod(null);
-  }
 
   return (
     <div id="top" className="flex min-h-screen flex-col bg-paper">
@@ -387,45 +376,7 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
       <Footer />
 
       {paymentModalPlan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-8" onClick={closePaymentModal}>
-          <div
-            className="w-full max-w-sm rounded-2xl border border-line bg-paper p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-base font-semibold">
-              {t("subscription.paymentModal.title", { plan: paymentModalPlan })}
-            </h2>
-
-            <div className="mt-4 flex flex-col gap-2">
-              {PAYMENT_METHODS.map((method) => (
-                <button
-                  key={method.key}
-                  type="button"
-                  onClick={() => setSelectedMethod(method.key)}
-                  className={`rounded-lg border px-4 py-2.5 text-left text-sm transition ${
-                    selectedMethod === method.key ? "border-ink bg-surface" : "border-line hover:border-ink"
-                  }`}
-                >
-                  {t(method.labelKey)}
-                </button>
-              ))}
-            </div>
-
-            {selectedMethod && (
-              <p className="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
-                {t("subscription.paymentModal.notReady")}
-              </p>
-            )}
-
-            <button
-              type="button"
-              onClick={closePaymentModal}
-              className="mt-4 w-full rounded-lg border border-line px-4 py-2 text-sm"
-            >
-              {t("subscription.paymentModal.close")}
-            </button>
-          </div>
-        </div>
+        <PaymentMethodModal planLabel={paymentModalPlan} onClose={() => setPaymentModalPlan(null)} />
       )}
     </div>
   );
