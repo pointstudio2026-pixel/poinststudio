@@ -15,6 +15,10 @@
      never for large blocks of text or primary buttons. */
   --color-tint-blue: #eaf0f6;
   --color-tint-beige: #f1ebdf;
+  /* Homepage-only signature accent (landing page redesign) -- a single
+     muted brass tone used sparingly (a rule, a dot, an underline), never as
+     a text or button fill. Deliberately not used outside src/features/landing. */
+  --color-gold: #a9782e;
 }
 
 :root {
@@ -31,9 +35,17 @@ body {
 }
 
 .eyebrow {
-  font-family: ui-serif, Georgia, "Times New Roman", serif;
+  font-family:
+    var(--font-fraunces, ui-serif), var(--font-gowun-batang, ui-serif), ui-serif, Georgia, "Times New Roman", serif;
   font-style: italic;
   letter-spacing: 0.02em;
+}
+
+/* 홈페이지 헤드라인 전용 -- Fraunces(라틴)+Gowun Batang(한글)를 폴백 체인으로
+   묶어, 언어에 관계없이 같은 성격(에디토리얼 세리프)의 헤드라인 서체가
+   적용되게 한다(브라우저가 글자 단위로 커버되는 폰트를 자동 선택). */
+.font-display {
+  font-family: var(--font-fraunces, ui-serif), var(--font-gowun-batang, ui-serif), ui-serif, Georgia, serif;
 }
 
 .font-script {
@@ -50,4 +62,27 @@ body {
   box-shadow:
     0 2px 4px rgba(28, 26, 22, 0.04),
     0 24px 48px -20px rgba(28, 26, 22, 0.18);
+}
+
+/* 홈페이지 섹션 스크롤 리빌(ScrollReveal.tsx) -- 절제된 페이드+슬라이드만,
+   prefers-reduced-motion이면 즉시 완전히 보이는 상태로 고정한다. */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.6s ease-out,
+    transform 0.6s ease-out;
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-on-scroll {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

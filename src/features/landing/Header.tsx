@@ -30,13 +30,17 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
   return (
     <header className="sticky top-0 z-40 border-b border-line/80 bg-paper/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
-        <Link href="/" className="text-lg font-semibold tracking-tight">
-          ASTER.
+        <Link href="/" className="font-display text-lg font-semibold tracking-tight">
+          ASTER<span className="text-[var(--color-gold)]">.</span>
         </Link>
 
         <nav className="hidden items-center gap-4 text-xs text-muted lg:flex">
           {NAV_LINKS.map((link) => (
-            <a key={link.href} href={link.href} className="whitespace-nowrap transition hover:text-ink">
+            <a
+              key={link.href}
+              href={link.href}
+              className="whitespace-nowrap border-b border-transparent pb-0.5 transition hover:border-[var(--color-gold)] hover:text-ink"
+            >
               {t(link.labelKey)}
             </a>
           ))}

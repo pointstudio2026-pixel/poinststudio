@@ -7,10 +7,12 @@ export function Footer() {
   const { t } = useTranslation();
 
   return (
-    <footer className="border-t border-line bg-surface px-5 py-14 sm:px-8">
+    <footer className="border-t border-line bg-surface px-5 py-16 sm:px-8 sm:py-20">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 sm:flex-row sm:justify-between">
-        <div className="flex flex-col gap-2">
-          <span className="text-lg font-semibold tracking-tight">ASTER.</span>
+        <div className="flex flex-col gap-3">
+          <span className="font-display text-3xl font-semibold tracking-tight">
+            ASTER<span className="text-[var(--color-gold)]">.</span>
+          </span>
           <p className="max-w-xs text-sm text-muted">{t("home.footer.tagline")}</p>
         </div>
 
@@ -47,7 +49,8 @@ export function Footer() {
         </div>
       </div>
 
-      <p className="mx-auto mt-12 max-w-6xl text-xs text-muted">
+      <div className="mx-auto mt-12 h-px max-w-6xl bg-gradient-to-r from-[var(--color-gold)]/40 via-line to-transparent" />
+      <p className="mx-auto mt-6 max-w-6xl text-xs text-muted">
         {t("home.footer.copyright", { year: new Date().getFullYear() })}
       </p>
     </footer>

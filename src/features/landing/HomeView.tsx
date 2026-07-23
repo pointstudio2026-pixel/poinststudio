@@ -7,6 +7,7 @@ import { ProductMockup } from "@/features/landing/ProductMockup";
 import { ResultShowcase } from "@/features/landing/ResultShowcase";
 import { FaqAccordion } from "@/features/landing/FaqAccordion";
 import { Footer } from "@/features/landing/Footer";
+import { ScrollReveal } from "@/features/landing/ScrollReveal";
 import { PaymentMethodModal } from "@/features/subscription/PaymentMethodModal";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { MessageKey } from "@/shared/i18n/messages/types";
@@ -123,10 +124,13 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
 
       <main className="flex flex-col">
         {/* Hero */}
-        <section className="mx-auto grid w-full max-w-6xl gap-12 px-5 py-16 sm:px-8 sm:py-20 lg:min-h-[780px] lg:grid-cols-2 lg:items-center lg:py-24">
+        <section className="mx-auto grid w-full max-w-6xl gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:min-h-[780px] lg:grid-cols-2 lg:items-center lg:py-28">
           <div className="flex flex-col items-start gap-6">
-            <p className="eyebrow text-sm text-muted">{t("home.hero.eyebrow")}</p>
-            <h1 className={`${heroTitleSize} leading-[1.08] font-semibold tracking-tight`}>
+            <p className="eyebrow flex items-center gap-2 text-sm text-muted">
+              <span className="h-px w-6 bg-[var(--color-gold)]" aria-hidden />
+              {t("home.hero.eyebrow")}
+            </p>
+            <h1 className={`font-display ${heroTitleSize} leading-[1.08] font-semibold tracking-tight`}>
               {t("home.hero.titleLine1")}
               <br />
               {t("home.hero.titleLine2")}
@@ -154,9 +158,9 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
 
         {/* How it works */}
         <section id="how-it-works" className="border-t border-line bg-surface px-5 py-20 sm:px-8 sm:py-24">
-          <div className="mx-auto max-w-6xl">
+          <ScrollReveal className="mx-auto max-w-6xl">
             <p className="eyebrow text-sm text-muted">{t("home.howItWorks.eyebrow")}</p>
-            <h2 className="mt-2 text-[32px] font-semibold sm:text-[36px] lg:text-[40px]">{t("home.howItWorks.title")}</h2>
+            <h2 className="font-display mt-2 text-[32px] font-semibold sm:text-[36px] lg:text-[40px]">{t("home.howItWorks.title")}</h2>
 
             <div className="relative mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {HOW_IT_WORKS.map((item) => (
@@ -165,7 +169,9 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
                   className="shadow-soft group flex flex-col gap-4 rounded-2xl border border-line bg-paper p-6 transition hover:-translate-y-1 hover:border-ink"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-3xl font-semibold text-line group-hover:text-muted">{item.step}</span>
+                    <span className="font-display text-3xl font-semibold text-line group-hover:text-[var(--color-gold)]">
+                      {item.step}
+                    </span>
                     <item.icon className="h-7 w-7 text-ink" />
                   </div>
                   <h3 className="text-xl font-semibold">{t(item.titleKey)}</h3>
@@ -173,14 +179,14 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
                 </div>
               ))}
             </div>
-          </div>
+          </ScrollReveal>
         </section>
 
         {/* Result preview */}
         <section id="preview" className="border-t border-line px-5 py-20 sm:px-8 sm:py-24">
-          <div className="mx-auto max-w-6xl">
+          <ScrollReveal className="mx-auto max-w-6xl">
             <p className="eyebrow text-sm text-muted">{t("home.preview.eyebrow")}</p>
-            <h2 className="mt-2 text-[32px] font-semibold sm:text-[36px] lg:text-[40px]">{t("home.preview.title")}</h2>
+            <h2 className="font-display mt-2 text-[32px] font-semibold sm:text-[36px] lg:text-[40px]">{t("home.preview.title")}</h2>
             <p className="mt-3 max-w-2xl text-lg leading-relaxed text-muted">{t("home.preview.body")}</p>
 
             <div className="mt-10 grid gap-6 lg:grid-cols-3">
@@ -217,14 +223,14 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
                 <ResultShowcase />
               </div>
             </div>
-          </div>
+          </ScrollReveal>
         </section>
 
         {/* Core advantages */}
         <section className="border-t border-line bg-surface px-5 py-20 sm:px-8 sm:py-24">
-          <div className="mx-auto max-w-6xl">
+          <ScrollReveal className="mx-auto max-w-6xl">
             <p className="eyebrow text-sm text-muted">{t("home.advantages.eyebrow")}</p>
-            <h2 className="mt-2 text-[32px] font-semibold sm:text-[36px] lg:text-[40px]">{t("home.advantages.title")}</h2>
+            <h2 className="font-display mt-2 text-[32px] font-semibold sm:text-[36px] lg:text-[40px]">{t("home.advantages.title")}</h2>
 
             <div className="mt-12 grid gap-6 sm:grid-cols-3">
               {ADVANTAGES.map((item) => (
@@ -237,14 +243,14 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
                 </div>
               ))}
             </div>
-          </div>
+          </ScrollReveal>
         </section>
 
         {/* AI experts */}
         <section className="border-t border-line px-5 py-20 sm:px-8 sm:py-24">
-          <div className="mx-auto max-w-6xl">
+          <ScrollReveal className="mx-auto max-w-6xl">
             <p className="eyebrow text-sm text-muted">{t("home.experts.eyebrow")}</p>
-            <h2 className="mt-2 max-w-2xl text-[32px] font-semibold leading-tight sm:text-[36px] lg:text-[40px]">
+            <h2 className="font-display mt-2 max-w-2xl text-[32px] font-semibold leading-tight sm:text-[36px] lg:text-[40px]">
               {t("home.experts.title")}
             </h2>
 
@@ -262,14 +268,14 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
                 </div>
               ))}
             </div>
-          </div>
+          </ScrollReveal>
         </section>
 
         {/* Pricing */}
         <section id="pricing" className="border-t border-line bg-surface px-5 py-20 sm:px-8 sm:py-24">
-          <div className="mx-auto max-w-6xl text-center">
+          <ScrollReveal className="mx-auto max-w-6xl text-center">
             <p className="eyebrow text-sm text-muted">{t("home.pricing.eyebrow")}</p>
-            <h2 className="mt-2 text-[32px] font-semibold sm:text-[36px] lg:text-[40px]">{t("home.pricing.title")}</h2>
+            <h2 className="font-display mt-2 text-[32px] font-semibold sm:text-[36px] lg:text-[40px]">{t("home.pricing.title")}</h2>
             <p className="mt-3 text-lg text-muted">{t("home.pricing.subtitle")}</p>
 
             <div className="mt-12 grid items-stretch gap-6 sm:grid-cols-3">
@@ -289,9 +295,9 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
                     <p className={`eyebrow text-sm ${plan.highlighted ? "text-paper/70" : "text-muted"}`}>
                       {plan.code}
                     </p>
-                    <p className="mt-2 text-3xl font-semibold">
+                    <p className="font-display mt-2 text-3xl font-semibold tabular-nums">
                       {plan.price}
-                      <span className="text-base font-normal">{t("common.perMonth")}</span>
+                      <span className="font-sans text-base font-normal">{t("common.perMonth")}</span>
                     </p>
                     <p className={`mt-1 text-sm ${plan.highlighted ? "text-paper/70" : "text-muted"}`}>
                       {t(plan.descriptionKey)}
@@ -337,24 +343,24 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
                 </div>
               ))}
             </div>
-          </div>
+          </ScrollReveal>
         </section>
 
         {/* FAQ */}
         <section id="faq" className="border-t border-line px-5 py-20 sm:px-8 sm:py-24">
-          <div className="mx-auto max-w-[880px] text-center">
+          <ScrollReveal className="mx-auto max-w-[880px] text-center">
             <p className="eyebrow text-sm text-muted">{t("home.faq.eyebrow")}</p>
-            <h2 className="mt-2 text-[32px] font-semibold sm:text-[36px] lg:text-[40px]">{t("home.faq.title")}</h2>
+            <h2 className="font-display mt-2 text-[32px] font-semibold sm:text-[36px] lg:text-[40px]">{t("home.faq.title")}</h2>
             <p className="mt-3 text-lg text-muted">{t("home.faq.subtitle")}</p>
-          </div>
+          </ScrollReveal>
           <div className="mt-10">
             <FaqAccordion />
           </div>
         </section>
 
         {/* Final CTA */}
-        <section className="border-t border-line bg-ink px-5 py-20 text-center text-paper sm:px-8 sm:py-24">
-          <h2 className="text-[32px] font-semibold sm:text-[36px] lg:text-[40px]">{t("home.finalCta.title")}</h2>
+        <section className="border-t border-line bg-ink px-5 py-24 text-center text-paper sm:px-8 sm:py-28">
+          <h2 className="font-display text-[32px] font-semibold sm:text-[36px] lg:text-[40px]">{t("home.finalCta.title")}</h2>
           <p className="mx-auto mt-3 max-w-md text-lg leading-relaxed text-paper/70">{t("home.finalCta.body")}</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
