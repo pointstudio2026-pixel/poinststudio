@@ -12,6 +12,8 @@ export interface PromptLayers {
   baseTemplateContext: string;
   /** "내 스타일"에서 선택한 카테고리의 비전 분석 설명. 선택 안 했으면 빈 문자열. */
   userStyleContext: string;
+  /** 관리자가 등록한 학습 자료(TrainingExample) 중 매칭된 프롬프트 발췌. 매칭 없으면 빈 문자열. */
+  referenceExampleContext: string;
   /** 스타일 화면에서 미리 선택한 브랜드 컬러 팔레트 지시. 선택 안 했으면 빈 문자열. */
   colorContext: string;
   logoStyleContext: string;

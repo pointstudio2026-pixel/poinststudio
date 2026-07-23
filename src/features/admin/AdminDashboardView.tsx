@@ -157,9 +157,14 @@ export function AdminDashboardView() {
     <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 p-8">
       <header className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Admin Dashboard</h1>
-        <Link href="/projects" className="text-sm underline">
-          일반 화면으로
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/ops-portal-7x2q/training-examples" className="text-sm underline">
+            작업물 스타일 학습 자료
+          </Link>
+          <Link href="/projects" className="text-sm underline">
+            일반 화면으로
+          </Link>
+        </div>
       </header>
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">

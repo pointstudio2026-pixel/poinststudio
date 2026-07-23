@@ -20,6 +20,7 @@ import { FakeLogoStyleCategoryRepository, FakeLogoStyleSelectionRepository } fro
 import type { LogoStyleCategory } from "@/modules/logoStyles/domain/LogoStyle";
 import { FakeUserStyleCategoryRepository, FakeProjectUserStyleSelectionRepository } from "@/modules/userStyles/testing/fakes";
 import { FakeColorPaletteSelectionRepository } from "@/modules/colorPalettes/testing/fakes";
+import { FakeTrainingExampleRepository } from "@/modules/trainingExamples/testing/fakes";
 import { EnsureEmailVerifiedUseCase } from "@/modules/auth/application/EnsureEmailVerifiedUseCase";
 import { FakeUserRepository } from "@/modules/auth/testing/fakes";
 import { CreateProjectUseCase } from "@/modules/projects/application/CreateProjectUseCase";
@@ -103,6 +104,7 @@ async function setup() {
   const userStyleSelections = new FakeProjectUserStyleSelectionRepository();
   const colorPaletteSelections = new FakeColorPaletteSelectionRepository();
   const prompts = new FakePromptRepository();
+  const trainingExamples = new FakeTrainingExampleRepository();
   const generations = new FakeGenerationRepository();
   const queue = new FakeImageGenerationQueue();
   const subs = new FakeSubscriptionRepository();
@@ -134,6 +136,7 @@ async function setup() {
     userStyleSelections,
     colorPaletteSelections,
     prompts,
+    trainingExamples,
   );
 
   return {

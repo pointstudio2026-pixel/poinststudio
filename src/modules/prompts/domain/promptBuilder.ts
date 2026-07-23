@@ -283,6 +283,24 @@ function styleKeywordPhrase(style: Style): string {
   return keywords.length > 0 ? keywords.join(", ") : style.category;
 }
 
+const REFERENCE_EXAMPLE_PROMPT_EXCERPT_LENGTH = 200;
+
+/**
+ * 관리자 페이지에서 등록한 TrainingExample 중 이 프로젝트의 업종/유형과
+ * 매칭된 것(있으면)의 프롬프트 원문을 짧게 발췌해 참고 문구로 붙인다.
+ * "내 스타일"의 userStyleContext와 동일하게 매칭이 없으면 빈 문자열을
+ * 반환해 프롬프트에 아무 영향도 주지 않는다.
+ */
+function buildReferenceExampleContext(referenceExamplePrompts: string[]): string {
+  if (referenceExamplePrompts.length === 0) return "";
+  const excerpts = referenceExamplePrompts.map((p) =>
+    p.length > REFERENCE_EXAMPLE_PROMPT_EXCERPT_LENGTH ? `${p.slice(0, REFERENCE_EXAMPLE_PROMPT_EXCERPT_LENGTH)}...` : p,
+  );
+  return `참고 예시(과거 등록된 유사한 프롬프트, 그대로 따라 하지 말고 톤과 구성 참고만): ${excerpts
+    .map((e) => `"${e}"`)
+    .join(" / ")}`;
+}
+
 /**
  * 14_PRD_PromptEngine.md "Prompt Layers": deterministic composition from
  * Interview answers + Brand Strategy + selected Style, so identical inputs
@@ -310,6 +328,8 @@ export function buildPromptLayers(input: {
   logoStyleNames: string[];
   /** "내 스타일"에서 선택한 카테고리의 비전 분석 설명(있을 때만). 계정 전체, 모든 작업물 유형 공통. */
   userStyleDescription?: string;
+  /** 관리자가 등록한 학습 자료 중 이 프로젝트와 매칭된 프롬프트 원문(있을 때만, 최대 2~3개). */
+  referenceExamplePrompts?: string[];
   /** 스타일 화면에서 미리 선택한 브랜드 컬러(있을 때만). 로고 여부와 무관하게 모든 유형에 동일 적용. */
   colorPaletteSwatches?: ColorSwatch[];
   /** 브랜드 인터뷰 "그 외 사항"(무조건 포함/제외되어야 하는 내용) 답변. 없으면 생략. */
@@ -347,6 +367,8 @@ export function buildPromptLayers(input: {
   const userStyleContext = input.userStyleDescription
     ? `사용자 지정 스타일 참고: ${input.userStyleDescription}`
     : "";
+
+  const referenceExampleContext = buildReferenceExampleContext(input.referenceExamplePrompts ?? []);
 
   // 스타일 화면에서 미리 컬러를 골랐다면 이름 + 정확한 hex 코드를 함께
   // 명시해 이미지 모델이 실제로 그 색상을 그대로 사용하도록 강제한다 --
@@ -389,6 +411,7 @@ export function buildPromptLayers(input: {
     styleContext,
     baseTemplateContext,
     userStyleContext,
+    referenceExampleContext,
     colorContext,
     logoStyleContext,
     deliverableContext,
@@ -419,6 +442,7 @@ export function composePrompt(layers: PromptLayers): ComposedPrompt {
     layers.styleContext,
     layers.baseTemplateContext,
     layers.userStyleContext,
+    layers.referenceExampleContext,
     layers.logoStyleContext,
     layers.deliverableContext,
     // colorContext/typographyContext는 마지막 "내용" 지시로 최종 구도 지시

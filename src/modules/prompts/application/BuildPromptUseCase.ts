@@ -12,6 +12,8 @@ import type { ProjectUserStyleSelectionRepository } from "@/modules/userStyles/d
 import type { ColorPaletteSelectionRepository } from "@/modules/colorPalettes/domain/ColorPaletteSelectionRepository";
 import type { PromptRepository } from "@/modules/prompts/domain/PromptRepository";
 import type { Prompt, PromptProvider } from "@/modules/prompts/domain/Prompt";
+import type { TrainingExampleRepository } from "@/modules/trainingExamples/domain/TrainingExampleRepository";
+import { rankTrainingExamples } from "@/modules/trainingExamples/domain/trainingExampleRules";
 import { buildPromptLayers, composePrompt } from "@/modules/prompts/domain/promptBuilder";
 import { computePromptHash } from "@/modules/prompts/domain/promptHash";
 import { DEFAULT_PROVIDER, formatForProvider } from "@/modules/prompts/domain/providerFormatters";
@@ -34,6 +36,7 @@ export class BuildPromptUseCase {
     private readonly projectUserStyleSelectionRepository: ProjectUserStyleSelectionRepository,
     private readonly colorPaletteSelectionRepository: ColorPaletteSelectionRepository,
     private readonly promptRepository: PromptRepository,
+    private readonly trainingExampleRepository: TrainingExampleRepository,
   ) {}
 
   async execute(input: { projectId: string; userId: string; provider?: PromptProvider }): Promise<Prompt> {
@@ -105,6 +108,26 @@ export class BuildPromptUseCase {
       input.projectId,
     );
 
+    // 관리자가 등록한 학습 자료(TrainingExample) 중 이 프로젝트와 같은
+    // deliverableType이면서 업종/목적 텍스트가 겹치는 것을 참고 문구로
+    // 반영한다 -- AI 호출 없는 결정론적 매칭이라 비용이 들지 않고, 매칭되는
+    // 게 없으면(신규 기능이라 데이터가 아직 없을 수 있음) 조용히 생략된다
+    // ("내 스타일" userStyleDescription과 동일한 무해한 폴백 패턴).
+    let referenceExamplePrompts: string[] = [];
+    if (project.deliverableType) {
+      const candidates = await this.trainingExampleRepository.listByDeliverableType(project.deliverableType);
+      const keywordText = [answers.industry, answers.purpose, brandStrategyData.brandKnowledge.mission]
+        .filter(Boolean)
+        .join(" ");
+      referenceExamplePrompts = rankTrainingExamples(candidates, {
+        keywordText,
+        deliverableType: project.deliverableType,
+      })
+        .filter((r) => r.score > 0)
+        .slice(0, 2)
+        .map((r) => r.example.prompt);
+    }
+
     const layers = buildPromptLayers({
       brandName: answers.brandName ?? "",
       industry: answers.industry ?? "",
@@ -116,6 +139,7 @@ export class BuildPromptUseCase {
       secondaryStyles,
       logoStyleNames,
       userStyleDescription,
+      referenceExamplePrompts,
       colorPaletteSwatches: colorPaletteSelection?.swatches,
       additionalNotes: answers.additionalNotes,
     });

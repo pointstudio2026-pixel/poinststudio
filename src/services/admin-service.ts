@@ -159,3 +159,32 @@ export function changeUserPlan(userId: string, planCode: "free" | "pro" | "studi
     body: JSON.stringify({ planCode }),
   });
 }
+
+export interface TrainingExampleDto {
+  id: string;
+  prompt: string;
+  deliverableType: string;
+  imageStorageKey: string;
+  imageContentType: string;
+  createdByUserId: string;
+  createdAt: string;
+}
+
+export function fetchTrainingExamples() {
+  return apiFetch<{ examples: TrainingExampleDto[] }>("/api/admin/training-examples");
+}
+
+export function createTrainingExample(input: { prompt: string; deliverableType: string; image: File }) {
+  const formData = new FormData();
+  formData.set("prompt", input.prompt);
+  formData.set("deliverableType", input.deliverableType);
+  formData.set("image", input.image);
+  return apiFetch<{ example: TrainingExampleDto }>("/api/admin/training-examples", {
+    method: "POST",
+    body: formData,
+  });
+}
+
+export function deleteTrainingExample(id: string) {
+  return apiFetch<{ deleted: boolean }>(`/api/admin/training-examples/${id}`, { method: "DELETE" });
+}

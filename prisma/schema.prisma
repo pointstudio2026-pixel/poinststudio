@@ -51,6 +51,7 @@ model User {
   oauthAccounts      OAuthAccount[]
   userStyleCategories UserStyleCategory[]
   inquiries          Inquiry[]
+  trainingExamples   TrainingExample[]
   team               Team?
   teamMemberships    TeamMembership[]
 
@@ -649,4 +650,23 @@ model TeamMembership {
 
   @@unique([teamId, userId])
   @@map("team_memberships")
+}
+
+// 관리자가 직접 입력하는 (프롬프트, 생성 이미지) 참고 자료 -- 향후 실제
+// 프로젝트의 프롬프트 생성(BuildPromptUseCase)에서 deliverableType +
+// 키워드 겹침으로 매칭되면 그 프롬프트 원문 일부가 참고 문구로 포함된다.
+// 의도적으로 Vision AI 분석을 하지 않는다(비용 발생 금지) -- prompt 필드
+// 자체가 이미 텍스트 학습 데이터이므로 결정론적 키워드 매칭만으로 충분하다.
+model TrainingExample {
+  id               String   @id @default(uuid()) @db.Uuid
+  prompt           String   @db.Text
+  deliverableType  String   @map("deliverable_type") @db.VarChar(30)
+  imageStorageKey  String   @map("image_storage_key")
+  imageContentType String   @map("image_content_type") @db.VarChar(50)
+  createdByUserId  String   @map("created_by_user_id") @db.Uuid
+  createdBy        User     @relation(fields: [createdByUserId], references: [id])
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@index([deliverableType])
+  @@map("training_examples")
 }

@@ -16,6 +16,7 @@ import { FakeLogoStyleCategoryRepository, FakeLogoStyleSelectionRepository } fro
 import type { LogoStyleCategory } from "@/modules/logoStyles/domain/LogoStyle";
 import { FakeUserStyleCategoryRepository, FakeProjectUserStyleSelectionRepository } from "@/modules/userStyles/testing/fakes";
 import { FakeColorPaletteSelectionRepository } from "@/modules/colorPalettes/testing/fakes";
+import { FakeTrainingExampleRepository } from "@/modules/trainingExamples/testing/fakes";
 import { CreateProjectUseCase } from "@/modules/projects/application/CreateProjectUseCase";
 import { SelectDeliverableTypeUseCase } from "@/modules/projects/application/SelectDeliverableTypeUseCase";
 import { FakeProjectRepository } from "@/modules/projects/testing/fakes";
@@ -92,6 +93,7 @@ async function setup() {
   const userStyleSelections = new FakeProjectUserStyleSelectionRepository();
   const colorPaletteSelections = new FakeColorPaletteSelectionRepository();
   const prompts = new FakePromptRepository();
+  const trainingExamples = new FakeTrainingExampleRepository();
 
   const { projectId } = await new CreateProjectUseCase(projects).execute({ userId: "user-1", name: "Bakery" });
   await new SelectDeliverableTypeUseCase(projects).execute({
@@ -113,6 +115,7 @@ async function setup() {
     userStyleSelections,
     colorPaletteSelections,
     prompts,
+    trainingExamples,
     build: new BuildPromptUseCase(
       projects,
       interviews,
@@ -125,6 +128,7 @@ async function setup() {
       userStyleSelections,
       colorPaletteSelections,
       prompts,
+      trainingExamples,
     ),
     get: new GetPromptUseCase(projects, prompts),
     getVersions: new GetPromptVersionsUseCase(projects, prompts),
@@ -221,6 +225,32 @@ describe("BuildPromptUseCase", () => {
 
     const versions = await ctx.getVersions.execute({ projectId: ctx.projectId, userId: "user-1" });
     expect(versions).toHaveLength(2);
+  });
+
+  it("includes a matching admin-registered TrainingExample as reference text, AI 호출 없이 순수 키워드 매칭만으로 (작업물 스타일 학습 자료)", async () => {
+    const ctx = await setup();
+    await fullySetUp(ctx);
+
+    await ctx.trainingExamples.create({
+      prompt: "fresh bread bakery logo, minimal sans-serif",
+      deliverableType: "브랜딩 & 로고",
+      imageStorageKey: "training-examples/x.png",
+      imageContentType: "image/png",
+      createdByUserId: "admin-1",
+    });
+    // 다른 유형이면 아무리 키워드가 겹쳐도 매칭에서 제외되어야 한다.
+    await ctx.trainingExamples.create({
+      prompt: "fresh bread bakery poster",
+      deliverableType: "포스터",
+      imageStorageKey: "training-examples/y.png",
+      imageContentType: "image/png",
+      createdByUserId: "admin-1",
+    });
+
+    const prompt = await ctx.build.execute({ projectId: ctx.projectId, userId: "user-1" });
+
+    expect(prompt.currentVersion.userPrompt).toContain("fresh bread bakery logo");
+    expect(prompt.currentVersion.userPrompt).not.toContain("fresh bread bakery poster");
   });
 
   it("rejects access from a user who doesn't own the project (권한 검증)", async () => {
