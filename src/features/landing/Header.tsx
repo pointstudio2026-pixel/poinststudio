@@ -30,8 +30,9 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
   return (
     <header className="sticky top-0 z-40 border-b border-line/80 bg-paper/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
-        <Link href="/" className="font-display text-lg font-semibold tracking-tight">
-          ASTER<span className="text-[var(--color-gold)]">.</span>
+        <Link href="/" className="shrink-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/aster-wordmark.png" alt="ASTER" className="h-6 w-auto sm:h-7" />
         </Link>
 
         <nav className="hidden items-center gap-4 text-xs text-muted lg:flex">

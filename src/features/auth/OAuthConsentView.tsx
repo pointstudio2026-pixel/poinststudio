@@ -13,8 +13,9 @@ export function OAuthConsentView({ email, providerLabel }: { email: string; prov
       <div className="absolute right-6 top-6">
         <LanguageSwitcher />
       </div>
-      <Link href="/" className="text-lg font-semibold tracking-tight">
-        ASTER.
+      <Link href="/">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/brand/aster-mark.png" alt="ASTER" className="h-9 w-auto" />
       </Link>
       <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-8">
         <p className="eyebrow text-sm text-muted">{t("oauthConsent.almostThere")}</p>

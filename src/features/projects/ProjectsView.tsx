@@ -52,8 +52,9 @@ export function ProjectsView({
   return (
     <div className="min-h-screen bg-paper">
       <header className="flex items-center justify-between border-b border-line px-8 py-5">
-        <Link href="/" className="text-lg font-semibold tracking-tight">
-          ASTER.
+        <Link href="/" className="shrink-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/aster-mark.png" alt="ASTER" className="h-8 w-auto" />
         </Link>
         <div className="flex items-center gap-2">
           <Link

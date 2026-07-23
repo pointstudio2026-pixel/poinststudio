@@ -46,8 +46,9 @@ export default async function ProjectLayout({
   return (
     <div className="min-h-screen bg-paper">
       <header className="flex h-16 items-center justify-between border-b border-line px-5 sm:px-8">
-        <Link href="/" className="text-lg font-semibold tracking-tight">
-          ASTER.
+        <Link href="/" className="shrink-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/aster-mark.png" alt="ASTER" className="h-8 w-auto" />
         </Link>
         <PrimaryNav user={{ email: user.email, name: user.name }} planCode={subscription.planCode} />
       </header>
