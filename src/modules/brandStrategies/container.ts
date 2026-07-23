@@ -5,7 +5,7 @@ import { SelectBrandStrategyUseCase } from "@/modules/brandStrategies/applicatio
 import { GetBrandStrategyUseCase } from "@/modules/brandStrategies/application/GetBrandStrategyUseCase";
 import { projectRepositoryInstance } from "@/modules/projects/container";
 import { interviewRepositoryInstance } from "@/modules/interviews/container";
-import { styleSelectionRepositoryInstance } from "@/modules/styles/container";
+import { styleRepositoryInstance, styleSelectionRepositoryInstance } from "@/modules/styles/container";
 import { colorPaletteSelectionRepositoryInstance } from "@/modules/colorPalettes/container";
 
 export const brandStrategyRepositoryInstance = new PrismaBrandStrategyRepository();
@@ -19,6 +19,7 @@ export const brandStrategiesContainer = {
     brandStrategyRepositoryInstance,
     composer,
     colorPaletteSelectionRepositoryInstance,
+    styleRepositoryInstance,
   ),
   selectBrandStrategyUseCase: new SelectBrandStrategyUseCase(
     projectRepositoryInstance,

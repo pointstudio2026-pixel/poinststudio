@@ -99,6 +99,7 @@ describe("selectQuestions", () => {
       "purpose",
       "targetAudience",
       "desiredImpression",
+      "forbiddenElements",
       "additionalNotes",
     ]);
   });

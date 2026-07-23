@@ -19,9 +19,21 @@ export class FakeLogoStyleSelectionRepository implements LogoStyleSelectionRepos
   private nextId = 1;
   private sequence = new Map<string, number>();
 
-  async create(projectId: string, categoryIds: string[], primaryCategoryId: string): Promise<LogoStyleSelection> {
+  async create(
+    projectId: string,
+    categoryIds: string[],
+    primaryCategoryId: string,
+    forbiddenCategoryIds: string[] = [],
+  ): Promise<LogoStyleSelection> {
     const id = `logo-style-selection-${this.nextId++}`;
-    const selection: LogoStyleSelection = { id, projectId, categoryIds, primaryCategoryId, createdAt: new Date() };
+    const selection: LogoStyleSelection = {
+      id,
+      projectId,
+      categoryIds,
+      primaryCategoryId,
+      forbiddenCategoryIds,
+      createdAt: new Date(),
+    };
     this.sequence.set(id, this.sequence.size);
     this.selections.push(selection);
     return selection;

@@ -38,6 +38,9 @@ const ACTIVITY_LABELS: Record<string, string> = {
   ADMIN_USER_UNSUSPENDED: "계정 정지 해제",
   ADMIN_USER_DELETED: "계정 삭제",
   ADMIN_USER_ROLE_CHANGED: "권한 변경",
+  PROMPT_CONFLICT_DETECTED: "프롬프트 우선순위 충돌 감지(사용자 우선 처리)",
+  STYLE_INTERVIEW_CONFLICT_DETECTED: "스타일-인터뷰 재검증 충돌 감지",
+  TRAINING_EXAMPLE_CREATED: "작업물 스타일 학습 자료 등록",
 };
 
 export function activityLabel(eventType: string): string {

@@ -13,6 +13,7 @@ import type { ColorPaletteSelectionRepository } from "@/modules/colorPalettes/do
 import type { PromptRepository } from "@/modules/prompts/domain/PromptRepository";
 import type { Prompt, PromptProvider } from "@/modules/prompts/domain/Prompt";
 import type { TrainingExampleRepository } from "@/modules/trainingExamples/domain/TrainingExampleRepository";
+import { TRAINING_EXAMPLE_CATEGORY_IMAGE_GENERATION } from "@/modules/trainingExamples/domain/TrainingExample";
 import { rankTrainingExamples } from "@/modules/trainingExamples/domain/trainingExampleRules";
 import { buildPromptLayers, composePrompt } from "@/modules/prompts/domain/promptBuilder";
 import { computePromptHash } from "@/modules/prompts/domain/promptHash";
@@ -20,6 +21,16 @@ import { DEFAULT_PROVIDER, formatForProvider } from "@/modules/prompts/domain/pr
 import { resolveSizePreset } from "@/modules/prompts/domain/sizePresetRules";
 import { isBrandingDeliverableType } from "@/modules/projects/domain/deliverableTypes";
 import { buildDeliverableContextText } from "@/modules/interviews/domain/deliverableTypeQuestions";
+import { classifyInterviewInput } from "@/modules/promptPriority/domain/classifyInterviewInput";
+import {
+  detectDbConflicts,
+  detectInternalOverlap,
+  type ConflictResult,
+  type DbSuggestion,
+} from "@/modules/promptPriority/domain/conflictDetection";
+import { preserveGoal } from "@/modules/promptPriority/domain/goalPreservationRules";
+import { checkPromptCompliance } from "@/modules/promptPriority/domain/promptComplianceCheck";
+import type { PromptDecisionRecordRepository } from "@/modules/promptPriority/domain/PromptDecisionRecordRepository";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { ConflictError, NotFoundError } from "@/shared/errors/AppError";
 
@@ -37,6 +48,7 @@ export class BuildPromptUseCase {
     private readonly colorPaletteSelectionRepository: ColorPaletteSelectionRepository,
     private readonly promptRepository: PromptRepository,
     private readonly trainingExampleRepository: TrainingExampleRepository,
+    private readonly promptDecisionRecordRepository: PromptDecisionRecordRepository,
   ) {}
 
   async execute(input: { projectId: string; userId: string; provider?: PromptProvider }): Promise<Prompt> {
@@ -70,6 +82,7 @@ export class BuildPromptUseCase {
 
     let brandStrategyData: BrandStrategyData;
     let logoStyleNames: string[] = [];
+    let forbiddenLogoCategoryNames: string[] = [];
 
     if (isBrandingDeliverableType(project.deliverableType)) {
       const strategy = await this.brandStrategyRepository.findByProjectId(input.projectId);
@@ -86,6 +99,12 @@ export class BuildPromptUseCase {
       }
       brandStrategyData = strategy.currentVersion.data;
       logoStyleNames = logoStyleCategories.map((c) => c.name);
+      if (logoStyleSelection.forbiddenCategoryIds.length > 0) {
+        const forbiddenCategories = await this.logoStyleCategoryRepository.findByIds(
+          logoStyleSelection.forbiddenCategoryIds,
+        );
+        forbiddenLogoCategoryNames = forbiddenCategories.map((c) => c.name);
+      }
     } else {
       brandStrategyData = buildFallbackBrandStrategyData(answers);
     }
@@ -108,25 +127,59 @@ export class BuildPromptUseCase {
       input.projectId,
     );
 
+    // 하드 제약조건 분류 -- 인터뷰 답변 + 이미 로드한 각 선택의 forbidden*
+    // 필드를 합쳐 만든다. AI 호출 없음.
+    const forbiddenStyleNames = selection.forbiddenStyleIds.length
+      ? (await this.styleRepository.findByIds(selection.forbiddenStyleIds)).map((s) => s.name)
+      : [];
+    const { hardConstraints, softPreferences } = classifyInterviewInput({
+      answers,
+      deliverableType: project.deliverableType,
+      colorPaletteSwatches: colorPaletteSelection?.swatches,
+      forbiddenColors: colorPaletteSelection?.forbiddenColors,
+      forbiddenStyleNames,
+      forbiddenLogoCategoryNames,
+    });
+
     // 관리자가 등록한 학습 자료(TrainingExample) 중 이 프로젝트와 같은
     // deliverableType이면서 업종/목적 텍스트가 겹치는 것을 참고 문구로
     // 반영한다 -- AI 호출 없는 결정론적 매칭이라 비용이 들지 않고, 매칭되는
     // 게 없으면(신규 기능이라 데이터가 아직 없을 수 있음) 조용히 생략된다
-    // ("내 스타일" userStyleDescription과 동일한 무해한 폴백 패턴).
+    // ("내 스타일" userStyleDescription과 동일한 무해한 폴백 패턴). 사용자
+    // 하드제약과 충돌하는 후보는 최종 후보에서 제외한다 -- DB는 참고자료일
+    // 뿐 사용자의 명시적 결정을 절대 덮어쓰지 않는다.
     let referenceExamplePrompts: string[] = [];
+    let dbCandidatesFound: string[] = [];
+    let dbCandidatesUsed: string[] = [];
+    const dbConflicts: ConflictResult[] = [];
     if (project.deliverableType) {
-      const candidates = await this.trainingExampleRepository.listByDeliverableType(project.deliverableType);
+      const candidates = await this.trainingExampleRepository.listByDeliverableType(
+        project.deliverableType,
+        TRAINING_EXAMPLE_CATEGORY_IMAGE_GENERATION,
+      );
+      dbCandidatesFound = candidates.map((c) => c.id);
+
+      const dbSuggestions: DbSuggestion[] = candidates.flatMap((c) => [
+        { field: "color" as const, category: "COLOR_CONFLICT" as const, sourceRef: c.id, text: c.prompt, reason: c.prompt },
+        { field: "style" as const, category: "STYLE_CONFLICT" as const, sourceRef: c.id, text: c.prompt, reason: c.prompt },
+      ]);
+      dbConflicts.push(...detectDbConflicts(hardConstraints, dbSuggestions, preserveGoal));
+      const excludedCandidateIds = new Set(dbConflicts.map((c) => c.sourceRef));
+      const nonConflictingCandidates = candidates.filter((c) => !excludedCandidateIds.has(c.id));
+
       const keywordText = [answers.industry, answers.purpose, brandStrategyData.brandKnowledge.mission]
         .filter(Boolean)
         .join(" ");
-      referenceExamplePrompts = rankTrainingExamples(candidates, {
+      const ranked = rankTrainingExamples(nonConflictingCandidates, {
         keywordText,
         deliverableType: project.deliverableType,
       })
         .filter((r) => r.score > 0)
-        .slice(0, 2)
-        .map((r) => r.example.prompt);
+        .slice(0, 2);
+      referenceExamplePrompts = ranked.map((r) => r.example.prompt);
+      dbCandidatesUsed = ranked.map((r) => r.example.id);
     }
+    const conflicts = [...dbConflicts, ...detectInternalOverlap(hardConstraints)];
 
     const layers = buildPromptLayers({
       brandName: answers.brandName ?? "",
@@ -142,8 +195,10 @@ export class BuildPromptUseCase {
       referenceExamplePrompts,
       colorPaletteSwatches: colorPaletteSelection?.swatches,
       additionalNotes: answers.additionalNotes,
+      hardConstraints,
     });
-    const { systemPrompt, userPrompt, flaggedTerms } = composePrompt(layers);
+    const { systemPrompt, userPrompt, flaggedTerms, contentOnlyUserPrompt } = composePrompt(layers);
+    const complianceCheck = checkPromptCompliance(contentOnlyUserPrompt, hardConstraints);
 
     const provider = input.provider ?? DEFAULT_PROVIDER;
     const hash = computePromptHash(systemPrompt, userPrompt, provider);
@@ -156,12 +211,31 @@ export class BuildPromptUseCase {
       ? await this.promptRepository.addVersion(existing.id, versionInput)
       : await this.promptRepository.createWithFirstVersion(input.projectId, versionInput);
 
+    await this.promptDecisionRecordRepository.create({
+      promptVersionId: prompt.currentVersion.id,
+      hardConstraints,
+      softPreferences,
+      dbCandidatesFound,
+      dbCandidatesUsed,
+      conflicts,
+      complianceCheck,
+    });
+
     await recordActivity({
       userId: input.userId,
       projectId: input.projectId,
       eventType: "PROMPT_BUILT",
       payload: { version: prompt.currentVersion.versionNumber, provider, hash },
     });
+
+    if (conflicts.length > 0) {
+      await recordActivity({
+        userId: input.userId,
+        projectId: input.projectId,
+        eventType: "PROMPT_CONFLICT_DETECTED",
+        payload: { promptVersionId: prompt.currentVersion.id, conflicts },
+      });
+    }
 
     return prompt;
   }

@@ -43,13 +43,19 @@ export class FakeStyleSelectionRepository implements StyleSelectionRepository {
   private nextId = 1;
   private sequence = new Map<string, number>();
 
-  async create(projectId: string, primaryStyleId: string, secondaryStyleIds: string[]): Promise<StyleSelection> {
+  async create(
+    projectId: string,
+    primaryStyleId: string,
+    secondaryStyleIds: string[],
+    forbiddenStyleIds: string[] = [],
+  ): Promise<StyleSelection> {
     const id = `selection-${this.nextId++}`;
     const selection: StyleSelection = {
       id,
       projectId,
       primaryStyleId,
       secondaryStyleIds,
+      forbiddenStyleIds,
       createdAt: new Date(),
     };
     // Selections created within the same tick would otherwise tie on

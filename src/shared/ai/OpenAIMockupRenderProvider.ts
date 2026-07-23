@@ -32,20 +32,18 @@ const ESTIMATED_COST_PER_IMAGE_USD = 0.053;
  * 순서 -- 첫 번째가 실제 참조해야 할 대상, 두 번째가 합성될 배경).
  */
 function buildPrompt(request: MockupRenderRequest): string {
-  if (request.compositingMode === "fullDesign") {
-    return (
-      `첨부된 두 이미지 중 첫 번째(디자인 시안)를 다시 그리거나 새로 해석하지 말고 ` +
-      `정확히 그대로, ${request.templateName} 목업의 해당 영역에 자연스럽게 합성한 ` +
-      `사실적인 사진을 만들어줘. 시안에 있는 모든 텍스트, 레이아웃, 색상, 로고를 ` +
-      `완전히 동일하게 유지해줘 -- 문구나 심볼을 새로 만들어내면 안 돼.`
-    );
-  }
-  return (
-    `첨부된 두 이미지 중 첫 번째(브랜드 로고)를 다시 그리거나 새로 해석하지 말고 ` +
-    `정확히 그대로, ${request.templateName} 목업에 자연스럽게 배치한 사실적인 제품 ` +
-    `사진을 만들어줘. 로고의 텍스트, 심볼, 색상을 완전히 동일하게 유지하고, 배경과 ` +
-    `소품은 실제 사용 환경처럼 유지해줘.`
-  );
+  const base =
+    request.compositingMode === "fullDesign"
+      ? `첨부된 두 이미지 중 첫 번째(디자인 시안)를 다시 그리거나 새로 해석하지 말고 ` +
+        `정확히 그대로, ${request.templateName} 목업의 해당 영역에 자연스럽게 합성한 ` +
+        `사실적인 사진을 만들어줘. 시안에 있는 모든 텍스트, 레이아웃, 색상, 로고를 ` +
+        `완전히 동일하게 유지해줘 -- 문구나 심볼을 새로 만들어내면 안 돼.`
+      : `첨부된 두 이미지 중 첫 번째(브랜드 로고)를 다시 그리거나 새로 해석하지 말고 ` +
+        `정확히 그대로, ${request.templateName} 목업에 자연스럽게 배치한 사실적인 제품 ` +
+        `사진을 만들어줘. 로고의 텍스트, 심볼, 색상을 완전히 동일하게 유지하고, 배경과 ` +
+        `소품은 실제 사용 환경처럼 유지해줘.`;
+  if (!request.referenceExampleText) return base;
+  return `${base} 참고 연출 가이드: ${request.referenceExampleText}`;
 }
 
 export class OpenAIMockupRenderProvider implements MockupRenderProvider {

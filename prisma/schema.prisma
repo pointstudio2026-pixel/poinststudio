@@ -243,6 +243,9 @@ model StyleSelection {
   primaryStyleId    String   @map("primary_style_id") @db.Uuid
   primaryStyle      Style    @relation("PrimaryStyle", fields: [primaryStyleId], references: [id])
   secondaryStyleIds String[] @map("secondary_style_ids")
+  // 사용자가 명시적으로 배제한 스타일 -- 우선순위 시스템의 하드 제약조건.
+  // FK 무결성 없음(secondaryStyleIds와 동일한 배열 관례).
+  forbiddenStyleIds String[] @default([]) @map("forbidden_style_ids")
   createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
   @@index([projectId, createdAt(sort: Desc)])
@@ -260,6 +263,9 @@ model ColorPaletteSelection {
   project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   presetSlug String?  @map("preset_slug") @db.VarChar(60)
   swatches   Json
+  // 사용자가 명시적으로 금지한 색상(hex) -- 우선순위 시스템의 하드
+  // 제약조건. swatches(허용 목록)와 별개의 배제 목록.
+  forbiddenColors String[] @default([]) @map("forbidden_colors")
   createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
   @@index([projectId, createdAt(sort: Desc)])
@@ -308,6 +314,9 @@ model LogoStyleSelection {
   categoryIds  String[]            @map("category_ids")
   primaryCategoryId String         @map("primary_category_id") @db.Uuid
   primaryCategory   LogoStyleCategory @relation(fields: [primaryCategoryId], references: [id])
+  // 사용자가 명시적으로 배제한 로고 스타일 카테고리 -- 우선순위 시스템의
+  // 하드 제약조건. categoryIds와 동일하게 FK 무결성 없음.
+  forbiddenCategoryIds String[]    @default([]) @map("forbidden_category_ids")
   createdAt    DateTime            @default(now()) @map("created_at") @db.Timestamptz()
 
   @@index([projectId, createdAt(sort: Desc)])
@@ -386,6 +395,8 @@ model PromptVersion {
   flaggedTerms  String[] @map("flagged_terms")
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
+  decisionRecord PromptDecisionRecord?
+
   @@unique([promptId, versionNumber])
   @@index([hash])
   @@map("prompt_versions")
@@ -419,6 +430,9 @@ model GenerationVersion {
   costAmount      Decimal?  @map("cost_amount") @db.Decimal(12, 6)
   createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz()
   completedAt     DateTime? @map("completed_at") @db.Timestamptz()
+
+  evaluation GenerationEvaluation?
+  feedback   GenerationFeedback?
 
   @@unique([generationId, versionNumber])
   @@map("generation_versions")
@@ -667,6 +681,77 @@ model TrainingExample {
   createdBy        User     @relation(fields: [createdByUserId], references: [id])
   createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
+  // 어떤 생성 파이프라인의 참고 자료인지 -- "이미지생성"(BuildPromptUseCase,
+  // 실제 브랜드 이미지 생성)과 "목업"(ProcessMockupJobUseCase, 목업 합성)은
+  // 완전히 다른 프롬프트 파이프라인이라 데이터를 절대 섞지 않는다. 자유
+  // 문자열이라 관리자가 나중에 새 카테고리를 더 추가할 수 있다(닫힌 enum
+  // 아님). 기존 행은 전부 "이미지생성"으로 마이그레이션됨.
+  category String @default("이미지생성") @db.VarChar(30)
+  // 업종별로도 매칭할 수 있도록(선택 사항) -- interviewQuestions.ts의
+  // INDUSTRY_OPTIONS와 동일한 값을 쓴다. 기존 행은 null(업종 미지정).
+  industry String? @db.VarChar(30)
+
+  // 텍스트 레벨 평가(안전성 게이트 + 독창성) -- Vision AI 없음, AI 비용 0.
+  // 브랜드적합성/실용성/가독성은 프로젝트 컨텍스트가 없어 평가 불가하므로
+  // evaluationBreakdown 안에 null + 사유로 명시(거짓 평균 금지).
+  evaluationScore     Float?    @map("evaluation_score")
+  evaluationBreakdown Json?     @map("evaluation_breakdown")
+  evaluatedAt         DateTime? @map("evaluated_at") @db.Timestamptz()
+  // 이 자료가 어디서 왔는지 -- 관리자 직접 입력 / 실제 사용자 생성물 승격 /
+  // (나중에) 리서치한 실제 브랜드 사례.
+  source                    String  @default("ADMIN") @db.VarChar(20)
+  sourceGenerationVersionId String? @map("source_generation_version_id") @db.Uuid
+
   @@index([deliverableType])
+  @@index([evaluationScore])
+  @@index([category])
   @@map("training_examples")
+}
+
+// 프롬프트 조립 시점의 우선순위 판단 기록 -- PromptVersion 1:1, 관리자
+// 가시성 전용(실제 조립 로직은 promptBuilder.ts가 그대로 담당한다).
+model PromptDecisionRecord {
+  id                String        @id @default(uuid()) @db.Uuid
+  promptVersionId   String        @unique @map("prompt_version_id") @db.Uuid
+  promptVersion     PromptVersion @relation(fields: [promptVersionId], references: [id], onDelete: Cascade)
+  hardConstraints   Json          @map("hard_constraints")
+  softPreferences   Json          @map("soft_preferences")
+  dbCandidatesFound Json          @map("db_candidates_found")
+  dbCandidatesUsed  Json          @map("db_candidates_used")
+  conflicts         Json          @default("[]")
+  complianceCheck   Json          @map("compliance_check")
+  createdAt         DateTime      @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@map("prompt_decision_records")
+}
+
+// 생성 결과 1건에 대한 텍스트 레벨(프롬프트 준수) 평가 -- 이미지 픽셀 자체는
+// 검증하지 않는다(status로 명시). Vision AI 없음, AI 비용 0.
+model GenerationEvaluation {
+  id                   String            @id @default(uuid()) @db.Uuid
+  generationVersionId  String            @unique @map("generation_version_id") @db.Uuid
+  generationVersion    GenerationVersion @relation(fields: [generationVersionId], references: [id], onDelete: Cascade)
+  status               String            @default("PROMPT_LEVEL_ONLY") @db.VarChar(30)
+  hardConstraintPassed Boolean           @map("hard_constraint_passed")
+  issues               Json              @default("[]")
+  usageScore           Float?            @map("usage_score")
+  promotedToReference  Boolean           @default(false) @map("promoted_to_reference")
+  createdAt            DateTime          @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@map("generation_evaluations")
+}
+
+// 생성 결과에 대한 사용자 본인의 평가 -- 선택형 태그(타이핑 불필요) +
+// 자유 텍스트(선택), 완전히 건너뛰기 가능(행이 없으면 그냥 평가 안 한
+// 것). AI 호출 없음, 비용 0.
+model GenerationFeedback {
+  id                  String            @id @default(uuid()) @db.Uuid
+  generationVersionId String            @unique @map("generation_version_id") @db.Uuid
+  generationVersion   GenerationVersion @relation(fields: [generationVersionId], references: [id], onDelete: Cascade)
+  likedTags           String[]          @default([]) @map("liked_tags")
+  dislikedTags        String[]          @default([]) @map("disliked_tags")
+  freeText            String?           @map("free_text") @db.Text
+  createdAt           DateTime          @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@map("generation_feedback")
 }

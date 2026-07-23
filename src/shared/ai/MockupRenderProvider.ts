@@ -21,6 +21,12 @@ export interface MockupRenderRequest {
   placementArea: PlacementArea;
   templateName: string;
   compositingMode: MockupCompositingMode;
+  /**
+   * TrainingExample(category="목업")에서 찾은 참고 문구(연출/합성 스타일
+   * 가이드) -- 없으면 생략된다(기존 프로젝트/템플릿과 100% 동일하게 동작).
+   * 이미지 생성 DB("이미지생성" 카테고리)와는 절대 섞이지 않는다.
+   */
+  referenceExampleText?: string;
 }
 
 export interface MockupRenderResult {

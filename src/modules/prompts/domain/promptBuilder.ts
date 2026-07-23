@@ -4,6 +4,11 @@ import type { ColorSwatch } from "@/modules/colorPalettes/domain/ColorPalette";
 import type { PromptLayers } from "@/modules/prompts/domain/Prompt";
 import { BRANDING_LOGO_DELIVERABLE_TYPE } from "@/modules/projects/domain/deliverableTypes";
 import { SAFETY_CONSTRAINTS_TEXT, applySafetyRules } from "@/modules/prompts/domain/promptSafety";
+import type { HardConstraintSet } from "@/modules/promptPriority/domain/HardConstraint";
+import {
+  buildHardConstraintClosingClause,
+  buildHardConstraintOpeningClause,
+} from "@/modules/promptPriority/domain/hardConstraintClauseBuilder";
 
 // 이미지 생성 모델은 "완성된 결과물이 아닌 방향성 제안" 같은 문구를 그대로
 // 받으면 종종 러프하거나 산만한(여러 컨셉이 뒤섞인) 결과를 낸다 -- 실제로는
@@ -334,6 +339,8 @@ export function buildPromptLayers(input: {
   colorPaletteSwatches?: ColorSwatch[];
   /** 브랜드 인터뷰 "그 외 사항"(무조건 포함/제외되어야 하는 내용) 답변. 없으면 생략. */
   additionalNotes?: string;
+  /** 우선순위 시스템의 하드 제약조건(있을 때만). 없거나 모든 필드가 비어있으면 두 신규 레이어는 빈 문자열. */
+  hardConstraints?: HardConstraintSet;
 }): PromptLayers {
   const isLogo = !input.deliverableType || input.deliverableType === BRANDING_LOGO_DELIVERABLE_TYPE;
 
@@ -404,8 +411,16 @@ export function buildPromptLayers(input: {
     ? `다음 사항을 반드시 지킨다: ${input.additionalNotes.trim()}`
     : "";
 
+  const hardConstraintOpeningContext = input.hardConstraints
+    ? buildHardConstraintOpeningClause(input.hardConstraints)
+    : "";
+  const hardConstraintClosingContext = input.hardConstraints
+    ? buildHardConstraintClosingClause(input.hardConstraints)
+    : "";
+
   return {
     systemInstructions: SYSTEM_INSTRUCTIONS,
+    hardConstraintOpeningContext,
     brandContext,
     industryContext,
     styleContext,
@@ -419,6 +434,7 @@ export function buildPromptLayers(input: {
     typographyContext,
     generationObjective: buildGenerationObjective(input.deliverableType),
     safetyConstraints: SAFETY_CONSTRAINTS_TEXT,
+    hardConstraintClosingContext,
   };
 }
 
@@ -426,6 +442,14 @@ export interface ComposedPrompt {
   systemPrompt: string;
   userPrompt: string;
   flaggedTerms: string[];
+  /**
+   * 하드제약 절대 준수/재확인 조항을 뺀 "내용" 부분만. 그 두 조항 자체가
+   * 금지 색상/요소를 리터럴로 언급하기 때문에(예: "#a16207를 절대 쓰지
+   * 않는다"), 준수 검증(promptComplianceCheck)은 전체 userPrompt가 아니라
+   * 이 필드를 대상으로 해야 "금지 문구를 언급했다"와 "실제로 금지된 걸
+   * 콘텐츠에 썼다"를 헷갈리지 않는다.
+   */
+  contentOnlyUserPrompt: string;
 }
 
 /**
@@ -436,7 +460,7 @@ export interface ComposedPrompt {
  */
 export function composePrompt(layers: PromptLayers): ComposedPrompt {
   const rawSystemPrompt = [layers.systemInstructions, layers.safetyConstraints].join("\n\n");
-  const rawUserPrompt = [
+  const contentLayers = [
     layers.brandContext,
     layers.industryContext,
     layers.styleContext,
@@ -452,16 +476,28 @@ export function composePrompt(layers: PromptLayers): ComposedPrompt {
     layers.additionalRequirementsContext,
     layers.typographyContext,
     layers.generationObjective,
+  ];
+  const rawContentOnlyUserPrompt = contentLayers.filter(Boolean).join("\n\n");
+  const rawUserPrompt = [
+    // 하드제약 절대 준수 조항(있으면)은 맨 앞에 둔다 -- 뒤따르는 모든 문맥보다
+    // 우선한다는 걸 최우선으로 명시. 하드제약이 없으면 빈 문자열이라
+    // filter(Boolean)에서 제거되고, 기존 프로젝트의 출력은 전혀 안 바뀐다.
+    layers.hardConstraintOpeningContext,
+    ...contentLayers,
+    // 하드제약 재확인 조항(있으면)은 맨 뒤에서 다시 한번 강조한다.
+    layers.hardConstraintClosingContext,
   ]
     .filter(Boolean)
     .join("\n\n");
 
   const systemResult = applySafetyRules(rawSystemPrompt);
   const userResult = applySafetyRules(rawUserPrompt);
+  const contentOnlyResult = applySafetyRules(rawContentOnlyUserPrompt);
 
   return {
     systemPrompt: systemResult.text,
     userPrompt: userResult.text,
     flaggedTerms: [...systemResult.flaggedTerms, ...userResult.flaggedTerms],
+    contentOnlyUserPrompt: contentOnlyResult.text,
   };
 }

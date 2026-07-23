@@ -15,6 +15,8 @@ export interface StyleSelection {
   projectId: string;
   primaryStyleId: string;
   secondaryStyleIds: string[];
+  /** 사용자가 명시적으로 배제한 스타일 -- 우선순위 시스템의 하드 제약조건. */
+  forbiddenStyleIds: string[];
   createdAt: Date;
 }
 

@@ -168,17 +168,32 @@ export interface TrainingExampleDto {
   imageContentType: string;
   createdByUserId: string;
   createdAt: string;
+  evaluationScore: number | null;
+  evaluationBreakdown: Record<string, { score: number | null; reason?: string; note?: string }> | null;
+  evaluatedAt: string | null;
+  source: string;
+  sourceGenerationVersionId: string | null;
+  category: string;
+  industry: string | null;
 }
 
 export function fetchTrainingExamples() {
   return apiFetch<{ examples: TrainingExampleDto[] }>("/api/admin/training-examples");
 }
 
-export function createTrainingExample(input: { prompt: string; deliverableType: string; image: File }) {
+export function createTrainingExample(input: {
+  prompt: string;
+  deliverableType: string;
+  image: File;
+  category: string;
+  industry?: string;
+}) {
   const formData = new FormData();
   formData.set("prompt", input.prompt);
   formData.set("deliverableType", input.deliverableType);
   formData.set("image", input.image);
+  formData.set("category", input.category);
+  if (input.industry) formData.set("industry", input.industry);
   return apiFetch<{ example: TrainingExampleDto }>("/api/admin/training-examples", {
     method: "POST",
     body: formData,
@@ -187,4 +202,34 @@ export function createTrainingExample(input: { prompt: string; deliverableType: 
 
 export function deleteTrainingExample(id: string) {
   return apiFetch<{ deleted: boolean }>(`/api/admin/training-examples/${id}`, { method: "DELETE" });
+}
+
+export function promoteGenerationsToReference() {
+  return apiFetch<{ result: { evaluated: number; promoted: number } }>("/api/admin/training-examples/promote", {
+    method: "POST",
+  });
+}
+
+export interface PromptDecisionRecordDto {
+  id: string;
+  promptVersionId: string;
+  hardConstraints: Record<string, unknown>;
+  softPreferences: Record<string, unknown>;
+  dbCandidatesFound: string[];
+  dbCandidatesUsed: string[];
+  conflicts: {
+    category: string;
+    field: string;
+    userValue: string;
+    discardedSuggestion: string;
+    resolution: string;
+    preservedGoalVia: string;
+    sourceRef: string;
+  }[];
+  complianceCheck: { passed: boolean; issues: string[] };
+  createdAt: string;
+}
+
+export function fetchPromptDecisionRecords() {
+  return apiFetch<{ records: PromptDecisionRecordDto[] }>("/api/admin/prompt-decisions");
 }

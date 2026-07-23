@@ -20,6 +20,7 @@ import {
 } from "@/services/edits-service";
 import { Spinner } from "@/components/Spinner";
 import { ImageLightbox } from "@/components/ImageLightbox";
+import { GenerationFeedbackWidget } from "@/features/generation/GenerationFeedbackWidget";
 import { NextStepButton } from "@/features/workspace/NextStepButton";
 import { AiProviderSelect } from "@/components/AiProviderSelect";
 import { ApiError } from "@/services/http-client";
@@ -253,35 +254,35 @@ export function GenerationView({ projectId }: { projectId: string }) {
           </div>
           <div className="grid grid-cols-3 gap-3">
             {completedVersions.map((version, i) => (
-              <div
-                key={version.id}
-                className="relative w-full overflow-hidden rounded-md border border-neutral-200"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={version.images[0]?.url} alt={`결과 ${i + 1}`} className="block h-auto w-full" />
-                <button
-                  type="button"
-                  onClick={() => setLightboxImage({ url: version.images[0]!.url, alt: `결과 ${i + 1}` })}
-                  aria-label="크게 보기"
-                  className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-neutral-900/80 text-white shadow-soft backdrop-blur-sm transition hover:bg-neutral-900"
-                >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+              <div key={version.id} className="flex flex-col gap-2">
+                <div className="relative w-full overflow-hidden rounded-md border border-neutral-200">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={version.images[0]?.url} alt={`결과 ${i + 1}`} className="block h-auto w-full" />
+                  <button
+                    type="button"
+                    onClick={() => setLightboxImage({ url: version.images[0]!.url, alt: `결과 ${i + 1}` })}
+                    aria-label="크게 보기"
+                    className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-neutral-900/80 text-white shadow-soft backdrop-blur-sm transition hover:bg-neutral-900"
                   >
-                    <circle cx="11" cy="11" r="7" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                  </svg>
-                </button>
-                <span className="absolute left-1.5 top-1.5 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-medium text-neutral-600">
-                  결과 {i + 1}
-                </span>
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <circle cx="11" cy="11" r="7" />
+                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                  </button>
+                  <span className="absolute left-1.5 top-1.5 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-medium text-neutral-600">
+                    결과 {i + 1}
+                  </span>
+                </div>
+                <GenerationFeedbackWidget generationVersionId={version.id} />
               </div>
             ))}
           </div>

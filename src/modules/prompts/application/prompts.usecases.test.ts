@@ -17,6 +17,7 @@ import type { LogoStyleCategory } from "@/modules/logoStyles/domain/LogoStyle";
 import { FakeUserStyleCategoryRepository, FakeProjectUserStyleSelectionRepository } from "@/modules/userStyles/testing/fakes";
 import { FakeColorPaletteSelectionRepository } from "@/modules/colorPalettes/testing/fakes";
 import { FakeTrainingExampleRepository } from "@/modules/trainingExamples/testing/fakes";
+import { FakePromptDecisionRecordRepository } from "@/modules/promptPriority/testing/fakes";
 import { CreateProjectUseCase } from "@/modules/projects/application/CreateProjectUseCase";
 import { SelectDeliverableTypeUseCase } from "@/modules/projects/application/SelectDeliverableTypeUseCase";
 import { FakeProjectRepository } from "@/modules/projects/testing/fakes";
@@ -94,6 +95,7 @@ async function setup() {
   const colorPaletteSelections = new FakeColorPaletteSelectionRepository();
   const prompts = new FakePromptRepository();
   const trainingExamples = new FakeTrainingExampleRepository();
+  const promptDecisionRecords = new FakePromptDecisionRecordRepository();
 
   const { projectId } = await new CreateProjectUseCase(projects).execute({ userId: "user-1", name: "Bakery" });
   await new SelectDeliverableTypeUseCase(projects).execute({
@@ -116,6 +118,7 @@ async function setup() {
     colorPaletteSelections,
     prompts,
     trainingExamples,
+    promptDecisionRecords,
     build: new BuildPromptUseCase(
       projects,
       interviews,
@@ -129,6 +132,7 @@ async function setup() {
       colorPaletteSelections,
       prompts,
       trainingExamples,
+      promptDecisionRecords,
     ),
     get: new GetPromptUseCase(projects, prompts),
     getVersions: new GetPromptVersionsUseCase(projects, prompts),
@@ -251,6 +255,62 @@ describe("BuildPromptUseCase", () => {
 
     expect(prompt.currentVersion.userPrompt).toContain("fresh bread bakery logo");
     expect(prompt.currentVersion.userPrompt).not.toContain("fresh bread bakery poster");
+  });
+
+  it("(회귀 방지) leaves the prompt untouched when no hard constraints are set -- no priority-system markers leak into existing projects", async () => {
+    const ctx = await setup();
+    await fullySetUp(ctx);
+
+    const prompt = await ctx.build.execute({ projectId: ctx.projectId, userId: "user-1" });
+
+    expect(prompt.currentVersion.userPrompt).not.toContain("절대 준수");
+    expect(prompt.currentVersion.userPrompt).not.toContain("최종 확인");
+    const record = await ctx.promptDecisionRecords.findByPromptVersionId(prompt.currentVersion.id);
+    expect(record?.conflicts).toEqual([]);
+    expect(record?.complianceCheck.passed).toBe(true);
+  });
+
+  it("(우선순위 시스템) keeps the user's forbidden color and drops a conflicting DB reference example, recording the conflict", async () => {
+    const ctx = await setup();
+    await fullySetUp(ctx);
+
+    // 사용자가 골드(#a16207)를 금지 색상으로 지정.
+    await ctx.colorPaletteSelections.create({
+      projectId: ctx.projectId,
+      presetSlug: null,
+      swatches: [{ hex: "#2563eb", label: "Blue" }],
+      forbiddenColors: ["#a16207"],
+    });
+
+    // 관리자가 등록한 학습 자료가 하필 골드를 추천한다 -- DB 패턴과 사용자
+    // 하드제약이 충돌하는 시나리오.
+    await ctx.trainingExamples.create({
+      prompt: "골드 톤의 프리미엄 베이커리 로고, fresh bread bakery",
+      deliverableType: "브랜딩 & 로고",
+      imageStorageKey: "training-examples/gold.png",
+      imageContentType: "image/png",
+      createdByUserId: "admin-1",
+    });
+
+    const prompt = await ctx.build.execute({ projectId: ctx.projectId, userId: "user-1" });
+
+    // DB가 추천한 골드 예시(참고 문구)는 완전히 빠지고, 사용자가 고른
+    // 파란색만 브랜드 컬러로 남는다. "#a16207"는 "이 색은 절대 쓰지 않는다"
+    // 라는 하드제약 조항 자체에는 리터럴로 등장하는 게 정상이라 전체
+    // userPrompt 문자열로는 판단하지 않고, 실제 준수 여부는 아래
+    // complianceCheck(내용부만 검사)로 확인한다.
+    expect(prompt.currentVersion.userPrompt).not.toContain("골드");
+    expect(prompt.currentVersion.userPrompt).toContain("#2563eb");
+
+    const record = await ctx.promptDecisionRecords.findByPromptVersionId(prompt.currentVersion.id);
+    expect(record).not.toBeNull();
+    expect(record?.conflicts.length).toBeGreaterThan(0);
+    const colorConflict = record?.conflicts.find((c) => c.category === "COLOR_CONFLICT");
+    expect(colorConflict?.resolution).toBe("KEEP_USER_DISCARD_SUGGESTION");
+    expect(colorConflict?.preservedGoalVia).toBeTruthy();
+    // 하드제약 조항 자체가 금지 색상을 언급하는 건 정상이라, "콘텐츠에
+    // 실제로 쓰였는지"만 보는 준수 검증은 그래도 통과해야 한다.
+    expect(record?.complianceCheck.passed).toBe(true);
   });
 
   it("rejects access from a user who doesn't own the project (권한 검증)", async () => {

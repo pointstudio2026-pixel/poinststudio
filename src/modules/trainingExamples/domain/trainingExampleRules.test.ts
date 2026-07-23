@@ -11,6 +11,13 @@ function makeExample(overrides: Partial<TrainingExample> = {}): TrainingExample 
     imageContentType: "image/png",
     createdByUserId: "admin-1",
     createdAt: new Date(),
+    evaluationScore: null,
+    evaluationBreakdown: null,
+    evaluatedAt: null,
+    source: "ADMIN",
+    sourceGenerationVersionId: null,
+    category: "이미지생성",
+    industry: null,
     ...overrides,
   };
 }

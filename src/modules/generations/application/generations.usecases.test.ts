@@ -4,7 +4,11 @@ import { RetryGenerationUseCase } from "@/modules/generations/application/RetryG
 import { GetGenerationUseCase } from "@/modules/generations/application/GetGenerationUseCase";
 import { GetGenerationStatusUseCase } from "@/modules/generations/application/GetGenerationStatusUseCase";
 import { ProcessGenerationJobUseCase } from "@/modules/generations/application/ProcessGenerationJobUseCase";
-import { FakeGenerationRepository, FakeImageGenerationQueue } from "@/modules/generations/testing/fakes";
+import {
+  FakeGenerationRepository,
+  FakeImageGenerationQueue,
+  FakeGenerationEvaluationRepository,
+} from "@/modules/generations/testing/fakes";
 import { BuildPromptUseCase } from "@/modules/prompts/application/BuildPromptUseCase";
 import { FakePromptRepository } from "@/modules/prompts/testing/fakes";
 import { FakeInterviewRepository } from "@/modules/interviews/testing/fakes";
@@ -21,6 +25,7 @@ import type { LogoStyleCategory } from "@/modules/logoStyles/domain/LogoStyle";
 import { FakeUserStyleCategoryRepository, FakeProjectUserStyleSelectionRepository } from "@/modules/userStyles/testing/fakes";
 import { FakeColorPaletteSelectionRepository } from "@/modules/colorPalettes/testing/fakes";
 import { FakeTrainingExampleRepository } from "@/modules/trainingExamples/testing/fakes";
+import { FakePromptDecisionRecordRepository } from "@/modules/promptPriority/testing/fakes";
 import { EnsureEmailVerifiedUseCase } from "@/modules/auth/application/EnsureEmailVerifiedUseCase";
 import { FakeUserRepository } from "@/modules/auth/testing/fakes";
 import { CreateProjectUseCase } from "@/modules/projects/application/CreateProjectUseCase";
@@ -105,6 +110,8 @@ async function setup() {
   const colorPaletteSelections = new FakeColorPaletteSelectionRepository();
   const prompts = new FakePromptRepository();
   const trainingExamples = new FakeTrainingExampleRepository();
+  const promptDecisionRecords = new FakePromptDecisionRecordRepository();
+  const generationEvaluations = new FakeGenerationEvaluationRepository();
   const generations = new FakeGenerationRepository();
   const queue = new FakeImageGenerationQueue();
   const subs = new FakeSubscriptionRepository();
@@ -137,6 +144,7 @@ async function setup() {
     colorPaletteSelections,
     prompts,
     trainingExamples,
+    promptDecisionRecords,
   );
 
   return {
@@ -160,7 +168,15 @@ async function setup() {
     retry: new RetryGenerationUseCase(projects, prompts, checkPlan, generations, queue),
     get: new GetGenerationUseCase(projects, generations),
     getStatus: new GetGenerationStatusUseCase(projects, generations),
-    process: new ProcessGenerationJobUseCase(projects, prompts, generations, recordUsage),
+    generationEvaluations,
+    process: new ProcessGenerationJobUseCase(
+      projects,
+      prompts,
+      generations,
+      recordUsage,
+      promptDecisionRecords,
+      generationEvaluations,
+    ),
   };
 }
 

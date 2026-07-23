@@ -16,6 +16,7 @@ export interface ColorPaletteSelectionDto {
   projectId: string;
   presetSlug: string | null;
   swatches: ColorSwatchDto[];
+  forbiddenColors: string[];
   createdAt: string;
 }
 
@@ -25,7 +26,7 @@ export function fetchColorPalettes() {
 
 export function selectColorPalette(
   projectId: string,
-  input: { presetSlug: string } | { customSwatches: ColorSwatchDto[] },
+  input: ({ presetSlug: string } | { customSwatches: ColorSwatchDto[] }) & { forbiddenColors?: string[] },
 ) {
   return apiFetch<{ selection: ColorPaletteSelectionDto }>(`/api/projects/${projectId}/color-palette`, {
     method: "POST",

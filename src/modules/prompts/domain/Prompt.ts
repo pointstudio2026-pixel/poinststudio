@@ -4,6 +4,8 @@ export type PromptProvider = "openai" | "gemini" | "nanobanana";
 
 export interface PromptLayers {
   systemInstructions: string;
+  /** 사용자 하드제약 절대 준수 조항(맨 앞) -- 제약이 없으면 빈 문자열, 기존 프로젝트 출력은 전혀 안 바뀐다. */
+  hardConstraintOpeningContext: string;
   brandContext: string;
   /** 업종별 시각적 관습(색감/분위기) 고정 뼈대. 매칭되는 업종이 없으면("기타") 빈 문자열. */
   industryContext: string;
@@ -25,6 +27,8 @@ export interface PromptLayers {
   typographyContext: string;
   generationObjective: string;
   safetyConstraints: string;
+  /** 사용자 하드제약 재확인 조항(맨 뒤) -- 제약이 없으면 빈 문자열. */
+  hardConstraintClosingContext: string;
 }
 
 export interface GenerationPayload {

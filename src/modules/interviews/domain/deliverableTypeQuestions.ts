@@ -21,7 +21,7 @@ interface DeliverableTypeQuestionSet {
 // "선택형으로 심플하게"라는 요청에 직접 부합한다.
 const DELIVERABLE_IMAGE_STYLE_KEY = "deliverableImageStyle";
 const DELIVERABLE_BACKGROUND_STYLE_KEY = "deliverableBackgroundStyle";
-const DELIVERABLE_AVOID_ELEMENTS_KEY = "deliverableAvoidElements";
+export const DELIVERABLE_AVOID_ELEMENTS_KEY = "deliverableAvoidElements";
 /** sizePresetRules.ts의 ORIENTATION_OPTION_TO_PRESET과 옵션 문구가 정확히 일치해야 한다. */
 const DELIVERABLE_ORIENTATION_KEY = "deliverableOrientation";
 
@@ -268,6 +268,11 @@ const DELIVERABLE_TYPE_QUESTION_SETS: DeliverableTypeQuestionSet[] = [
 export function matchDeliverableTypeQuestions(deliverableType: string | null | undefined): InterviewQuestionDef[] {
   if (!deliverableType || deliverableType === BRANDING_LOGO_DELIVERABLE_TYPE) return [];
   return DELIVERABLE_TYPE_QUESTION_SETS.find((set) => set.deliverableType === deliverableType)?.questions ?? [];
+}
+
+/** 그 유형의 "꼭 포함할 요소" 다중 선택 질문 key -- promptPriority의 classifyInterviewInput()이 requiredElements 하드 제약을 뽑을 때 쓴다. */
+export function getRequiredElementsKey(deliverableType: string | null | undefined): string | undefined {
+  return DELIVERABLE_TYPE_QUESTION_SETS.find((set) => set.deliverableType === deliverableType)?.requiredElementsKey;
 }
 
 /**

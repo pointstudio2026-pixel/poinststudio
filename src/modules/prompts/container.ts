@@ -16,6 +16,7 @@ import {
 } from "@/modules/userStyles/container";
 import { colorPaletteSelectionRepositoryInstance } from "@/modules/colorPalettes/container";
 import { trainingExampleRepositoryInstance } from "@/modules/trainingExamples/container";
+import { promptDecisionRecordRepositoryInstance } from "@/modules/promptPriority/container";
 
 export const promptRepositoryInstance = new PrismaPromptRepository();
 const promptRepository = promptRepositoryInstance;
@@ -36,6 +37,7 @@ export const promptsContainer = {
     colorPaletteSelectionRepositoryInstance,
     promptRepository,
     trainingExampleRepositoryInstance,
+    promptDecisionRecordRepositoryInstance,
   ),
   getPromptUseCase: new GetPromptUseCase(projectRepositoryInstance, promptRepository),
   getPromptVersionsUseCase: new GetPromptVersionsUseCase(projectRepositoryInstance, promptRepository),

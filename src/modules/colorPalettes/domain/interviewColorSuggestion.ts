@@ -60,6 +60,23 @@ function findNearbyRoleLabel(text: string, match: RawColorMatch, usedLabels: Set
   return null;
 }
 
+/**
+ * hex 코드에 대응하는 색상 단어들을 돌려준다(역방향 조회) -- promptPriority
+ * 모듈의 충돌 감지가 "금지 색상(hex)이 DB 예시 프롬프트 텍스트에 색상
+ * 단어로 언급됐는지" 판단할 때 재사용한다. 이 표에 없는 커스텀 hex는
+ * 단어로 매칭할 수 없어 빈 배열을 반환한다(알려진 한계, Phase 1 수용).
+ */
+export function getColorNameHints(hex: string): string[] {
+  const normalized = hex.toLowerCase();
+  const hints: string[] = [];
+  for (const rule of COLOR_KEYWORD_RULES) {
+    if (rule.hex.toLowerCase() !== normalized) continue;
+    const words = rule.pattern.source.split("|");
+    hints.push(...words);
+  }
+  return hints;
+}
+
 export function suggestColorSwatchesFromNotes(text: string | null | undefined): ColorSwatch[] | null {
   if (!text || !text.trim()) return null;
 

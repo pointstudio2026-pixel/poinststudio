@@ -50,3 +50,23 @@ export function retryGeneration(generationVersionId: string) {
     method: "POST",
   });
 }
+
+export interface GenerationFeedbackDto {
+  id: string;
+  generationVersionId: string;
+  likedTags: string[];
+  dislikedTags: string[];
+  freeText: string | null;
+  createdAt: string;
+}
+
+/** 완전히 선택 사항 -- 호출하지 않아도 다음 단계로 진행 가능. */
+export function submitGenerationFeedback(
+  generationVersionId: string,
+  input: { likedTags: string[]; dislikedTags: string[]; freeText: string | null },
+) {
+  return apiFetch<{ feedback: GenerationFeedbackDto }>(`/api/generations/${generationVersionId}/feedback`, {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}

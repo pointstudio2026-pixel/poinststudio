@@ -15,6 +15,19 @@ import { UnsuspendUserUseCase } from "@/modules/admin/application/UnsuspendUserU
 import { DeleteUserUseCase } from "@/modules/admin/application/DeleteUserUseCase";
 import { ChangeUserRoleUseCase } from "@/modules/admin/application/ChangeUserRoleUseCase";
 import { GetUserDetailUseCase } from "@/modules/admin/application/GetUserDetailUseCase";
+import { PromoteGenerationsToReferenceUseCase } from "@/modules/promptPriority/application/PromoteGenerationsToReferenceUseCase";
+import {
+  generationEvaluationRepositoryInstance,
+  generationFeedbackRepositoryInstance,
+  generationRepositoryInstance,
+} from "@/modules/generations/container";
+import { exportRepositoryInstance } from "@/modules/exports/container";
+import { projectRepositoryInstance } from "@/modules/projects/container";
+import { promptRepositoryInstance } from "@/modules/prompts/container";
+import { trainingExampleRepositoryInstance } from "@/modules/trainingExamples/container";
+import { resolveFileStorage } from "@/shared/storage/fileStorageRouter";
+import { scheduleReferencePromotion } from "@/shared/queue/referencePromotionQueue";
+import { startReferencePromotionWorker } from "@/workers/referencePromotionWorker";
 import { resolveTextCompletionProvider } from "@/shared/ai/textCompletionRouter";
 import { resolveImageGenerationProvider } from "@/shared/ai/imageGenerationRouter";
 import { resolveMockupRenderProvider } from "@/shared/ai/mockupRenderRouter";
@@ -62,4 +75,25 @@ export const adminContainer = {
     getAuditLogsUseCase,
     subscriptionsContainer.getUsageSummaryUseCase,
   ),
+  promoteGenerationsToReferenceUseCase: new PromoteGenerationsToReferenceUseCase(
+    generationEvaluationRepositoryInstance,
+    generationRepositoryInstance,
+    generationFeedbackRepositoryInstance,
+    exportRepositoryInstance,
+    projectRepositoryInstance,
+    promptRepositoryInstance,
+    trainingExampleRepositoryInstance,
+    resolveFileStorage(),
+  ),
 };
+
+// 매일 자동으로 미평가 생성물을 평가+승격한다(관리자 "지금 실행" 버튼과
+// 별개로, 항상 자동으로도 돈다). AI 호출 없음, 비용 0 -- 다른 큐/워커와
+// 동일한 MVP 모놀리스 자동 시작 패턴.
+const globalForReferencePromotionWorker = globalThis as unknown as { referencePromotionWorkerStarted?: boolean };
+const isBuildPhaseForReferencePromotion = process.env.npm_lifecycle_event === "build";
+if (!isBuildPhaseForReferencePromotion && !globalForReferencePromotionWorker.referencePromotionWorkerStarted) {
+  startReferencePromotionWorker(adminContainer.promoteGenerationsToReferenceUseCase);
+  void scheduleReferencePromotion();
+  globalForReferencePromotionWorker.referencePromotionWorkerStarted = true;
+}

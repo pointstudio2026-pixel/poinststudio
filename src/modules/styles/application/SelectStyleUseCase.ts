@@ -19,6 +19,7 @@ export class SelectStyleUseCase {
     userId: string;
     primaryStyleId: string;
     secondaryStyleIds: string[];
+    forbiddenStyleIds?: string[];
   }): Promise<StyleSelection> {
     const project = await this.projectRepository.findByIdForUser(input.projectId, input.userId);
     if (!project) {
@@ -51,10 +52,27 @@ export class SelectStyleUseCase {
       );
     }
 
+    // 하드제약 선택 시점 거부: 새로 제출한 금지 스타일 목록이 지금 선택한
+    // 필수(Primary/Secondary) 스타일과 겹치면 즉시 거부한다 -- 위
+    // findConflict()와 같은 "선택 시점에 막는다" 원칙을 하드제약에도 적용.
+    const forbiddenStyleIds = input.forbiddenStyleIds ?? [];
+    if (forbiddenStyleIds.length > 0) {
+      const forbiddenSet = new Set(forbiddenStyleIds);
+      const overlapping = [primary, ...secondaries].filter((s) => forbiddenSet.has(s.id));
+      if (overlapping.length > 0) {
+        throw new ValidationError(
+          `"${overlapping.map((s) => s.name).join(", ")}"은(는) 선택한 스타일이면서 동시에 금지 스타일로 지정됐습니다.`,
+          undefined,
+          "STYLE-004",
+        );
+      }
+    }
+
     const selection = await this.styleSelectionRepository.create(
       input.projectId,
       input.primaryStyleId,
       input.secondaryStyleIds,
+      forbiddenStyleIds,
     );
 
     // "style" 다음 단계는 유형에 따라 갈린다: 브랜딩 & 로고는 브랜드 전략으로,

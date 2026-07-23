@@ -11,6 +11,7 @@ import { projectRepositoryInstance } from "@/modules/projects/container";
 import { interviewRepositoryInstance } from "@/modules/interviews/container";
 import { generationRepositoryInstance } from "@/modules/generations/container";
 import { subscriptionsContainer } from "@/modules/subscriptions/container";
+import { trainingExampleRepositoryInstance } from "@/modules/trainingExamples/container";
 import { BullMqMockupRenderQueue } from "@/shared/queue/mockupRenderQueue";
 import { resolveMockupRenderProvider } from "@/shared/ai/mockupRenderRouter";
 import { startMockupRenderWorker } from "@/workers/mockupRenderWorker";
@@ -46,6 +47,7 @@ const processMockupJobUseCase = new ProcessMockupJobUseCase(
   templateRepository,
   subscriptionsContainer.recordUsageUseCase,
   resolveMockupRenderProvider(),
+  trainingExampleRepositoryInstance,
 );
 
 // Same MVP monolith auto-start pattern as generations/edits containers.

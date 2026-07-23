@@ -161,6 +161,9 @@ export function AdminDashboardView() {
           <Link href="/ops-portal-7x2q/training-examples" className="text-sm underline">
             작업물 스타일 학습 자료
           </Link>
+          <Link href="/ops-portal-7x2q/prompt-decisions" className="text-sm underline">
+            프롬프트 우선순위 기록
+          </Link>
           <Link href="/projects" className="text-sm underline">
             일반 화면으로
           </Link>

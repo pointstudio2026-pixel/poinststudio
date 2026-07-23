@@ -8,6 +8,7 @@ import { logoStylesContainer } from "@/modules/logoStyles/container";
 const bodySchema = z.object({
   projectId: z.string().min(1),
   categoryIds: z.array(z.string().min(1)).min(1),
+  forbiddenCategoryIds: z.array(z.string().min(1)).default([]),
 });
 
 export async function POST(request: NextRequest) {
@@ -23,6 +24,7 @@ export async function POST(request: NextRequest) {
       projectId: parsed.data.projectId,
       userId: session.sub,
       categoryIds: parsed.data.categoryIds,
+      forbiddenCategoryIds: parsed.data.forbiddenCategoryIds,
     });
 
     return apiSuccess({ selection }, { status: 201 });

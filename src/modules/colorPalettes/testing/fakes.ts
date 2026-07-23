@@ -13,6 +13,7 @@ export class FakeColorPaletteSelectionRepository implements ColorPaletteSelectio
       projectId: input.projectId,
       presetSlug: input.presetSlug,
       swatches: input.swatches,
+      forbiddenColors: input.forbiddenColors ?? [],
       createdAt: new Date(),
     };
     this.selections.push(selection);

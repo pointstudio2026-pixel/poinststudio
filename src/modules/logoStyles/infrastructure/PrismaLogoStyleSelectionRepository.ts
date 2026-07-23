@@ -7,6 +7,7 @@ function toSelection(row: {
   projectId: string;
   categoryIds: string[];
   primaryCategoryId: string;
+  forbiddenCategoryIds: string[];
   createdAt: Date;
 }): LogoStyleSelection {
   return {
@@ -14,6 +15,7 @@ function toSelection(row: {
     projectId: row.projectId,
     categoryIds: row.categoryIds,
     primaryCategoryId: row.primaryCategoryId,
+    forbiddenCategoryIds: row.forbiddenCategoryIds,
     createdAt: row.createdAt,
   };
 }
@@ -23,9 +25,10 @@ export class PrismaLogoStyleSelectionRepository implements LogoStyleSelectionRep
     projectId: string,
     categoryIds: string[],
     primaryCategoryId: string,
+    forbiddenCategoryIds: string[] = [],
   ): Promise<LogoStyleSelection> {
     const row = await prisma.logoStyleSelection.create({
-      data: { projectId, categoryIds, primaryCategoryId },
+      data: { projectId, categoryIds, primaryCategoryId, forbiddenCategoryIds },
     });
     return toSelection(row);
   }

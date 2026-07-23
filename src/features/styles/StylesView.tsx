@@ -170,6 +170,8 @@ export function StylesView({
   const [colorError, setColorError] = useState<string | null>(null);
   const [isSelectingColor, setIsSelectingColor] = useState(false);
   const [colorSuggestionDismissed, setColorSuggestionDismissed] = useState(false);
+  const [forbiddenColorsInput, setForbiddenColorsInput] = useState("");
+  const [forbiddenColors, setForbiddenColors] = useState<string[]>([]);
 
   const { data: recommendData, isLoading: isLoadingRecommendations } = useQuery({
     queryKey: ["style-recommendations", projectId],
@@ -312,12 +314,44 @@ export function StylesView({
     setIsSelectingColor(true);
     setColorError(null);
     try {
-      await selectColorPalette(projectId, { presetSlug: slug });
+      await selectColorPalette(projectId, { presetSlug: slug, forbiddenColors });
       setSelectedPaletteSlug(slug);
       setIsCustomColorSelected(false);
       setShowCustomColorForm(false);
     } catch (err) {
       setColorError(err instanceof Error ? err.message : "컬러 팔레트 선택에 실패했습니다.");
+    } finally {
+      setIsSelectingColor(false);
+    }
+  }
+
+  function parseForbiddenColorsInput(text: string): string[] {
+    return text
+      .split(",")
+      .map((s) => s.trim())
+      .filter((s) => /^#[0-9a-fA-F]{6}$/.test(s));
+  }
+
+  async function handleApplyForbiddenColors() {
+    const parsed = parseForbiddenColorsInput(forbiddenColorsInput);
+    setColorError(null);
+    if (!selectedPaletteSlug && !isCustomColorSelected) {
+      // 아직 팔레트를 선택하지 않았으면 목록만 로컬에 저장해두고, 팔레트를
+      // 선택하는 시점(handleSelectColorPreset/handleConfirmCustomColor)에
+      // 함께 전송한다.
+      setForbiddenColors(parsed);
+      return;
+    }
+    setIsSelectingColor(true);
+    try {
+      if (selectedPaletteSlug) {
+        await selectColorPalette(projectId, { presetSlug: selectedPaletteSlug, forbiddenColors: parsed });
+      } else {
+        await selectColorPalette(projectId, { customSwatches, forbiddenColors: parsed });
+      }
+      setForbiddenColors(parsed);
+    } catch (err) {
+      setColorError(err instanceof Error ? err.message : "제외할 색상 저장에 실패했습니다.");
     } finally {
       setIsSelectingColor(false);
     }
@@ -342,7 +376,7 @@ export function StylesView({
     setIsSelectingColor(true);
     setColorError(null);
     try {
-      await selectColorPalette(projectId, { customSwatches });
+      await selectColorPalette(projectId, { customSwatches, forbiddenColors });
       setSelectedPaletteSlug(null);
       setIsCustomColorSelected(true);
     } catch (err) {
@@ -556,6 +590,40 @@ export function StylesView({
               </div>
             )}
           </div>
+        </div>
+
+        <div className="mt-4 border-t border-neutral-100 pt-3">
+          <h3 className="text-xs font-medium text-neutral-700">절대 사용하면 안 되는 색상 (선택 사항)</h3>
+          <p className="mt-1 text-xs text-neutral-400">
+            HEX 코드를 쉼표로 구분해 입력하면(예: #ff0000, #000000) 이미지 생성 시 해당 색상을 절대 사용하지 않습니다.
+          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <input
+              type="text"
+              value={forbiddenColorsInput}
+              onChange={(e) => setForbiddenColorsInput(e.target.value)}
+              placeholder="#ff0000, #000000"
+              className="min-w-[220px] flex-1 rounded-md border border-neutral-300 px-2 py-1 text-xs"
+            />
+            <button
+              type="button"
+              onClick={handleApplyForbiddenColors}
+              disabled={isSelectingColor}
+              className="rounded-md border border-neutral-300 px-2 py-1 text-xs disabled:opacity-50"
+            >
+              적용
+            </button>
+          </div>
+          {forbiddenColors.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {forbiddenColors.map((hex) => (
+                <div key={hex} className="flex items-center gap-1 rounded-full border border-neutral-200 px-2 py-0.5">
+                  <div className="h-3 w-3 rounded-full border border-neutral-200" style={{ backgroundColor: hex }} />
+                  <span className="text-[10px] text-neutral-500">{hex}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -5,6 +5,7 @@ export interface CreateColorPaletteSelectionInput {
   projectId: string;
   presetSlug: string | null;
   swatches: ColorSwatch[];
+  forbiddenColors?: string[];
 }
 
 export interface ColorPaletteSelectionRepository {

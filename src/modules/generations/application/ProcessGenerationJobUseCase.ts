@@ -1,7 +1,9 @@
 import type { ProjectRepository } from "@/modules/projects/domain/ProjectRepository";
 import type { PromptRepository } from "@/modules/prompts/domain/PromptRepository";
 import type { GenerationRepository } from "@/modules/generations/domain/GenerationRepository";
+import type { GenerationEvaluationRepository } from "@/modules/generations/domain/GenerationEvaluationRepository";
 import type { RecordUsageUseCase } from "@/modules/subscriptions/application/RecordUsageUseCase";
+import type { PromptDecisionRecordRepository } from "@/modules/promptPriority/domain/PromptDecisionRecordRepository";
 import { resolveImageGenerationProvider } from "@/shared/ai/imageGenerationRouter";
 import { GENERATION_EVENT_TYPE } from "@/modules/subscriptions/domain/planLimits";
 import { getWorkspaceSteps } from "@/modules/projects/domain/Project";
@@ -23,6 +25,8 @@ export class ProcessGenerationJobUseCase {
     private readonly promptRepository: PromptRepository,
     private readonly generationRepository: GenerationRepository,
     private readonly recordUsageUseCase: RecordUsageUseCase,
+    private readonly promptDecisionRecordRepository: PromptDecisionRecordRepository,
+    private readonly generationEvaluationRepository: GenerationEvaluationRepository,
   ) {}
 
   async execute(input: {
@@ -62,6 +66,22 @@ export class ProcessGenerationJobUseCase {
         costAmount: result.costAmount,
         completedAt: new Date(),
       });
+
+      // 프롬프트 조립 시점에 이미 계산해둔 텍스트 레벨 준수 검증 결과를
+      // 생성 결과에도 남긴다 -- 이미지 자체는 검증하지 않는다(비용 없음,
+      // status로 명시). PromptDecisionRecord가 없으면(하드제약 없는
+      // 기존 프로젝트) 조용히 생략한다.
+      const decisionRecord = await this.promptDecisionRecordRepository.findByPromptVersionId(
+        version.promptVersionId,
+      );
+      if (decisionRecord) {
+        await this.generationEvaluationRepository.create({
+          generationVersionId: version.id,
+          status: "PROMPT_LEVEL_ONLY",
+          hardConstraintPassed: decisionRecord.complianceCheck.passed,
+          issues: decisionRecord.complianceCheck.issues,
+        });
+      }
 
       const project = await this.projectRepository.findById(generation.projectId);
       if (project) {

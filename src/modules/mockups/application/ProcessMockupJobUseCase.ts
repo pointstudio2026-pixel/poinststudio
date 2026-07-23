@@ -4,6 +4,9 @@ import type { MockupRepository } from "@/modules/mockups/domain/MockupRepository
 import type { MockupTemplateRepository } from "@/modules/mockups/domain/MockupTemplateRepository";
 import type { RecordUsageUseCase } from "@/modules/subscriptions/application/RecordUsageUseCase";
 import type { MockupRenderProvider } from "@/shared/ai/MockupRenderProvider";
+import type { TrainingExampleRepository } from "@/modules/trainingExamples/domain/TrainingExampleRepository";
+import { TRAINING_EXAMPLE_CATEGORY_MOCKUP } from "@/modules/trainingExamples/domain/TrainingExample";
+import { rankTrainingExamples } from "@/modules/trainingExamples/domain/trainingExampleRules";
 import { GENERATION_EVENT_TYPE } from "@/modules/subscriptions/domain/planLimits";
 import { isBrandingDeliverableType } from "@/modules/projects/domain/deliverableTypes";
 import { recordActivity } from "@/shared/activity/activityLogger";
@@ -18,6 +21,7 @@ export class ProcessMockupJobUseCase {
     private readonly templateRepository: MockupTemplateRepository,
     private readonly recordUsageUseCase: RecordUsageUseCase,
     private readonly mockupRenderProvider: MockupRenderProvider,
+    private readonly trainingExampleRepository: TrainingExampleRepository,
   ) {}
 
   async execute(input: { mockupId: string; isFinalAttempt: boolean; requestedByUserId: string }): Promise<void> {
@@ -48,6 +52,23 @@ export class ProcessMockupJobUseCase {
     const compositingMode = isBranding ? "logo" : "fullDesign";
     const placementArea = isBranding ? template.placementArea : (template.fullDesignPlacementArea ?? template.placementArea);
 
+    // 관리자가 등록한 "목업" 카테고리 학습 자료 중 이 작업물 유형과 같은
+    // 것을 연출 참고 문구로 반영한다 -- AI 호출 없는 결정론적 키워드 매칭.
+    // "이미지생성" 카테고리 자료는 여기서 절대 조회하지 않는다(파이프라인
+    // 분리, 사용자 지시사항).
+    let referenceExampleText: string | undefined;
+    if (project.deliverableType) {
+      const candidates = await this.trainingExampleRepository.listByDeliverableType(
+        project.deliverableType,
+        TRAINING_EXAMPLE_CATEGORY_MOCKUP,
+      );
+      const [top] = rankTrainingExamples(candidates, {
+        keywordText: template.name,
+        deliverableType: project.deliverableType,
+      }).filter((r) => r.score > 0);
+      referenceExampleText = top?.example.prompt;
+    }
+
     try {
       const result = await this.mockupRenderProvider.render({
         logoImageUrl: sourceImage.url,
@@ -55,6 +76,7 @@ export class ProcessMockupJobUseCase {
         placementArea,
         templateName: template.name,
         compositingMode,
+        referenceExampleText,
       });
 
       await this.mockupRepository.updateResult(mockup.id, {

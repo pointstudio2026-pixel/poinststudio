@@ -22,6 +22,8 @@ export async function POST(request: NextRequest) {
     const prompt = formData?.get("prompt");
     const deliverableType = formData?.get("deliverableType");
     const image = formData?.get("image");
+    const category = formData?.get("category");
+    const industry = formData?.get("industry");
 
     if (typeof prompt !== "string" || !prompt.trim()) {
       throw new ValidationError("프롬프트를 입력해주세요.", undefined, "TRAINING_EXAMPLE-001");
@@ -40,6 +42,8 @@ export async function POST(request: NextRequest) {
       imageData: Buffer.from(arrayBuffer),
       imageContentType: image.type,
       createdByUserId: session.sub,
+      category: typeof category === "string" ? category : undefined,
+      industry: typeof industry === "string" ? industry : undefined,
     });
 
     return apiSuccess({ example }, { status: 201 });

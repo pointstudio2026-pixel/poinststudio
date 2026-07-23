@@ -18,6 +18,7 @@ export class SelectLogoStyleUseCase {
     projectId: string;
     userId: string;
     categoryIds: string[];
+    forbiddenCategoryIds?: string[];
   }): Promise<LogoStyleSelection> {
     const project = await this.projectRepository.findByIdForUser(input.projectId, input.userId);
     if (!project) {
@@ -37,10 +38,24 @@ export class SelectLogoStyleUseCase {
       throw new NotFoundError("선택한 로고 스타일을 찾을 수 없습니다.", "LOGO_STYLE-002");
     }
 
+    const forbiddenCategoryIds = input.forbiddenCategoryIds ?? [];
+    if (forbiddenCategoryIds.length > 0) {
+      const forbiddenSet = new Set(forbiddenCategoryIds);
+      const overlapping = categories.filter((c) => forbiddenSet.has(c.id));
+      if (overlapping.length > 0) {
+        throw new ValidationError(
+          `"${overlapping.map((c) => c.name).join(", ")}"은(는) 선택한 로고 스타일이면서 동시에 금지 로고 스타일로 지정됐습니다.`,
+          undefined,
+          "LOGO_STYLE-004",
+        );
+      }
+    }
+
     const selection = await this.selectionRepository.create(
       input.projectId,
       input.categoryIds,
       input.categoryIds[0]!,
+      forbiddenCategoryIds,
     );
 
     const steps = getWorkspaceSteps(project.deliverableType);

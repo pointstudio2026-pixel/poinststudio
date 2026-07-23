@@ -12,6 +12,7 @@ function toSelection(row: {
   projectId: string;
   presetSlug: string | null;
   swatches: Prisma.JsonValue;
+  forbiddenColors: string[];
   createdAt: Date;
 }): ColorPaletteSelection {
   return {
@@ -19,6 +20,7 @@ function toSelection(row: {
     projectId: row.projectId,
     presetSlug: row.presetSlug,
     swatches: row.swatches as unknown as ColorSwatch[],
+    forbiddenColors: row.forbiddenColors,
     createdAt: row.createdAt,
   };
 }
@@ -30,6 +32,7 @@ export class PrismaColorPaletteSelectionRepository implements ColorPaletteSelect
         projectId: input.projectId,
         presetSlug: input.presetSlug,
         swatches: input.swatches as unknown as Prisma.InputJsonValue,
+        forbiddenColors: input.forbiddenColors ?? [],
       },
     });
     return toSelection(row);

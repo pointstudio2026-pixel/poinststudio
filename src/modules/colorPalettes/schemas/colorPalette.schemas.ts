@@ -11,6 +11,8 @@ export const selectColorPaletteSchema = z
   .object({
     presetSlug: z.string().min(1).optional(),
     customSwatches: z.array(customSwatchSchema).min(2).max(4).optional(),
+    /** 사용자가 명시적으로 배제하는 색상 -- 우선순위 시스템의 하드 제약조건(선택 사항). */
+    forbiddenColors: z.array(hexColorSchema).max(10).optional(),
   })
   .refine((data) => Boolean(data.presetSlug) !== Boolean(data.customSwatches), {
     message: "presetSlug 또는 customSwatches 중 하나만 지정해야 합니다.",

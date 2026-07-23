@@ -69,6 +69,7 @@ async function setup() {
       strategies,
       brainComposer,
       colorPaletteSelections,
+      styles,
     ),
     select: new SelectBrandStrategyUseCase(projects, strategies),
     get: new GetBrandStrategyUseCase(projects, strategies),

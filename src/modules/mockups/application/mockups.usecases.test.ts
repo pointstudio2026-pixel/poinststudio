@@ -8,6 +8,7 @@ import { ProcessMockupJobUseCase } from "@/modules/mockups/application/ProcessMo
 import { FakeMockupRepository, FakeMockupRenderQueue, FakeMockupTemplateRepository } from "@/modules/mockups/testing/fakes";
 import type { MockupTemplate } from "@/modules/mockups/domain/Mockup";
 import { FakeGenerationRepository } from "@/modules/generations/testing/fakes";
+import { FakeTrainingExampleRepository } from "@/modules/trainingExamples/testing/fakes";
 import { CreateProjectUseCase } from "@/modules/projects/application/CreateProjectUseCase";
 import { FakeProjectRepository } from "@/modules/projects/testing/fakes";
 import { CheckPlanUseCase } from "@/modules/subscriptions/application/CheckPlanUseCase";
@@ -15,6 +16,7 @@ import { RecordUsageUseCase } from "@/modules/subscriptions/application/RecordUs
 import { FakeSubscriptionRepository, FakeUsageRepository } from "@/modules/subscriptions/testing/fakes";
 import { GENERATION_EVENT_TYPE, PLAN_LIMITS } from "@/modules/subscriptions/domain/planLimits";
 import { MockMockupRenderProvider, FORCE_FAILURE_MARKER } from "@/shared/ai/MockMockupRenderProvider";
+import type { MockupRenderProvider, MockupRenderRequest } from "@/shared/ai/MockupRenderProvider";
 import { ConflictError, NotFoundError, UsageLimitError, ValidationError } from "@/shared/errors/AppError";
 
 vi.mock("@/shared/activity/activityLogger", () => ({
@@ -42,6 +44,7 @@ async function setup() {
   const checkPlan = new CheckPlanUseCase(subs, usage);
   const recordUsage = new RecordUsageUseCase(usage);
   const provider = new MockMockupRenderProvider();
+  const trainingExamples = new FakeTrainingExampleRepository();
 
   templates.templates = [TEMPLATE];
 
@@ -67,12 +70,13 @@ async function setup() {
     queue,
     subs,
     usage,
+    trainingExamples,
     create: new CreateMockupUseCase(projects, generations, templates, checkPlan, mockups, queue),
     getMockups: new GetMockupsUseCase(projects, mockups),
     getTemplates: new GetMockupTemplatesUseCase(templates),
     favorite: new ToggleMockupFavoriteUseCase(projects, mockups),
     remove: new DeleteMockupUseCase(projects, mockups),
-    process: new ProcessMockupJobUseCase(projects, generations, mockups, templates, recordUsage, provider),
+    process: new ProcessMockupJobUseCase(projects, generations, mockups, templates, recordUsage, provider, trainingExamples),
   };
 }
 
@@ -215,6 +219,64 @@ describe("ProcessMockupJobUseCase", () => {
     current = await ctx.mockups.getById(mockup.id);
     expect(current?.status).toBe("failed");
     expect(current?.errorMessage).toBeTruthy();
+  });
+
+  it("only reads '목업' 카테고리 TrainingExample -- '이미지생성' 자료는 절대 섞이지 않는다", async () => {
+    const ctx = await setup();
+    const project = ctx.projects.projects.find((p) => p.id === ctx.projectId)!;
+    project.deliverableType = "명함";
+
+    await ctx.trainingExamples.create({
+      prompt: "Business Card 느낌의 이미지생성 전용 참고 문구 -- 목업에 절대 섞이면 안 됨",
+      deliverableType: "명함",
+      imageStorageKey: "training-examples/a.png",
+      imageContentType: "image/png",
+      createdByUserId: "admin-1",
+      category: "이미지생성",
+    });
+    await ctx.trainingExamples.create({
+      prompt: "Business Card Cream 톤의 따뜻한 나무 책상 연출",
+      deliverableType: "명함",
+      imageStorageKey: "training-examples/b.png",
+      imageContentType: "image/png",
+      createdByUserId: "admin-1",
+      category: "목업",
+    });
+
+    const captured: MockupRenderRequest[] = [];
+    const capturingProvider: MockupRenderProvider = {
+      name: "capturing",
+      async render(request) {
+        captured.push(request);
+        return { imageUrl: "data:image/png;base64,X", thumbnailUrl: "data:image/png;base64,X", provider: "capturing", costAmount: 0 };
+      },
+      async health() {
+        return true;
+      },
+    };
+    const processWithCapture = new ProcessMockupJobUseCase(
+      ctx.projects,
+      ctx.generations,
+      ctx.mockups,
+      ctx.templates,
+      new RecordUsageUseCase(ctx.usage),
+      capturingProvider,
+      ctx.trainingExamples,
+    );
+
+    const mockup = await ctx.create.execute({
+      projectId: ctx.projectId,
+      userId: "user-1",
+      generationVersionId: ctx.sourceVersion.id,
+      sourceImageIndex: 0,
+      templateId: TEMPLATE.id,
+    });
+
+    await processWithCapture.execute({ mockupId: mockup.id, requestedByUserId: "user-1", isFinalAttempt: true });
+
+    expect(captured).toHaveLength(1);
+    expect(captured[0]?.referenceExampleText).toContain("나무 책상");
+    expect(captured[0]?.referenceExampleText).not.toContain("절대 섞이면 안 됨");
   });
 });
 

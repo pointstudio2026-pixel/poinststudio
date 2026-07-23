@@ -151,6 +151,20 @@ export const INTERVIEW_QUESTIONS: InterviewQuestionDef[] = [
     required: true,
     options: DESIRED_IMPRESSION_OPTIONS,
   },
+  // 배송타입별 deliverableAvoidElements(피하고 싶은 요소)는 로고를 포함한
+  // "브랜딩 & 로고" 유형에는 아예 안 물어보는 질문이라(matchDeliverableTypeQuestions
+  // 참고), 로고 프로젝트도 빠짐없이 하드제약을 답할 수 있게 여기 공통
+  // 질문으로 하나 둔다. promptPriority 모듈의 classifyInterviewInput()이
+  // 이 답을 HardConstraintSet.forbiddenElements로 읽는다.
+  {
+    key: "forbiddenElements",
+    text: "절대 포함되면 안 되는 요소가 있나요? (선택 사항)",
+    type: "select",
+    required: false,
+    multiple: true,
+    allowOther: true,
+    options: ["특정 동물/인물 이미지", "특정 상징/아이콘", "종교적 상징", "가격/금액 표시", "복잡한 배경"],
+  },
   {
     key: "additionalNotes",
     text: "그 외 사항(무조건 포함되어야 하는 내용 또는 제외되어야하는 내용)이 있다면 알려주세요.",

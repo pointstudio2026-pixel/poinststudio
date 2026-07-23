@@ -19,13 +19,18 @@ export interface TrainingExampleRecommendation {
   score: number;
 }
 
-export function scoreTrainingExample(example: TrainingExample, input: TrainingExampleScoreInput): number {
-  if (example.deliverableType !== input.deliverableType) return 0;
-
-  const words = example.prompt
+/** 자유 텍스트를 소문자 단어 토큰으로 쪼갠다(1글자 토큰 제외) -- prompt 원문에서 "키워드"를 뽑아내는 유일한 방법(별도 curated 키워드 목록이 없음). */
+export function tokenizePromptText(text: string): string[] {
+  return text
     .toLowerCase()
     .split(/[\s,.!?"'()·\-]+/)
     .filter((w) => w.length > 1);
+}
+
+export function scoreTrainingExample(example: TrainingExample, input: TrainingExampleScoreInput): number {
+  if (example.deliverableType !== input.deliverableType) return 0;
+
+  const words = tokenizePromptText(example.prompt);
   if (words.length === 0) return 0;
 
   const text = input.keywordText.toLowerCase();

@@ -14,7 +14,8 @@ import { resolveFileStorage } from "@/shared/storage/fileStorageRouter";
 import { BullMqExportQueue } from "@/shared/queue/exportQueue";
 import { startExportWorker } from "@/workers/exportWorker";
 
-const exportRepository = new PrismaExportRepository();
+export const exportRepositoryInstance = new PrismaExportRepository();
+const exportRepository = exportRepositoryInstance;
 const renderer = new PdfLibExportRenderer();
 const fileStorage = resolveFileStorage();
 const queue = new BullMqExportQueue();

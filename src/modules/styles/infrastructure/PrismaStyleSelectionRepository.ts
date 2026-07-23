@@ -7,6 +7,7 @@ function toSelection(row: {
   projectId: string;
   primaryStyleId: string;
   secondaryStyleIds: string[];
+  forbiddenStyleIds: string[];
   createdAt: Date;
 }): StyleSelection {
   return {
@@ -14,6 +15,7 @@ function toSelection(row: {
     projectId: row.projectId,
     primaryStyleId: row.primaryStyleId,
     secondaryStyleIds: row.secondaryStyleIds,
+    forbiddenStyleIds: row.forbiddenStyleIds,
     createdAt: row.createdAt,
   };
 }
@@ -23,9 +25,10 @@ export class PrismaStyleSelectionRepository implements StyleSelectionRepository 
     projectId: string,
     primaryStyleId: string,
     secondaryStyleIds: string[],
+    forbiddenStyleIds: string[] = [],
   ): Promise<StyleSelection> {
     const row = await prisma.styleSelection.create({
-      data: { projectId, primaryStyleId, secondaryStyleIds },
+      data: { projectId, primaryStyleId, secondaryStyleIds, forbiddenStyleIds },
     });
     return toSelection(row);
   }

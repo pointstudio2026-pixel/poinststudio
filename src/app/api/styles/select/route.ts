@@ -9,6 +9,7 @@ const bodySchema = z.object({
   projectId: z.string().min(1),
   primaryStyleId: z.string().min(1),
   secondaryStyleIds: z.array(z.string().min(1)).default([]),
+  forbiddenStyleIds: z.array(z.string().min(1)).default([]),
 });
 
 export async function POST(request: NextRequest) {
@@ -25,6 +26,7 @@ export async function POST(request: NextRequest) {
       userId: session.sub,
       primaryStyleId: parsed.data.primaryStyleId,
       secondaryStyleIds: parsed.data.secondaryStyleIds,
+      forbiddenStyleIds: parsed.data.forbiddenStyleIds,
     });
 
     return apiSuccess({ selection }, { status: 201 });

@@ -8,6 +8,13 @@ import type {
   EnqueueImageGenerationInput,
   ImageGenerationQueuePort,
 } from "@/modules/generations/domain/ImageGenerationQueuePort";
+import type {
+  CreateGenerationEvaluationInput,
+  GenerationEvaluation,
+} from "@/modules/generations/domain/GenerationEvaluation";
+import type { GenerationEvaluationRepository } from "@/modules/generations/domain/GenerationEvaluationRepository";
+import type { GenerationFeedback, SubmitGenerationFeedbackInput } from "@/modules/generations/domain/GenerationFeedback";
+import type { GenerationFeedbackRepository } from "@/modules/generations/domain/GenerationFeedbackRepository";
 
 export class FakeGenerationRepository implements GenerationRepository {
   generations = new Map<string, { id: string; projectId: string }>();
@@ -114,5 +121,68 @@ export class FakeImageGenerationQueue implements ImageGenerationQueuePort {
 
   async enqueue(input: EnqueueImageGenerationInput): Promise<void> {
     this.enqueued.push(input);
+  }
+}
+
+export class FakeGenerationEvaluationRepository implements GenerationEvaluationRepository {
+  evaluations: GenerationEvaluation[] = [];
+  private nextId = 1;
+
+  async create(input: CreateGenerationEvaluationInput): Promise<GenerationEvaluation> {
+    const evaluation: GenerationEvaluation = {
+      id: `generation-evaluation-${this.nextId++}`,
+      generationVersionId: input.generationVersionId,
+      status: input.status,
+      hardConstraintPassed: input.hardConstraintPassed,
+      issues: input.issues,
+      usageScore: null,
+      promotedToReference: false,
+      createdAt: new Date(),
+    };
+    this.evaluations.push(evaluation);
+    return evaluation;
+  }
+
+  async findByGenerationVersionId(generationVersionId: string): Promise<GenerationEvaluation | null> {
+    return this.evaluations.find((e) => e.generationVersionId === generationVersionId) ?? null;
+  }
+
+  async updateUsageScore(id: string, usageScore: number, promotedToReference: boolean): Promise<GenerationEvaluation> {
+    const index = this.evaluations.findIndex((e) => e.id === id);
+    if (index === -1) throw new Error("evaluation not found");
+    const updated = { ...this.evaluations[index]!, usageScore, promotedToReference };
+    this.evaluations[index] = updated;
+    return updated;
+  }
+
+  async listUnscored(limit: number): Promise<GenerationEvaluation[]> {
+    return this.evaluations.filter((e) => e.usageScore === null).slice(0, limit);
+  }
+}
+
+export class FakeGenerationFeedbackRepository implements GenerationFeedbackRepository {
+  feedback: GenerationFeedback[] = [];
+  private nextId = 1;
+
+  async upsert(input: SubmitGenerationFeedbackInput): Promise<GenerationFeedback> {
+    const existingIndex = this.feedback.findIndex((f) => f.generationVersionId === input.generationVersionId);
+    const record: GenerationFeedback = {
+      id: existingIndex >= 0 ? this.feedback[existingIndex]!.id : `generation-feedback-${this.nextId++}`,
+      generationVersionId: input.generationVersionId,
+      likedTags: input.likedTags,
+      dislikedTags: input.dislikedTags,
+      freeText: input.freeText,
+      createdAt: existingIndex >= 0 ? this.feedback[existingIndex]!.createdAt : new Date(),
+    };
+    if (existingIndex >= 0) {
+      this.feedback[existingIndex] = record;
+    } else {
+      this.feedback.push(record);
+    }
+    return record;
+  }
+
+  async findByGenerationVersionId(generationVersionId: string): Promise<GenerationFeedback | null> {
+    return this.feedback.find((f) => f.generationVersionId === generationVersionId) ?? null;
   }
 }

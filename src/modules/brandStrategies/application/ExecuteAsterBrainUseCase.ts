@@ -1,11 +1,13 @@
 import type { ProjectRepository } from "@/modules/projects/domain/ProjectRepository";
 import type { InterviewRepository } from "@/modules/interviews/domain/InterviewRepository";
+import type { StyleRepository } from "@/modules/styles/domain/StyleRepository";
 import type { StyleSelectionRepository } from "@/modules/styles/domain/StyleSelectionRepository";
 import type { BrandStrategyRepository } from "@/modules/brandStrategies/domain/BrandStrategyRepository";
 import type { BrandStrategy, BrandStrategyData } from "@/modules/brandStrategies/domain/BrandStrategy";
 import type { AsterBrainComposer } from "@/modules/brandStrategies/application/AsterBrainComposer";
 import type { ColorPaletteSelectionRepository } from "@/modules/colorPalettes/domain/ColorPaletteSelectionRepository";
 import type { ColorSwatch } from "@/modules/colorPalettes/domain/ColorPalette";
+import { classifyInterviewInput } from "@/modules/promptPriority/domain/classifyInterviewInput";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { ConflictError, NotFoundError } from "@/shared/errors/AppError";
 
@@ -45,6 +47,7 @@ export class ExecuteAsterBrainUseCase {
     private readonly brandStrategyRepository: BrandStrategyRepository,
     private readonly composer: AsterBrainComposer,
     private readonly colorPaletteSelectionRepository: ColorPaletteSelectionRepository,
+    private readonly styleRepository: StyleRepository,
   ) {}
 
   async execute(input: {
@@ -84,6 +87,35 @@ export class ExecuteAsterBrainUseCase {
     const answers = Object.fromEntries(
       interview.answers.filter((a) => a.answer).map((a) => [a.questionKey, a.answer as string]),
     );
+
+    // 스타일 선택 → 브랜드 전략 전환 재검증: 스타일 단계에서 이미 하드
+    // 거부(SelectStyleUseCase)가 있었으니 리터럴 겹침은 이 시점에 없어야
+    // 정상이지만, 인터뷰 완료 이후 답이 바뀌는 등의 경우를 대비해 다시 한
+    // 번 확인만 하고 기록만 남긴다(차단하지 않음 -- 사용자가 이미 스타일
+    // 단계에서 확정한 선택이라 여기서 막으면 막다른 UX가 된다).
+    const { hardConstraints } = classifyInterviewInput({ answers, deliverableType: project.deliverableType });
+    if (hardConstraints.forbiddenElements.length > 0) {
+      const selectedStyles = await this.styleRepository.findByIds([
+        styleSelection.primaryStyleId,
+        ...styleSelection.secondaryStyleIds,
+      ]);
+      const forbiddenLower = hardConstraints.forbiddenElements.map((e) => e.toLowerCase());
+      const conflictingStyles = selectedStyles.filter((s) =>
+        s.keywords.some((k) => forbiddenLower.some((f) => k.toLowerCase().includes(f) || f.includes(k.toLowerCase()))),
+      );
+      if (conflictingStyles.length > 0) {
+        await recordActivity({
+          userId: input.userId,
+          projectId: input.projectId,
+          eventType: "STYLE_INTERVIEW_CONFLICT_DETECTED",
+          payload: {
+            conflictingStyleNames: conflictingStyles.map((s) => s.name),
+            forbiddenElements: hardConstraints.forbiddenElements,
+            resolution: "KEEP_USER_STYLE_SELECTION",
+          },
+        });
+      }
+    }
 
     const { candidates: rawCandidates, reasoningSummary, confidenceLevel } = await this.composer.compose(
       answers,

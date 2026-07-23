@@ -7,22 +7,52 @@ import {
   createTrainingExample,
   deleteTrainingExample,
   fetchTrainingExamples,
+  promoteGenerationsToReference,
 } from "@/services/admin-service";
 import { DELIVERABLE_TYPE_OPTIONS } from "@/modules/projects/domain/deliverableTypes";
+import { INDUSTRY_OPTIONS } from "@/modules/interviews/domain/interviewQuestions";
+import { KNOWN_TRAINING_EXAMPLE_CATEGORIES } from "@/modules/trainingExamples/domain/TrainingExample";
 import { Spinner } from "@/components/Spinner";
+
+const CUSTOM_CATEGORY_OPTION = "직접 입력";
 
 export function TrainingExamplesView() {
   const queryClient = useQueryClient();
   const [prompt, setPrompt] = useState("");
   const [deliverableType, setDeliverableType] = useState(DELIVERABLE_TYPE_OPTIONS[0]!);
+  const [category, setCategory] = useState<string>(KNOWN_TRAINING_EXAMPLE_CATEGORIES[0]);
+  const [customCategory, setCustomCategory] = useState("");
+  const [industry, setIndustry] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [isPromoting, setIsPromoting] = useState(false);
+  const [promoteResult, setPromoteResult] = useState<{ evaluated: number; promoted: number } | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<string>("전체");
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-training-examples"],
     queryFn: fetchTrainingExamples,
   });
+
+  const categoryTabs = [
+    "전체",
+    ...Array.from(new Set([...KNOWN_TRAINING_EXAMPLE_CATEGORIES, ...(data?.examples.map((e) => e.category) ?? [])])),
+  ];
+  const visibleExamples =
+    categoryFilter === "전체" ? data?.examples : data?.examples.filter((e) => e.category === categoryFilter);
+
+  async function handlePromote() {
+    setIsPromoting(true);
+    setPromoteResult(null);
+    try {
+      const { result } = await promoteGenerationsToReference();
+      setPromoteResult(result);
+      await queryClient.invalidateQueries({ queryKey: ["admin-training-examples"] });
+    } finally {
+      setIsPromoting(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -30,10 +60,21 @@ export function TrainingExamplesView() {
       setFormError("이미지 파일을 선택해주세요.");
       return;
     }
+    const resolvedCategory = category === CUSTOM_CATEGORY_OPTION ? customCategory.trim() : category;
+    if (!resolvedCategory) {
+      setFormError("카테고리를 입력해주세요.");
+      return;
+    }
     setFormError(null);
     setIsSubmitting(true);
     try {
-      await createTrainingExample({ prompt, deliverableType, image });
+      await createTrainingExample({
+        prompt,
+        deliverableType,
+        image,
+        category: resolvedCategory,
+        industry: industry || undefined,
+      });
       setPrompt("");
       setImage(null);
       await queryClient.invalidateQueries({ queryKey: ["admin-training-examples"] });
@@ -57,12 +98,36 @@ export function TrainingExamplesView() {
           <p className="mt-1 text-sm text-neutral-500">
             프롬프트와 그 프롬프트로 만든 생성 이미지를 등록하면, 같은 작업물 유형의 실제 프로젝트 프롬프트를
             만들 때 참고 자료로 자동 반영됩니다. (AI 분석 없이 텍스트 매칭만 사용 -- 비용 없음)
+            &quot;이미지생성&quot; 카테고리는 이미지 생성 파이프라인에만, &quot;목업&quot; 카테고리는 목업 생성
+            파이프라인에만 영향을 주며 서로 절대 섞이지 않습니다.
           </p>
         </div>
-        <Link href="/ops-portal-7x2q" className="text-sm underline">
-          대시보드로
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/ops-portal-7x2q/prompt-decisions" className="text-sm underline">
+            프롬프트 우선순위 기록
+          </Link>
+          <Link href="/ops-portal-7x2q" className="text-sm underline">
+            대시보드로
+          </Link>
+        </div>
       </header>
+
+      <div className="flex items-center gap-3 rounded-md border border-neutral-200 bg-neutral-50 p-4">
+        <button
+          type="button"
+          onClick={handlePromote}
+          disabled={isPromoting}
+          className="flex items-center gap-2 rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm disabled:opacity-50"
+        >
+          {isPromoting && <Spinner />}
+          지금 바로 실행
+        </button>
+        <p className="text-xs text-neutral-500">
+          {promoteResult
+            ? `${promoteResult.evaluated}건 평가, ${promoteResult.promoted}건 DB 반영(80점 이상)`
+            : "매일 자동으로도 실행됩니다. 실사용자 생성물 중 아직 평가 안 된 것들을 비용 없는 행동 신호(재시도/내보내기/프로젝트 완료 여부)와 사용자 평가로 채점하고 80점 이상만 참고자료로 반영합니다."}
+        </p>
+      </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded-md border border-neutral-200 p-4">
         <div className="flex flex-col gap-1">
@@ -81,6 +146,55 @@ export function TrainingExamplesView() {
               </option>
             ))}
           </select>
+        </div>
+
+        <div className="flex gap-3">
+          <div className="flex flex-1 flex-col gap-1">
+            <label htmlFor="category" className="text-sm text-neutral-500">
+              카테고리
+            </label>
+            <select
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="rounded-md border border-neutral-300 px-3 py-2 text-sm"
+            >
+              {KNOWN_TRAINING_EXAMPLE_CATEGORIES.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+              <option value={CUSTOM_CATEGORY_OPTION}>{CUSTOM_CATEGORY_OPTION}</option>
+            </select>
+            {category === CUSTOM_CATEGORY_OPTION && (
+              <input
+                type="text"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                placeholder="새 카테고리 이름"
+                className="mt-1 rounded-md border border-neutral-300 px-3 py-2 text-sm"
+              />
+            )}
+          </div>
+
+          <div className="flex flex-1 flex-col gap-1">
+            <label htmlFor="industry" className="text-sm text-neutral-500">
+              업종 (선택 사항)
+            </label>
+            <select
+              id="industry"
+              value={industry}
+              onChange={(e) => setIndustry(e.target.value)}
+              className="rounded-md border border-neutral-300 px-3 py-2 text-sm"
+            >
+              <option value="">선택 안 함</option>
+              {INDUSTRY_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -122,16 +236,33 @@ export function TrainingExamplesView() {
         </button>
       </form>
 
+      <div className="flex flex-wrap gap-2">
+        {categoryTabs.map((tab) => (
+          <button
+            key={tab}
+            type="button"
+            onClick={() => setCategoryFilter(tab)}
+            className={`rounded-full border px-3 py-1 text-xs ${
+              categoryFilter === tab
+                ? "border-neutral-900 bg-neutral-900 text-white"
+                : "border-neutral-300 bg-white text-neutral-600"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
       <section className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {isLoading && (
           <div className="col-span-full flex justify-center p-6">
             <Spinner />
           </div>
         )}
-        {!isLoading && data?.examples.length === 0 && (
+        {!isLoading && visibleExamples?.length === 0 && (
           <p className="col-span-full text-center text-sm text-neutral-400">아직 등록된 학습 자료가 없습니다.</p>
         )}
-        {data?.examples.map((example) => (
+        {visibleExamples?.map((example) => (
           <div key={example.id} className="flex flex-col gap-2 rounded-md border border-neutral-200 p-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -139,9 +270,33 @@ export function TrainingExamplesView() {
               alt={example.prompt}
               className="aspect-square w-full rounded-md object-cover"
             />
-            <span className="w-fit rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600">
-              {example.deliverableType}
-            </span>
+            <div className="flex flex-wrap gap-1">
+              <span className="w-fit rounded-full bg-neutral-800 px-2 py-0.5 text-xs text-white">
+                {example.category}
+              </span>
+              <span className="w-fit rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600">
+                {example.deliverableType}
+              </span>
+              {example.industry && (
+                <span className="w-fit rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600">
+                  {example.industry}
+                </span>
+              )}
+              <span className="w-fit rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600">
+                {example.source === "ADMIN" ? "관리자 입력" : example.source === "USER_GENERATION" ? "사용자 생성물" : "리서치"}
+              </span>
+              {example.evaluationScore !== null && (
+                <span
+                  className={`w-fit rounded-full px-2 py-0.5 text-xs ${
+                    example.evaluationScore >= 0.8
+                      ? "bg-green-100 text-green-700"
+                      : "bg-amber-100 text-amber-700"
+                  }`}
+                >
+                  평가 {Math.round(example.evaluationScore * 100)}점
+                </span>
+              )}
+            </div>
             <p className="line-clamp-3 text-xs text-neutral-600">{example.prompt}</p>
             <button
               type="button"

@@ -1,11 +1,16 @@
-import type { TrainingExampleRepository } from "@/modules/trainingExamples/domain/TrainingExampleRepository";
+import type {
+  CreateTrainingExampleInput,
+  TrainingExampleRepository,
+} from "@/modules/trainingExamples/domain/TrainingExampleRepository";
 import type { TrainingExample } from "@/modules/trainingExamples/domain/TrainingExample";
+import { TRAINING_EXAMPLE_CATEGORY_IMAGE_GENERATION } from "@/modules/trainingExamples/domain/TrainingExample";
 import type { FileStorage } from "@/shared/storage/FileStorage";
 import {
   MAX_REFERENCE_SIZE_BYTES,
   isAllowedReferenceContentType,
 } from "@/modules/userStyles/domain/userStyleRules";
 import { DELIVERABLE_TYPE_OPTIONS } from "@/modules/projects/domain/deliverableTypes";
+import { evaluateTrainingExamplePromptText } from "@/modules/promptPriority/domain/trainingExampleEvaluation";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { ValidationError } from "@/shared/errors/AppError";
 
@@ -28,6 +33,8 @@ export class CreateTrainingExampleUseCase {
     imageData: Buffer;
     imageContentType: string;
     createdByUserId: string;
+    category?: string;
+    industry?: string | null;
   }): Promise<TrainingExample> {
     const prompt = input.prompt.trim();
     if (!prompt) {
@@ -42,9 +49,19 @@ export class CreateTrainingExampleUseCase {
     if (input.imageData.byteLength > MAX_REFERENCE_SIZE_BYTES) {
       throw new ValidationError("이미지 용량은 5MB를 초과할 수 없습니다.", undefined, "TRAINING_EXAMPLE-004");
     }
+    const category = input.category?.trim() || TRAINING_EXAMPLE_CATEGORY_IMAGE_GENERATION;
 
     const storageKey = `training-examples/${crypto.randomUUID()}`;
     const saved = await this.fileStorage.save(storageKey, input.imageData, input.imageContentType);
+
+    // 텍스트 레벨 평가(안전성 게이트 + 독창성) -- Vision AI 없음, AI 비용 0.
+    // 같은 카테고리 내에서만 비교한다(이미지생성 vs 목업이 서로 "중복"으로
+    // 취급되면 안 됨 -- 파이프라인이 완전히 분리되어 있으므로).
+    const existingExamples = await this.trainingExampleRepository.listByDeliverableType(
+      input.deliverableType,
+      category,
+    );
+    const evaluation = evaluateTrainingExamplePromptText(prompt, input.deliverableType, existingExamples);
 
     const example = await this.trainingExampleRepository.create({
       prompt,
@@ -52,6 +69,12 @@ export class CreateTrainingExampleUseCase {
       imageStorageKey: saved.key,
       imageContentType: input.imageContentType,
       createdByUserId: input.createdByUserId,
+      evaluationScore: evaluation.score,
+      evaluationBreakdown: evaluation.breakdown as unknown as CreateTrainingExampleInput["evaluationBreakdown"],
+      evaluatedAt: new Date(),
+      source: "ADMIN",
+      category,
+      industry: input.industry?.trim() || null,
     });
 
     await recordActivity({

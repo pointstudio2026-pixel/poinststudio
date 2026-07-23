@@ -4,7 +4,7 @@ import type { ColorPaletteSelection } from "@/modules/colorPalettes/domain/Color
 import type { SelectColorPaletteInput } from "@/modules/colorPalettes/schemas/colorPalette.schemas";
 import { findPresetColorPalette } from "@/modules/colorPalettes/domain/ColorPalette";
 import { recordActivity } from "@/shared/activity/activityLogger";
-import { NotFoundError } from "@/shared/errors/AppError";
+import { NotFoundError, ValidationError } from "@/shared/errors/AppError";
 
 /**
  * SelectProjectUserStyleUseCase와 동일하게 어떤 워크스페이스 단계도 게이팅하지
@@ -37,10 +37,22 @@ export class SelectColorPaletteUseCase {
       swatches = input.customSwatches!;
     }
 
+    const forbiddenColors = input.forbiddenColors ?? [];
+    const forbiddenSet = new Set(forbiddenColors.map((hex) => hex.toLowerCase()));
+    const overlapping = swatches.filter((s) => forbiddenSet.has(s.hex.toLowerCase()));
+    if (overlapping.length > 0) {
+      throw new ValidationError(
+        `"${overlapping.map((s) => s.label).join(", ")}"은(는) 선택한 색상이면서 동시에 금지 색상으로 지정됐습니다.`,
+        undefined,
+        "COLOR_PALETTE-001",
+      );
+    }
+
     const selection = await this.selectionRepository.create({
       projectId: input.projectId,
       presetSlug,
       swatches,
+      forbiddenColors,
     });
 
     await recordActivity({
