@@ -123,7 +123,7 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
             </h1>
             <p className="max-w-md text-lg leading-relaxed text-muted">{t("home.hero.body")}</p>
             <div className="flex flex-wrap gap-3">
-              <Link href="/register" className={BTN_PRIMARY}>
+              <Link href={user ? "/projects" : "/register"} className={BTN_PRIMARY}>
                 {t("home.hero.cta")}
               </Link>
               <a href="#preview" className={BTN_SECONDARY}>
@@ -302,7 +302,7 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
                   </ul>
                   {!plan.comingSoon && (
                     <Link
-                      href={plan.href}
+                      href={user ? "/projects" : plan.href}
                       className={`mt-auto flex h-[52px] items-center justify-center rounded-full text-base font-medium transition ${
                         plan.highlighted
                           ? "bg-paper text-ink hover:opacity-90"
@@ -336,7 +336,7 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
           <p className="mx-auto mt-3 max-w-md text-lg leading-relaxed text-paper/70">{t("home.finalCta.body")}</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
-              href="/register"
+              href={user ? "/projects" : "/register"}
               className="inline-flex h-[52px] items-center justify-center rounded-full bg-paper px-7 text-base font-medium text-ink transition hover:opacity-90"
             >
               {t("home.finalCta.cta")}
