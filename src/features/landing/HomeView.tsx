@@ -105,7 +105,12 @@ export interface HomeViewUser {
 }
 
 export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCode: PlanCode | null }) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
+  // 일본어는 3줄 히어로 타이틀이 64px에서 좌측 칼럼 폭을 넘어 오른쪽 목업
+  // 카드와 겹친다 -- 다른 언어보다 한 단계 작게(다른 섹션 h2와 비슷한
+  // 스케일로) 낮춰서 칼럼 안에 자연스럽게 들어오게 한다.
+  const heroTitleSize =
+    locale === "ja" ? "text-[30px] sm:text-[40px] lg:text-[48px]" : "text-[40px] sm:text-[52px] lg:text-[64px]";
 
   return (
     <div id="top" className="flex min-h-screen flex-col bg-paper">
@@ -116,7 +121,7 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
         <section className="mx-auto grid w-full max-w-6xl gap-12 px-5 py-16 sm:px-8 sm:py-20 lg:min-h-[780px] lg:grid-cols-2 lg:items-center lg:py-24">
           <div className="flex flex-col items-start gap-6">
             <p className="eyebrow text-sm text-muted">{t("home.hero.eyebrow")}</p>
-            <h1 className="text-[40px] leading-[1.08] font-semibold tracking-tight sm:text-[52px] lg:text-[64px]">
+            <h1 className={`${heroTitleSize} leading-[1.08] font-semibold tracking-tight`}>
               {t("home.hero.titleLine1")}
               <br />
               {t("home.hero.titleLine2")}

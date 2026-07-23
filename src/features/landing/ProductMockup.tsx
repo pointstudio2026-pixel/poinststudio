@@ -32,11 +32,11 @@ export function ProductMockup() {
 
   return (
     <div className="shadow-soft-lg w-full max-w-xl overflow-hidden rounded-3xl border border-line bg-surface">
-      <div className="flex items-center gap-1.5 border-b border-line px-5 py-3">
-        <span className="h-2.5 w-2.5 rounded-full bg-line" />
-        <span className="h-2.5 w-2.5 rounded-full bg-line" />
-        <span className="h-2.5 w-2.5 rounded-full bg-line" />
-        <span className="ml-3 text-xs text-muted">{t("home.mockup.workspaceTitle")}</span>
+      <div className="flex min-w-0 items-center gap-1.5 border-b border-line px-5 py-3">
+        <span className="h-2.5 w-2.5 flex-shrink-0 rounded-full bg-line" />
+        <span className="h-2.5 w-2.5 flex-shrink-0 rounded-full bg-line" />
+        <span className="h-2.5 w-2.5 flex-shrink-0 rounded-full bg-line" />
+        <span className="ml-3 min-w-0 truncate text-xs text-muted">{t("home.mockup.workspaceTitle")}</span>
       </div>
 
       <div className="flex">
@@ -53,7 +53,7 @@ export function ProductMockup() {
           ))}
         </aside>
 
-        <div className="flex-1 p-5">
+        <div className="min-w-0 flex-1 p-5">
           <div className="flex items-center justify-between">
             <p className="text-xs font-medium text-muted">{t("home.mockup.analysisResult")}</p>
             <span className="rounded-full bg-tint-blue px-2 py-0.5 text-[10px] font-medium text-ink">
