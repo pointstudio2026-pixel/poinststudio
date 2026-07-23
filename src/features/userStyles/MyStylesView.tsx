@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addUserStyleReferenceImage,
@@ -14,8 +13,18 @@ import {
 } from "@/services/user-styles-service";
 import { MAX_REFERENCES_PER_CATEGORY } from "@/modules/userStyles/domain/userStyleRules";
 import { Spinner } from "@/components/Spinner";
+import { AppHeader } from "@/features/navigation/AppHeader";
+import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 
-export function MyStylesView() {
+export function MyStylesView({
+  email,
+  name,
+  planCode,
+}: {
+  email: string;
+  name: string | null;
+  planCode: PlanCode;
+}) {
   const queryClient = useQueryClient();
   const [newCategoryName, setNewCategoryName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
@@ -93,25 +102,25 @@ export function MyStylesView() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Spinner />
+      <div className="min-h-screen bg-paper">
+        <AppHeader user={{ email, name }} planCode={planCode} />
+        <div className="flex items-center justify-center py-24">
+          <Spinner />
+        </div>
       </div>
     );
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-8">
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold">내 스타일</h1>
-          <p className="mt-1 text-sm text-neutral-500">
-            직접 참고 이미지를 등록하면, 이미지 생성 전 프로젝트의 스타일 단계에서 내 스타일로
-            선택할 수 있습니다. 계정 전체에서 재사용됩니다.
-          </p>
-        </div>
-        <Link href="/projects" className="text-sm underline">
-          내 프로젝트로
-        </Link>
+    <div className="min-h-screen bg-paper">
+      <AppHeader user={{ email, name }} planCode={planCode} />
+      <main className="mx-auto flex max-w-3xl flex-col gap-6 p-8">
+      <header>
+        <h1 className="text-xl font-semibold">내 스타일</h1>
+        <p className="mt-1 text-sm text-neutral-500">
+          직접 참고 이미지를 등록하면, 이미지 생성 전 프로젝트의 스타일 단계에서 내 스타일로
+          선택할 수 있습니다. 계정 전체에서 재사용됩니다.
+        </p>
       </header>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
@@ -215,6 +224,7 @@ export function MyStylesView() {
           })}
         </div>
       )}
-    </main>
+      </main>
+    </div>
   );
 }

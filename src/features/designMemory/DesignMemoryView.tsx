@@ -1,13 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchDesignMemory, resetDesignMemory, updateDesignMemorySettings } from "@/services/design-memory-service";
 import { MOCKUP_CATEGORY_LABELS } from "@/services/mockups-service";
 import { Spinner } from "@/components/Spinner";
+import { AppHeader } from "@/features/navigation/AppHeader";
+import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 
-export function DesignMemoryView() {
+export function DesignMemoryView({
+  email,
+  name,
+  planCode,
+}: {
+  email: string;
+  name: string | null;
+  planCode: PlanCode;
+}) {
   const queryClient = useQueryClient();
   const [actionError, setActionError] = useState<string | null>(null);
   const [isResetting, setIsResetting] = useState(false);
@@ -46,8 +55,11 @@ export function DesignMemoryView() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Spinner />
+      <div className="min-h-screen bg-paper">
+        <AppHeader user={{ email, name }} planCode={planCode} />
+        <div className="flex items-center justify-center py-24">
+          <Spinner />
+        </div>
       </div>
     );
   }
@@ -55,13 +67,10 @@ export function DesignMemoryView() {
   const profile = data?.profile;
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-8">
-      <header className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Design Memory</h1>
-        <Link href="/projects" className="text-sm underline">
-          내 프로젝트로
-        </Link>
-      </header>
+    <div className="min-h-screen bg-paper">
+      <AppHeader user={{ email, name }} planCode={planCode} />
+      <main className="mx-auto flex max-w-3xl flex-col gap-6 p-8">
+      <h1 className="text-xl font-semibold">Design Memory</h1>
 
       <p className="text-sm text-neutral-500">
         ASTER는 회원님의 스타일 선택과 수정 패턴을 참고해 다음 프로젝트에서 더 나은 추천을 제공합니다.
@@ -174,6 +183,7 @@ export function DesignMemoryView() {
           )}
         </section>
       )}
-    </main>
+      </main>
+    </div>
   );
 }

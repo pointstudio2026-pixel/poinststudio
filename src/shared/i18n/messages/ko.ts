@@ -8,7 +8,6 @@ export const ko = {
   },
   subscription: {
     title: "구독 플랜",
-    backToProjects: "내 프로젝트로",
     currentPlanLine: "현재 플랜: {plan}",
     currentPlanBadge: "현재 플랜",
     upgradeButton: "업그레이드",
@@ -32,8 +31,6 @@ export const ko = {
   },
   support: {
     title: "문의사항",
-    backToProjects: "내 프로젝트로",
-    backToHome: "메인페이지로",
     subtitle: "같은 언어로 남긴 공개 문의를 함께 볼 수 있어요.",
     newInquiry: "새 문의 작성",
     cancel: "취소",
@@ -192,7 +189,7 @@ export const ko = {
         feature1: "브랜드 프로젝트에 충분한 월간 생성 횟수",
         feature2: "내 스타일 기능",
         feature3: "목업 기능",
-        cta: "출시 알림 받기",
+        cta: "업그레이드",
       },
       studio: {
         description: "기업 및 에이전시를 위한 팀 플랜",
@@ -200,7 +197,7 @@ export const ko = {
         feature2: "내 스타일 기능",
         feature3: "목업 기능",
         feature4: "팀 기능",
-        cta: "출시 알림 받기",
+        cta: "업그레이드",
       },
     },
     faq: {
@@ -280,7 +277,7 @@ export const ko = {
   },
   authOauth: {
     or: "또는",
-    loginNotice: "Google로 로그인하시려면 먼저 회원가입을 진행해주셔야 정상적으로 로그인됩니다.",
+    loginNotice: "Google, Kakao로 로그인하시려면 먼저 회원가입을 진행해주셔야 정상적으로 로그인됩니다.",
     kakaoNotReady: "정식 출시 이후 카카오 로그인을 이용하실 수 있습니다.",
     google: "Google로 계속하기",
     kakao: "Kakao로 계속하기",

@@ -1,4 +1,5 @@
 import { requireSessionOrRedirect } from "@/shared/auth/session";
+import { authContainer } from "@/modules/auth/container";
 import { subscriptionsContainer } from "@/modules/subscriptions/container";
 import { SubscriptionView } from "@/features/subscription/SubscriptionView";
 
@@ -7,10 +8,18 @@ import { SubscriptionView } from "@/features/subscription/SubscriptionView";
 // (19_PRD_Subscription.md: "제외 - 실제 PG 결제 연동").
 export default async function SubscriptionPage() {
   const session = await requireSessionOrRedirect();
+  const user = await authContainer.getMeUseCase.execute({ userId: session.sub });
   const subscription = await subscriptionsContainer.getSubscriptionUseCase.execute({
     userId: session.sub,
   });
   const plans = subscriptionsContainer.getPlansUseCase.execute();
 
-  return <SubscriptionView currentPlanCode={subscription.planCode} plans={plans} />;
+  return (
+    <SubscriptionView
+      email={user.email}
+      name={user.name}
+      currentPlanCode={subscription.planCode}
+      plans={plans}
+    />
+  );
 }

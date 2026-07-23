@@ -6,47 +6,44 @@ import type { MessageKey } from "@/shared/i18n/messages/types";
 
 export type PaymentMethod = "toss" | "kakaopay" | "paypal";
 
+/**
+ * Toss/KakaoPay/PayPal 모두 아이콘 심볼 대신 실제 브랜드 컬러의 워드마크
+ * 배지로 표시한다 -- 이전에는 로고 형태를 직접 손으로 근사해서 그렸는데
+ * 실물과 다르게 보인다는 피드백을 받았다. 아이콘 도형을 다시 추정하는
+ * 대신, 훨씬 알아보기 쉽고 정확한 "실제 브랜드명 + 실제 브랜드 컬러"
+ * 조합으로 바꿨다("~로 결제/로그인" 버튼에 상표를 노출하는 것은 업계
+ * 표준 관행이라 문제 없음).
+ */
 function TossIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden>
-      <rect width="20" height="20" rx="6" fill="#1B64DA" />
-      <path
-        d="M6 10.3l2.6 2.6L14.5 7"
-        fill="none"
-        stroke="#fff"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <span
+      className="flex h-5 min-w-5 items-center justify-center rounded px-1 text-[11px] font-bold lowercase tracking-tight text-white"
+      style={{ backgroundColor: "#0064FF" }}
+      aria-hidden
+    >
+      toss
+    </span>
   );
 }
 
 function KakaoPayIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden>
-      <rect width="20" height="20" rx="6" fill="#FFE812" />
-      <circle cx="10" cy="10" r="5" fill="#3C1E1E" />
-      <text x="10" y="12.8" fontSize="6.5" fontWeight="700" fill="#FFE812" textAnchor="middle">
-        ₩
-      </text>
-    </svg>
+    <span
+      className="flex h-5 min-w-5 items-center justify-center rounded px-1 text-[11px] font-bold lowercase tracking-tight text-[#3C1E1E]"
+      style={{ backgroundColor: "#FFE812" }}
+      aria-hidden
+    >
+      pay
+    </span>
   );
 }
 
 function PayPalIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden>
-      <rect width="20" height="20" rx="6" fill="#003087" />
-      <path
-        d="M7 14.5l1.1-7h2.6c1.7 0 2.7.8 2.4 2.3-.3 1.6-1.6 2.4-3.2 2.4H8.6l-.4 2.3H7z"
-        fill="#009CDE"
-      />
-      <path
-        d="M5.8 14.5l1.1-7h2.6c1.7 0 2.7.8 2.4 2.3-.3 1.6-1.6 2.4-3.2 2.4H7.4l-.4 2.3H5.8z"
-        fill="#fff"
-      />
-    </svg>
+    <span className="flex h-5 min-w-5 items-center justify-center text-[11px] font-bold italic" aria-hidden>
+      <span style={{ color: "#003087" }}>Pay</span>
+      <span style={{ color: "#009CDE" }}>Pal</span>
+    </span>
   );
 }
 

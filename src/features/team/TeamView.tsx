@@ -6,12 +6,17 @@ import { useRouter } from "next/navigation";
 import { registerTeam, joinTeam, type TeamDto, type TeamMembershipDto } from "@/services/team-service";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 import { Spinner } from "@/components/Spinner";
+import { AppHeader } from "@/features/navigation/AppHeader";
 
 export function TeamView({
+  email,
+  name,
   planCode,
   ownedTeam,
   memberships,
 }: {
+  email: string;
+  name: string | null;
   planCode: PlanCode;
   ownedTeam: TeamDto | null;
   memberships: TeamMembershipDto[];
@@ -56,13 +61,10 @@ export function TeamView({
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 p-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">팀</h1>
-        <Link href="/projects" className="text-sm underline">
-          내 프로젝트로
-        </Link>
-      </div>
+    <div className="min-h-screen bg-paper">
+      <AppHeader user={{ email, name }} planCode={planCode} />
+      <main className="mx-auto flex max-w-2xl flex-col gap-6 p-8">
+      <h1 className="text-xl font-semibold">팀</h1>
 
       <section className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-4">
         <p className="text-sm font-medium">내 팀</p>
@@ -126,6 +128,7 @@ export function TeamView({
           {memberships.length > 0 ? `현재 ${memberships.length}개 팀에 참여 중이에요.` : "아직 참여한 팀이 없어요."}
         </p>
       </section>
-    </main>
+      </main>
+    </div>
   );
 }

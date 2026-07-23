@@ -10,7 +10,6 @@ export const en: Messages = {
   },
   subscription: {
     title: "Subscription Plans",
-    backToProjects: "Back to my projects",
     currentPlanLine: "Current plan: {plan}",
     currentPlanBadge: "Current plan",
     upgradeButton: "Upgrade",
@@ -34,8 +33,6 @@ export const en: Messages = {
   },
   support: {
     title: "Support",
-    backToProjects: "Back to my projects",
-    backToHome: "Back to homepage",
     subtitle: "You can also see public inquiries posted in your language.",
     newInquiry: "New inquiry",
     cancel: "Cancel",
@@ -194,7 +191,7 @@ export const en: Messages = {
         feature1: "Ample monthly generations for brand projects",
         feature2: "My Styles feature",
         feature3: "Mockups feature",
-        cta: "Get launch notification",
+        cta: "Upgrade",
       },
       studio: {
         description: "A team plan for companies and agencies",
@@ -202,7 +199,7 @@ export const en: Messages = {
         feature2: "My Styles feature",
         feature3: "Mockups feature",
         feature4: "Team features",
-        cta: "Get launch notification",
+        cta: "Upgrade",
       },
     },
     faq: {
@@ -282,7 +279,7 @@ export const en: Messages = {
   },
   authOauth: {
     or: "or",
-    loginNotice: "To sign in with Google, you'll need to register first for it to work.",
+    loginNotice: "To sign in with Google or Kakao, you'll need to register first for it to work.",
     kakaoNotReady: "Kakao login will be available after the official launch.",
     google: "Continue with Google",
     kakao: "Continue with Kakao",

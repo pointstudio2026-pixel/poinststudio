@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { fetchDashboard } from "@/services/dashboard-service";
-import { PrimaryNav } from "@/features/navigation/PrimaryNav";
+import { AppHeader } from "@/features/navigation/AppHeader";
 import { NewProjectButton } from "@/features/projects/NewProjectButton";
 import { UsageWidget } from "@/features/subscription/UsageWidget";
 import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
@@ -51,21 +51,14 @@ export function ProjectsView({
 
   return (
     <div className="min-h-screen bg-paper">
-      <header className="flex items-center justify-between border-b border-line px-8 py-5">
-        <Link href="/" className="shrink-0">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/aster-mark.png" alt="ASTER" className="h-8 w-auto" />
+      <AppHeader user={{ email, name }} planCode={data?.subscription.planCode ?? "free"}>
+        <Link
+          href="/design-memory"
+          className="whitespace-nowrap rounded-full border border-line px-3 py-1.5 text-xs transition hover:border-ink"
+        >
+          {t("dashboard.designMemory")}
         </Link>
-        <div className="flex items-center gap-2">
-          <Link
-            href="/design-memory"
-            className="whitespace-nowrap rounded-full border border-line px-3 py-1.5 text-xs transition hover:border-ink"
-          >
-            {t("dashboard.designMemory")}
-          </Link>
-          <PrimaryNav user={{ email, name }} planCode={data?.subscription.planCode ?? "free"} />
-        </div>
-      </header>
+      </AppHeader>
 
       <EmailVerificationBanner emailVerified={emailVerified} />
 

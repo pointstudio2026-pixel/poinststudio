@@ -32,7 +32,7 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
         <Link href="/" className="shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/aster-wordmark.png" alt="ASTER" className="h-6 w-auto sm:h-7" />
+          <img src="/brand/aster-full.png" alt="ASTER" className="h-7 w-auto sm:h-8" />
         </Link>
 
         <nav className="hidden items-center gap-4 text-xs text-muted lg:flex">

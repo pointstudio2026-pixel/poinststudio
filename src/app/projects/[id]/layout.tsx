@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireSessionOrRedirect } from "@/shared/auth/session";
 import { authContainer } from "@/modules/auth/container";
@@ -6,7 +5,7 @@ import { projectsContainer } from "@/modules/projects/container";
 import { subscriptionsContainer } from "@/modules/subscriptions/container";
 import { NotFoundError } from "@/shared/errors/AppError";
 import { ProjectSidebar } from "@/features/workspace/ProjectSidebar";
-import { PrimaryNav } from "@/features/navigation/PrimaryNav";
+import { AppHeader } from "@/features/navigation/AppHeader";
 import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 
 /**
@@ -45,13 +44,7 @@ export default async function ProjectLayout({
 
   return (
     <div className="min-h-screen bg-paper">
-      <header className="flex h-16 items-center justify-between border-b border-line px-5 sm:px-8">
-        <Link href="/" className="shrink-0">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/aster-mark.png" alt="ASTER" className="h-8 w-auto" />
-        </Link>
-        <PrimaryNav user={{ email: user.email, name: user.name }} planCode={subscription.planCode} />
-      </header>
+      <AppHeader user={{ email: user.email, name: user.name }} planCode={subscription.planCode} />
 
       <EmailVerificationBanner emailVerified={user.emailVerified} />
 

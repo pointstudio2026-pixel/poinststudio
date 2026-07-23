@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,6 +11,8 @@ import {
 } from "@/modules/auth/schemas/auth.schemas";
 import { updateProfile, changePassword } from "@/services/auth-service";
 import { Spinner } from "@/components/Spinner";
+import { AppHeader } from "@/features/navigation/AppHeader";
+import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 
 const changePasswordFormSchema = changePasswordSchema
   .extend({ confirmPassword: z.string().min(1, "새 비밀번호를 다시 입력해주세요.") })
@@ -25,19 +26,18 @@ export function MyInfoView({
   email,
   initialName,
   hasPassword,
+  planCode,
 }: {
   email: string;
   initialName: string | null;
   hasPassword: boolean;
+  planCode: PlanCode;
 }) {
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 p-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">내 정보</h1>
-        <Link href="/projects" className="text-sm underline">
-          내 프로젝트로
-        </Link>
-      </div>
+    <div className="min-h-screen bg-paper">
+      <AppHeader user={{ email, name: initialName }} planCode={planCode} />
+      <main className="mx-auto flex max-w-2xl flex-col gap-6 p-8">
+      <h1 className="text-xl font-semibold">내 정보</h1>
 
       <section className="flex flex-col gap-2 rounded-lg border border-neutral-200 p-4">
         <p className="text-sm text-neutral-500">이메일</p>
@@ -56,7 +56,8 @@ export function MyInfoView({
           </p>
         </section>
       )}
-    </main>
+      </main>
+    </div>
   );
 }
 

@@ -1,5 +1,7 @@
 import { requireSessionOrRedirect } from "@/shared/auth/session";
 import { inquiriesContainer } from "@/modules/inquiries/container";
+import { authContainer } from "@/modules/auth/container";
+import { subscriptionsContainer } from "@/modules/subscriptions/container";
 import { AppError } from "@/shared/errors/AppError";
 import { InquiryDetailView } from "@/features/support/InquiryDetailView";
 
@@ -27,7 +29,19 @@ async function loadInquiry(id: string, userId: string, userRole: "designer" | "a
 export default async function InquiryDetailPage({ params }: PageParams) {
   const session = await requireSessionOrRedirect();
   const { id } = await params;
-  const { inquiry, errorCode } = await loadInquiry(id, session.sub, session.role);
+  const [{ inquiry, errorCode }, user, subscription] = await Promise.all([
+    loadInquiry(id, session.sub, session.role),
+    authContainer.getMeUseCase.execute({ userId: session.sub }),
+    subscriptionsContainer.getSubscriptionUseCase.execute({ userId: session.sub }),
+  ]);
 
-  return <InquiryDetailView inquiry={inquiry} errorCode={errorCode} />;
+  return (
+    <InquiryDetailView
+      inquiry={inquiry}
+      errorCode={errorCode}
+      email={user.email}
+      name={user.name}
+      planCode={subscription.planCode}
+    />
+  );
 }

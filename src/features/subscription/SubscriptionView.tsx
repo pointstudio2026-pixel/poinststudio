@@ -1,15 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
+import { AppHeader } from "@/features/navigation/AppHeader";
 import { PaymentMethodModal } from "@/features/subscription/PaymentMethodModal";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { MessageKey } from "@/shared/i18n/messages/types";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
+import { getPlanPrice } from "@/modules/subscriptions/domain/planPricing";
 
 const PLAN_LABELS: Record<PlanCode, string> = { free: "Free", pro: "Pro", studio: "Studio" };
-const PLAN_PRICES: Record<PlanCode, string> = { free: "₩0", pro: "₩29,000", studio: "₩99,000" };
 const ALLOWANCE_KEYS: Record<PlanCode, MessageKey> = {
   free: "subscription.allowance.free",
   pro: "subscription.allowance.pro",
@@ -24,26 +23,24 @@ interface PlanRow {
 }
 
 export function SubscriptionView({
+  email,
+  name,
   currentPlanCode,
   plans,
 }: {
+  email: string;
+  name: string | null;
   currentPlanCode: PlanCode;
   plans: PlanRow[];
 }) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [paymentModalPlan, setPaymentModalPlan] = useState<PlanCode | null>(null);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 bg-paper p-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{t("subscription.title")}</h1>
-        <div className="flex items-center gap-3">
-          <Link href="/projects" className="text-sm underline">
-            {t("subscription.backToProjects")}
-          </Link>
-          <LanguageSwitcher />
-        </div>
-      </div>
+    <div className="min-h-screen bg-paper">
+      <AppHeader user={{ email, name }} planCode={currentPlanCode} />
+      <main className="mx-auto flex max-w-4xl flex-col gap-6 p-8">
+      <h1 className="text-xl font-semibold">{t("subscription.title")}</h1>
       <p className="text-sm text-muted">
         {t("subscription.currentPlanLine", { plan: PLAN_LABELS[currentPlanCode] })}
       </p>
@@ -71,7 +68,7 @@ export function SubscriptionView({
                   {PLAN_LABELS[plan.planCode]}
                 </p>
                 <p className="mt-2 text-3xl font-semibold">
-                  {PLAN_PRICES[plan.planCode]}
+                  {getPlanPrice(plan.planCode, locale)}
                   <span className="text-base font-normal">{t("common.perMonth")}</span>
                 </p>
               </div>
@@ -116,6 +113,7 @@ export function SubscriptionView({
       {paymentModalPlan && (
         <PaymentMethodModal planLabel={PLAN_LABELS[paymentModalPlan]} onClose={() => setPaymentModalPlan(null)} />
       )}
-    </main>
+      </main>
+    </div>
   );
 }

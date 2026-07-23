@@ -8,10 +8,20 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { submitInquirySchema, type SubmitInquiryInput } from "@/modules/inquiries/schemas/inquiry.schemas";
 import { submitInquiry, fetchInquiries } from "@/services/inquiry-service";
 import { Spinner } from "@/components/Spinner";
+import { AppHeader } from "@/features/navigation/AppHeader";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import { INTL_LOCALE } from "@/shared/i18n/locale";
+import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 
-export function SupportView() {
+export function SupportView({
+  email,
+  name,
+  planCode,
+}: {
+  email: string;
+  name: string | null;
+  planCode: PlanCode;
+}) {
   const { t, locale } = useTranslation();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
@@ -45,17 +55,11 @@ export function SupportView() {
   });
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 p-8">
+    <div className="min-h-screen bg-paper">
+      <AppHeader user={{ email, name }} planCode={planCode} />
+      <main className="mx-auto flex max-w-2xl flex-col gap-6 p-8">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{t("support.title")}</h1>
-        <div className="flex items-center gap-3">
-          <Link href="/" className="text-sm underline">
-            {t("support.backToHome")}
-          </Link>
-          <Link href="/projects" className="text-sm underline">
-            {t("support.backToProjects")}
-          </Link>
-        </div>
       </div>
 
       <div className="flex items-center justify-between">
@@ -138,6 +142,7 @@ export function SupportView() {
           </li>
         ))}
       </ul>
-    </main>
+      </main>
+    </div>
   );
 }

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import { INTL_LOCALE } from "@/shared/i18n/locale";
 import { inquiryErrorMessage } from "@/features/support/inquiryErrorMessage";
+import { AppHeader } from "@/features/navigation/AppHeader";
+import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 
 interface InquiryDetailDto {
   subject: string;
@@ -15,14 +17,22 @@ interface InquiryDetailDto {
 export function InquiryDetailView({
   inquiry,
   errorCode,
+  email,
+  name,
+  planCode,
 }: {
   inquiry: InquiryDetailDto | null;
   errorCode: string | undefined;
+  email: string;
+  name: string | null;
+  planCode: PlanCode;
 }) {
   const { t, locale } = useTranslation();
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 p-8">
+    <div className="min-h-screen bg-paper">
+      <AppHeader user={{ email, name }} planCode={planCode} />
+      <main className="mx-auto flex max-w-2xl flex-col gap-6 p-8">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{t("support.title")}</h1>
         <Link href="/support" className="text-sm underline">
@@ -52,6 +62,7 @@ export function InquiryDetailView({
           {t(inquiryErrorMessage(errorCode))}
         </div>
       )}
-    </main>
+      </main>
+    </div>
   );
 }

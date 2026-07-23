@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Header } from "@/features/landing/Header";
+import { AppHeader } from "@/features/navigation/AppHeader";
 import { Footer } from "@/features/landing/Footer";
 import { getCurrentSession } from "@/shared/auth/session";
 import { authContainer } from "@/modules/auth/container";
@@ -15,10 +16,11 @@ export default async function GuidePage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-paper">
-      <Header
-        user={user ? { email: user.email, name: user.name } : null}
-        planCode={subscription?.planCode ?? null}
-      />
+      {user ? (
+        <AppHeader user={{ email: user.email, name: user.name }} planCode={subscription?.planCode ?? "free"} />
+      ) : (
+        <Header user={null} planCode={null} />
+      )}
 
       <main className="mx-auto flex w-full max-w-3xl flex-col gap-16 px-5 py-16 sm:px-8 sm:py-24">
         <div className="flex flex-col gap-3">

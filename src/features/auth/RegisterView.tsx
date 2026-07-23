@@ -16,7 +16,7 @@ export function RegisterView() {
       </div>
       <Link href="/">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/brand/aster-mark.png" alt="ASTER" className="h-9 w-auto" />
+        <img src="/brand/aster-full.png" alt="ASTER" className="h-8 w-auto" />
       </Link>
       <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-8">
         <p className="eyebrow text-sm text-muted">{t("register.getStarted")}</p>

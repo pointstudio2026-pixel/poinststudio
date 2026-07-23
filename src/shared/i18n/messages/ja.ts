@@ -10,7 +10,6 @@ export const ja: Messages = {
   },
   subscription: {
     title: "料金プラン",
-    backToProjects: "マイプロジェクトへ",
     currentPlanLine: "現在のプラン: {plan}",
     currentPlanBadge: "現在のプラン",
     upgradeButton: "アップグレード",
@@ -34,8 +33,6 @@ export const ja: Messages = {
   },
   support: {
     title: "お問い合わせ",
-    backToProjects: "マイプロジェクトへ",
-    backToHome: "トップページへ",
     subtitle: "同じ言語で投稿された公開の問い合わせも確認できます。",
     newInquiry: "新しい問い合わせを作成",
     cancel: "キャンセル",
@@ -194,7 +191,7 @@ export const ja: Messages = {
         feature1: "ブランドプロジェクトに十分な月間生成回数",
         feature2: "マイスタイル機能",
         feature3: "モックアップ機能",
-        cta: "リリース通知を受け取る",
+        cta: "アップグレード",
       },
       studio: {
         description: "企業・エージェンシー向けチームプラン",
@@ -202,7 +199,7 @@ export const ja: Messages = {
         feature2: "マイスタイル機能",
         feature3: "モックアップ機能",
         feature4: "チーム機能",
-        cta: "リリース通知を受け取る",
+        cta: "アップグレード",
       },
     },
     faq: {
@@ -282,7 +279,7 @@ export const ja: Messages = {
   },
   authOauth: {
     or: "または",
-    loginNotice: "Googleでログインするには、先に会員登録が必要です。",
+    loginNotice: "Google・Kakaoでログインするには、先に会員登録が必要です。",
     kakaoNotReady: "Kakaoログインは正式サービス開始後にご利用いただけます。",
     google: "Googleで続ける",
     kakao: "Kakaoで続ける",

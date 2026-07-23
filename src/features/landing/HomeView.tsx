@@ -12,6 +12,7 @@ import { PaymentMethodModal } from "@/features/subscription/PaymentMethodModal";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { MessageKey } from "@/shared/i18n/messages/types";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
+import { getPlanPrice } from "@/modules/subscriptions/domain/planPricing";
 import {
   IconBranch,
   IconChat,
@@ -54,7 +55,7 @@ const EXPERTS = [
 const PLANS = [
   {
     code: "Free",
-    price: "₩0",
+    planCode: "free",
     descriptionKey: "home.pricing.free.description",
     featureKeys: ["home.pricing.free.feature1", "home.pricing.free.feature2"],
     ctaKey: "home.pricing.free.cta",
@@ -65,7 +66,7 @@ const PLANS = [
   },
   {
     code: "Pro",
-    price: "₩29,000",
+    planCode: "pro",
     descriptionKey: "home.pricing.pro.description",
     featureKeys: ["home.pricing.pro.feature1", "home.pricing.pro.feature2", "home.pricing.pro.feature3"],
     ctaKey: "home.pricing.pro.cta",
@@ -76,7 +77,7 @@ const PLANS = [
   },
   {
     code: "Studio",
-    price: "₩99,000",
+    planCode: "studio",
     descriptionKey: "home.pricing.studio.description",
     featureKeys: [
       "home.pricing.studio.feature1",
@@ -92,7 +93,7 @@ const PLANS = [
   },
 ] as const satisfies {
   code: string;
-  price: string;
+  planCode: PlanCode;
   descriptionKey: MessageKey;
   featureKeys: MessageKey[];
   ctaKey: MessageKey;
@@ -296,7 +297,7 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
                       {plan.code}
                     </p>
                     <p className="font-display mt-2 text-3xl font-semibold tabular-nums">
-                      {plan.price}
+                      {getPlanPrice(plan.planCode, locale)}
                       <span className="font-sans text-base font-normal">{t("common.perMonth")}</span>
                     </p>
                     <p className={`mt-1 text-sm ${plan.highlighted ? "text-paper/70" : "text-muted"}`}>
