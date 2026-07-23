@@ -46,7 +46,7 @@ export function SubscriptionView({
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 p-8">
+    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 bg-paper p-8">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{t("subscription.title")}</h1>
         <div className="flex items-center gap-3">
@@ -56,39 +56,66 @@ export function SubscriptionView({
           <LanguageSwitcher />
         </div>
       </div>
-      <p className="text-sm text-neutral-500">
+      <p className="text-sm text-muted">
         {t("subscription.currentPlanLine", { plan: PLAN_LABELS[currentPlanCode] })}
       </p>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      {/* 메인페이지 요금제 섹션(PLANS in HomeView.tsx)과 동일한 카드 디자인 --
+          단 여기는 실제 사용자 데이터(현재 플랜/실제 한도)를 보여준다. */}
+      <div className="grid items-stretch gap-6 sm:grid-cols-3">
         {plans.map((plan) => {
           const isCurrent = plan.planCode === currentPlanCode;
+          const highlighted = plan.planCode === "pro";
           return (
             <div
               key={plan.planCode}
-              className={`rounded-lg border p-4 ${isCurrent ? "border-neutral-900" : "border-neutral-200"}`}
+              className={`shadow-soft relative flex h-full flex-col gap-5 rounded-2xl border p-7 text-left ${
+                highlighted ? "border-ink bg-ink text-paper" : "border-line bg-paper"
+              } ${isCurrent ? "ring-2 ring-ink ring-offset-2 ring-offset-paper" : ""}`}
             >
-              <h2 className="font-medium">{PLAN_LABELS[plan.planCode]}</h2>
-              <p className="mt-1 text-lg font-semibold">
-                {PLAN_PRICES[plan.planCode]}
-                {t("common.perMonth")}
-              </p>
-              <p className="mt-2 text-sm text-neutral-500">
-                {t(ALLOWANCE_KEYS[plan.planCode], { limit: plan.monthlyGenerationLimit })}
-              </p>
-              <p className="text-sm text-neutral-500">
-                {plan.maxResolution === "high" ? t("subscription.highRes") : t("subscription.standardRes")}
-              </p>
-              <p className="text-sm text-neutral-500">
-                {plan.priorityQueue ? t("subscription.priorityQueue") : t("subscription.standardQueue")}
-              </p>
+              {highlighted && (
+                <span className="absolute -top-3 right-6 rounded-full bg-paper px-3 py-1 text-xs font-medium text-ink shadow-soft">
+                  {t("home.pricing.popular")}
+                </span>
+              )}
+              <div>
+                <p className={`eyebrow text-sm ${highlighted ? "text-paper/70" : "text-muted"}`}>
+                  {PLAN_LABELS[plan.planCode]}
+                </p>
+                <p className="mt-2 text-3xl font-semibold">
+                  {PLAN_PRICES[plan.planCode]}
+                  <span className="text-base font-normal">{t("common.perMonth")}</span>
+                </p>
+              </div>
+              <ul className="flex flex-1 flex-col gap-2 text-base">
+                <li className="flex items-center gap-2">
+                  <span aria-hidden>·</span>
+                  {t(ALLOWANCE_KEYS[plan.planCode], { limit: plan.monthlyGenerationLimit })}
+                </li>
+                <li className="flex items-center gap-2">
+                  <span aria-hidden>·</span>
+                  {plan.maxResolution === "high" ? t("subscription.highRes") : t("subscription.standardRes")}
+                </li>
+                <li className="flex items-center gap-2">
+                  <span aria-hidden>·</span>
+                  {plan.priorityQueue ? t("subscription.priorityQueue") : t("subscription.standardQueue")}
+                </li>
+              </ul>
               {isCurrent ? (
-                <p className="mt-4 text-center text-sm text-neutral-400">{t("subscription.currentPlanBadge")}</p>
+                <p
+                  className={`mt-auto flex h-[52px] items-center justify-center rounded-full border text-base font-medium ${
+                    highlighted ? "border-paper/30 text-paper/70" : "border-line text-muted"
+                  }`}
+                >
+                  {t("subscription.currentPlanBadge")}
+                </p>
               ) : (
                 <button
                   type="button"
                   onClick={() => setPaymentModalPlan(plan.planCode)}
-                  className="mt-4 w-full rounded-md bg-neutral-900 px-4 py-2 text-center text-sm text-white transition hover:opacity-90"
+                  className={`mt-auto flex h-[52px] items-center justify-center rounded-full text-base font-medium transition ${
+                    highlighted ? "bg-paper text-ink hover:opacity-90" : "border border-line hover:border-ink"
+                  }`}
                 >
                   {t("subscription.upgradeButton")}
                 </button>
@@ -99,9 +126,9 @@ export function SubscriptionView({
       </div>
 
       {paymentModalPlan && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 p-8" onClick={closeModal}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-8" onClick={closeModal}>
           <div
-            className="w-full max-w-sm rounded-lg border border-neutral-200 bg-white p-6"
+            className="w-full max-w-sm rounded-2xl border border-line bg-paper p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-base font-semibold">
@@ -114,10 +141,8 @@ export function SubscriptionView({
                   key={method.key}
                   type="button"
                   onClick={() => setSelectedMethod(method.key)}
-                  className={`rounded-md border px-4 py-2.5 text-left text-sm transition ${
-                    selectedMethod === method.key
-                      ? "border-neutral-900 bg-neutral-50"
-                      : "border-neutral-200 hover:border-neutral-900"
+                  className={`rounded-lg border px-4 py-2.5 text-left text-sm transition ${
+                    selectedMethod === method.key ? "border-ink bg-surface" : "border-line hover:border-ink"
                   }`}
                 >
                   {t(method.labelKey)}
@@ -126,7 +151,7 @@ export function SubscriptionView({
             </div>
 
             {selectedMethod && (
-              <p className="mt-4 rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-800">
+              <p className="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
                 {t("subscription.paymentModal.notReady")}
               </p>
             )}
@@ -134,7 +159,7 @@ export function SubscriptionView({
             <button
               type="button"
               onClick={closeModal}
-              className="mt-4 w-full rounded-md border border-neutral-300 px-4 py-2 text-sm"
+              className="mt-4 w-full rounded-lg border border-line px-4 py-2 text-sm"
             >
               {t("subscription.paymentModal.close")}
             </button>
