@@ -48,7 +48,7 @@ export default async function ProjectLayout({
 
       <EmailVerificationBanner emailVerified={user.emailVerified} />
 
-      <div className="grid gap-8 px-5 py-8 sm:px-8 sm:py-10 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12 lg:px-10">
+      <div className="mx-auto grid max-w-6xl gap-8 px-5 py-8 sm:px-8 sm:py-10 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12 lg:px-10">
         <ProjectSidebar
           projectId={id}
           currentStep={currentStep}
