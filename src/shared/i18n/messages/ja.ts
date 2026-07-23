@@ -73,7 +73,6 @@ export const ja: Messages = {
       navPreview: "制作例",
       navPricing: "料金プラン",
       navFaq: "よくある質問",
-      navSupport: "お問い合わせ",
       login: "ログイン",
       getStarted: "無料で始める",
       menuOpen: "メニューを開く",

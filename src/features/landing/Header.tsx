@@ -16,7 +16,6 @@ const NAV_LINKS: { href: string; labelKey: MessageKey }[] = [
   { href: "#preview", labelKey: "home.header.navPreview" },
   { href: "#pricing", labelKey: "home.header.navPricing" },
   { href: "#faq", labelKey: "home.header.navFaq" },
-  { href: "/support", labelKey: "home.header.navSupport" },
 ];
 
 export interface HeaderUser {

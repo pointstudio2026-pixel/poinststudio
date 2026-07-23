@@ -71,7 +71,6 @@ export const ko = {
       navPreview: "결과 예시",
       navPricing: "요금제",
       navFaq: "FAQ",
-      navSupport: "문의하기",
       login: "로그인",
       getStarted: "무료로 시작하기",
       menuOpen: "메뉴 열기",

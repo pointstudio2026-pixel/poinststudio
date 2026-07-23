@@ -73,7 +73,6 @@ export const en: Messages = {
       navPreview: "Results",
       navPricing: "Pricing",
       navFaq: "FAQ",
-      navSupport: "Contact",
       login: "Log in",
       getStarted: "Start for free",
       menuOpen: "Open menu",
