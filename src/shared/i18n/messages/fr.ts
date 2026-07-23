@@ -24,7 +24,7 @@ export const fr: Messages = {
     },
     paymentModal: {
       title: "Choisissez un mode de paiement pour l'offre {plan}",
-      toss: "Toss Pay",
+      card: "Carte bancaire",
       kakaopay: "Kakao Pay",
       paypal: "PayPal",
       notReady: "Le paiement sera disponible après le lancement officiel.",

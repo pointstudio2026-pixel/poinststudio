@@ -22,7 +22,7 @@ export const ko = {
     },
     paymentModal: {
       title: "{plan} 플랜 결제 수단 선택",
-      toss: "Toss페이",
+      card: "카드결제",
       kakaopay: "카카오페이",
       paypal: "PayPal",
       notReady: "정식 서비스 출시 이후 결제 가능합니다.",

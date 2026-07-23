@@ -4,25 +4,29 @@ import { useState } from "react";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { MessageKey } from "@/shared/i18n/messages/types";
 
-export type PaymentMethod = "toss" | "kakaopay" | "paypal";
+export type PaymentMethod = "card" | "kakaopay" | "paypal";
 
 /**
- * Toss/KakaoPay/PayPal 모두 아이콘 심볼 대신 실제 브랜드 컬러의 워드마크
+ * 실제 연동 예정: card -> 포트원(카드 정기결제), kakaopay -> 카카오페이
+ * 자체 API(정기결제 전용 CID), paypal -> PayPal Subscriptions API. 지금은
+ * 사업자 등록/API 키가 없어 셋 다 버튼을 눌러도 notReady 안내만 뜬다.
+ * 나중에 실제 연동할 때는 이 파일의 각 버튼 onClick을 해당 SDK/결제창
+ * 호출로 교체하면 된다 -- 버튼 구성·라벨·아이콘은 그대로 재사용 가능.
+ *
+ * 카카오페이/PayPal은 아이콘 심볼 대신 실제 브랜드 컬러의 워드마크
  * 배지로 표시한다 -- 이전에는 로고 형태를 직접 손으로 근사해서 그렸는데
  * 실물과 다르게 보인다는 피드백을 받았다. 아이콘 도형을 다시 추정하는
  * 대신, 훨씬 알아보기 쉽고 정확한 "실제 브랜드명 + 실제 브랜드 컬러"
  * 조합으로 바꿨다("~로 결제/로그인" 버튼에 상표를 노출하는 것은 업계
- * 표준 관행이라 문제 없음).
+ * 표준 관행이라 문제 없음). 카드결제는 특정 브랜드가 아니라 범용
+ * 카드 아이콘을 쓴다.
  */
-function TossIcon() {
+function CardIcon() {
   return (
-    <span
-      className="flex h-5 min-w-5 items-center justify-center rounded px-1 text-[11px] font-bold lowercase tracking-tight text-white"
-      style={{ backgroundColor: "#0064FF" }}
-      aria-hidden
-    >
-      toss
-    </span>
+    <svg width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden>
+      <rect x="0.5" y="0.5" width="19" height="13" rx="2" stroke="currentColor" />
+      <rect x="0.5" y="3.5" width="19" height="2.5" fill="currentColor" />
+    </svg>
   );
 }
 
@@ -48,15 +52,21 @@ function PayPalIcon() {
 }
 
 const PAYMENT_METHODS: { key: PaymentMethod; labelKey: MessageKey; Icon: () => React.JSX.Element }[] = [
-  { key: "toss", labelKey: "subscription.paymentModal.toss", Icon: TossIcon },
+  { key: "card", labelKey: "subscription.paymentModal.card", Icon: CardIcon },
   { key: "kakaopay", labelKey: "subscription.paymentModal.kakaopay", Icon: KakaoPayIcon },
   { key: "paypal", labelKey: "subscription.paymentModal.paypal", Icon: PayPalIcon },
 ];
 
+/** 카카오페이는 국내 전용, PayPal은 해외 결제까지 커버 -- 한국어 로케일에서만 카드/카카오페이를 같이 보여주고, 나머지 로케일은 PayPal만 보여준다. */
+const KOREAN_LOCALE_METHODS: PaymentMethod[] = ["card", "kakaopay", "paypal"];
+const OTHER_LOCALE_METHODS: PaymentMethod[] = ["paypal"];
+
 /** SubscriptionView와 홈페이지 요금제 섹션이 공유하는 결제 수단 선택 모달 -- 실제 결제 연동 전, "정식 출시 이후" 안내만 보여준다. */
 export function PaymentMethodModal({ planLabel, onClose }: { planLabel: string; onClose: () => void }) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
+  const visibleKeys = locale === "ko" ? KOREAN_LOCALE_METHODS : OTHER_LOCALE_METHODS;
+  const visibleMethods = PAYMENT_METHODS.filter((m) => visibleKeys.includes(m.key));
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-8" onClick={onClose}>
@@ -64,7 +74,7 @@ export function PaymentMethodModal({ planLabel, onClose }: { planLabel: string; 
         <h2 className="text-base font-semibold">{t("subscription.paymentModal.title", { plan: planLabel })}</h2>
 
         <div className="mt-4 flex flex-col gap-2">
-          {PAYMENT_METHODS.map(({ key, labelKey, Icon }) => (
+          {visibleMethods.map(({ key, labelKey, Icon }) => (
             <button
               key={key}
               type="button"
