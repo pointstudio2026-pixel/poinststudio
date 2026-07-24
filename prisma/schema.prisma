@@ -228,6 +228,9 @@ model Style {
   keywords    String[]
   description String
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  // 무드 참고 이미지(대분류/중분류=null, 실제 선택 가능한 소분류만 채워짐) --
+  // LogoStyleCategory.sampleImageUrl과 동일한 관례, 정적 /public 경로.
+  sampleImageUrl String? @map("sample_image_url")
 
   primarySelections StyleSelection[] @relation("PrimaryStyle")
   favoritedBy       StyleFavorite[]

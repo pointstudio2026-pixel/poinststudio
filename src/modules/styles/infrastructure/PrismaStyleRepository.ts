@@ -11,6 +11,7 @@ function toStyle(row: {
   category: string;
   keywords: string[];
   description: string;
+  sampleImageUrl: string | null;
 }): Style {
   return {
     id: row.id,
@@ -21,6 +22,7 @@ function toStyle(row: {
     category: row.category,
     keywords: row.keywords,
     description: row.description,
+    sampleImageUrl: row.sampleImageUrl,
   };
 }
 

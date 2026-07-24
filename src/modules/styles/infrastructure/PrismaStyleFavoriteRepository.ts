@@ -35,6 +35,7 @@ export class PrismaStyleFavoriteRepository implements StyleFavoriteRepository {
       category: row.style.category,
       keywords: row.style.keywords,
       description: row.style.description,
+      sampleImageUrl: row.style.sampleImageUrl,
     }));
   }
 }

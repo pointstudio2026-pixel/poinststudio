@@ -51,6 +51,7 @@ const PRIMARY_STYLE: Style = {
   category: "Minimal",
   keywords: ["미니멀"],
   description: "설명",
+  sampleImageUrl: null,
 };
 
 describe("composeConceptBoardData", () => {

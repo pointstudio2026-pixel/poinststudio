@@ -9,6 +9,7 @@ export interface StyleDto {
   category: string;
   keywords: string[];
   description: string;
+  sampleImageUrl: string | null;
 }
 
 export interface StyleRecommendationDto {

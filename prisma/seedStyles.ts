@@ -199,6 +199,9 @@ async function main() {
       for (const modifier of L3_MODIFIERS) {
         const l3Name = `${l2.name} ${modifier.name}`;
         const l3Slug = slugify(l1.slug, l2.slug, modifier.slug);
+        // 무드 참고 이미지 -- 파일명이 l3Slug와 정확히 일치해야 한다(생성
+        // 스크립트가 이 slugify()를 그대로 미러링해서 만든 파일들).
+        const sampleImageUrl = `/styles/${l3Slug}.png`;
         await prisma.style.upsert({
           where: { slug: l3Slug },
           create: {
@@ -209,6 +212,7 @@ async function main() {
             category: l1.name,
             keywords: [...l1.keywords, l2.name, ...modifier.keywords],
             description: `${l1.name} 계열의 ${l2.name} 스타일에 ${modifier.name} 느낌을 더한 디자인 방향입니다.`,
+            sampleImageUrl,
           },
           update: {
             name: l3Name,
@@ -216,6 +220,7 @@ async function main() {
             category: l1.name,
             keywords: [...l1.keywords, l2.name, ...modifier.keywords],
             description: `${l1.name} 계열의 ${l2.name} 스타일에 ${modifier.name} 느낌을 더한 디자인 방향입니다.`,
+            sampleImageUrl,
           },
         });
         l3Count++;

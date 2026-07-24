@@ -798,6 +798,14 @@ export function StylesView({
             <button type="button" onClick={() => setDetailStyle(null)} className="text-sm underline">
               닫기
             </button>
+            {detailStyle.sampleImageUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={detailStyle.sampleImageUrl}
+                alt={detailStyle.name}
+                className="mt-4 aspect-square w-full rounded-md object-cover"
+              />
+            )}
             <h3 className="mt-4 text-lg font-semibold">{detailStyle.name}</h3>
             <p className="mt-1 text-xs text-neutral-400">{detailStyle.category}</p>
             <p className="mt-3 text-sm">{detailStyle.description}</p>
@@ -834,7 +842,7 @@ function StyleCard({
 }) {
   return (
     <div
-      className={`rounded-md border p-3 text-sm ${
+      className={`overflow-hidden rounded-md border text-sm ${
         isPrimary
           ? "border-neutral-900 bg-neutral-50"
           : isSecondary
@@ -842,26 +850,39 @@ function StyleCard({
             : "border-neutral-200"
       }`}
     >
-      <div className="flex items-start justify-between">
-        <button type="button" onClick={onDetail} className="text-left font-medium underline-offset-2 hover:underline">
-          {style.name}
-        </button>
-        <button type="button" onClick={onFavorite} aria-label="즐겨찾기">
-          {isFavorite ? "★" : "☆"}
+      {style.sampleImageUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={style.sampleImageUrl}
+          alt={style.name}
+          className="aspect-square w-full object-cover"
+          loading="lazy"
+        />
+      ) : (
+        <div className="aspect-square w-full bg-neutral-100" aria-hidden />
+      )}
+      <div className="p-3">
+        <div className="flex items-start justify-between">
+          <button type="button" onClick={onDetail} className="text-left font-medium underline-offset-2 hover:underline">
+            {style.name}
+          </button>
+          <button type="button" onClick={onFavorite} aria-label="즐겨찾기">
+            {isFavorite ? "★" : "☆"}
+          </button>
+        </div>
+        <p className="mt-1 text-xs text-neutral-400">{style.category}</p>
+        {!compact && score !== undefined && (
+          <p className="mt-1 text-xs text-neutral-500">점수 {Math.round(score * 100)}%</p>
+        )}
+        {!compact && reason && <p className="mt-1 text-xs text-neutral-500">{reason}</p>}
+        <button
+          type="button"
+          onClick={onSelect}
+          className="mt-2 rounded-md border border-neutral-300 px-2 py-1 text-xs"
+        >
+          {isPrimary ? "Primary 선택됨" : isSecondary ? "Secondary 선택됨" : "선택"}
         </button>
       </div>
-      <p className="mt-1 text-xs text-neutral-400">{style.category}</p>
-      {!compact && score !== undefined && (
-        <p className="mt-1 text-xs text-neutral-500">점수 {Math.round(score * 100)}%</p>
-      )}
-      {!compact && reason && <p className="mt-1 text-xs text-neutral-500">{reason}</p>}
-      <button
-        type="button"
-        onClick={onSelect}
-        className="mt-2 rounded-md border border-neutral-300 px-2 py-1 text-xs"
-      >
-        {isPrimary ? "Primary 선택됨" : isSecondary ? "Secondary 선택됨" : "선택"}
-      </button>
     </div>
   );
 }

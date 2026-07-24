@@ -18,6 +18,7 @@ function makeStyle(overrides: Partial<Style> = {}): Style {
     category: "미니멀",
     keywords: ["미니멀", "여백", "강렬한"],
     description: "미니멀 계열의 볼드 스타일입니다.",
+    sampleImageUrl: null,
     ...overrides,
   };
 }

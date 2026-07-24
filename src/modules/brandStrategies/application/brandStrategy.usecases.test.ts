@@ -40,6 +40,7 @@ async function setup() {
       category: "미니멀",
       keywords: [],
       description: "설명",
+      sampleImageUrl: null,
     },
   ];
 

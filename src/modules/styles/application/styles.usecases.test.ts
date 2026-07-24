@@ -35,6 +35,7 @@ function makeStyle(overrides: Partial<Style>): Style {
     category: overrides.category ?? "Minimal",
     keywords: overrides.keywords ?? [],
     description: overrides.description ?? "설명",
+    sampleImageUrl: overrides.sampleImageUrl ?? null,
   };
 }
 

@@ -101,6 +101,7 @@ export class FakeStyleFavoriteRepository implements StyleFavoriteRepository {
       category: "unknown",
       keywords: [],
       description: "",
+      sampleImageUrl: null,
     }));
   }
 }

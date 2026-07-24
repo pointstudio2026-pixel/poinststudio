@@ -35,6 +35,7 @@ const PRIMARY_STYLE: Style = {
   category: "Minimal",
   keywords: ["미니멀"],
   description: "Minimal 계열의 Monochrome 스타일에 Bold 느낌을 더한 디자인 방향입니다.",
+  sampleImageUrl: null,
 };
 
 describe("buildPromptLayers / composePrompt", () => {

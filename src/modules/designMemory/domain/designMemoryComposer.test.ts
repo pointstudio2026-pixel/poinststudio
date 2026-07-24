@@ -11,6 +11,7 @@ const STYLE: Style = {
   category: "Minimal",
   keywords: [],
   description: "설명",
+  sampleImageUrl: null,
 };
 
 describe("composeDesignMemoryProfile", () => {

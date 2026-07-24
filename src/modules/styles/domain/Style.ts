@@ -8,6 +8,8 @@ export interface Style {
   category: string;
   keywords: string[];
   description: string;
+  /** 무드 참고 이미지(소분류 스타일만 채워짐, 대분류/중분류는 null). */
+  sampleImageUrl: string | null;
 }
 
 export interface StyleSelection {
