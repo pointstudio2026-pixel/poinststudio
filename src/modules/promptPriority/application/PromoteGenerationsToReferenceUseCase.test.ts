@@ -137,4 +137,52 @@ describe("PromoteGenerationsToReferenceUseCase", () => {
     expect(ctx.generationEvaluations.evaluations).toHaveLength(1);
     expect(ctx.generationEvaluations.evaluations[0]?.id).toBe(existing.id);
   });
+
+  it("(전체 저장) stores a TrainingExample for a below-threshold generation too, with a dynamic note describing the real signals -- no image, prompt only", async () => {
+    const ctx = setup();
+    const created = await new CreateProjectUseCase(ctx.projects).execute({ userId: "user-1", name: "Test" });
+    const prompt = await ctx.prompts.createWithFirstVersion(created.projectId, {
+      provider: "openai",
+      systemPrompt: "system",
+      userPrompt: "a below-threshold prompt",
+      hash: "hash-2",
+      payload: {
+        provider: "openai",
+        model: "gpt-image-2",
+        systemPrompt: "system",
+        userPrompt: "a below-threshold prompt",
+        sizePreset: "square",
+        parameters: {},
+      },
+      flaggedTerms: [],
+    });
+    const generation = await ctx.generations.createWithFirstVersion(created.projectId, { promptVersionId: prompt.currentVersion.id });
+    await ctx.generations.updateVersionResult(generation.currentVersion.id, {
+      status: "completed",
+      images: [{ url: "data:image/png;base64,AAA", thumbnailUrl: "t" }],
+      completedAt: new Date(),
+    });
+    await ctx.decisionRecords.create({
+      promptVersionId: prompt.currentVersion.id,
+      hardConstraints: EMPTY_HARD_CONSTRAINTS,
+      softPreferences: EMPTY_SOFT_PREFERENCES,
+      dbCandidatesFound: [],
+      dbCandidatesUsed: [],
+      conflicts: [],
+      complianceCheck: { passed: true, issues: [] },
+    });
+    // No feedback, no retry, no export, no mockup progress -- baseline 0.5, below the 0.6 threshold.
+
+    const result = await ctx.useCase.execute();
+
+    expect(result.promoted).toBe(1);
+    expect(ctx.trainingExamples.examples).toHaveLength(1);
+    const stored = ctx.trainingExamples.examples[0]!;
+    expect(stored.evaluationScore).toBe(0.5);
+    expect(stored.imageStorageKey).toBeNull();
+    expect(stored.imageContentType).toBeNull();
+    expect(stored.evaluationBreakdown?.usageScore?.note).toContain("재시도 없이 그대로 사용됨");
+    expect(stored.evaluationBreakdown?.usageScore?.note).toContain("아직 내보내지 않음");
+    expect(stored.evaluationBreakdown?.usageScore?.note).toContain("목업 단계 전");
+  });
 });

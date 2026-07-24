@@ -106,6 +106,20 @@ export class PromoteGenerationsToReferenceUseCase {
       const interview = await this.interviewRepository.findLatestByProjectId(generation.projectId);
       const industry = interview?.answers.find((a) => a.questionKey === "industry")?.answer ?? null;
 
+      // 관리자가 "왜 이 점수인지" 실제로 판단할 수 있도록, 이 예시 하나에
+      // 실제로 반영된 신호를 그대로 서술한다(고정 문구가 아니라 매번 다른
+      // 실제 근거) -- 사용자 요청 2026-07-24: "프롬프트를 해석까지 해주면
+      // 좋겠다, 점수가 높고 낮은지 판단할 수 있도록".
+      const signalNotes: string[] = [];
+      if (feedback && (feedback.likedTags.length > 0 || feedback.dislikedTags.length > 0)) {
+        if (feedback.likedTags.length > 0) signalNotes.push(`사용자가 좋았던 점으로 선택: ${feedback.likedTags.join(", ")}`);
+        if (feedback.dislikedTags.length > 0) signalNotes.push(`사용자가 아쉬운 점으로 선택: ${feedback.dislikedTags.join(", ")}`);
+      } else {
+        signalNotes.push(wasRetried ? "이후 재시도/수정됨(만족스럽지 않았을 가능성)" : "재시도 없이 그대로 사용됨");
+        signalNotes.push(wasExported ? "실제로 내보내기(export)함" : "아직 내보내지 않음");
+        signalNotes.push(projectReachedMockupStage ? "목업 단계까지 진행함" : "목업 단계 전");
+      }
+
       await this.trainingExampleRepository.create({
         prompt: prompt.userPrompt,
         deliverableType: project.deliverableType ?? "브랜딩 & 로고",
@@ -115,7 +129,7 @@ export class PromoteGenerationsToReferenceUseCase {
         industry,
         evaluationScore: usageScore,
         evaluationBreakdown: {
-          usageScore: { score: usageScore, note: "행동 신호(재시도/내보내기/목업진행) + 사용자 평가 기반 -- 텍스트 품질 평가 아님" },
+          usageScore: { score: usageScore, note: signalNotes.join(" · ") },
         },
         evaluatedAt: new Date(),
       });

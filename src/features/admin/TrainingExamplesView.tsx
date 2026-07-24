@@ -21,6 +21,32 @@ const UNSET_INDUSTRY_OPTION = "업종 미지정";
 type EvaluationFilter = "전체" | "참고자료(60점 이상)" | "회피대상(60점 미만)" | "미평가";
 const EVALUATION_FILTERS: EvaluationFilter[] = ["전체", "참고자료(60점 이상)", "회피대상(60점 미만)", "미평가"];
 
+const BREAKDOWN_LABELS: Record<string, string> = {
+  safety: "안전성",
+  originality: "독창성",
+  brandFit: "브랜드 적합성",
+  purposeFit: "목적 적합성",
+  readability: "가독성",
+  dbPatternAlignment: "DB 패턴 정합성",
+  usageScore: "실사용 반응",
+};
+
+/** 점수가 실제로 매겨진 항목만 사람이 읽을 수 있는 문장으로 -- N/A 항목(구조상 평가 불가)은 판단에 도움이 안 돼 생략한다. */
+function interpretBreakdown(
+  breakdown: Record<string, { score: number | null; reason?: string; flaggedTerms?: string[]; note?: string }> | null,
+): string[] {
+  if (!breakdown) return [];
+  return Object.entries(breakdown)
+    .filter(([, entry]) => entry.score !== null)
+    .map(([key, entry]) => {
+      const label = BREAKDOWN_LABELS[key] ?? key;
+      const scoreText = `${Math.round((entry.score ?? 0) * 100)}점`;
+      const detail =
+        entry.note ?? entry.reason ?? (entry.flaggedTerms && entry.flaggedTerms.length > 0 ? `문제 키워드: ${entry.flaggedTerms.join(", ")}` : "");
+      return detail ? `${label} ${scoreText} — ${detail}` : `${label} ${scoreText}`;
+    });
+}
+
 export function TrainingExamplesView() {
   const queryClient = useQueryClient();
   const [prompt, setPrompt] = useState("");
@@ -352,14 +378,6 @@ export function TrainingExamplesView() {
         )}
         {visibleExamples.map((example) => (
           <div key={example.id} className="flex flex-col gap-2 rounded-md border border-neutral-200 p-3">
-            {example.imageStorageKey && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={`/api/admin/training-examples/${example.id}/image`}
-                alt={example.prompt}
-                className="aspect-square w-full rounded-md object-cover"
-              />
-            )}
             <div className="flex flex-wrap gap-1">
               <span className="w-fit rounded-full bg-neutral-800 px-2 py-0.5 text-xs text-white">
                 {example.category}
@@ -388,6 +406,13 @@ export function TrainingExamplesView() {
               )}
             </div>
             <p className="text-sm text-neutral-700">{example.prompt}</p>
+            {interpretBreakdown(example.evaluationBreakdown).length > 0 && (
+              <ul className="flex flex-col gap-0.5 rounded-md bg-neutral-50 p-2 text-xs text-neutral-500">
+                {interpretBreakdown(example.evaluationBreakdown).map((line, i) => (
+                  <li key={i}>· {line}</li>
+                ))}
+              </ul>
+            )}
             <button
               type="button"
               onClick={() => handleDelete(example.id)}

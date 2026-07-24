@@ -27,6 +27,8 @@ export interface MockupRenderRequest {
    * 이미지 생성 DB("이미지생성" 카테고리)와는 절대 섞이지 않는다.
    */
   referenceExampleText?: string;
+  /** 평가 점수 60점 미만인 과거 목업 결과 중 매칭된 것 -- "이런 연출은 피하라"는 회피 지침. 없으면 생략. */
+  avoidPatternText?: string;
 }
 
 export interface MockupRenderResult {

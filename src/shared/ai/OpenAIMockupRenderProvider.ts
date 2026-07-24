@@ -42,8 +42,9 @@ function buildPrompt(request: MockupRenderRequest): string {
         `정확히 그대로, ${request.templateName} 목업에 자연스럽게 배치한 사실적인 제품 ` +
         `사진을 만들어줘. 로고의 텍스트, 심볼, 색상을 완전히 동일하게 유지하고, 배경과 ` +
         `소품은 실제 사용 환경처럼 유지해줘.`;
-  if (!request.referenceExampleText) return base;
-  return `${base} 참고 연출 가이드: ${request.referenceExampleText}`;
+  const referenceClause = request.referenceExampleText ? ` 참고 연출 가이드: ${request.referenceExampleText}` : "";
+  const avoidClause = request.avoidPatternText ? ` 회피 지침(과거에 반응이 좋지 않았던 연출, 피할 것): ${request.avoidPatternText}` : "";
+  return `${base}${referenceClause}${avoidClause}`;
 }
 
 export class OpenAIMockupRenderProvider implements MockupRenderProvider {

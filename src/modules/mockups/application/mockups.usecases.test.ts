@@ -284,6 +284,56 @@ describe("ProcessMockupJobUseCase", () => {
     expect(captured[0]?.referenceExampleText).toContain("나무 책상");
     expect(captured[0]?.referenceExampleText).not.toContain("절대 섞이면 안 됨");
   });
+
+  it("(회피 지침) surfaces a matching 60점 미만 '목업' TrainingExample as avoidPatternText, never as referenceExampleText", async () => {
+    const ctx = await setup();
+    const project = ctx.projects.projects.find((p) => p.id === ctx.projectId)!;
+    project.deliverableType = "명함";
+
+    await ctx.trainingExamples.create({
+      prompt: "Business Card Cream 톤이지만 그림자가 과도하고 산만했던 실패 연출",
+      deliverableType: "명함",
+      createdByUserId: "admin-1",
+      category: "목업",
+      evaluationScore: 0.3,
+    });
+
+    const captured: MockupRenderRequest[] = [];
+    const capturingProvider: MockupRenderProvider = {
+      name: "capturing",
+      async render(request) {
+        captured.push(request);
+        return { imageUrl: "data:image/png;base64,X", thumbnailUrl: "data:image/png;base64,X", provider: "capturing", costAmount: 0 };
+      },
+      async health() {
+        return true;
+      },
+    };
+    const processWithCapture = new ProcessMockupJobUseCase(
+      ctx.projects,
+      ctx.generations,
+      ctx.mockups,
+      ctx.templates,
+      new RecordUsageUseCase(ctx.usage),
+      capturingProvider,
+      ctx.trainingExamples,
+      ctx.interviews,
+    );
+
+    const mockup = await ctx.create.execute({
+      projectId: ctx.projectId,
+      userId: "user-1",
+      generationVersionId: ctx.sourceVersion.id,
+      sourceImageIndex: 0,
+      templateId: TEMPLATE.id,
+    });
+
+    await processWithCapture.execute({ mockupId: mockup.id, requestedByUserId: "user-1", isFinalAttempt: true });
+
+    expect(captured).toHaveLength(1);
+    expect(captured[0]?.avoidPatternText).toContain("과도하고 산만했던");
+    expect(captured[0]?.referenceExampleText).toBeUndefined();
+  });
 });
 
 describe("Favorites / Delete / Templates", () => {

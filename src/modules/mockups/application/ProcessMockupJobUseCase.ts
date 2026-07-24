@@ -60,11 +60,14 @@ export class ProcessMockupJobUseCase {
     // "이미지생성" 카테고리 자료는 여기서 절대 조회하지 않는다(파이프라인
     // 분리, 사용자 지시사항).
     let referenceExampleText: string | undefined;
+    let avoidPatternText: string | undefined;
     if (project.deliverableType) {
+      const deliverableType = project.deliverableType;
       const interview = await this.interviewRepository.findLatestByProjectId(project.id);
       const industry = interview?.answers.find((a) => a.questionKey === "industry")?.answer ?? undefined;
+
       const candidates = await this.trainingExampleRepository.listCandidates({
-        deliverableType: project.deliverableType,
+        deliverableType,
         category: TRAINING_EXAMPLE_CATEGORY_MOCKUP,
         industry,
         bucket: "above",
@@ -73,10 +76,26 @@ export class ProcessMockupJobUseCase {
       });
       const [top] = rankTrainingExamples(candidates, {
         keywordText: template.name,
-        deliverableType: project.deliverableType,
+        deliverableType,
         industry,
       }).filter((r) => r.score > 0);
       referenceExampleText = top?.example.prompt;
+
+      // 회피 지침: 평가 점수 60점 미만인 과거 목업 결과 중 매칭되는 것.
+      const avoidCandidates = await this.trainingExampleRepository.listCandidates({
+        deliverableType,
+        category: TRAINING_EXAMPLE_CATEGORY_MOCKUP,
+        industry,
+        bucket: "below",
+        threshold: REFERENCE_PROMOTION_THRESHOLD,
+        limit: 50,
+      });
+      const [topAvoid] = rankTrainingExamples(avoidCandidates, {
+        keywordText: template.name,
+        deliverableType,
+        industry,
+      }).filter((r) => r.score > 0);
+      avoidPatternText = topAvoid?.example.prompt;
     }
 
     try {
@@ -87,6 +106,7 @@ export class ProcessMockupJobUseCase {
         templateName: template.name,
         compositingMode,
         referenceExampleText,
+        avoidPatternText,
       });
 
       await this.mockupRepository.updateResult(mockup.id, {
