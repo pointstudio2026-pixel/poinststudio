@@ -4,14 +4,18 @@ import { useState } from "react";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { MessageKey } from "@/shared/i18n/messages/types";
 
-const STYLE_TILES: { nameKey: MessageKey; bg: string }[] = [
-  { nameKey: "home.showcase.style.minimalEuro", bg: "linear-gradient(135deg, #F1EBDF, #D9CBB8)" },
-  { nameKey: "home.showcase.style.naturalWarm", bg: "linear-gradient(135deg, #EFE7D8, #B9AE9A)" },
-  { nameKey: "home.showcase.style.cleanLab", bg: "linear-gradient(135deg, #EAF0F6, #C9D6E3)" },
-  { nameKey: "home.showcase.style.softBeauty", bg: "linear-gradient(135deg, #F1EBDF, #CBB98F)" },
+const STYLE_TILES: { nameKey: MessageKey; image: string }[] = [
+  { nameKey: "home.showcase.style.minimalEuro", image: "/landing/showcase/style-minimal-euro.png" },
+  { nameKey: "home.showcase.style.naturalWarm", image: "/landing/showcase/style-natural-warm.png" },
+  { nameKey: "home.showcase.style.cleanLab", image: "/landing/showcase/style-clean-lab.png" },
+  { nameKey: "home.showcase.style.softBeauty", image: "/landing/showcase/style-soft-beauty.png" },
 ];
 
-const LOGO_DIRECTIONS: MessageKey[] = ["home.showcase.logo.symbol", "home.showcase.logo.wordmark", "home.showcase.logo.initial"];
+const LOGO_DIRECTIONS: { nameKey: MessageKey; image: string }[] = [
+  { nameKey: "home.showcase.logo.symbol", image: "/landing/showcase/logo-symbol.png" },
+  { nameKey: "home.showcase.logo.wordmark", image: "/landing/showcase/logo-wordmark.png" },
+  { nameKey: "home.showcase.logo.initial", image: "/landing/showcase/logo-initial.png" },
+];
 
 const COLOR_SWATCHES: { hex: string; nameKey: MessageKey }[] = [
   { hex: "#D9CBB8", nameKey: "home.showcase.color.sand" },
@@ -20,7 +24,11 @@ const COLOR_SWATCHES: { hex: string; nameKey: MessageKey }[] = [
   { hex: "#171512", nameKey: "home.showcase.color.ink" },
 ];
 
-const MOCKUP_KINDS: MessageKey[] = ["home.showcase.mockup.package", "home.showcase.mockup.businessCard", "home.showcase.mockup.webBanner"];
+const MOCKUP_KINDS: { nameKey: MessageKey; image: string }[] = [
+  { nameKey: "home.showcase.mockup.package", image: "/landing/showcase/mockup-package.png" },
+  { nameKey: "home.showcase.mockup.businessCard", image: "/landing/showcase/mockup-business-card.png" },
+  { nameKey: "home.showcase.mockup.webBanner", image: "/landing/showcase/mockup-web-banner.png" },
+];
 
 const TAB_KEYS: { key: string; labelKey: MessageKey }[] = [
   { key: "strategy", labelKey: "home.showcase.tabStrategy" },
@@ -57,7 +65,8 @@ export function ResultShowcase() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {STYLE_TILES.map((s) => (
           <div key={s.nameKey} className="overflow-hidden rounded-xl border border-line bg-paper">
-            <div className="aspect-square" style={{ background: s.bg }} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={s.image} alt={t(s.nameKey)} className="aspect-square w-full object-cover" />
             <p className="px-3 py-2 text-sm font-medium">{t(s.nameKey)}</p>
           </div>
         ))}
@@ -65,21 +74,16 @@ export function ResultShowcase() {
     ),
     logo: (
       <div className="grid grid-cols-3 gap-3">
-        {LOGO_DIRECTIONS.map((nameKey, i) => (
+        {LOGO_DIRECTIONS.map((l) => (
           <div
-            key={nameKey}
+            key={l.nameKey}
             className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5"
           >
-            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-line bg-surface">
-              {i === 0 && (
-                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.4">
-                  <circle cx="14" cy="14" r="9" />
-                </svg>
-              )}
-              {i === 1 && <span className="font-serif text-sm">Aster</span>}
-              {i === 2 && <span className="text-lg font-semibold">A.</span>}
+            <div className="h-16 w-16 overflow-hidden rounded-full border border-line bg-surface">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={l.image} alt={t(l.nameKey)} className="h-full w-full object-cover" />
             </div>
-            <p className="text-sm text-muted">{t(nameKey)}</p>
+            <p className="text-sm text-muted">{t(l.nameKey)}</p>
           </div>
         ))}
       </div>
@@ -97,12 +101,15 @@ export function ResultShowcase() {
     ),
     mockup: (
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {MOCKUP_KINDS.map((nameKey) => (
-          <div key={nameKey} className="overflow-hidden rounded-xl border border-line bg-paper">
-            <div className="flex aspect-[4/3] items-center justify-center bg-tint-beige">
-              <span className="font-serif text-2xl text-ink/70">Aster</span>
-            </div>
-            <p className="px-3 py-2 text-sm font-medium">{t("home.showcase.mockup.applied", { name: t(nameKey) })}</p>
+        {MOCKUP_KINDS.map((m) => (
+          <div key={m.nameKey} className="overflow-hidden rounded-xl border border-line bg-paper">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={m.image}
+              alt={t(m.nameKey)}
+              className="aspect-[4/3] w-full object-cover"
+            />
+            <p className="px-3 py-2 text-sm font-medium">{t("home.showcase.mockup.applied", { name: t(m.nameKey) })}</p>
           </div>
         ))}
       </div>
