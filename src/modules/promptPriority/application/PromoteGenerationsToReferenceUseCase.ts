@@ -4,6 +4,7 @@ import type { GenerationFeedbackRepository } from "@/modules/generations/domain/
 import type { ExportRepository } from "@/modules/exports/domain/ExportRepository";
 import type { ProjectRepository } from "@/modules/projects/domain/ProjectRepository";
 import type { PromptRepository } from "@/modules/prompts/domain/PromptRepository";
+import type { PromptDecisionRecordRepository } from "@/modules/promptPriority/domain/PromptDecisionRecordRepository";
 import type { TrainingExampleRepository } from "@/modules/trainingExamples/domain/TrainingExampleRepository";
 import type { FileStorage } from "@/shared/storage/FileStorage";
 import { getWorkspaceSteps } from "@/modules/projects/domain/Project";
@@ -31,11 +32,28 @@ export class PromoteGenerationsToReferenceUseCase {
     private readonly exportRepository: ExportRepository,
     private readonly projectRepository: ProjectRepository,
     private readonly promptRepository: PromptRepository,
+    private readonly promptDecisionRecordRepository: PromptDecisionRecordRepository,
     private readonly trainingExampleRepository: TrainingExampleRepository,
     private readonly fileStorage: FileStorage,
   ) {}
 
   async execute(input: { limit?: number } = {}): Promise<{ evaluated: number; promoted: number }> {
+    // 자가 치유: 정상 흐름이면 완료 처리 직후 바로 생기지만
+    // (ProcessGenerationJobUseCase), 그 직후 배포/재시작 등으로 프로세스가
+    // 끊기면 GenerationEvaluation 행 자체가 영구히 누락될 수 있다 -- 매
+    // 실행마다 먼저 채워 넣어야 그런 생성물도 결국 평가 대상에 들어온다.
+    const missingEvaluations = await this.generationRepository.listCompletedWithoutEvaluation(50);
+    for (const version of missingEvaluations) {
+      const decisionRecord = await this.promptDecisionRecordRepository.findByPromptVersionId(version.promptVersionId);
+      if (!decisionRecord) continue;
+      await this.generationEvaluationRepository.create({
+        generationVersionId: version.id,
+        status: "PROMPT_LEVEL_ONLY",
+        hardConstraintPassed: decisionRecord.complianceCheck.passed,
+        issues: decisionRecord.complianceCheck.issues,
+      });
+    }
+
     const unscored = await this.generationEvaluationRepository.listUnscored(input.limit ?? 50);
     let promoted = 0;
 

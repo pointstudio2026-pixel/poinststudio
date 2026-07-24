@@ -24,4 +24,12 @@ export interface GenerationRepository {
   getVersionById(versionId: string): Promise<GenerationVersion | null>;
   updateVersionResult(versionId: string, patch: UpdateGenerationVersionResultInput): Promise<GenerationVersion>;
   listVersions(generationId: string): Promise<GenerationVersion[]>;
+  /**
+   * "completed" 버전인데 GenerationEvaluation 행이 아예 없는 것들 -- 정상
+   * 흐름이면 항상 같이 생기지만(ProcessGenerationJobUseCase), 완료 처리
+   * 직후 배포 등으로 프로세스가 중단되면 두 쓰기 사이에 끊겨서 영구히
+   * 누락될 수 있다. PromoteGenerationsToReferenceUseCase가 매 실행마다
+   * 이걸 먼저 채워 넣어 자가 치유한다.
+   */
+  listCompletedWithoutEvaluation(limit: number): Promise<GenerationVersion[]>;
 }

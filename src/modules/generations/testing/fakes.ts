@@ -114,6 +114,15 @@ export class FakeGenerationRepository implements GenerationRepository {
       .filter((v) => v.generationId === generationId)
       .sort((a, b) => b.versionNumber - a.versionNumber);
   }
+
+  /** 테스트에서 "이미 GenerationEvaluation이 있는 버전"을 표시해두는 용도. */
+  evaluatedVersionIds = new Set<string>();
+
+  async listCompletedWithoutEvaluation(limit: number): Promise<GenerationVersion[]> {
+    return this.versions
+      .filter((v) => v.status === "completed" && !this.evaluatedVersionIds.has(v.id))
+      .slice(0, limit);
+  }
 }
 
 export class FakeImageGenerationQueue implements ImageGenerationQueuePort {

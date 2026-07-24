@@ -24,6 +24,7 @@ import {
 import { exportRepositoryInstance } from "@/modules/exports/container";
 import { projectRepositoryInstance } from "@/modules/projects/container";
 import { promptRepositoryInstance } from "@/modules/prompts/container";
+import { promptDecisionRecordRepositoryInstance } from "@/modules/promptPriority/container";
 import { trainingExampleRepositoryInstance } from "@/modules/trainingExamples/container";
 import { resolveFileStorage } from "@/shared/storage/fileStorageRouter";
 import { scheduleReferencePromotion } from "@/shared/queue/referencePromotionQueue";
@@ -82,6 +83,7 @@ export const adminContainer = {
     exportRepositoryInstance,
     projectRepositoryInstance,
     promptRepositoryInstance,
+    promptDecisionRecordRepositoryInstance,
     trainingExampleRepositoryInstance,
     resolveFileStorage(),
   ),

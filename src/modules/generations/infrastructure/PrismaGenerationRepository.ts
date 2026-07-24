@@ -137,4 +137,13 @@ export class PrismaGenerationRepository implements GenerationRepository {
     });
     return rows.map(toVersion);
   }
+
+  async listCompletedWithoutEvaluation(limit: number): Promise<GenerationVersion[]> {
+    const rows = await prisma.generationVersion.findMany({
+      where: { status: "completed", evaluation: { is: null } },
+      take: limit,
+      orderBy: { completedAt: "asc" },
+    });
+    return rows.map(toVersion);
+  }
 }
