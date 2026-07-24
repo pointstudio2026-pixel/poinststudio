@@ -1,9 +1,11 @@
+import { Prisma } from "../../../../generated/prisma/client";
 import { prisma } from "@/shared/database/prisma";
 import type {
   CreateGenerationEvaluationInput,
   GenerationEvaluation,
 } from "@/modules/generations/domain/GenerationEvaluation";
 import type { GenerationEvaluationRepository } from "@/modules/generations/domain/GenerationEvaluationRepository";
+import type { VisionEvaluationResult } from "@/modules/generations/domain/visionEvaluation";
 
 function toDomain(row: {
   id: string;
@@ -12,6 +14,8 @@ function toDomain(row: {
   hardConstraintPassed: boolean;
   issues: unknown;
   usageScore: number | null;
+  visionScore: number | null;
+  visionEvaluation: Prisma.JsonValue | null;
   promotedToReference: boolean;
   createdAt: Date;
 }): GenerationEvaluation {
@@ -22,6 +26,8 @@ function toDomain(row: {
     hardConstraintPassed: row.hardConstraintPassed,
     issues: row.issues as string[],
     usageScore: row.usageScore,
+    visionScore: row.visionScore,
+    visionEvaluation: row.visionEvaluation as unknown as VisionEvaluationResult | null,
     promotedToReference: row.promotedToReference,
     createdAt: row.createdAt,
   };
@@ -49,6 +55,22 @@ export class PrismaGenerationEvaluationRepository implements GenerationEvaluatio
     const row = await prisma.generationEvaluation.update({
       where: { id },
       data: { usageScore, promotedToReference },
+    });
+    return toDomain(row);
+  }
+
+  async updateVisionEvaluation(
+    id: string,
+    visionScore: number,
+    visionEvaluation: VisionEvaluationResult,
+  ): Promise<GenerationEvaluation> {
+    const row = await prisma.generationEvaluation.update({
+      where: { id },
+      data: {
+        visionScore,
+        visionEvaluation: visionEvaluation as unknown as Prisma.InputJsonValue,
+        status: "VISION_VERIFIED",
+      },
     });
     return toDomain(row);
   }

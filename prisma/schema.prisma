@@ -739,8 +739,11 @@ model PromptDecisionRecord {
   @@map("prompt_decision_records")
 }
 
-// 생성 결과 1건에 대한 텍스트 레벨(프롬프트 준수) 평가 -- 이미지 픽셀 자체는
-// 검증하지 않는다(status로 명시). Vision AI 없음, AI 비용 0.
+// 생성 결과 1건에 대한 평가. 처음엔 텍스트 레벨(프롬프트 준수)만
+// 확인했지만(status="PROMPT_LEVEL_ONLY", AI 비용 0), 2026-07-24 사용자
+// 승인으로 GPT Vision 판단이 추가됐다 -- 생성 완료 직후 이미지+프롬프트+
+// 브랜드 인터뷰를 비교해 visionScore/visionEvaluation을 채우고
+// status="VISION_VERIFIED"로 갱신한다(EvaluateGenerationVisionUseCase).
 model GenerationEvaluation {
   id                   String            @id @default(uuid()) @db.Uuid
   generationVersionId  String            @unique @map("generation_version_id") @db.Uuid
@@ -749,6 +752,8 @@ model GenerationEvaluation {
   hardConstraintPassed Boolean           @map("hard_constraint_passed")
   issues               Json              @default("[]")
   usageScore           Float?            @map("usage_score")
+  visionScore          Float?            @map("vision_score")
+  visionEvaluation     Json?             @map("vision_evaluation")
   promotedToReference  Boolean           @default(false) @map("promoted_to_reference")
   createdAt            DateTime          @default(now()) @map("created_at") @db.Timestamptz()
 

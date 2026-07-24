@@ -145,6 +145,8 @@ export class FakeGenerationEvaluationRepository implements GenerationEvaluationR
       hardConstraintPassed: input.hardConstraintPassed,
       issues: input.issues,
       usageScore: null,
+      visionScore: null,
+      visionEvaluation: null,
       promotedToReference: false,
       createdAt: new Date(),
     };
@@ -160,6 +162,18 @@ export class FakeGenerationEvaluationRepository implements GenerationEvaluationR
     const index = this.evaluations.findIndex((e) => e.id === id);
     if (index === -1) throw new Error("evaluation not found");
     const updated = { ...this.evaluations[index]!, usageScore, promotedToReference };
+    this.evaluations[index] = updated;
+    return updated;
+  }
+
+  async updateVisionEvaluation(
+    id: string,
+    visionScore: number,
+    visionEvaluation: GenerationEvaluation["visionEvaluation"],
+  ): Promise<GenerationEvaluation> {
+    const index = this.evaluations.findIndex((e) => e.id === id);
+    if (index === -1) throw new Error("evaluation not found");
+    const updated = { ...this.evaluations[index]!, visionScore, visionEvaluation, status: "VISION_VERIFIED" };
     this.evaluations[index] = updated;
     return updated;
   }

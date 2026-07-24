@@ -4,6 +4,8 @@ import { RetryGenerationUseCase } from "@/modules/generations/application/RetryG
 import { GetGenerationUseCase } from "@/modules/generations/application/GetGenerationUseCase";
 import { GetGenerationStatusUseCase } from "@/modules/generations/application/GetGenerationStatusUseCase";
 import { ProcessGenerationJobUseCase } from "@/modules/generations/application/ProcessGenerationJobUseCase";
+import { EvaluateGenerationVisionUseCase } from "@/modules/generations/application/EvaluateGenerationVisionUseCase";
+import { MockVisionEvaluationProvider } from "@/shared/ai/MockVisionEvaluationProvider";
 import {
   FakeGenerationRepository,
   FakeImageGenerationQueue,
@@ -177,6 +179,12 @@ async function setup() {
       recordUsage,
       promptDecisionRecords,
       generationEvaluations,
+      new EvaluateGenerationVisionUseCase(
+        generationEvaluations,
+        promptDecisionRecords,
+        interviews,
+        new MockVisionEvaluationProvider(),
+      ),
     ),
   };
 }
@@ -328,6 +336,11 @@ describe("ProcessGenerationJobUseCase", () => {
 
     const updatedProject = await ctx.projects.findByIdForUser(ctx.projectId, "user-1");
     expect(updatedProject?.currentStep).toBe("concept_board");
+
+    // Vision AI(Mock) 판단까지 생성 완료 직후 자동으로 채워진다 (2026-07-24 신규).
+    const evaluation = await ctx.generationEvaluations.findByGenerationVersionId(version.id);
+    expect(evaluation?.status).toBe("VISION_VERIFIED");
+    expect(evaluation?.visionScore).not.toBeNull();
   });
 
   it("marks a version failed only on the final attempt, otherwise rethrows for BullMQ to retry (Provider 장애 / 재시도)", async () => {

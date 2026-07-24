@@ -7,11 +7,14 @@ import { GetGenerationUseCase } from "@/modules/generations/application/GetGener
 import { GetGenerationStatusUseCase } from "@/modules/generations/application/GetGenerationStatusUseCase";
 import { ProcessGenerationJobUseCase } from "@/modules/generations/application/ProcessGenerationJobUseCase";
 import { SubmitGenerationFeedbackUseCase } from "@/modules/generations/application/SubmitGenerationFeedbackUseCase";
+import { EvaluateGenerationVisionUseCase } from "@/modules/generations/application/EvaluateGenerationVisionUseCase";
 import { projectRepositoryInstance } from "@/modules/projects/container";
 import { promptRepositoryInstance, promptsContainer } from "@/modules/prompts/container";
 import { promptDecisionRecordRepositoryInstance } from "@/modules/promptPriority/container";
+import { interviewRepositoryInstance } from "@/modules/interviews/container";
 import { subscriptionsContainer } from "@/modules/subscriptions/container";
 import { authContainer } from "@/modules/auth/container";
+import { resolveVisionEvaluationProvider } from "@/shared/ai/visionEvaluationRouter";
 import { BullMqImageGenerationQueue } from "@/shared/queue/imageGenerationQueue";
 import { startImageGenerationWorker } from "@/workers/imageGenerationWorker";
 
@@ -47,6 +50,13 @@ export const generationsContainer = {
   ),
 };
 
+const evaluateGenerationVisionUseCase = new EvaluateGenerationVisionUseCase(
+  generationEvaluationRepositoryInstance,
+  promptDecisionRecordRepositoryInstance,
+  interviewRepositoryInstance,
+  resolveVisionEvaluationProvider(),
+);
+
 const processGenerationJobUseCase = new ProcessGenerationJobUseCase(
   projectRepositoryInstance,
   promptRepositoryInstance,
@@ -54,6 +64,7 @@ const processGenerationJobUseCase = new ProcessGenerationJobUseCase(
   subscriptionsContainer.recordUsageUseCase,
   promptDecisionRecordRepositoryInstance,
   generationEvaluationRepositoryInstance,
+  evaluateGenerationVisionUseCase,
 );
 
 // MVP monolith simplification: auto-start the Worker in-process instead of

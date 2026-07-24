@@ -81,15 +81,26 @@ export class PromoteGenerationsToReferenceUseCase {
       const currentIndex = steps.findIndex((s) => s.key === project.currentStep);
       const projectReachedMockupStage = mockupIndex >= 0 && currentIndex >= mockupIndex;
 
-      const usageScore = computeGenerationUsageScore({
+      const behavioralScore = computeGenerationUsageScore({
         feedback: feedback ? { likedTags: feedback.likedTags, dislikedTags: feedback.dislikedTags } : null,
         wasRetried,
         wasExported,
         projectReachedMockupStage,
       });
 
-      const meetsThreshold = usageScore >= REFERENCE_PROMOTION_THRESHOLD;
-      await this.generationEvaluationRepository.updateUsageScore(evaluation.id, usageScore, meetsThreshold);
+      // Vision AI(GPT) 판단이 생성 직후 이미 채워져 있으면(2026-07-24 신규
+      // 기능) 행동 신호와 동등 가중 평균으로 결합한다 -- 재시도 없이 그대로
+      // 썼더라도(행동 신호는 좋음) 실제로 금지 요소가 그려졌거나 여러 시안이
+      // 섞였다면(Vision 신호는 나쁨) 참고자료로는 부적합하다는 판단을 반영.
+      // Vision 판단이 없는(아직 미실행/실패한) 기존 행은 행동 신호만으로
+      // 그대로 판단한다(하위 호환).
+      const finalScore =
+        evaluation.visionScore != null
+          ? Math.round(((evaluation.visionScore + behavioralScore) / 2) * 100) / 100
+          : behavioralScore;
+
+      const meetsThreshold = finalScore >= REFERENCE_PROMOTION_THRESHOLD;
+      await this.generationEvaluationRepository.updateUsageScore(evaluation.id, finalScore, meetsThreshold);
 
       // 점수와 무관하게 완료된 생성물은 전부 DB에 쌓는다(사용자 결정,
       // 2026-07-24: "모든 생성물들은 다 저장해, 점수 상관없이") -- 대신
@@ -127,9 +138,12 @@ export class PromoteGenerationsToReferenceUseCase {
         source: "USER_GENERATION",
         sourceGenerationVersionId: version.id,
         industry,
-        evaluationScore: usageScore,
+        evaluationScore: finalScore,
         evaluationBreakdown: {
-          usageScore: { score: usageScore, note: signalNotes.join(" · ") },
+          usageScore: { score: behavioralScore, note: signalNotes.join(" · ") },
+          ...(evaluation.visionEvaluation
+            ? { visionQuality: { score: evaluation.visionScore, note: evaluation.visionEvaluation.summary } }
+            : {}),
         },
         evaluatedAt: new Date(),
       });

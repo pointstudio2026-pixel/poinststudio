@@ -29,6 +29,7 @@ const BREAKDOWN_LABELS: Record<string, string> = {
   readability: "가독성",
   dbPatternAlignment: "DB 패턴 정합성",
   usageScore: "실사용 반응",
+  visionQuality: "AI 비전 평가",
 };
 
 /** 점수가 실제로 매겨진 항목만 사람이 읽을 수 있는 문장으로 -- N/A 항목(구조상 평가 불가)은 판단에 도움이 안 돼 생략한다. */

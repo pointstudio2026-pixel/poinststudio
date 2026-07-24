@@ -4,6 +4,7 @@ import type { GenerationRepository } from "@/modules/generations/domain/Generati
 import type { GenerationEvaluationRepository } from "@/modules/generations/domain/GenerationEvaluationRepository";
 import type { RecordUsageUseCase } from "@/modules/subscriptions/application/RecordUsageUseCase";
 import type { PromptDecisionRecordRepository } from "@/modules/promptPriority/domain/PromptDecisionRecordRepository";
+import type { EvaluateGenerationVisionUseCase } from "@/modules/generations/application/EvaluateGenerationVisionUseCase";
 import { resolveImageGenerationProvider } from "@/shared/ai/imageGenerationRouter";
 import { GENERATION_EVENT_TYPE } from "@/modules/subscriptions/domain/planLimits";
 import { getWorkspaceSteps } from "@/modules/projects/domain/Project";
@@ -27,6 +28,7 @@ export class ProcessGenerationJobUseCase {
     private readonly recordUsageUseCase: RecordUsageUseCase,
     private readonly promptDecisionRecordRepository: PromptDecisionRecordRepository,
     private readonly generationEvaluationRepository: GenerationEvaluationRepository,
+    private readonly evaluateGenerationVisionUseCase: EvaluateGenerationVisionUseCase,
   ) {}
 
   async execute(input: {
@@ -75,12 +77,27 @@ export class ProcessGenerationJobUseCase {
         version.promptVersionId,
       );
       if (decisionRecord) {
-        await this.generationEvaluationRepository.create({
+        const evaluation = await this.generationEvaluationRepository.create({
           generationVersionId: version.id,
           status: "PROMPT_LEVEL_ONLY",
           hardConstraintPassed: decisionRecord.complianceCheck.passed,
           issues: decisionRecord.complianceCheck.issues,
         });
+
+        // Vision AI(GPT) 판단 -- 이미지 + 프롬프트 + 브랜드 인터뷰를 비교해
+        // 실제로 잘 수행됐는지 평가한다(2026-07-24 사용자 승인). best-effort:
+        // 실패해도(네트워크 오류 등) 여기서 조용히 삼켜지므로 생성 자체는
+        // 항상 완료 처리된다.
+        const firstImage = result.images[0];
+        if (firstImage) {
+          await this.evaluateGenerationVisionUseCase.execute({
+            generationEvaluationId: evaluation.id,
+            projectId: generation.projectId,
+            promptVersionId: version.promptVersionId,
+            imageUrl: firstImage.url,
+            imagePromptText: promptVersion.userPrompt,
+          });
+        }
       }
 
       const project = await this.projectRepository.findById(generation.projectId);
