@@ -9,6 +9,7 @@ import { FakeMockupRepository, FakeMockupRenderQueue, FakeMockupTemplateReposito
 import type { MockupTemplate } from "@/modules/mockups/domain/Mockup";
 import { FakeGenerationRepository } from "@/modules/generations/testing/fakes";
 import { FakeTrainingExampleRepository } from "@/modules/trainingExamples/testing/fakes";
+import { FakeInterviewRepository } from "@/modules/interviews/testing/fakes";
 import { CreateProjectUseCase } from "@/modules/projects/application/CreateProjectUseCase";
 import { FakeProjectRepository } from "@/modules/projects/testing/fakes";
 import { CheckPlanUseCase } from "@/modules/subscriptions/application/CheckPlanUseCase";
@@ -45,6 +46,7 @@ async function setup() {
   const recordUsage = new RecordUsageUseCase(usage);
   const provider = new MockMockupRenderProvider();
   const trainingExamples = new FakeTrainingExampleRepository();
+  const interviews = new FakeInterviewRepository();
 
   templates.templates = [TEMPLATE];
 
@@ -71,12 +73,13 @@ async function setup() {
     subs,
     usage,
     trainingExamples,
+    interviews,
     create: new CreateMockupUseCase(projects, generations, templates, checkPlan, mockups, queue),
     getMockups: new GetMockupsUseCase(projects, mockups),
     getTemplates: new GetMockupTemplatesUseCase(templates),
     favorite: new ToggleMockupFavoriteUseCase(projects, mockups),
     remove: new DeleteMockupUseCase(projects, mockups),
-    process: new ProcessMockupJobUseCase(projects, generations, mockups, templates, recordUsage, provider, trainingExamples),
+    process: new ProcessMockupJobUseCase(projects, generations, mockups, templates, recordUsage, provider, trainingExamples, interviews),
   };
 }
 
@@ -233,6 +236,7 @@ describe("ProcessMockupJobUseCase", () => {
       imageContentType: "image/png",
       createdByUserId: "admin-1",
       category: "이미지생성",
+      evaluationScore: 0.9,
     });
     await ctx.trainingExamples.create({
       prompt: "Business Card Cream 톤의 따뜻한 나무 책상 연출",
@@ -241,6 +245,7 @@ describe("ProcessMockupJobUseCase", () => {
       imageContentType: "image/png",
       createdByUserId: "admin-1",
       category: "목업",
+      evaluationScore: 0.9,
     });
 
     const captured: MockupRenderRequest[] = [];
@@ -262,6 +267,7 @@ describe("ProcessMockupJobUseCase", () => {
       new RecordUsageUseCase(ctx.usage),
       capturingProvider,
       ctx.trainingExamples,
+      ctx.interviews,
     );
 
     const mockup = await ctx.create.execute({

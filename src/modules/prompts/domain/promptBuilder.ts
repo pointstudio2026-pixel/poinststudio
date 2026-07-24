@@ -307,6 +307,23 @@ function buildReferenceExampleContext(referenceExamplePrompts: string[]): string
 }
 
 /**
+ * 실사용자 생성물 중 평가 점수가 낮았던(60점 미만) 과거 프롬프트를 회피
+ * 지침으로 붙인다 -- 사용자 지시(2026-07-24: "60점 미만인 것들은 참고하지
+ * 않아야 할 사항이기 때문에... 낮은 점수일수록 참고하지 않아야 할 사항들이
+ * 많을 것"). referenceExampleContext와 동일한 매칭/발췌 규칙, 매칭 없으면
+ * 빈 문자열.
+ */
+function buildAvoidGuidanceContext(avoidPatternPrompts: string[]): string {
+  if (avoidPatternPrompts.length === 0) return "";
+  const excerpts = avoidPatternPrompts.map((p) =>
+    p.length > REFERENCE_EXAMPLE_PROMPT_EXCERPT_LENGTH ? `${p.slice(0, REFERENCE_EXAMPLE_PROMPT_EXCERPT_LENGTH)}...` : p,
+  );
+  return `회피 지침(과거에 반응이 좋지 않았던 방향, 아래와 비슷한 방향은 피한다): ${excerpts
+    .map((e) => `"${e}"`)
+    .join(" / ")}`;
+}
+
+/**
  * 14_PRD_PromptEngine.md "Prompt Layers": deterministic composition from
  * Interview answers + Brand Strategy + selected Style, so identical inputs
  * always produce identical layers (and therefore an identical hash --
@@ -335,6 +352,8 @@ export function buildPromptLayers(input: {
   userStyleDescription?: string;
   /** 관리자가 등록한 학습 자료 중 이 프로젝트와 매칭된 프롬프트 원문(있을 때만, 최대 2~3개). */
   referenceExamplePrompts?: string[];
+  /** 평가 점수 60점 미만인 과거 생성물 중 매칭된 프롬프트 원문(있을 때만) -- 회피 지침으로 반영. */
+  avoidPatternPrompts?: string[];
   /** 스타일 화면에서 미리 선택한 브랜드 컬러(있을 때만). 로고 여부와 무관하게 모든 유형에 동일 적용. */
   colorPaletteSwatches?: ColorSwatch[];
   /** 브랜드 인터뷰 "그 외 사항"(무조건 포함/제외되어야 하는 내용) 답변. 없으면 생략. */
@@ -376,6 +395,7 @@ export function buildPromptLayers(input: {
     : "";
 
   const referenceExampleContext = buildReferenceExampleContext(input.referenceExamplePrompts ?? []);
+  const avoidPatternContext = buildAvoidGuidanceContext(input.avoidPatternPrompts ?? []);
 
   // 스타일 화면에서 미리 컬러를 골랐다면 이름 + 정확한 hex 코드를 함께
   // 명시해 이미지 모델이 실제로 그 색상을 그대로 사용하도록 강제한다 --
@@ -427,6 +447,7 @@ export function buildPromptLayers(input: {
     baseTemplateContext,
     userStyleContext,
     referenceExampleContext,
+    avoidPatternContext,
     colorContext,
     logoStyleContext,
     deliverableContext,
@@ -467,6 +488,7 @@ export function composePrompt(layers: PromptLayers): ComposedPrompt {
     layers.baseTemplateContext,
     layers.userStyleContext,
     layers.referenceExampleContext,
+    layers.avoidPatternContext,
     layers.logoStyleContext,
     layers.deliverableContext,
     // colorContext/typographyContext는 마지막 "내용" 지시로 최종 구도 지시

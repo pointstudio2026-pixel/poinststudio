@@ -48,6 +48,7 @@ const processMockupJobUseCase = new ProcessMockupJobUseCase(
   subscriptionsContainer.recordUsageUseCase,
   resolveMockupRenderProvider(),
   trainingExampleRepositoryInstance,
+  interviewRepositoryInstance,
 );
 
 // Same MVP monolith auto-start pattern as generations/edits containers.

@@ -164,8 +164,8 @@ export interface TrainingExampleDto {
   id: string;
   prompt: string;
   deliverableType: string;
-  imageStorageKey: string;
-  imageContentType: string;
+  imageStorageKey: string | null;
+  imageContentType: string | null;
   createdByUserId: string;
   createdAt: string;
   evaluationScore: number | null;

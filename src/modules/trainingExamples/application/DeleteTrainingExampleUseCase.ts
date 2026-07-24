@@ -16,7 +16,9 @@ export class DeleteTrainingExampleUseCase {
     }
 
     await this.trainingExampleRepository.delete(example.id);
-    await this.fileStorage.delete(example.imageStorageKey);
+    if (example.imageStorageKey) {
+      await this.fileStorage.delete(example.imageStorageKey);
+    }
 
     await recordActivity({
       userId: input.deletedByUserId,

@@ -242,6 +242,7 @@ describe("BuildPromptUseCase", () => {
       imageStorageKey: "training-examples/x.png",
       imageContentType: "image/png",
       createdByUserId: "admin-1",
+      evaluationScore: 0.9,
     });
     // 다른 유형이면 아무리 키워드가 겹쳐도 매칭에서 제외되어야 한다.
     await ctx.trainingExamples.create({
@@ -250,6 +251,7 @@ describe("BuildPromptUseCase", () => {
       imageStorageKey: "training-examples/y.png",
       imageContentType: "image/png",
       createdByUserId: "admin-1",
+      evaluationScore: 0.9,
     });
 
     const prompt = await ctx.build.execute({ projectId: ctx.projectId, userId: "user-1" });
@@ -291,6 +293,7 @@ describe("BuildPromptUseCase", () => {
       imageStorageKey: "training-examples/gold.png",
       imageContentType: "image/png",
       createdByUserId: "admin-1",
+      evaluationScore: 0.9,
     });
 
     const prompt = await ctx.build.execute({ projectId: ctx.projectId, userId: "user-1" });
@@ -312,6 +315,42 @@ describe("BuildPromptUseCase", () => {
     // 하드제약 조항 자체가 금지 색상을 언급하는 건 정상이라, "콘텐츠에
     // 실제로 쓰였는지"만 보는 준수 검증은 그래도 통과해야 한다.
     expect(record?.complianceCheck.passed).toBe(true);
+  });
+
+  it("(회피 지침) injects a matching low-scoring (60점 미만) TrainingExample as avoid guidance, but never as a positive reference", async () => {
+    const ctx = await setup();
+    await fullySetUp(ctx);
+
+    await ctx.trainingExamples.create({
+      prompt: "fresh bread bakery logo 과도한 그림자와 복잡한 배경으로 산만했던 사례",
+      deliverableType: "브랜딩 & 로고",
+      createdByUserId: "admin-1",
+      evaluationScore: 0.3,
+    });
+
+    const prompt = await ctx.build.execute({ projectId: ctx.projectId, userId: "user-1" });
+
+    expect(prompt.currentVersion.userPrompt).toContain("회피 지침");
+    expect(prompt.currentVersion.userPrompt).toContain("과도한 그림자와 복잡한 배경");
+    // 60점 미만 자료는 "참고 예시"(긍정 추천) 문구에는 절대 섞이지 않는다.
+    expect(prompt.currentVersion.userPrompt).not.toContain("참고 예시");
+  });
+
+  it("(회피 지침) a 60점 이상 example never gets treated as an avoid pattern", async () => {
+    const ctx = await setup();
+    await fullySetUp(ctx);
+
+    await ctx.trainingExamples.create({
+      prompt: "fresh bread bakery logo, minimal sans-serif",
+      deliverableType: "브랜딩 & 로고",
+      createdByUserId: "admin-1",
+      evaluationScore: 0.9,
+    });
+
+    const prompt = await ctx.build.execute({ projectId: ctx.projectId, userId: "user-1" });
+
+    expect(prompt.currentVersion.userPrompt).toContain("참고 예시");
+    expect(prompt.currentVersion.userPrompt).not.toContain("회피 지침");
   });
 
   it("rejects access from a user who doesn't own the project (권한 검증)", async () => {

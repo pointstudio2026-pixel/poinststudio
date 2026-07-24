@@ -8,10 +8,10 @@ import {
 import { FakeExportRepository } from "@/modules/exports/testing/fakes";
 import { FakeProjectRepository } from "@/modules/projects/testing/fakes";
 import { CreateProjectUseCase } from "@/modules/projects/application/CreateProjectUseCase";
+import { FakeInterviewRepository } from "@/modules/interviews/testing/fakes";
 import { FakePromptRepository } from "@/modules/prompts/testing/fakes";
 import { FakePromptDecisionRecordRepository } from "@/modules/promptPriority/testing/fakes";
 import { FakeTrainingExampleRepository } from "@/modules/trainingExamples/testing/fakes";
-import { FakeFileStorage } from "@/shared/storage/testing/FakeFileStorage";
 import type { HardConstraintSet, SoftPreferenceSet } from "@/modules/promptPriority/domain/HardConstraint";
 
 const EMPTY_HARD_CONSTRAINTS: HardConstraintSet = {
@@ -33,10 +33,10 @@ function setup() {
   const feedback = new FakeGenerationFeedbackRepository();
   const exports = new FakeExportRepository();
   const projects = new FakeProjectRepository();
+  const interviews = new FakeInterviewRepository();
   const prompts = new FakePromptRepository();
   const decisionRecords = new FakePromptDecisionRecordRepository();
   const trainingExamples = new FakeTrainingExampleRepository();
-  const fileStorage = new FakeFileStorage();
 
   const useCase = new PromoteGenerationsToReferenceUseCase(
     generationEvaluations,
@@ -44,13 +44,13 @@ function setup() {
     feedback,
     exports,
     projects,
+    interviews,
     prompts,
     decisionRecords,
     trainingExamples,
-    fileStorage,
   );
 
-  return { useCase, generationEvaluations, generations, feedback, exports, projects, prompts, decisionRecords, trainingExamples, fileStorage };
+  return { useCase, generationEvaluations, generations, feedback, exports, projects, interviews, prompts, decisionRecords, trainingExamples };
 }
 
 describe("PromoteGenerationsToReferenceUseCase", () => {

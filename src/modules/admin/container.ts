@@ -23,10 +23,10 @@ import {
 } from "@/modules/generations/container";
 import { exportRepositoryInstance } from "@/modules/exports/container";
 import { projectRepositoryInstance } from "@/modules/projects/container";
+import { interviewRepositoryInstance } from "@/modules/interviews/container";
 import { promptRepositoryInstance } from "@/modules/prompts/container";
 import { promptDecisionRecordRepositoryInstance } from "@/modules/promptPriority/container";
 import { trainingExampleRepositoryInstance } from "@/modules/trainingExamples/container";
-import { resolveFileStorage } from "@/shared/storage/fileStorageRouter";
 import { scheduleReferencePromotion } from "@/shared/queue/referencePromotionQueue";
 import { startReferencePromotionWorker } from "@/workers/referencePromotionWorker";
 import { resolveTextCompletionProvider } from "@/shared/ai/textCompletionRouter";
@@ -82,10 +82,10 @@ export const adminContainer = {
     generationFeedbackRepositoryInstance,
     exportRepositoryInstance,
     projectRepositoryInstance,
+    interviewRepositoryInstance,
     promptRepositoryInstance,
     promptDecisionRecordRepositoryInstance,
     trainingExampleRepositoryInstance,
-    resolveFileStorage(),
   ),
 };
 

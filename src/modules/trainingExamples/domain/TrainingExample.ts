@@ -22,8 +22,9 @@ export interface TrainingExample {
   id: string;
   prompt: string;
   deliverableType: string;
-  imageStorageKey: string;
-  imageContentType: string;
+  /** 실사용자 생성물 승격분(source="USER_GENERATION")은 이미지를 저장하지 않는다 -- null. */
+  imageStorageKey: string | null;
+  imageContentType: string | null;
   createdByUserId: string;
   createdAt: Date;
   evaluationScore: number | null;

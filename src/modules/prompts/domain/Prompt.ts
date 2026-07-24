@@ -16,6 +16,8 @@ export interface PromptLayers {
   userStyleContext: string;
   /** 관리자가 등록한 학습 자료(TrainingExample) 중 매칭된 프롬프트 발췌. 매칭 없으면 빈 문자열. */
   referenceExampleContext: string;
+  /** 60점 미만으로 평가된 과거 생성물 중 매칭된 것 -- "이런 방향은 피하라"는 회피 지침. 매칭 없으면 빈 문자열. */
+  avoidPatternContext: string;
   /** 스타일 화면에서 미리 선택한 브랜드 컬러 팔레트 지시. 선택 안 했으면 빈 문자열. */
   colorContext: string;
   logoStyleContext: string;

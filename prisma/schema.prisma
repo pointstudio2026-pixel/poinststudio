@@ -678,8 +678,15 @@ model TrainingExample {
   id               String   @id @default(uuid()) @db.Uuid
   prompt           String   @db.Text
   deliverableType  String   @map("deliverable_type") @db.VarChar(30)
-  imageStorageKey  String   @map("image_storage_key")
-  imageContentType String   @map("image_content_type") @db.VarChar(50)
+  // 실사용자 생성물 승격분은 이미지 파일을 저장하지 않는다(2026-07-24
+  // 사용자 결정) -- 실제 프롬프트 조립에 쓰이는 건 prompt 텍스트뿐이라
+  // (rankTrainingExamples가 텍스트만 읽음, 이미지는 관리자 미리보기
+  // 용도였을 뿐) 이미지 없이도 학습 가치는 그대로고, R2 등 실 오브젝트
+  // 스토리지 없이도 무제한으로 안전하게 쌓을 수 있다. 관리자가 직접
+  // 등록하는 자료(source="ADMIN")는 계속 이미지를 요구한다(애플리케이션
+  // 레벨 검증, CreateTrainingExampleUseCase).
+  imageStorageKey  String?  @map("image_storage_key")
+  imageContentType String?  @map("image_content_type") @db.VarChar(50)
   createdByUserId  String   @map("created_by_user_id") @db.Uuid
   createdBy        User     @relation(fields: [createdByUserId], references: [id])
   createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz()
@@ -708,6 +715,10 @@ model TrainingExample {
   @@index([deliverableType])
   @@index([evaluationScore])
   @@index([category])
+  // BuildPromptUseCase/ProcessMockupJobUseCase의 실제 조회 조건(작업물
+  // 유형+카테고리+업종)을 그대로 커버하는 인덱스 -- 데이터가 아무리
+  // 쌓여도(수만 건) 이 조회 자체는 항상 빠르게 유지된다.
+  @@index([deliverableType, category, industry])
   @@map("training_examples")
 }
 

@@ -3,6 +3,7 @@ import { prisma } from "@/shared/database/prisma";
 import type { TrainingExample, TrainingExampleEvaluationBreakdownEntry } from "@/modules/trainingExamples/domain/TrainingExample";
 import type {
   CreateTrainingExampleInput,
+  ListTrainingExampleCandidatesInput,
   TrainingExampleRepository,
 } from "@/modules/trainingExamples/domain/TrainingExampleRepository";
 
@@ -10,8 +11,8 @@ type Row = {
   id: string;
   prompt: string;
   deliverableType: string;
-  imageStorageKey: string;
-  imageContentType: string;
+  imageStorageKey: string | null;
+  imageContentType: string | null;
   createdByUserId: string;
   createdAt: Date;
   evaluationScore: number | null;
@@ -48,8 +49,8 @@ export class PrismaTrainingExampleRepository implements TrainingExampleRepositor
       data: {
         prompt: input.prompt,
         deliverableType: input.deliverableType,
-        imageStorageKey: input.imageStorageKey,
-        imageContentType: input.imageContentType,
+        imageStorageKey: input.imageStorageKey ?? null,
+        imageContentType: input.imageContentType ?? null,
         createdByUserId: input.createdByUserId,
         evaluationScore: input.evaluationScore ?? null,
         evaluationBreakdown: (input.evaluationBreakdown ?? undefined) as unknown as Prisma.InputJsonValue,
@@ -76,6 +77,24 @@ export class PrismaTrainingExampleRepository implements TrainingExampleRepositor
     return rows.map(toDomain);
   }
 
+  async listCandidates(input: ListTrainingExampleCandidatesInput): Promise<TrainingExample[]> {
+    const scoreFilter =
+      input.bucket === "above" ? { gte: input.threshold } : { lt: input.threshold };
+    const rows = await prisma.trainingExample.findMany({
+      where: {
+        deliverableType: input.deliverableType,
+        category: input.category,
+        evaluationScore: scoreFilter,
+        ...(input.industry ? { OR: [{ industry: input.industry }, { industry: null }] } : {}),
+      },
+      // "above": 가장 좋은 것부터. "below": 가장 명확히 나쁜(점수가 낮은) 것부터 --
+      // 회피 지침으로서 가치가 가장 큰 것들이 상한(limit) 안에 먼저 들어오도록.
+      orderBy: { evaluationScore: input.bucket === "above" ? "desc" : "asc" },
+      take: input.limit,
+    });
+    return rows.map(toDomain);
+  }
+
   async findById(id: string): Promise<TrainingExample | null> {
     const row = await prisma.trainingExample.findUnique({ where: { id } });
     return row ? toDomain(row) : null;
@@ -85,11 +104,32 @@ export class PrismaTrainingExampleRepository implements TrainingExampleRepositor
     await prisma.trainingExample.delete({ where: { id } });
   }
 
-  async deleteLowestScoring(count: number): Promise<number> {
-    if (count <= 0) return 0;
+  async pruneAboveThreshold(threshold: number, capacity: number): Promise<number> {
+    return this.pruneBucket({ evaluationScore: { gte: threshold } }, capacity, "asc");
+  }
+
+  async pruneBelowThreshold(threshold: number, capacity: number): Promise<number> {
+    return this.pruneBucket({ evaluationScore: { lt: threshold } }, capacity, "desc");
+  }
+
+  /**
+   * 공통 용량 관리 로직 -- 주어진 조건(bucket)에 해당하는 행 수가 capacity를
+   * 넘으면, orderBy 방향으로 정렬했을 때 앞쪽(초과분)을 삭제한다.
+   * "above" 버킷은 asc(낮은 점수부터), "below" 버킷은 desc(threshold에
+   * 가까운, 즉 가장 덜 나쁜 것부터) -- 호출부에서 방향을 결정한다.
+   */
+  private async pruneBucket(
+    where: Prisma.TrainingExampleWhereInput,
+    capacity: number,
+    order: "asc" | "desc",
+  ): Promise<number> {
+    const total = await prisma.trainingExample.count({ where });
+    if (total <= capacity) return 0;
+    const excess = total - capacity;
     const targets = await prisma.trainingExample.findMany({
-      orderBy: [{ evaluationScore: "asc" }, { createdAt: "asc" }],
-      take: count,
+      where,
+      orderBy: { evaluationScore: order },
+      take: excess,
       select: { id: true },
     });
     if (targets.length === 0) return 0;

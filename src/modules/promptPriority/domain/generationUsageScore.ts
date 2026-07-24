@@ -1,5 +1,10 @@
-/** 리서치 브랜드 자료/실사용자 생성물 승격 기준선(사용자 확정: "80점 이상"). */
-export const REFERENCE_PROMOTION_THRESHOLD = 0.8;
+/**
+ * 리서치 브랜드 자료/실사용자 생성물 승격 기준선. 처음엔 80점으로
+ * 시작했지만(2026-07-23), 그 기준으로는 DB가 너무 천천히 쌓여서
+ * 2026-07-24 사용자 지시로 60점으로 낮춤 -- "일단 60점 이상이면 다
+ * 넣어놓자, 80점 기준으론 발전하는데 시간이 꽤 걸리겠다".
+ */
+export const REFERENCE_PROMOTION_THRESHOLD = 0.6;
 
 export interface GenerationUsageSignals {
   /** 사용자가 직접 남긴 평가(있으면 이게 최우선 신호). */

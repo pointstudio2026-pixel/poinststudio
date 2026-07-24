@@ -15,6 +15,9 @@ export class GetTrainingExampleImageUseCase {
       throw new NotFoundError("학습 자료를 찾을 수 없습니다.", "TRAINING_EXAMPLE_NOT_FOUND");
     }
 
+    if (!example.imageStorageKey) {
+      throw new NotFoundError("이 학습 자료는 이미지가 저장되어 있지 않습니다.", "TRAINING_EXAMPLE_FILE_NOT_FOUND");
+    }
     const file = await this.fileStorage.read(example.imageStorageKey);
     if (!file) {
       throw new NotFoundError("이미지 파일을 찾을 수 없습니다.", "TRAINING_EXAMPLE_FILE_NOT_FOUND");

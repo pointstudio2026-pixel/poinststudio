@@ -3,24 +3,25 @@ import type { GenerationRepository } from "@/modules/generations/domain/Generati
 import type { GenerationFeedbackRepository } from "@/modules/generations/domain/GenerationFeedbackRepository";
 import type { ExportRepository } from "@/modules/exports/domain/ExportRepository";
 import type { ProjectRepository } from "@/modules/projects/domain/ProjectRepository";
+import type { InterviewRepository } from "@/modules/interviews/domain/InterviewRepository";
 import type { PromptRepository } from "@/modules/prompts/domain/PromptRepository";
 import type { PromptDecisionRecordRepository } from "@/modules/promptPriority/domain/PromptDecisionRecordRepository";
 import type { TrainingExampleRepository } from "@/modules/trainingExamples/domain/TrainingExampleRepository";
-import type { FileStorage } from "@/shared/storage/FileStorage";
 import { getWorkspaceSteps } from "@/modules/projects/domain/Project";
 import { computeGenerationUsageScore, REFERENCE_PROMOTION_THRESHOLD } from "@/modules/promptPriority/domain/generationUsageScore";
 
-/** DB 용량 상한(§6) -- 넘으면 점수 낮은 자료부터 초과분만큼 자동 삭제. */
-const DEFAULT_CAPACITY = 500;
-function getCapacity(): number {
-  const raw = process.env.TRAINING_EXAMPLE_CAPACITY;
-  const parsed = raw ? Number(raw) : NaN;
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_CAPACITY;
-}
+/**
+ * DB 용량 상한(사용자 결정 2026-07-24) -- 참고(60점 이상)/회피(60점 미만)
+ * 버킷을 따로 관리한다. 프롬프트 텍스트만 저장하므로(이미지 없음) 이 정도
+ * 규모는 사실상 무료라 넉넉하게 잡았다 -- 조회 성능은 listCandidates의
+ * limit(상위 N개만 조회)이 총량과 무관하게 항상 보장한다.
+ */
+const ABOVE_THRESHOLD_CAPACITY = 20000;
+const BELOW_THRESHOLD_CAPACITY = 10000;
 
 /**
  * 관리자 수동 트리거(§6) -- 아직 평가 안 된(usageScore=null) 완료 생성물을
- * 비용 없는 행동 신호로 평가하고, 80점 이상만 참고 DB(TrainingExample,
+ * 비용 없는 행동 신호로 평가하고, 60점 이상만 참고 DB(TrainingExample,
  * source:"USER_GENERATION")로 승격한다. Vision AI 호출 없음, AI 비용 0.
  * Phase 1은 스케줄러 없이 이 유스케이스를 관리자가 버튼으로 직접 실행한다.
  */
@@ -31,10 +32,10 @@ export class PromoteGenerationsToReferenceUseCase {
     private readonly generationFeedbackRepository: GenerationFeedbackRepository,
     private readonly exportRepository: ExportRepository,
     private readonly projectRepository: ProjectRepository,
+    private readonly interviewRepository: InterviewRepository,
     private readonly promptRepository: PromptRepository,
     private readonly promptDecisionRecordRepository: PromptDecisionRecordRepository,
     private readonly trainingExampleRepository: TrainingExampleRepository,
-    private readonly fileStorage: FileStorage,
   ) {}
 
   async execute(input: { limit?: number } = {}): Promise<{ evaluated: number; promoted: number }> {
@@ -87,61 +88,47 @@ export class PromoteGenerationsToReferenceUseCase {
         projectReachedMockupStage,
       });
 
-      const shouldPromote = usageScore >= REFERENCE_PROMOTION_THRESHOLD;
-      await this.generationEvaluationRepository.updateUsageScore(evaluation.id, usageScore, shouldPromote);
+      const meetsThreshold = usageScore >= REFERENCE_PROMOTION_THRESHOLD;
+      await this.generationEvaluationRepository.updateUsageScore(evaluation.id, usageScore, meetsThreshold);
 
-      if (!shouldPromote) continue;
-
+      // 점수와 무관하게 완료된 생성물은 전부 DB에 쌓는다(사용자 결정,
+      // 2026-07-24: "모든 생성물들은 다 저장해, 점수 상관없이") -- 대신
+      // 실제 프롬프트 조립 시점(scoreTrainingExample)에서 기준 미달
+      // 자료는 후보에서 제외한다. 이러면 시간이 지날수록 실사용자 결과가
+      // 쌓이면서도, 실제로 쓰이는 건 항상 기준을 넘은 것들뿐이라 전체
+      // 품질이 점점 올라가는 구조가 된다. 즉시 삭제하지 않고 남겨두는 건
+      // 나중에 기준선을 조정하거나 재평가할 여지를 남기기 위함이다.
       const prompt = await this.promptRepository.getVersionById(version.promptVersionId);
       if (!prompt) continue;
 
-      const image = version.images[0]!;
-      const uploaded = await this.uploadImageFromUrl(image.url);
-      if (!uploaded) continue;
+      // 프로젝트 인터뷰에 이미 있는 업종 답변을 그대로 태그로 남긴다 --
+      // 실제 사용 시점(rankTrainingExamples)에도 이 값이 반영되도록.
+      const interview = await this.interviewRepository.findLatestByProjectId(generation.projectId);
+      const industry = interview?.answers.find((a) => a.questionKey === "industry")?.answer ?? null;
 
       await this.trainingExampleRepository.create({
         prompt: prompt.userPrompt,
         deliverableType: project.deliverableType ?? "브랜딩 & 로고",
-        imageStorageKey: uploaded.key,
-        imageContentType: uploaded.contentType,
         createdByUserId: generation.projectId, // 실사용자 프로젝트에서 승격된 것이라 실제 관리자 계정이 없음 -- projectId로 출처를 표시.
         source: "USER_GENERATION",
         sourceGenerationVersionId: version.id,
+        industry,
+        evaluationScore: usageScore,
+        evaluationBreakdown: {
+          usageScore: { score: usageScore, note: "행동 신호(재시도/내보내기/목업진행) + 사용자 평가 기반 -- 텍스트 품질 평가 아님" },
+        },
+        evaluatedAt: new Date(),
       });
       promoted += 1;
     }
 
-    // 용량 관리: 총 개수가 상한을 넘으면 점수 낮은 자료부터 초과분만큼 삭제.
-    const all = await this.trainingExampleRepository.list();
-    const capacity = getCapacity();
-    if (all.length > capacity) {
-      await this.trainingExampleRepository.deleteLowestScoring(all.length - capacity);
-    }
+    // 용량 관리: 참고(60점 이상)/회피(60점 미만) 버킷을 각각 따로 관리 --
+    // 참고 버킷은 낮은 점수부터, 회피 버킷은 threshold에 가까운(가장 덜
+    // 나쁜) 것부터 삭제한다(사용자 결정: 점수가 낮을수록 회피 지침으로서
+    // 가치가 크다).
+    await this.trainingExampleRepository.pruneAboveThreshold(REFERENCE_PROMOTION_THRESHOLD, ABOVE_THRESHOLD_CAPACITY);
+    await this.trainingExampleRepository.pruneBelowThreshold(REFERENCE_PROMOTION_THRESHOLD, BELOW_THRESHOLD_CAPACITY);
 
     return { evaluated: unscored.length, promoted };
-  }
-
-  /** GeneratedImage.url은 provider 응답 형태에 따라 data: URL 또는 실제 원격 URL일 수 있다 -- 둘 다 FileStorage에 다시 저장해야 TrainingExample의 인증된 이미지 서빙 규약(§ FileStorage 패턴)을 따를 수 있다. */
-  private async uploadImageFromUrl(url: string): Promise<{ key: string; contentType: string } | null> {
-    try {
-      let buffer: Buffer;
-      let contentType: string;
-      if (url.startsWith("data:")) {
-        const match = /^data:([^;]+);base64,(.+)$/.exec(url);
-        if (!match) return null;
-        contentType = match[1]!;
-        buffer = Buffer.from(match[2]!, "base64");
-      } else {
-        const response = await fetch(url);
-        if (!response.ok) return null;
-        contentType = response.headers.get("content-type") ?? "image/png";
-        buffer = Buffer.from(await response.arrayBuffer());
-      }
-      const key = `training-examples/promoted-${crypto.randomUUID()}`;
-      const saved = await this.fileStorage.save(key, buffer, contentType);
-      return { key: saved.key, contentType };
-    } catch {
-      return null;
-    }
   }
 }

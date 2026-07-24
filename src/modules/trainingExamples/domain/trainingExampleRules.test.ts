@@ -42,6 +42,42 @@ describe("scoreTrainingExample", () => {
     expect(highOverlap).toBeGreaterThan(lowOverlap);
     expect(lowOverlap).toBe(0);
   });
+
+  it("gives 0 when both the example and the input specify a different industry", () => {
+    const example = makeExample({ industry: "카페/커피" });
+    const score = scoreTrainingExample(example, {
+      keywordText: "카페 브랜드 로고 미니멀 산세리프 따뜻한 우드톤",
+      deliverableType: "브랜딩 & 로고",
+      industry: "병원/의원/클리닉",
+    });
+    expect(score).toBe(0);
+  });
+
+  it("does not exclude an example with no industry tag, even when the input specifies one", () => {
+    const example = makeExample({ industry: null });
+    const score = scoreTrainingExample(example, {
+      keywordText: "카페 브랜드 로고 미니멀 산세리프 따뜻한 우드톤",
+      deliverableType: "브랜딩 & 로고",
+      industry: "카페/커피",
+    });
+    expect(score).toBeGreaterThan(0);
+  });
+
+  it("boosts the score when the example's industry exactly matches the input's", () => {
+    // 부분 겹침(1.0 만점이 아닌 값)이어야 가산점 효과가 실제로 관찰된다 --
+    // 겹침이 이미 100%면 clamp(min 1)에 가려서 차이가 안 보인다.
+    const example = makeExample({ industry: "카페/커피" });
+    const withMatch = scoreTrainingExample(example, {
+      keywordText: "카페 브랜드 로고",
+      deliverableType: "브랜딩 & 로고",
+      industry: "카페/커피",
+    });
+    const withoutIndustryInput = scoreTrainingExample(example, {
+      keywordText: "카페 브랜드 로고",
+      deliverableType: "브랜딩 & 로고",
+    });
+    expect(withMatch).toBeGreaterThan(withoutIndustryInput);
+  });
 });
 
 describe("rankTrainingExamples", () => {

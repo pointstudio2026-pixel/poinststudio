@@ -1,6 +1,7 @@
 import type { TrainingExample } from "@/modules/trainingExamples/domain/TrainingExample";
 import type {
   CreateTrainingExampleInput,
+  ListTrainingExampleCandidatesInput,
   TrainingExampleRepository,
 } from "@/modules/trainingExamples/domain/TrainingExampleRepository";
 
@@ -14,8 +15,8 @@ export class FakeTrainingExampleRepository implements TrainingExampleRepository 
       createdAt: new Date(),
       prompt: input.prompt,
       deliverableType: input.deliverableType,
-      imageStorageKey: input.imageStorageKey,
-      imageContentType: input.imageContentType,
+      imageStorageKey: input.imageStorageKey ?? null,
+      imageContentType: input.imageContentType ?? null,
       createdByUserId: input.createdByUserId,
       evaluationScore: input.evaluationScore ?? null,
       evaluationBreakdown: input.evaluationBreakdown ?? null,
@@ -41,6 +42,22 @@ export class FakeTrainingExampleRepository implements TrainingExampleRepository 
     );
   }
 
+  async listCandidates(input: ListTrainingExampleCandidatesInput): Promise<TrainingExample[]> {
+    const matches = this.examples.filter((e) => {
+      if (e.deliverableType !== input.deliverableType) return false;
+      if (e.category !== input.category) return false;
+      if (input.industry && e.industry && e.industry !== input.industry) return false;
+      if (e.evaluationScore === null) return false;
+      return input.bucket === "above" ? e.evaluationScore >= input.threshold : e.evaluationScore < input.threshold;
+    });
+    matches.sort((a, b) =>
+      input.bucket === "above"
+        ? (b.evaluationScore ?? 0) - (a.evaluationScore ?? 0)
+        : (a.evaluationScore ?? 0) - (b.evaluationScore ?? 0),
+    );
+    return matches.slice(0, input.limit);
+  }
+
   async findById(id: string): Promise<TrainingExample | null> {
     return this.examples.find((e) => e.id === id) ?? null;
   }
@@ -49,10 +66,23 @@ export class FakeTrainingExampleRepository implements TrainingExampleRepository 
     this.examples = this.examples.filter((e) => e.id !== id);
   }
 
-  async deleteLowestScoring(count: number): Promise<number> {
-    if (count <= 0) return 0;
-    const sorted = [...this.examples].sort((a, b) => (a.evaluationScore ?? 0) - (b.evaluationScore ?? 0));
-    const targetIds = new Set(sorted.slice(0, count).map((e) => e.id));
+  async pruneAboveThreshold(threshold: number, capacity: number): Promise<number> {
+    const bucket = this.examples.filter((e) => e.evaluationScore !== null && e.evaluationScore >= threshold);
+    if (bucket.length <= capacity) return 0;
+    const excess = bucket.length - capacity;
+    const sorted = [...bucket].sort((a, b) => (a.evaluationScore ?? 0) - (b.evaluationScore ?? 0));
+    const targetIds = new Set(sorted.slice(0, excess).map((e) => e.id));
+    const before = this.examples.length;
+    this.examples = this.examples.filter((e) => !targetIds.has(e.id));
+    return before - this.examples.length;
+  }
+
+  async pruneBelowThreshold(threshold: number, capacity: number): Promise<number> {
+    const bucket = this.examples.filter((e) => e.evaluationScore !== null && e.evaluationScore < threshold);
+    if (bucket.length <= capacity) return 0;
+    const excess = bucket.length - capacity;
+    const sorted = [...bucket].sort((a, b) => (b.evaluationScore ?? 0) - (a.evaluationScore ?? 0));
+    const targetIds = new Set(sorted.slice(0, excess).map((e) => e.id));
     const before = this.examples.length;
     this.examples = this.examples.filter((e) => !targetIds.has(e.id));
     return before - this.examples.length;

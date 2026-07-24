@@ -30,6 +30,7 @@ import {
 } from "@/modules/promptPriority/domain/conflictDetection";
 import { preserveGoal } from "@/modules/promptPriority/domain/goalPreservationRules";
 import { checkPromptCompliance } from "@/modules/promptPriority/domain/promptComplianceCheck";
+import { REFERENCE_PROMOTION_THRESHOLD } from "@/modules/promptPriority/domain/generationUsageScore";
 import type { PromptDecisionRecordRepository } from "@/modules/promptPriority/domain/PromptDecisionRecordRepository";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { ConflictError, NotFoundError } from "@/shared/errors/AppError";
@@ -149,14 +150,28 @@ export class BuildPromptUseCase {
     // 하드제약과 충돌하는 후보는 최종 후보에서 제외한다 -- DB는 참고자료일
     // 뿐 사용자의 명시적 결정을 절대 덮어쓰지 않는다.
     let referenceExamplePrompts: string[] = [];
+    let avoidPatternPrompts: string[] = [];
     let dbCandidatesFound: string[] = [];
     let dbCandidatesUsed: string[] = [];
     const dbConflicts: ConflictResult[] = [];
     if (project.deliverableType) {
-      const candidates = await this.trainingExampleRepository.listByDeliverableType(
-        project.deliverableType,
-        TRAINING_EXAMPLE_CATEGORY_IMAGE_GENERATION,
-      );
+      const deliverableType = project.deliverableType;
+      // 데이터가 아무리 쌓여도(수만 건) 조회 비용이 항상 일정하게 유지되도록
+      // DB 레벨에서 상위 N개까지만 가져온다 -- 실제 관련성 순위는 그 안에서
+      // rankTrainingExamples(키워드 겹침)로 다시 매긴다.
+      const CANDIDATE_FETCH_LIMIT = 50;
+      const keywordText = [answers.industry, answers.purpose, brandStrategyData.brandKnowledge.mission]
+        .filter(Boolean)
+        .join(" ");
+
+      const candidates = await this.trainingExampleRepository.listCandidates({
+        deliverableType,
+        category: TRAINING_EXAMPLE_CATEGORY_IMAGE_GENERATION,
+        industry: answers.industry,
+        bucket: "above",
+        threshold: REFERENCE_PROMOTION_THRESHOLD,
+        limit: CANDIDATE_FETCH_LIMIT,
+      });
       dbCandidatesFound = candidates.map((c) => c.id);
 
       const dbSuggestions: DbSuggestion[] = candidates.flatMap((c) => [
@@ -167,17 +182,30 @@ export class BuildPromptUseCase {
       const excludedCandidateIds = new Set(dbConflicts.map((c) => c.sourceRef));
       const nonConflictingCandidates = candidates.filter((c) => !excludedCandidateIds.has(c.id));
 
-      const keywordText = [answers.industry, answers.purpose, brandStrategyData.brandKnowledge.mission]
-        .filter(Boolean)
-        .join(" ");
       const ranked = rankTrainingExamples(nonConflictingCandidates, {
         keywordText,
-        deliverableType: project.deliverableType,
+        deliverableType,
+        industry: answers.industry,
       })
         .filter((r) => r.score > 0)
         .slice(0, 2);
       referenceExamplePrompts = ranked.map((r) => r.example.prompt);
       dbCandidatesUsed = ranked.map((r) => r.example.id);
+
+      // 회피 지침: 평가 점수 60점 미만인 과거 생성물 중 매칭되는 것(있으면
+      // 최대 1개) -- 사용자 지시(2026-07-24), "이런 방향은 피하라".
+      const avoidCandidates = await this.trainingExampleRepository.listCandidates({
+        deliverableType,
+        category: TRAINING_EXAMPLE_CATEGORY_IMAGE_GENERATION,
+        industry: answers.industry,
+        bucket: "below",
+        threshold: REFERENCE_PROMOTION_THRESHOLD,
+        limit: CANDIDATE_FETCH_LIMIT,
+      });
+      const avoidRanked = rankTrainingExamples(avoidCandidates, { keywordText, deliverableType, industry: answers.industry })
+        .filter((r) => r.score > 0)
+        .slice(0, 1);
+      avoidPatternPrompts = avoidRanked.map((r) => r.example.prompt);
     }
     const conflicts = [...dbConflicts, ...detectInternalOverlap(hardConstraints)];
 
@@ -193,6 +221,7 @@ export class BuildPromptUseCase {
       logoStyleNames,
       userStyleDescription,
       referenceExamplePrompts,
+      avoidPatternPrompts,
       colorPaletteSwatches: colorPaletteSelection?.swatches,
       additionalNotes: answers.additionalNotes,
       hardConstraints,

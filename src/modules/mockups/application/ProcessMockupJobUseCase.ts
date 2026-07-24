@@ -7,6 +7,8 @@ import type { MockupRenderProvider } from "@/shared/ai/MockupRenderProvider";
 import type { TrainingExampleRepository } from "@/modules/trainingExamples/domain/TrainingExampleRepository";
 import { TRAINING_EXAMPLE_CATEGORY_MOCKUP } from "@/modules/trainingExamples/domain/TrainingExample";
 import { rankTrainingExamples } from "@/modules/trainingExamples/domain/trainingExampleRules";
+import type { InterviewRepository } from "@/modules/interviews/domain/InterviewRepository";
+import { REFERENCE_PROMOTION_THRESHOLD } from "@/modules/promptPriority/domain/generationUsageScore";
 import { GENERATION_EVENT_TYPE } from "@/modules/subscriptions/domain/planLimits";
 import { isBrandingDeliverableType } from "@/modules/projects/domain/deliverableTypes";
 import { recordActivity } from "@/shared/activity/activityLogger";
@@ -22,6 +24,7 @@ export class ProcessMockupJobUseCase {
     private readonly recordUsageUseCase: RecordUsageUseCase,
     private readonly mockupRenderProvider: MockupRenderProvider,
     private readonly trainingExampleRepository: TrainingExampleRepository,
+    private readonly interviewRepository: InterviewRepository,
   ) {}
 
   async execute(input: { mockupId: string; isFinalAttempt: boolean; requestedByUserId: string }): Promise<void> {
@@ -58,13 +61,20 @@ export class ProcessMockupJobUseCase {
     // 분리, 사용자 지시사항).
     let referenceExampleText: string | undefined;
     if (project.deliverableType) {
-      const candidates = await this.trainingExampleRepository.listByDeliverableType(
-        project.deliverableType,
-        TRAINING_EXAMPLE_CATEGORY_MOCKUP,
-      );
+      const interview = await this.interviewRepository.findLatestByProjectId(project.id);
+      const industry = interview?.answers.find((a) => a.questionKey === "industry")?.answer ?? undefined;
+      const candidates = await this.trainingExampleRepository.listCandidates({
+        deliverableType: project.deliverableType,
+        category: TRAINING_EXAMPLE_CATEGORY_MOCKUP,
+        industry,
+        bucket: "above",
+        threshold: REFERENCE_PROMOTION_THRESHOLD,
+        limit: 50,
+      });
       const [top] = rankTrainingExamples(candidates, {
         keywordText: template.name,
         deliverableType: project.deliverableType,
+        industry,
       }).filter((r) => r.score > 0);
       referenceExampleText = top?.example.prompt;
     }

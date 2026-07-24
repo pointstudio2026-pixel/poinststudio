@@ -49,7 +49,7 @@ describe("computeGenerationUsageScore", () => {
     expect(score).toBeLessThanOrEqual(1);
   });
 
-  it("REFERENCE_PROMOTION_THRESHOLD is 0.8 (사용자 확정: 80점 이상)", () => {
-    expect(REFERENCE_PROMOTION_THRESHOLD).toBe(0.8);
+  it("REFERENCE_PROMOTION_THRESHOLD is 0.6 (사용자 확정 2026-07-24: 60점 이상)", () => {
+    expect(REFERENCE_PROMOTION_THRESHOLD).toBe(0.6);
   });
 });
