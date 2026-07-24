@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { OAuthConsentForm } from "@/features/auth/OAuthConsentForm";
 import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
@@ -14,8 +15,7 @@ export function OAuthConsentView({ email, providerLabel }: { email: string; prov
         <LanguageSwitcher />
       </div>
       <Link href="/">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/brand/aster-mark.png" alt="ASTER" className="h-9 w-auto" />
+        <Image src="/brand/aster-mark.png" alt="ASTER" width={351} height={400} sizes="32px" priority className="h-9 w-auto" />
       </Link>
       <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-8">
         <p className="eyebrow text-sm text-muted">{t("oauthConsent.almostThere")}</p>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
@@ -10,8 +11,7 @@ export function Footer() {
     <footer className="border-t border-line bg-surface px-5 py-16 sm:px-8 sm:py-20">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 sm:flex-row sm:justify-between">
         <div className="flex flex-col gap-3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/aster-full.png" alt="ASTER" className="h-8 w-auto" />
+          <Image src="/brand/aster-full.png" alt="ASTER" width={1390} height={424} sizes="105px" className="h-8 w-auto" />
           <p className="max-w-xs text-sm text-muted">{t("home.footer.tagline")}</p>
         </div>
 

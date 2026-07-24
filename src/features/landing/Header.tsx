@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { NewProjectButton } from "@/features/projects/NewProjectButton";
 import { LogoutButton } from "@/features/auth/LogoutButton";
@@ -31,8 +32,15 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
     <header className="sticky top-0 z-40 border-b border-line/80 bg-paper/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
         <Link href="/" className="shrink-0">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/aster-full.png" alt="ASTER" className="h-7 w-auto sm:h-8" />
+          <Image
+            src="/brand/aster-full.png"
+            alt="ASTER"
+            width={1390}
+            height={424}
+            sizes="110px"
+            priority
+            className="h-7 w-auto sm:h-8"
+          />
         </Link>
 
         <nav className="hidden items-center gap-4 text-xs text-muted lg:flex">

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { PrimaryNav, type PrimaryNavUser } from "@/features/navigation/PrimaryNav";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
@@ -21,8 +22,7 @@ export function AppHeader({
     <header className="border-b border-line">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
         <Link href="/" className="shrink-0">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/aster-mark.png" alt="ASTER" className="h-8 w-auto" />
+          <Image src="/brand/aster-mark.png" alt="ASTER" width={351} height={400} sizes="30px" priority className="h-8 w-auto" />
         </Link>
         <div className="flex items-center gap-2">
           {children}

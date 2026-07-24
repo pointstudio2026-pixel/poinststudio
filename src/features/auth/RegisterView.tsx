@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { OAuthButtons } from "@/features/auth/OAuthButtons";
 import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
@@ -14,8 +15,7 @@ export function RegisterView() {
         <LanguageSwitcher />
       </div>
       <Link href="/">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/brand/aster-full.png" alt="ASTER" className="h-8 w-auto" />
+        <Image src="/brand/aster-full.png" alt="ASTER" width={1390} height={424} sizes="105px" priority className="h-8 w-auto" />
       </Link>
       <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-8">
         <p className="eyebrow text-sm text-muted">{t("register.getStarted")}</p>
