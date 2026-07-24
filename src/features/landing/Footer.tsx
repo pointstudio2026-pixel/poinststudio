@@ -10,9 +10,8 @@ export function Footer() {
     <footer className="border-t border-line bg-surface px-5 py-16 sm:px-8 sm:py-20">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 sm:flex-row sm:justify-between">
         <div className="flex flex-col gap-3">
-          <span className="font-display text-3xl font-semibold tracking-tight">
-            ASTER<span className="text-[var(--color-gold)]">.</span>
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/aster-full.png" alt="ASTER" className="h-8 w-auto" />
           <p className="max-w-xs text-sm text-muted">{t("home.footer.tagline")}</p>
         </div>
 
