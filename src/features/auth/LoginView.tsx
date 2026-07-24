@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { LoginForm } from "@/features/auth/LoginForm";
 import { OAuthButtons } from "@/features/auth/OAuthButtons";
 import { oauthErrorMessage } from "@/features/auth/oauthErrorMessage";
 import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
@@ -28,9 +27,6 @@ export function LoginView({ oauthErrorCode }: { oauthErrorCode?: string }) {
             {t(errorKey)}
           </p>
         )}
-        <div className="mt-6">
-          <LoginForm />
-        </div>
         <div className="mt-6">
           <OAuthButtons intent="login" />
         </div>

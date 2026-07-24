@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { RegisterForm } from "@/features/auth/RegisterForm";
 import { OAuthButtons } from "@/features/auth/OAuthButtons";
 import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
@@ -21,9 +20,6 @@ export function RegisterView() {
       <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-8">
         <p className="eyebrow text-sm text-muted">{t("register.getStarted")}</p>
         <h1 className="mt-1 text-xl font-semibold">{t("register.title")}</h1>
-        <div className="mt-6">
-          <RegisterForm />
-        </div>
         <div className="mt-6">
           <OAuthButtons intent="register" />
         </div>

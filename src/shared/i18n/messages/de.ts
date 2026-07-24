@@ -278,8 +278,6 @@ export const de: Messages = {
   },
   authOauth: {
     or: "oder",
-    loginNotice: "Um sich mit Google oder Kakao anzumelden, müssen Sie sich zuerst registrieren.",
-    kakaoNotReady: "Die Kakao-Anmeldung ist nach dem offiziellen Launch verfügbar.",
     google: "Mit Google fortfahren",
     kakao: "Mit Kakao fortfahren",
     consentPrefix: "Wenn Sie fortfahren, stimmen Sie unseren",

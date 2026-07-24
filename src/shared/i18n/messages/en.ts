@@ -278,8 +278,6 @@ export const en: Messages = {
   },
   authOauth: {
     or: "or",
-    loginNotice: "To sign in with Google or Kakao, you'll need to register first for it to work.",
-    kakaoNotReady: "Kakao login will be available after the official launch.",
     google: "Continue with Google",
     kakao: "Continue with Kakao",
     consentPrefix: "By continuing, you agree to our",
