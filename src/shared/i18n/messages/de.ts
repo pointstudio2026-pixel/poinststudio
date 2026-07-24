@@ -8,6 +8,9 @@ export const de: Messages = {
     proOnlyBody: "Die Mockup-Erstellung ist ab dem Pro-Plan verfügbar.",
     upgradeLink: "Abo-Pläne ansehen",
   },
+  aiProviderSelect: {
+    comingSoon: "Verfügbar nach dem offiziellen Launch. Momentan ist nur GPT nutzbar.",
+  },
   subscription: {
     title: "Abo-Pläne",
     currentPlanLine: "Aktueller Plan: {plan}",

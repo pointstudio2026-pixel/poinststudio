@@ -8,6 +8,9 @@ export const en: Messages = {
     proOnlyBody: "Mockup generation is available on the Pro plan and above.",
     upgradeLink: "View subscription plans",
   },
+  aiProviderSelect: {
+    comingSoon: "Coming soon after official launch. Only GPT is available right now.",
+  },
   subscription: {
     title: "Subscription Plans",
     currentPlanLine: "Current plan: {plan}",

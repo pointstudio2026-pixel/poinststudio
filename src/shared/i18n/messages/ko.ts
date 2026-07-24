@@ -6,6 +6,9 @@ export const ko = {
     proOnlyBody: "목업 생성은 Pro 이상 플랜에서 이용할 수 있는 기능입니다.",
     upgradeLink: "구독 플랜 보기",
   },
+  aiProviderSelect: {
+    comingSoon: "정식 출시 이후 서비스 예정입니다. 지금은 GPT만 이용하실 수 있어요.",
+  },
   subscription: {
     title: "구독 플랜",
     currentPlanLine: "현재 플랜: {plan}",

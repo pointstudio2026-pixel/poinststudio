@@ -8,6 +8,9 @@ export const ja: Messages = {
     proOnlyBody: "モックアップ生成はProプラン以上でご利用いただける機能です。",
     upgradeLink: "料金プランを見る",
   },
+  aiProviderSelect: {
+    comingSoon: "正式サービス開始後に対応予定です。現在はGPTのみご利用いただけます。",
+  },
   subscription: {
     title: "料金プラン",
     currentPlanLine: "現在のプラン: {plan}",

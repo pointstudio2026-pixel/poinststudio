@@ -8,6 +8,9 @@ export const fr: Messages = {
     proOnlyBody: "La génération de maquettes est disponible à partir de l'offre Pro.",
     upgradeLink: "Voir les offres d'abonnement",
   },
+  aiProviderSelect: {
+    comingSoon: "Disponible après le lancement officiel. Seul GPT est utilisable pour le moment.",
+  },
   subscription: {
     title: "Offres d'abonnement",
     currentPlanLine: "Offre actuelle : {plan}",
