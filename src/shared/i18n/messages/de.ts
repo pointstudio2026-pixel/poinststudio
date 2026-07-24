@@ -67,6 +67,10 @@ export const de: Messages = {
     logout: "Abmelden",
   },
   home: {
+    betaBanner: {
+      message: "Wir befinden uns aktuell in der Beta-Phase vor dem offiziellen Launch. Kostenpflichtige Funktionen sind erst nach dem offiziellen Launch verfügbar. Bei Problemen wenden Sie sich bitte über den Support an uns.",
+      linkLabel: "Support kontaktieren",
+    },
     header: {
       navService: "Service",
       navHowItWorks: "So funktioniert's",

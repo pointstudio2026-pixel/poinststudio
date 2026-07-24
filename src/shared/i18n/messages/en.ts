@@ -67,6 +67,10 @@ export const en: Messages = {
     logout: "Log out",
   },
   home: {
+    betaBanner: {
+      message: "We're in pre-launch beta right now. Paid features will be available after the official launch. If anything feels off, please let us know via Support -- we'd really appreciate it.",
+      linkLabel: "Contact support",
+    },
     header: {
       navService: "Service",
       navHowItWorks: "How it works",

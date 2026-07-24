@@ -65,6 +65,10 @@ export const ko = {
     logout: "로그아웃",
   },
   home: {
+    betaBanner: {
+      message: "현재 정식 출시 전입니다. 정식 출시 이후 유료화 기능을 이용하실 수 있어요. 불편한 점은 문의사항에 남겨주시면 감사하겠습니다.",
+      linkLabel: "문의하기",
+    },
     header: {
       navService: "서비스",
       navHowItWorks: "사용 방법",

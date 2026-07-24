@@ -121,6 +121,12 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
 
   return (
     <div id="top" className="flex min-h-screen flex-col bg-paper">
+      <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 bg-amber-50 px-4 py-2 text-center text-xs text-amber-900">
+        <span>{t("home.betaBanner.message")}</span>
+        <Link href="/support" className="whitespace-nowrap font-medium underline underline-offset-2 hover:text-amber-950">
+          {t("home.betaBanner.linkLabel")}
+        </Link>
+      </div>
       <Header user={user} planCode={planCode} />
 
       <main className="flex flex-col">

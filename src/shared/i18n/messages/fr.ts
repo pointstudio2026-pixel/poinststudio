@@ -67,6 +67,10 @@ export const fr: Messages = {
     logout: "Se déconnecter",
   },
   home: {
+    betaBanner: {
+      message: "Nous sommes actuellement en bêta, avant le lancement officiel. Les fonctionnalités payantes seront disponibles après le lancement. Si quelque chose ne va pas, merci de nous le signaler via la page Support.",
+      linkLabel: "Contacter le support",
+    },
     header: {
       navService: "Service",
       navHowItWorks: "Comment ça marche",

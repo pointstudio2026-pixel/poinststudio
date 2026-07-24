@@ -67,6 +67,10 @@ export const ja: Messages = {
     logout: "ログアウト",
   },
   home: {
+    betaBanner: {
+      message: "現在正式サービス開始前です。正式サービス開始後に有料機能をご利用いただけます。ご不便な点がございましたら、お問い合わせよりお知らせいただけますと幸いです。",
+      linkLabel: "お問い合わせ",
+    },
     header: {
       navService: "サービス",
       navHowItWorks: "使い方",
