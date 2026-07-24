@@ -16,10 +16,10 @@ const ACTIVE_STEP_INDEX = 2;
 const PALETTE = ["#D9CBB8", "#7C6A56", "#3A342B", "#171512"];
 
 const GENERATIONS = [
-  { bg: "linear-gradient(135deg, #EFE7D8, #D9CBB8)" },
-  { bg: "linear-gradient(135deg, #E7E2D6, #B9AE9A)" },
-  { bg: "linear-gradient(135deg, #EAF0F6, #C9D6E3)" },
-  { bg: "linear-gradient(135deg, #F1EBDF, #CBB98F)" },
+  "/landing/hero/generation-1.png",
+  "/landing/hero/generation-2.png",
+  "/landing/hero/generation-3.png",
+  "/landing/hero/generation-4.png",
 ];
 
 /**
@@ -79,8 +79,9 @@ export function ProductMockup() {
 
           <p className="mt-4 text-[10px] font-medium text-muted">{t("home.mockup.generationResult")}</p>
           <div className="mt-1.5 grid grid-cols-4 gap-2">
-            {GENERATIONS.map((g, i) => (
-              <div key={i} className="aspect-square rounded-lg border border-line" style={{ background: g.bg }} />
+            {GENERATIONS.map((src) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={src} src={src} alt="" className="aspect-square rounded-lg border border-line object-cover" />
             ))}
           </div>
 

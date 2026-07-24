@@ -29,7 +29,7 @@ const CATEGORIES: LogoStyleCategoryDef[] = [
     description: "글자를 중심으로 브랜드를 표현하는 스타일입니다.",
     subStyles: ["워드마크", "레터마크", "모노그램", "한글 타이포", "캘리그라피", "시그니처"],
     keywords: ["텍스트", "글자", "타이포그래피", "심플", "미니멀", "클래식", "전통"],
-    sampleImageUrl: "/logo-styles/typography.svg",
+    sampleImageUrl: "/logo-styles/typography.png",
     sortOrder: 1,
   },
   {
@@ -38,7 +38,7 @@ const CATEGORIES: LogoStyleCategoryDef[] = [
     description: "심플한 심볼을 중심으로 브랜드를 표현합니다.",
     subStyles: ["미니멀 심볼", "기하학 심볼", "추상 심볼", "픽토그램", "라인 심볼", "플랫 심볼"],
     keywords: ["심볼", "아이콘", "미니멀", "기하학적", "테크", "모던", "심플"],
-    sampleImageUrl: "/logo-styles/symbol.svg",
+    sampleImageUrl: "/logo-styles/symbol.png",
     sortOrder: 2,
   },
   {
@@ -47,7 +47,7 @@ const CATEGORIES: LogoStyleCategoryDef[] = [
     description: "친근하고 개성 있는 브랜드에 적합합니다.",
     subStyles: ["일러스트 심볼", "마스코트", "동물", "식물", "오브젝트"],
     keywords: ["친근한", "개성있는", "자연", "오가닉", "캐릭터", "플레이풀", "따뜻함"],
-    sampleImageUrl: "/logo-styles/illustration.svg",
+    sampleImageUrl: "/logo-styles/illustration.png",
     sortOrder: 3,
   },
   {
@@ -56,7 +56,7 @@ const CATEGORIES: LogoStyleCategoryDef[] = [
     description: "가장 많이 사용하는 브랜드 로고 형태입니다.",
     subStyles: ["심볼 + 워드마크", "엠블럼", "원형", "프레임", "커스텀 조합"],
     keywords: ["균형", "조합", "범용적", "신뢰", "안정적", "전문적"],
-    sampleImageUrl: "/logo-styles/combination.svg",
+    sampleImageUrl: "/logo-styles/combination.png",
     sortOrder: 4,
   },
   {
@@ -65,7 +65,7 @@ const CATEGORIES: LogoStyleCategoryDef[] = [
     description: "독창성과 차별성을 강조하는 스타일입니다.",
     subStyles: ["네거티브 스페이스", "그라디언트", "3D", "패턴"],
     keywords: ["고급", "프리미엄", "독창적", "세련된", "차별화", "우아함", "혁신"],
-    sampleImageUrl: "/logo-styles/premium.svg",
+    sampleImageUrl: "/logo-styles/premium.png",
     sortOrder: 5,
   },
 ];

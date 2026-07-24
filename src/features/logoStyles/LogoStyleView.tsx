@@ -282,7 +282,7 @@ function AiRecommendedCard({
       <div className="relative aspect-square w-full overflow-hidden bg-amber-50">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/logo-styles/ai-recommended.svg"
+          src="/logo-styles/ai-recommended.png"
           alt="AI 추천"
           className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
         />
