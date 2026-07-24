@@ -18,7 +18,7 @@ export function Footer() {
             height={424}
             sizes="110px"
             priority
-            className="h-7 w-auto sm:h-8"
+            className="h-7 w-auto self-start sm:h-8"
           />
           <p className="max-w-xs text-sm text-muted">{t("home.footer.tagline")}</p>
         </div>
