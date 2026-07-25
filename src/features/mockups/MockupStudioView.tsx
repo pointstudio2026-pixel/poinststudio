@@ -16,6 +16,7 @@ import {
 } from "@/services/mockups-service";
 import { fetchGenerationHistory } from "@/services/generations-service";
 import { Spinner } from "@/components/Spinner";
+import { ImageLightbox } from "@/components/ImageLightbox";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 import { DELIVERABLE_TYPE_TO_MOCKUP_CATEGORY } from "@/modules/mockups/domain/mockupRules";
@@ -34,8 +35,8 @@ export function MockupStudioView({
   const { t } = useTranslation();
   // "완성된 결과물"(포스터/브로슈어 등) deliverableType은 대응하는 목업
   // 카테고리 하나로 고정한다 -- 명함 프로젝트에 웹사이트 목업이 뜰 이유가
-  // 없다. 매핑이 없으면(브랜딩 & 로고, 리플렛, 패키지, 레거시 null) 기존
-  // 그대로 6개 카테고리를 전부 보여준다.
+  // 없다. 매핑이 없으면(브랜딩 & 로고, 레거시 null) 기존 그대로 전체
+  // 카테고리를 다 보여준다.
   const lockedCategory = deliverableType ? DELIVERABLE_TYPE_TO_MOCKUP_CATEGORY[deliverableType] : undefined;
   const queryClient = useQueryClient();
   const [previewMockup, setPreviewMockup] = useState<MockupProjectDto | null>(null);
@@ -43,6 +44,7 @@ export function MockupStudioView({
   const [selectedCategory, setSelectedCategory] = useState<MockupCategoryDto | null>(null);
   const [creatingTemplateId, setCreatingTemplateId] = useState<string | null>(null);
   const [createError, setCreateError] = useState<string | null>(null);
+  const [previewTemplateUrl, setPreviewTemplateUrl] = useState<string | null>(null);
 
   const { data: mockupsData } = useQuery({
     queryKey: ["mockups", projectId],
@@ -222,14 +224,16 @@ export function MockupStudioView({
 
             {createError && <p className="text-sm text-red-600">{createError}</p>}
 
+            {/* 예시 이미지는 둘러보기용일 뿐 -- 클릭하면 확대만 되고, 실제 생성은
+                아래 카테고리 단위 버튼으로만 트리거된다(이미지를 눌렀는데 바로
+                비용이 발생하는 걸 막기 위해 2026-07-25 분리). */}
             <div className="grid grid-cols-3 gap-3">
               {(templatesData?.templates ?? []).map((template) => (
                 <button
                   key={template.id}
                   type="button"
-                  onClick={() => handleCreateMockup(template.id)}
-                  disabled={Boolean(creatingTemplateId)}
-                  className="group relative overflow-hidden rounded-md border border-neutral-200 text-left transition hover:border-neutral-900 disabled:opacity-50"
+                  onClick={() => setPreviewTemplateUrl(template.backgroundUrl)}
+                  className="group relative overflow-hidden rounded-md border border-neutral-200 text-left transition hover:border-neutral-900"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -240,17 +244,31 @@ export function MockupStudioView({
                   <div className="absolute inset-x-0 bottom-0 bg-black/50 px-2 py-1 text-xs text-white">
                     {template.name}
                   </div>
-                  {creatingTemplateId === template.id && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                      <Spinner />
-                    </div>
-                  )}
                 </button>
               ))}
             </div>
+
+            {activeCategory && (
+              <button
+                type="button"
+                onClick={() => {
+                  const primaryTemplateId = templatesData?.templates[0]?.id;
+                  if (primaryTemplateId) handleCreateMockup(primaryTemplateId);
+                }}
+                disabled={Boolean(creatingTemplateId) || !templatesData?.templates.length}
+                className="flex items-center justify-center gap-2 rounded-md bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50"
+              >
+                {creatingTemplateId && <Spinner />}
+                {MOCKUP_CATEGORY_LABELS[activeCategory]} 선택
+              </button>
+            )}
           </div>
         )}
       </section>
+
+      {previewTemplateUrl && (
+        <ImageLightbox src={previewTemplateUrl} alt="목업 예시" onClose={() => setPreviewTemplateUrl(null)} />
+      )}
 
       {previewMockup?.resultImageUrl && (
         <div

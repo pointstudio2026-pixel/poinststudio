@@ -7,6 +7,10 @@ export const MOCKUP_CATEGORIES = [
   "website_hero",
   "brochure",
   "poster",
+  "package",
+  "leaflet",
+  "banner",
+  "uniform",
 ] as const;
 
 export type MockupCategory = (typeof MOCKUP_CATEGORIES)[number];

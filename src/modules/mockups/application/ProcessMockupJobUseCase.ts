@@ -104,6 +104,7 @@ export class ProcessMockupJobUseCase {
         backgroundUrl: template.backgroundUrl,
         placementArea,
         templateName: template.name,
+        category: template.category,
         compositingMode,
         referenceExampleText,
         avoidPatternText,

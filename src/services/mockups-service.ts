@@ -6,15 +6,23 @@ export type MockupCategoryDto =
   | "mobile_app"
   | "website_hero"
   | "brochure"
-  | "poster";
+  | "poster"
+  | "package"
+  | "leaflet"
+  | "banner"
+  | "uniform";
 
 export const MOCKUP_CATEGORY_LABELS: Record<MockupCategoryDto, string> = {
-  business_card: "Business Card",
-  signboard: "Signboard",
-  mobile_app: "Mobile App",
-  website_hero: "Website Hero",
-  brochure: "Brochure",
-  poster: "Poster",
+  business_card: "명함",
+  signboard: "간판",
+  mobile_app: "모바일 앱",
+  website_hero: "웹사이트",
+  brochure: "브로슈어",
+  poster: "포스터",
+  package: "패키지",
+  leaflet: "리플렛",
+  banner: "배너",
+  uniform: "유니폼",
 };
 
 export interface MockupTemplateDto {

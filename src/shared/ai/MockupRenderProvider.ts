@@ -20,6 +20,8 @@ export interface MockupRenderRequest {
   backgroundUrl: string;
   placementArea: PlacementArea;
   templateName: string;
+  /** MockupCategory 값(business_card, poster, ...) -- 카테고리별 연출 지침을 고르는 데만 쓰인다. */
+  category: string;
   compositingMode: MockupCompositingMode;
   /**
    * TrainingExample(category="목업")에서 찾은 참고 문구(연출/합성 스타일

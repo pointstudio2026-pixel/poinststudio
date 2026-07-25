@@ -7,6 +7,8 @@ import { resolveBackgroundDataUri, resolveImageBuffer } from "@/shared/ai/mockup
 import { ProviderError } from "@/shared/errors/AppError";
 import { logger } from "@/shared/logging/logger";
 import { isHealthEndpointReachable } from "@/shared/ai/providerHealthCheck";
+import { MOCKUP_CATEGORIES } from "@/modules/mockups/domain/Mockup";
+import { buildMockupCategorySceneDirective } from "@/modules/mockups/domain/mockupRules";
 
 const OPENAI_EDITS_URL = "https://api.openai.com/v1/images/edits";
 const OPENAI_MODELS_URL = "https://api.openai.com/v1/models";
@@ -42,9 +44,14 @@ function buildPrompt(request: MockupRenderRequest): string {
         `정확히 그대로, ${request.templateName} 목업에 자연스럽게 배치한 사실적인 제품 ` +
         `사진을 만들어줘. 로고의 텍스트, 심볼, 색상을 완전히 동일하게 유지하고, 배경과 ` +
         `소품은 실제 사용 환경처럼 유지해줘.`;
+  const isKnownCategory = (MOCKUP_CATEGORIES as readonly string[]).includes(request.category);
+  const sceneDirective = isKnownCategory
+    ? buildMockupCategorySceneDirective(request.category as (typeof MOCKUP_CATEGORIES)[number])
+    : "";
+  const sceneClause = sceneDirective ? ` 연출 지침: ${sceneDirective}` : "";
   const referenceClause = request.referenceExampleText ? ` 참고 연출 가이드: ${request.referenceExampleText}` : "";
   const avoidClause = request.avoidPatternText ? ` 회피 지침(과거에 반응이 좋지 않았던 연출, 피할 것): ${request.avoidPatternText}` : "";
-  return `${base}${referenceClause}${avoidClause}`;
+  return `${base}${sceneClause}${referenceClause}${avoidClause}`;
 }
 
 export class OpenAIMockupRenderProvider implements MockupRenderProvider {

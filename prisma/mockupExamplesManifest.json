@@ -1,0 +1,2122 @@
+[
+  {
+    "category": "business_card",
+    "name": "명함 예시 1",
+    "slug": "business-card-ex1",
+    "description": "명함 목업 예시 이미지 1.",
+    "imagePath": "/mockup-templates/business-card-ex1.jpg",
+    "placement": {
+      "xPct": 32,
+      "yPct": 22,
+      "widthPct": 20,
+      "heightPct": 20
+    },
+    "fullDesignPlacement": {
+      "xPct": 14,
+      "yPct": 12,
+      "widthPct": 56,
+      "heightPct": 60
+    },
+    "prompt": "고급스러운 명함 목업 사진. 대리석 또는 콘크리트 질감의 배경 위에 명함 앞뒤가 비스듬히 놓여 있고, 가상의 브랜드 로고와 워드마크가 인쇄되어 있다. 미니멀하고 모던한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "명함",
+    "visionScore": 0.9,
+    "visionSummary": "전체적으로 통일된 디자인으로 고급스러운 명함 목업을 잘 표현하고 있다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "명함 디자인이 현대적이고 고급스러운 느낌을 잘 전달하고 있다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "미니멀하고 모던한 스타일이 최신 디자인 트렌드에 부합한다."
+      },
+      "technicalQuality": {
+        "score": 1,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 고급스러운 명함 목업을 잘 표현하고 있다."
+    }
+  },
+  {
+    "category": "business_card",
+    "name": "명함 예시 2",
+    "slug": "business-card-ex2",
+    "description": "명함 목업 예시 이미지 2.",
+    "imagePath": "/mockup-templates/business-card-ex2.jpg",
+    "placement": {
+      "xPct": 32,
+      "yPct": 22,
+      "widthPct": 20,
+      "heightPct": 20
+    },
+    "fullDesignPlacement": {
+      "xPct": 14,
+      "yPct": 12,
+      "widthPct": 56,
+      "heightPct": 60
+    },
+    "prompt": "고급스러운 명함 목업 사진. 대리석 또는 콘크리트 질감의 배경 위에 명함 앞뒤가 비스듬히 놓여 있고, 가상의 브랜드 로고와 워드마크가 인쇄되어 있다. 따뜻한 내추럴 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "명함",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 고급스러운 느낌을 잘 전달하고 있다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드의 고급스러움과 자연스러운 톤이 잘 반영되어 있다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 부합하는 세련된 디자인이지만, 약간의 단순함이 더 필요할 수 있다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 고급스러운 느낌을 잘 전달하고 있다."
+    }
+  },
+  {
+    "category": "business_card",
+    "name": "명함 예시 4",
+    "slug": "business-card-ex4",
+    "description": "명함 목업 예시 이미지 4.",
+    "imagePath": "/mockup-templates/business-card-ex4.jpg",
+    "placement": {
+      "xPct": 32,
+      "yPct": 22,
+      "widthPct": 20,
+      "heightPct": 20
+    },
+    "fullDesignPlacement": {
+      "xPct": 14,
+      "yPct": 12,
+      "widthPct": 56,
+      "heightPct": 60
+    },
+    "prompt": "고급스러운 명함 목업 사진. 대리석 또는 콘크리트 질감의 배경 위에 명함 앞뒤가 비스듬히 놓여 있고, 가상의 브랜드 로고와 워드마크가 인쇄되어 있다. 럭셔리 다크톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "명함",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 고급스러운 명함 디자인이다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "명함 디자인이 고급스러운 브랜드 이미지와 잘 어울린다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 부합하는 세련된 디자인 스타일이다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 고급스러운 명함 디자인이다."
+    }
+  },
+  {
+    "category": "business_card",
+    "name": "명함 예시 3",
+    "slug": "business-card-ex3",
+    "description": "명함 목업 예시 이미지 3.",
+    "imagePath": "/mockup-templates/business-card-ex3.jpg",
+    "placement": {
+      "xPct": 32,
+      "yPct": 22,
+      "widthPct": 20,
+      "heightPct": 20
+    },
+    "fullDesignPlacement": {
+      "xPct": 14,
+      "yPct": 12,
+      "widthPct": 56,
+      "heightPct": 60
+    },
+    "prompt": "고급스러운 명함 목업 사진. 대리석 또는 콘크리트 질감의 배경 위에 명함 앞뒤가 비스듬히 놓여 있고, 가상의 브랜드 로고와 워드마크가 인쇄되어 있다. 볼드하고 컬러풀한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "명함",
+    "visionScore": 0.9,
+    "visionSummary": "통일된 디자인으로 고급스러운 명함 목업이 잘 표현되었다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "명함 디자인이 고급스러운 브랜드 이미지와 잘 어울린다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 맞는 세련된 디자인이지만, 좀 더 독창성이 필요하다."
+      },
+      "technicalQuality": {
+        "score": 1,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되었다."
+      },
+      "singleConceptRespected": true,
+      "summary": "통일된 디자인으로 고급스러운 명함 목업이 잘 표현되었다."
+    }
+  },
+  {
+    "category": "signboard",
+    "name": "간판 예시 1",
+    "slug": "signboard-ex1",
+    "description": "간판 목업 예시 이미지 1.",
+    "imagePath": "/mockup-templates/signboard-ex1.jpg",
+    "placement": {
+      "xPct": 41,
+      "yPct": 20,
+      "widthPct": 30,
+      "heightPct": 38
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 15,
+      "widthPct": 60,
+      "heightPct": 60
+    },
+    "prompt": "매장 외관 간판 목업 사진. 건물 외벽에 브랜드 로고가 새겨진 간판이 걸려 있고, 자연광 아래에서 촬영되었다. 미니멀하고 모던한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.9,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드 정보와 잘 어울리는 미니멀하고 모던한 디자인이다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "최신 트렌드에 부합하는 깔끔한 스타일이지만 약간의 독창성이 부족하다."
+      },
+      "technicalQuality": {
+        "score": 1,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "business_card",
+    "name": "명함 예시 5",
+    "slug": "business-card-ex5",
+    "description": "명함 목업 예시 이미지 5.",
+    "imagePath": "/mockup-templates/business-card-ex5.jpg",
+    "placement": {
+      "xPct": 32,
+      "yPct": 22,
+      "widthPct": 20,
+      "heightPct": 20
+    },
+    "fullDesignPlacement": {
+      "xPct": 14,
+      "yPct": 12,
+      "widthPct": 56,
+      "heightPct": 60
+    },
+    "prompt": "고급스러운 명함 목업 사진. 대리석 또는 콘크리트 질감의 배경 위에 명함 앞뒤가 비스듬히 놓여 있고, 가상의 브랜드 로고와 워드마크가 인쇄되어 있다. 빈티지 레트로 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "명함",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드의 고급스러움을 잘 나타내고 있다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드의 고급스러운 이미지와 잘 어울리는 디자인이다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 부합하는 빈티지 레트로 톤이 잘 표현되었다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드의 고급스러움을 잘 나타내고 있다."
+    }
+  },
+  {
+    "category": "signboard",
+    "name": "간판 예시 2",
+    "slug": "signboard-ex2",
+    "description": "간판 목업 예시 이미지 2.",
+    "imagePath": "/mockup-templates/signboard-ex2.jpg",
+    "placement": {
+      "xPct": 41,
+      "yPct": 20,
+      "widthPct": 30,
+      "heightPct": 38
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 15,
+      "widthPct": 60,
+      "heightPct": 60
+    },
+    "prompt": "매장 외관 간판 목업 사진. 건물 외벽에 브랜드 로고가 새겨진 간판이 걸려 있고, 자연광 아래에서 촬영되었다. 따뜻한 내추럴 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드의 업종과 목적에 잘 어울리는 디자인이다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "최신 브랜딩 트렌드에 부합하며, 복잡하지 않고 깔끔하다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되었다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "signboard",
+    "name": "간판 예시 3",
+    "slug": "signboard-ex3",
+    "description": "간판 목업 예시 이미지 3.",
+    "imagePath": "/mockup-templates/signboard-ex3.jpg",
+    "placement": {
+      "xPct": 41,
+      "yPct": 20,
+      "widthPct": 30,
+      "heightPct": 38
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 15,
+      "widthPct": 60,
+      "heightPct": 60
+    },
+    "prompt": "매장 외관 간판 목업 사진. 건물 외벽에 브랜드 로고가 새겨진 간판이 걸려 있고, 자연광 아래에서 촬영되었다. 볼드하고 컬러풀한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드의 업종과 목적에 잘 맞는 디자인이다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 부합하는 현대적인 스타일이다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되었다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "signboard",
+    "name": "간판 예시 4",
+    "slug": "signboard-ex4",
+    "description": "간판 목업 예시 이미지 4.",
+    "imagePath": "/mockup-templates/signboard-ex4.jpg",
+    "placement": {
+      "xPct": 41,
+      "yPct": 20,
+      "widthPct": 30,
+      "heightPct": 38
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 15,
+      "widthPct": 60,
+      "heightPct": 60
+    },
+    "prompt": "매장 외관 간판 목업 사진. 건물 외벽에 브랜드 로고가 새겨진 간판이 걸려 있고, 자연광 아래에서 촬영되었다. 럭셔리 다크톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드의 고급스러움과 남성복 이미지를 잘 반영하고 있다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 부합하는 세련된 디자인 스타일이다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
+    }
+  },
+  {
+    "category": "signboard",
+    "name": "간판 예시 5",
+    "slug": "signboard-ex5",
+    "description": "간판 목업 예시 이미지 5.",
+    "imagePath": "/mockup-templates/signboard-ex5.jpg",
+    "placement": {
+      "xPct": 41,
+      "yPct": 20,
+      "widthPct": 30,
+      "heightPct": 38
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 15,
+      "widthPct": 60,
+      "heightPct": 60
+    },
+    "prompt": "매장 외관 간판 목업 사진. 건물 외벽에 브랜드 로고가 새겨진 간판이 걸려 있고, 자연광 아래에서 촬영되었다. 빈티지 레트로 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.88,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드 정보와 관련된 디자인 요소가 잘 반영되어 있으나, 특정 프로젝트에 대한 명확한 연관성은 부족하다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "빈티지 레트로 톤이 현재 트렌드에 부합하며, 복잡하지 않고 세련된 디자인이다."
+      },
+      "technicalQuality": {
+        "score": 0.95,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있어 기술적 품질이 높다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
+    }
+  },
+  {
+    "category": "mobile_app",
+    "name": "모바일 앱 예시 1",
+    "slug": "mobile-app-ex1",
+    "description": "모바일 앱 목업 예시 이미지 1.",
+    "imagePath": "/mockup-templates/mobile-app-ex1.jpg",
+    "placement": {
+      "xPct": 40,
+      "yPct": 18,
+      "widthPct": 8,
+      "heightPct": 8
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 17,
+      "widthPct": 22,
+      "heightPct": 56
+    },
+    "prompt": "스마트폰 화면에 앱 UI가 떠 있는 목업 사진. 화면 상단에 가상의 브랜드 로고가 보이고, 손으로 들고 있거나 책상 위에 놓여 있다. 미니멀하고 모던한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "앱 디자인",
+    "visionScore": 0.88,
+    "visionSummary": "전체적으로 통일된 디자인으로, 현대적인 감각을 잘 살리고 있다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "모던한 디자인이 브랜드 이미지와 잘 어울리지만, 특정 브랜드 정보가 부족하다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "미니멀한 스타일이 최신 디자인 트렌드에 부합한다."
+      },
+      "technicalQuality": {
+        "score": 0.95,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로, 현대적인 감각을 잘 살리고 있다."
+    }
+  },
+  {
+    "category": "mobile_app",
+    "name": "모바일 앱 예시 2",
+    "slug": "mobile-app-ex2",
+    "description": "모바일 앱 목업 예시 이미지 2.",
+    "imagePath": "/mockup-templates/mobile-app-ex2.jpg",
+    "placement": {
+      "xPct": 40,
+      "yPct": 18,
+      "widthPct": 8,
+      "heightPct": 8
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 17,
+      "widthPct": 22,
+      "heightPct": 56
+    },
+    "prompt": "스마트폰 화면에 앱 UI가 떠 있는 목업 사진. 화면 상단에 가상의 브랜드 로고가 보이고, 손으로 들고 있거나 책상 위에 놓여 있다. 따뜻한 내추럴 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "앱 디자인",
+    "visionScore": 0.88,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드 정보와 어울리는 따뜻한 톤과 패션 관련 UI가 잘 표현되었다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "2024년 최신 디자인 트렌드에 부합하는 세련된 스타일과 색감이 사용되었다."
+      },
+      "technicalQuality": {
+        "score": 0.95,
+        "reasoning": "텍스트와 형태가 선명하고 깨짐 없이 잘 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "mobile_app",
+    "name": "모바일 앱 예시 3",
+    "slug": "mobile-app-ex3",
+    "description": "모바일 앱 목업 예시 이미지 3.",
+    "imagePath": "/mockup-templates/mobile-app-ex3.jpg",
+    "placement": {
+      "xPct": 40,
+      "yPct": 18,
+      "widthPct": 8,
+      "heightPct": 8
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 17,
+      "widthPct": 22,
+      "heightPct": 56
+    },
+    "prompt": "스마트폰 화면에 앱 UI가 떠 있는 목업 사진. 화면 상단에 가상의 브랜드 로고가 보이고, 손으로 들고 있거나 책상 위에 놓여 있다. 볼드하고 컬러풀한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "앱 디자인",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드 정보와 잘 어울리는 현대적이고 창의적인 디자인이다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 부합하는 컬러풀한 스타일이지만 약간의 복잡함이 있다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "mobile_app",
+    "name": "모바일 앱 예시 4",
+    "slug": "mobile-app-ex4",
+    "description": "모바일 앱 목업 예시 이미지 4.",
+    "imagePath": "/mockup-templates/mobile-app-ex4.jpg",
+    "placement": {
+      "xPct": 40,
+      "yPct": 18,
+      "widthPct": 8,
+      "heightPct": 8
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 17,
+      "widthPct": 22,
+      "heightPct": 56
+    },
+    "prompt": "스마트폰 화면에 앱 UI가 떠 있는 목업 사진. 화면 상단에 가상의 브랜드 로고가 보이고, 손으로 들고 있거나 책상 위에 놓여 있다. 럭셔리 다크톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "앱 디자인",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드의 럭셔리 이미지와 잘 어울리는 다크톤 스타일이 반영되어 있다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 맞는 세련된 디자인이지만, 약간의 복잡함이 느껴질 수 있다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨짐 없이 잘 표현되었다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
+    }
+  },
+  {
+    "category": "mobile_app",
+    "name": "모바일 앱 예시 5",
+    "slug": "mobile-app-ex5",
+    "description": "모바일 앱 목업 예시 이미지 5.",
+    "imagePath": "/mockup-templates/mobile-app-ex5.jpg",
+    "placement": {
+      "xPct": 40,
+      "yPct": 18,
+      "widthPct": 8,
+      "heightPct": 8
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 17,
+      "widthPct": 22,
+      "heightPct": 56
+    },
+    "prompt": "스마트폰 화면에 앱 UI가 떠 있는 목업 사진. 화면 상단에 가상의 브랜드 로고가 보이고, 손으로 들고 있거나 책상 위에 놓여 있다. 빈티지 레트로 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "앱 디자인",
+    "visionScore": 0.89,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 부합한다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드의 고급스러움과 빈티지 느낌이 잘 표현되어 있어 타겟 고객층에 적합하다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "2024년 트렌드에 맞는 세련된 디자인과 색감이 반영되어 있다."
+      },
+      "technicalQuality": {
+        "score": 1,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 부합한다."
+    }
+  },
+  {
+    "category": "website_hero",
+    "name": "웹사이트 예시 1",
+    "slug": "website-hero-ex1",
+    "description": "웹사이트 목업 예시 이미지 1.",
+    "imagePath": "/mockup-templates/website-hero-ex1.jpg",
+    "placement": {
+      "xPct": 9,
+      "yPct": 12,
+      "widthPct": 12,
+      "heightPct": 5
+    },
+    "fullDesignPlacement": {
+      "xPct": 8,
+      "yPct": 19,
+      "widthPct": 55,
+      "heightPct": 56
+    },
+    "prompt": "노트북 화면에 웹사이트 히어로 섹션이 떠 있는 목업 사진. 내비게이션 바에 가상의 브랜드 로고가 보이고, 책상 위에서 촬영되었다. 미니멀하고 모던한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "웹사이트",
+    "visionScore": 0.89,
+    "visionSummary": "통일된 디자인으로 브랜드 이미지에 적합한 목업 사진이다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "목업 이미지가 현대적이고 미니멀한 디자인으로 브랜드의 목적에 잘 맞는다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "2024년 최신 디자인 트렌드에 부합하는 깔끔한 스타일을 유지하고 있다."
+      },
+      "technicalQuality": {
+        "score": 1,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "통일된 디자인으로 브랜드 이미지에 적합한 목업 사진이다."
+    }
+  },
+  {
+    "category": "website_hero",
+    "name": "웹사이트 예시 2",
+    "slug": "website-hero-ex2",
+    "description": "웹사이트 목업 예시 이미지 2.",
+    "imagePath": "/mockup-templates/website-hero-ex2.jpg",
+    "placement": {
+      "xPct": 9,
+      "yPct": 12,
+      "widthPct": 12,
+      "heightPct": 5
+    },
+    "fullDesignPlacement": {
+      "xPct": 8,
+      "yPct": 19,
+      "widthPct": 55,
+      "heightPct": 56
+    },
+    "prompt": "노트북 화면에 웹사이트 히어로 섹션이 떠 있는 목업 사진. 내비게이션 바에 가상의 브랜드 로고가 보이고, 책상 위에서 촬영되었다. 따뜻한 내추럴 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "웹사이트",
+    "visionScore": 0.88,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드 정보에 맞춰 목업 이미지가 잘 구성되어 있다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "최신 디자인 트렌드에 부합하는 깔끔하고 현대적인 스타일이다."
+      },
+      "technicalQuality": {
+        "score": 0.95,
+        "reasoning": "텍스트와 형태가 선명하며 깨짐 현상이 없다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "website_hero",
+    "name": "웹사이트 예시 4",
+    "slug": "website-hero-ex4",
+    "description": "웹사이트 목업 예시 이미지 4.",
+    "imagePath": "/mockup-templates/website-hero-ex4.jpg",
+    "placement": {
+      "xPct": 9,
+      "yPct": 12,
+      "widthPct": 12,
+      "heightPct": 5
+    },
+    "fullDesignPlacement": {
+      "xPct": 8,
+      "yPct": 19,
+      "widthPct": 55,
+      "heightPct": 56
+    },
+    "prompt": "노트북 화면에 웹사이트 히어로 섹션이 떠 있는 목업 사진. 내비게이션 바에 가상의 브랜드 로고가 보이고, 책상 위에서 촬영되었다. 럭셔리 다크톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "웹사이트",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드의 럭셔리하고 세련된 이미지를 잘 반영하고 있다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 부합하는 다크톤 스타일과 깔끔한 디자인이다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
+    }
+  },
+  {
+    "category": "website_hero",
+    "name": "웹사이트 예시 5",
+    "slug": "website-hero-ex5",
+    "description": "웹사이트 목업 예시 이미지 5.",
+    "imagePath": "/mockup-templates/website-hero-ex5.jpg",
+    "placement": {
+      "xPct": 9,
+      "yPct": 12,
+      "widthPct": 12,
+      "heightPct": 5
+    },
+    "fullDesignPlacement": {
+      "xPct": 8,
+      "yPct": 19,
+      "widthPct": 55,
+      "heightPct": 56
+    },
+    "prompt": "노트북 화면에 웹사이트 히어로 섹션이 떠 있는 목업 사진. 내비게이션 바에 가상의 브랜드 로고가 보이고, 책상 위에서 촬영되었다. 빈티지 레트로 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "웹사이트",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 부합한다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드의 디지털 스튜디오 이미지와 잘 어울리며, 현대적인 느낌을 준다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "빈티지 레트로 톤이 최근 트렌드와 잘 맞지만, 약간의 현대적 요소가 부족하다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨짐이 없다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 부합한다."
+    }
+  },
+  {
+    "category": "brochure",
+    "name": "브로슈어 예시 1",
+    "slug": "brochure-ex1",
+    "description": "브로슈어 목업 예시 이미지 1.",
+    "imagePath": "/mockup-templates/brochure-ex1.jpg",
+    "placement": {
+      "xPct": 66,
+      "yPct": 16,
+      "widthPct": 26,
+      "heightPct": 12
+    },
+    "fullDesignPlacement": {
+      "xPct": 58,
+      "yPct": 8,
+      "widthPct": 38,
+      "heightPct": 82
+    },
+    "prompt": "브로슈어 표지 목업 사진. 접힌 브로슈어가 테이블 위에 놓여 있고 표지에 가상의 브랜드 로고가 인쇄되어 있다. 미니멀하고 모던한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브로슈어",
+    "visionScore": 0.88,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드의 미니멀하고 모던한 스타일이 잘 반영되어 있다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "최신 브랜딩 트렌드에 부합하는 깔끔한 디자인이다."
+      },
+      "technicalQuality": {
+        "score": 0.95,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되었다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
+    }
+  },
+  {
+    "category": "brochure",
+    "name": "브로슈어 예시 2",
+    "slug": "brochure-ex2",
+    "description": "브로슈어 목업 예시 이미지 2.",
+    "imagePath": "/mockup-templates/brochure-ex2.jpg",
+    "placement": {
+      "xPct": 66,
+      "yPct": 16,
+      "widthPct": 26,
+      "heightPct": 12
+    },
+    "fullDesignPlacement": {
+      "xPct": 58,
+      "yPct": 8,
+      "widthPct": 38,
+      "heightPct": 82
+    },
+    "prompt": "브로슈어 표지 목업 사진. 접힌 브로슈어가 테이블 위에 놓여 있고 표지에 가상의 브랜드 로고가 인쇄되어 있다. 따뜻한 내추럴 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브로슈어",
+    "visionScore": 0.89,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드의 자연스러운 느낌과 목업의 따뜻한 톤이 잘 어울린다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "2024년 최신 트렌드에 부합하는 심플하고 세련된 디자인이다."
+      },
+      "technicalQuality": {
+        "score": 1,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
+    }
+  },
+  {
+    "category": "brochure",
+    "name": "브로슈어 예시 3",
+    "slug": "brochure-ex3",
+    "description": "브로슈어 목업 예시 이미지 3.",
+    "imagePath": "/mockup-templates/brochure-ex3.jpg",
+    "placement": {
+      "xPct": 66,
+      "yPct": 16,
+      "widthPct": 26,
+      "heightPct": 12
+    },
+    "fullDesignPlacement": {
+      "xPct": 58,
+      "yPct": 8,
+      "widthPct": 38,
+      "heightPct": 82
+    },
+    "prompt": "브로슈어 표지 목업 사진. 접힌 브로슈어가 테이블 위에 놓여 있고 표지에 가상의 브랜드 로고가 인쇄되어 있다. 볼드하고 컬러풀한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브로슈어",
+    "visionScore": 0.89,
+    "visionSummary": "전체적으로 통일된 디자인으로 높은 품질을 보여준다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브로슈어 디자인이 디자인 스튜디오의 이미지와 잘 어울린다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "컬러풀한 톤과 현대적인 디자인 요소가 최신 트렌드에 부합한다."
+      },
+      "technicalQuality": {
+        "score": 1,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 높은 품질을 보여준다."
+    }
+  },
+  {
+    "category": "brochure",
+    "name": "브로슈어 예시 4",
+    "slug": "brochure-ex4",
+    "description": "브로슈어 목업 예시 이미지 4.",
+    "imagePath": "/mockup-templates/brochure-ex4.jpg",
+    "placement": {
+      "xPct": 66,
+      "yPct": 16,
+      "widthPct": 26,
+      "heightPct": 12
+    },
+    "fullDesignPlacement": {
+      "xPct": 58,
+      "yPct": 8,
+      "widthPct": 38,
+      "heightPct": 82
+    },
+    "prompt": "브로슈어 표지 목업 사진. 접힌 브로슈어가 테이블 위에 놓여 있고 표지에 가상의 브랜드 로고가 인쇄되어 있다. 럭셔리 다크톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브로슈어",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하며, 기술적 품질도 우수하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브로슈어 디자인이 럭셔리한 느낌을 잘 전달하고 있어 브랜드 이미지와 잘 어울린다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 이후 트렌드에 부합하는 세련된 디자인이지만, 약간의 독창성이 부족하다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있어 기술적 품질이 높다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하며, 기술적 품질도 우수하다."
+    }
+  },
+  {
+    "category": "brochure",
+    "name": "브로슈어 예시 5",
+    "slug": "brochure-ex5",
+    "description": "브로슈어 목업 예시 이미지 5.",
+    "imagePath": "/mockup-templates/brochure-ex5.jpg",
+    "placement": {
+      "xPct": 66,
+      "yPct": 16,
+      "widthPct": 26,
+      "heightPct": 12
+    },
+    "fullDesignPlacement": {
+      "xPct": 58,
+      "yPct": 8,
+      "widthPct": 38,
+      "heightPct": 82
+    },
+    "prompt": "브로슈어 표지 목업 사진. 접힌 브로슈어가 테이블 위에 놓여 있고 표지에 가상의 브랜드 로고가 인쇄되어 있다. 빈티지 레트로 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브로슈어",
+    "visionScore": 0.88,
+    "visionSummary": "전체적으로 통일된 디자인으로 높은 품질을 보여준다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브로슈어 디자인이 목업 예시 이미지 라이브러리와 잘 어울린다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "빈티지 레트로 톤이 최신 디자인 트렌드에 부합한다."
+      },
+      "technicalQuality": {
+        "score": 0.95,
+        "reasoning": "텍스트와 형태가 선명하고 깨지지 않았다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 높은 품질을 보여준다."
+    }
+  },
+  {
+    "category": "poster",
+    "name": "포스터 예시 1",
+    "slug": "poster-ex1",
+    "description": "포스터 목업 예시 이미지 1.",
+    "imagePath": "/mockup-templates/poster-ex1.jpg",
+    "placement": {
+      "xPct": 28,
+      "yPct": 10,
+      "widthPct": 44,
+      "heightPct": 6
+    },
+    "fullDesignPlacement": {
+      "xPct": 23,
+      "yPct": 8,
+      "widthPct": 60,
+      "heightPct": 82
+    },
+    "prompt": "포스터 목업 사진. 벽에 붙은 포스터에 가상의 브랜드 로고와 홍보 문구가 인쇄되어 있다. 미니멀하고 모던한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "포스터",
+    "visionScore": 0.86,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드의 미니멀한 이미지를 잘 전달하고 있다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드 정보와 일치하는 미니멀한 디자인이 잘 반영되었다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "2024년 최신 디자인 트렌드에 부합하는 모던한 스타일이다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되었다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드의 미니멀한 이미지를 잘 전달하고 있다."
+    }
+  },
+  {
+    "category": "poster",
+    "name": "포스터 예시 2",
+    "slug": "poster-ex2",
+    "description": "포스터 목업 예시 이미지 2.",
+    "imagePath": "/mockup-templates/poster-ex2.jpg",
+    "placement": {
+      "xPct": 28,
+      "yPct": 10,
+      "widthPct": 44,
+      "heightPct": 6
+    },
+    "fullDesignPlacement": {
+      "xPct": 23,
+      "yPct": 8,
+      "widthPct": 60,
+      "heightPct": 82
+    },
+    "prompt": "포스터 목업 사진. 벽에 붙은 포스터에 가상의 브랜드 로고와 홍보 문구가 인쇄되어 있다. 따뜻한 내추럴 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "포스터",
+    "visionScore": 0.89,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드의 라이프스타일 이미지와 잘 어울리는 따뜻한 톤과 메시지를 전달하고 있다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 이후의 디자인 트렌드에 부합하는 자연스러운 스타일을 유지하고 있다."
+      },
+      "technicalQuality": {
+        "score": 0.95,
+        "reasoning": "텍스트와 형태가 선명하고 깨짐 없이 잘 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "poster",
+    "name": "포스터 예시 3",
+    "slug": "poster-ex3",
+    "description": "포스터 목업 예시 이미지 3.",
+    "imagePath": "/mockup-templates/poster-ex3.jpg",
+    "placement": {
+      "xPct": 28,
+      "yPct": 10,
+      "widthPct": 44,
+      "heightPct": 6
+    },
+    "fullDesignPlacement": {
+      "xPct": 23,
+      "yPct": 8,
+      "widthPct": 60,
+      "heightPct": 82
+    },
+    "prompt": "포스터 목업 사진. 벽에 붙은 포스터에 가상의 브랜드 로고와 홍보 문구가 인쇄되어 있다. 볼드하고 컬러풀한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "포스터",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 메시지를 효과적으로 전달하고 있다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드의 피트니스 관련 메시지가 명확하게 전달되고 있다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "컬러풀하고 볼드한 디자인이 최신 트렌드에 부합한다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 메시지를 효과적으로 전달하고 있다."
+    }
+  },
+  {
+    "category": "poster",
+    "name": "포스터 예시 4",
+    "slug": "poster-ex4",
+    "description": "포스터 목업 예시 이미지 4.",
+    "imagePath": "/mockup-templates/poster-ex4.jpg",
+    "placement": {
+      "xPct": 28,
+      "yPct": 10,
+      "widthPct": 44,
+      "heightPct": 6
+    },
+    "fullDesignPlacement": {
+      "xPct": 23,
+      "yPct": 8,
+      "widthPct": 60,
+      "heightPct": 82
+    },
+    "prompt": "포스터 목업 사진. 벽에 붙은 포스터에 가상의 브랜드 로고와 홍보 문구가 인쇄되어 있다. 럭셔리 다크톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "포스터",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드의 고급스러움을 잘 전달하고 있다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드의 럭셔리 이미지와 잘 어울리는 디자인이다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 부합하는 세련된 스타일을 보여준다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되었다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드의 고급스러움을 잘 전달하고 있다."
+    }
+  },
+  {
+    "category": "package",
+    "name": "패키지 예시 1",
+    "slug": "package-ex1",
+    "description": "패키지 목업 예시 이미지 1.",
+    "imagePath": "/mockup-templates/package-ex1.jpg",
+    "placement": {
+      "xPct": 30,
+      "yPct": 30,
+      "widthPct": 40,
+      "heightPct": 30
+    },
+    "fullDesignPlacement": {
+      "xPct": 15,
+      "yPct": 10,
+      "widthPct": 70,
+      "heightPct": 75
+    },
+    "prompt": "제품 패키지 목업 사진. 박스나 파우치 포장에 가상의 브랜드 로고가 인쇄되어 있고, 테이블 위에 놓여 있다. 미니멀하고 모던한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "패키지",
+    "visionScore": 0.88,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지와 잘 어울린다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드의 건강하고 자연친화적인 이미지를 잘 반영하고 있다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "미니멀하고 모던한 디자인이 최신 트렌드에 부합한다."
+      },
+      "technicalQuality": {
+        "score": 0.95,
+        "reasoning": "텍스트와 형태가 선명하고 깨짐이 없다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지와 잘 어울린다."
+    }
+  },
+  {
+    "category": "package",
+    "name": "패키지 예시 2",
+    "slug": "package-ex2",
+    "description": "패키지 목업 예시 이미지 2.",
+    "imagePath": "/mockup-templates/package-ex2.jpg",
+    "placement": {
+      "xPct": 30,
+      "yPct": 30,
+      "widthPct": 40,
+      "heightPct": 30
+    },
+    "fullDesignPlacement": {
+      "xPct": 15,
+      "yPct": 10,
+      "widthPct": 70,
+      "heightPct": 75
+    },
+    "prompt": "제품 패키지 목업 사진. 박스나 파우치 포장에 가상의 브랜드 로고가 인쇄되어 있고, 테이블 위에 놓여 있다. 따뜻한 내추럴 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "패키지",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드 정보와 잘 어울리는 자연 친화적인 이미지이다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 맞는 따뜻한 톤과 실사 스타일을 반영하고 있다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "package",
+    "name": "패키지 예시 3",
+    "slug": "package-ex3",
+    "description": "패키지 목업 예시 이미지 3.",
+    "imagePath": "/mockup-templates/package-ex3.jpg",
+    "placement": {
+      "xPct": 30,
+      "yPct": 30,
+      "widthPct": 40,
+      "heightPct": 30
+    },
+    "fullDesignPlacement": {
+      "xPct": 15,
+      "yPct": 10,
+      "widthPct": 70,
+      "heightPct": 75
+    },
+    "prompt": "제품 패키지 목업 사진. 박스나 파우치 포장에 가상의 브랜드 로고가 인쇄되어 있고, 테이블 위에 놓여 있다. 볼드하고 컬러풀한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "패키지",
+    "visionScore": 0.89,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드 정보와 잘 어울리며, 스낵 제품의 특성을 잘 나타내고 있다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "2024년 최신 디자인 트렌드에 부합하며, 현대적인 느낌을 준다."
+      },
+      "technicalQuality": {
+        "score": 1,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "package",
+    "name": "패키지 예시 4",
+    "slug": "package-ex4",
+    "description": "패키지 목업 예시 이미지 4.",
+    "imagePath": "/mockup-templates/package-ex4.jpg",
+    "placement": {
+      "xPct": 30,
+      "yPct": 30,
+      "widthPct": 40,
+      "heightPct": 30
+    },
+    "fullDesignPlacement": {
+      "xPct": 15,
+      "yPct": 10,
+      "widthPct": 70,
+      "heightPct": 75
+    },
+    "prompt": "제품 패키지 목업 사진. 박스나 파우치 포장에 가상의 브랜드 로고가 인쇄되어 있고, 테이블 위에 놓여 있다. 럭셔리 다크톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "패키지",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 고급스러운 느낌을 잘 전달하고 있다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "럭셔리한 다크톤 스타일이 브랜드 이미지와 잘 어울린다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "최신 디자인 트렌드에 부합하며 과도하게 복잡하지 않다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되었다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 고급스러운 느낌을 잘 전달하고 있다."
+    }
+  },
+  {
+    "category": "package",
+    "name": "패키지 예시 5",
+    "slug": "package-ex5",
+    "description": "패키지 목업 예시 이미지 5.",
+    "imagePath": "/mockup-templates/package-ex5.jpg",
+    "placement": {
+      "xPct": 30,
+      "yPct": 30,
+      "widthPct": 40,
+      "heightPct": 30
+    },
+    "fullDesignPlacement": {
+      "xPct": 15,
+      "yPct": 10,
+      "widthPct": 70,
+      "heightPct": 75
+    },
+    "prompt": "제품 패키지 목업 사진. 박스나 파우치 포장에 가상의 브랜드 로고가 인쇄되어 있고, 테이블 위에 놓여 있다. 빈티지 레트로 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "패키지",
+    "visionScore": 0.89,
+    "visionSummary": "통일된 디자인으로 하나의 목업 이미지로 잘 표현되었다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드 정보와 잘 어울리는 빈티지 스타일의 패키지 디자인이다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "2024년 이후 트렌드에 부합하는 세련된 빈티지 디자인이다."
+      },
+      "technicalQuality": {
+        "score": 1,
+        "reasoning": "텍스트와 형태가 선명하고 깨짐이 없다."
+      },
+      "singleConceptRespected": true,
+      "summary": "통일된 디자인으로 하나의 목업 이미지로 잘 표현되었다."
+    }
+  },
+  {
+    "category": "package",
+    "name": "패키지 예시 6",
+    "slug": "package-ex6",
+    "description": "패키지 목업 예시 이미지 6.",
+    "imagePath": "/mockup-templates/package-ex6.jpg",
+    "placement": {
+      "xPct": 30,
+      "yPct": 30,
+      "widthPct": 40,
+      "heightPct": 30
+    },
+    "fullDesignPlacement": {
+      "xPct": 15,
+      "yPct": 10,
+      "widthPct": 70,
+      "heightPct": 75
+    },
+    "prompt": "제품 패키지 목업 사진. 박스나 파우치 포장에 가상의 브랜드 로고가 인쇄되어 있고, 테이블 위에 놓여 있다. 밝은 파스텔 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "패키지",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드 정보와 잘 어울리는 건강 및 웰빙 제품 이미지이다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 부합하는 밝은 파스텔 톤과 깔끔한 디자인이다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "leaflet",
+    "name": "리플렛 예시 1",
+    "slug": "leaflet-ex1",
+    "description": "리플렛 목업 예시 이미지 1.",
+    "imagePath": "/mockup-templates/leaflet-ex1.jpg",
+    "placement": {
+      "xPct": 30,
+      "yPct": 15,
+      "widthPct": 40,
+      "heightPct": 15
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 10,
+      "widthPct": 60,
+      "heightPct": 80
+    },
+    "prompt": "리플렛(전단지) 목업 사진. 접힌 리플렛이 손에 들려 있거나 테이블에 놓여 있고, 표지에 가상의 브랜드 로고가 인쇄되어 있다. 미니멀하고 모던한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "리플렛",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드 정보와 잘 어울리는 스킨케어 제품의 미니멀한 디자인이 반영되어 있다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 부합하는 모던한 스타일이지만, 약간의 전통적인 요소가 느껴진다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있어 기술적 품질이 높다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
+    }
+  },
+  {
+    "category": "leaflet",
+    "name": "리플렛 예시 2",
+    "slug": "leaflet-ex2",
+    "description": "리플렛 목업 예시 이미지 2.",
+    "imagePath": "/mockup-templates/leaflet-ex2.jpg",
+    "placement": {
+      "xPct": 30,
+      "yPct": 15,
+      "widthPct": 40,
+      "heightPct": 15
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 10,
+      "widthPct": 60,
+      "heightPct": 80
+    },
+    "prompt": "리플렛(전단지) 목업 사진. 접힌 리플렛이 손에 들려 있거나 테이블에 놓여 있고, 표지에 가상의 브랜드 로고가 인쇄되어 있다. 따뜻한 내추럴 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "리플렛",
+    "visionScore": 1,
+    "visionSummary": "통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 1,
+        "reasoning": "브랜드의 자연주의 스킨케어 이미지와 잘 어울린다."
+      },
+      "trendAlignment": {
+        "score": 1,
+        "reasoning": "2024년 최신 디자인 트렌드에 부합하는 따뜻한 색조와 심플한 디자인이다."
+      },
+      "technicalQuality": {
+        "score": 1,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "leaflet",
+    "name": "리플렛 예시 3",
+    "slug": "leaflet-ex3",
+    "description": "리플렛 목업 예시 이미지 3.",
+    "imagePath": "/mockup-templates/leaflet-ex3.jpg",
+    "placement": {
+      "xPct": 30,
+      "yPct": 15,
+      "widthPct": 40,
+      "heightPct": 15
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 10,
+      "widthPct": 60,
+      "heightPct": 80
+    },
+    "prompt": "리플렛(전단지) 목업 사진. 접힌 리플렛이 손에 들려 있거나 테이블에 놓여 있고, 표지에 가상의 브랜드 로고가 인쇄되어 있다. 볼드하고 컬러풀한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "리플렛",
+    "visionScore": 0.88,
+    "visionSummary": "전체적으로 통일된 디자인으로, 현대적인 감각을 잘 살리고 있다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드의 목업 예시 이미지 라이브러리와 잘 어울리며, 창의적이고 목적 지향적인 인상을 준다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "2024년 이후의 디자인 트렌드에 부합하며, 현대적이고 세련된 스타일을 보여준다."
+      },
+      "technicalQuality": {
+        "score": 0.95,
+        "reasoning": "텍스트와 형태가 선명하고 깨짐 없이 잘 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로, 현대적인 감각을 잘 살리고 있다."
+    }
+  },
+  {
+    "category": "leaflet",
+    "name": "리플렛 예시 4",
+    "slug": "leaflet-ex4",
+    "description": "리플렛 목업 예시 이미지 4.",
+    "imagePath": "/mockup-templates/leaflet-ex4.jpg",
+    "placement": {
+      "xPct": 30,
+      "yPct": 15,
+      "widthPct": 40,
+      "heightPct": 15
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 10,
+      "widthPct": 60,
+      "heightPct": 80
+    },
+    "prompt": "리플렛(전단지) 목업 사진. 접힌 리플렛이 손에 들려 있거나 테이블에 놓여 있고, 표지에 가상의 브랜드 로고가 인쇄되어 있다. 럭셔리 다크톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "리플렛",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "럭셔리 다크톤 스타일이 브랜드 이미지와 잘 어울린다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "최신 디자인 트렌드에 부합하며, 복잡하지 않고 세련된 느낌을 준다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "leaflet",
+    "name": "리플렛 예시 5",
+    "slug": "leaflet-ex5",
+    "description": "리플렛 목업 예시 이미지 5.",
+    "imagePath": "/mockup-templates/leaflet-ex5.jpg",
+    "placement": {
+      "xPct": 30,
+      "yPct": 15,
+      "widthPct": 40,
+      "heightPct": 15
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 10,
+      "widthPct": 60,
+      "heightPct": 80
+    },
+    "prompt": "리플렛(전단지) 목업 사진. 접힌 리플렛이 손에 들려 있거나 테이블에 놓여 있고, 표지에 가상의 브랜드 로고가 인쇄되어 있다. 빈티지 레트로 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "리플렛",
+    "visionScore": 0.89,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드의 목적인 제과점과 잘 어울리는 디자인이다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "빈티지 레트로 톤이 현재 트렌드에 부합한다."
+      },
+      "technicalQuality": {
+        "score": 1,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되었다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
+    }
+  },
+  {
+    "category": "leaflet",
+    "name": "리플렛 예시 6",
+    "slug": "leaflet-ex6",
+    "description": "리플렛 목업 예시 이미지 6.",
+    "imagePath": "/mockup-templates/leaflet-ex6.jpg",
+    "placement": {
+      "xPct": 30,
+      "yPct": 15,
+      "widthPct": 40,
+      "heightPct": 15
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 10,
+      "widthPct": 60,
+      "heightPct": 80
+    },
+    "prompt": "리플렛(전단지) 목업 사진. 접힌 리플렛이 손에 들려 있거나 테이블에 놓여 있고, 표지에 가상의 브랜드 로고가 인쇄되어 있다. 밝은 파스텔 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "리플렛",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 부합한다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드의 자연주의 스킨케어 이미지와 잘 어울리는 디자인이다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 맞춘 밝은 파스텔 톤이 사용되었다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되었다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 부합한다."
+    }
+  },
+  {
+    "category": "banner",
+    "name": "배너 예시 1",
+    "slug": "banner-ex1",
+    "description": "배너 목업 예시 이미지 1.",
+    "imagePath": "/mockup-templates/banner-ex1.jpg",
+    "placement": {
+      "xPct": 35,
+      "yPct": 35,
+      "widthPct": 30,
+      "heightPct": 15
+    },
+    "fullDesignPlacement": {
+      "xPct": 15,
+      "yPct": 20,
+      "widthPct": 70,
+      "heightPct": 45
+    },
+    "prompt": "SNS 광고 배너 목업 사진. 스마트폰 화면 속 인스타그램 피드에 가상의 브랜드 로고가 담긴 광고 배너 이미지가 보인다. 미니멀하고 모던한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.86,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드의 미니멀하고 현대적인 이미지와 잘 어울린다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "2024년 최신 디자인 트렌드에 부합하는 세련된 스타일이다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되었다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
+    }
+  },
+  {
+    "category": "banner",
+    "name": "배너 예시 2",
+    "slug": "banner-ex2",
+    "description": "배너 목업 예시 이미지 2.",
+    "imagePath": "/mockup-templates/banner-ex2.jpg",
+    "placement": {
+      "xPct": 35,
+      "yPct": 35,
+      "widthPct": 30,
+      "heightPct": 15
+    },
+    "fullDesignPlacement": {
+      "xPct": 15,
+      "yPct": 20,
+      "widthPct": 70,
+      "heightPct": 45
+    },
+    "prompt": "SNS 광고 배너 목업 사진. 스마트폰 화면 속 인스타그램 피드에 가상의 브랜드 로고가 담긴 광고 배너 이미지가 보인다. 따뜻한 내추럴 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드의 자연 친화적인 이미지와 잘 어울리는 따뜻한 톤이 사용되었다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 맞는 실사 스타일과 심플한 디자인이 반영되었다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨짐 없이 잘 표현되었다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
+    }
+  },
+  {
+    "category": "banner",
+    "name": "배너 예시 3",
+    "slug": "banner-ex3",
+    "description": "배너 목업 예시 이미지 3.",
+    "imagePath": "/mockup-templates/banner-ex3.jpg",
+    "placement": {
+      "xPct": 35,
+      "yPct": 35,
+      "widthPct": 30,
+      "heightPct": 15
+    },
+    "fullDesignPlacement": {
+      "xPct": 15,
+      "yPct": 20,
+      "widthPct": 70,
+      "heightPct": 45
+    },
+    "prompt": "SNS 광고 배너 목업 사진. 스마트폰 화면 속 인스타그램 피드에 가상의 브랜드 로고가 담긴 광고 배너 이미지가 보인다. 볼드하고 컬러풀한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.88,
+    "visionSummary": "전체적으로 통일된 디자인으로, 현대적인 감각을 잘 표현하고 있다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드의 색상과 스타일이 잘 반영되어 있으나, 특정 브랜드 정보가 부족하다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "2024년 최신 디자인 트렌드에 부합하는 컬러풀한 스타일이다."
+      },
+      "technicalQuality": {
+        "score": 0.95,
+        "reasoning": "텍스트와 형태가 선명하고 깨짐이 없다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로, 현대적인 감각을 잘 표현하고 있다."
+    }
+  },
+  {
+    "category": "banner",
+    "name": "배너 예시 4",
+    "slug": "banner-ex4",
+    "description": "배너 목업 예시 이미지 4.",
+    "imagePath": "/mockup-templates/banner-ex4.jpg",
+    "placement": {
+      "xPct": 35,
+      "yPct": 35,
+      "widthPct": 30,
+      "heightPct": 15
+    },
+    "fullDesignPlacement": {
+      "xPct": 15,
+      "yPct": 20,
+      "widthPct": 70,
+      "heightPct": 45
+    },
+    "prompt": "SNS 광고 배너 목업 사진. 스마트폰 화면 속 인스타그램 피드에 가상의 브랜드 로고가 담긴 광고 배너 이미지가 보인다. 럭셔리 다크톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "럭셔리 시계 브랜드의 이미지와 잘 어울리며, 고급스러운 느낌을 전달한다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 부합하는 다크톤 스타일이지만, 약간의 복잡함이 느껴질 수 있다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨짐이 없어 기술적 품질이 높다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "banner",
+    "name": "배너 예시 5",
+    "slug": "banner-ex5",
+    "description": "배너 목업 예시 이미지 5.",
+    "imagePath": "/mockup-templates/banner-ex5.jpg",
+    "placement": {
+      "xPct": 35,
+      "yPct": 35,
+      "widthPct": 30,
+      "heightPct": 15
+    },
+    "fullDesignPlacement": {
+      "xPct": 15,
+      "yPct": 20,
+      "widthPct": 70,
+      "heightPct": 45
+    },
+    "prompt": "SNS 광고 배너 목업 사진. 스마트폰 화면 속 인스타그램 피드에 가상의 브랜드 로고가 담긴 광고 배너 이미지가 보인다. 빈티지 레트로 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.89,
+    "visionSummary": "하나의 통일된 디자인으로 잘 구성된 이미지이다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드의 이미지와 목업이 잘 어울리지만, 특정 프로젝트 정보가 부족해 완전한 일치 여부는 불확실하다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "빈티지 레트로 톤이 최근 트렌드와 잘 맞아 떨어진다."
+      },
+      "technicalQuality": {
+        "score": 1,
+        "reasoning": "텍스트와 형태가 선명하고 깨짐이 없다."
+      },
+      "singleConceptRespected": true,
+      "summary": "하나의 통일된 디자인으로 잘 구성된 이미지이다."
+    }
+  },
+  {
+    "category": "banner",
+    "name": "배너 예시 6",
+    "slug": "banner-ex6",
+    "description": "배너 목업 예시 이미지 6.",
+    "imagePath": "/mockup-templates/banner-ex6.jpg",
+    "placement": {
+      "xPct": 35,
+      "yPct": 35,
+      "widthPct": 30,
+      "heightPct": 15
+    },
+    "fullDesignPlacement": {
+      "xPct": 15,
+      "yPct": 20,
+      "widthPct": 70,
+      "heightPct": 45
+    },
+    "prompt": "SNS 광고 배너 목업 사진. 스마트폰 화면 속 인스타그램 피드에 가상의 브랜드 로고가 담긴 광고 배너 이미지가 보인다. 밝은 파스텔 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로, 브랜드와 트렌드에 잘 맞는다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드의 목업 예시 이미지 라이브러리와 잘 어울리며, 일반적인 광고 배너의 목적에 부합한다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 이후의 디자인 트렌드에 맞는 밝은 파스텔 톤을 사용하고 있다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨짐 없이 잘 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로, 브랜드와 트렌드에 잘 맞는다."
+    }
+  },
+  {
+    "category": "uniform",
+    "name": "유니폼 예시 1",
+    "slug": "uniform-ex1",
+    "description": "유니폼 목업 예시 이미지 1.",
+    "imagePath": "/mockup-templates/uniform-ex1.jpg",
+    "placement": {
+      "xPct": 38,
+      "yPct": 30,
+      "widthPct": 24,
+      "heightPct": 20
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 15,
+      "widthPct": 60,
+      "heightPct": 60
+    },
+    "prompt": "카페/레스토랑 직원 유니폼 앞치마 목업 사진. 앞치마 가슴 부분에 가상의 브랜드 로고가 자수 또는 프린트되어 있다. 미니멀하고 모던한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드 정보와 잘 어울리며, 카페/베이커리의 느낌을 잘 전달한다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "미니멀하고 모던한 스타일로 최신 디자인 트렌드에 부합한다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "uniform",
+    "name": "유니폼 예시 2",
+    "slug": "uniform-ex2",
+    "description": "유니폼 목업 예시 이미지 2.",
+    "imagePath": "/mockup-templates/uniform-ex2.jpg",
+    "placement": {
+      "xPct": 38,
+      "yPct": 30,
+      "widthPct": 24,
+      "heightPct": 20
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 15,
+      "widthPct": 60,
+      "heightPct": 60
+    },
+    "prompt": "카페/레스토랑 직원 유니폼 앞치마 목업 사진. 앞치마 가슴 부분에 가상의 브랜드 로고가 자수 또는 프린트되어 있다. 따뜻한 내추럴 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드 정보와 잘 어울리는 카페 직원 유니폼 디자인이다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 부합하는 따뜻한 톤과 실사 스타일이다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되었다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "uniform",
+    "name": "유니폼 예시 3",
+    "slug": "uniform-ex3",
+    "description": "유니폼 목업 예시 이미지 3.",
+    "imagePath": "/mockup-templates/uniform-ex3.jpg",
+    "placement": {
+      "xPct": 38,
+      "yPct": 30,
+      "widthPct": 24,
+      "heightPct": 20
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 15,
+      "widthPct": 60,
+      "heightPct": 60
+    },
+    "prompt": "카페/레스토랑 직원 유니폼 앞치마 목업 사진. 앞치마 가슴 부분에 가상의 브랜드 로고가 자수 또는 프린트되어 있다. 볼드하고 컬러풀한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.86,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.8,
+        "reasoning": "브랜드 정보와 일치하는 카페 직원 유니폼으로 적합하다."
+      },
+      "trendAlignment": {
+        "score": 0.9,
+        "reasoning": "2024년 최신 디자인 트렌드에 부합하는 깔끔하고 현대적인 스타일이다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
+    }
+  },
+  {
+    "category": "uniform",
+    "name": "유니폼 예시 4",
+    "slug": "uniform-ex4",
+    "description": "유니폼 목업 예시 이미지 4.",
+    "imagePath": "/mockup-templates/uniform-ex4.jpg",
+    "placement": {
+      "xPct": 38,
+      "yPct": 30,
+      "widthPct": 24,
+      "heightPct": 20
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 15,
+      "widthPct": 60,
+      "heightPct": 60
+    },
+    "prompt": "카페/레스토랑 직원 유니폼 앞치마 목업 사진. 앞치마 가슴 부분에 가상의 브랜드 로고가 자수 또는 프린트되어 있다. 럭셔리 다크톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드 정보와 잘 어울리는 고급스러운 스타일의 앞치마 디자인이다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 트렌드에 부합하는 세련된 디자인이지만 약간의 단순함이 아쉽다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
+    }
+  },
+  {
+    "category": "uniform",
+    "name": "유니폼 예시 5",
+    "slug": "uniform-ex5",
+    "description": "유니폼 목업 예시 이미지 5.",
+    "imagePath": "/mockup-templates/uniform-ex5.jpg",
+    "placement": {
+      "xPct": 38,
+      "yPct": 30,
+      "widthPct": 24,
+      "heightPct": 20
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 15,
+      "widthPct": 60,
+      "heightPct": 60
+    },
+    "prompt": "카페/레스토랑 직원 유니폼 앞치마 목업 사진. 앞치마 가슴 부분에 가상의 브랜드 로고가 자수 또는 프린트되어 있다. 빈티지 레트로 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.87,
+    "visionSummary": "통일된 디자인으로 브랜드 이미지에 잘 부합한다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "카페/레스토랑 직원 유니폼으로 적합한 디자인이다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "빈티지 레트로 톤이 최근 트렌드와 잘 맞는다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되었다."
+      },
+      "singleConceptRespected": true,
+      "summary": "통일된 디자인으로 브랜드 이미지에 잘 부합한다."
+    }
+  },
+  {
+    "category": "uniform",
+    "name": "유니폼 예시 6",
+    "slug": "uniform-ex6",
+    "description": "유니폼 목업 예시 이미지 6.",
+    "imagePath": "/mockup-templates/uniform-ex6.jpg",
+    "placement": {
+      "xPct": 38,
+      "yPct": 30,
+      "widthPct": 24,
+      "heightPct": 20
+    },
+    "fullDesignPlacement": {
+      "xPct": 20,
+      "yPct": 15,
+      "widthPct": 60,
+      "heightPct": 60
+    },
+    "prompt": "카페/레스토랑 직원 유니폼 앞치마 목업 사진. 앞치마 가슴 부분에 가상의 브랜드 로고가 자수 또는 프린트되어 있다. 밝은 파스텔 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "브랜딩 & 로고",
+    "visionScore": 0.87,
+    "visionSummary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.9,
+        "reasoning": "브랜드 정보와 잘 어울리는 카페/레스토랑 직원 유니폼 디자인이다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "밝은 파스텔 톤과 실사 스타일이 최신 트렌드에 부합한다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨짐이 없다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
+    }
+  },
+  {
+    "category": "website_hero",
+    "name": "웹사이트 예시 3",
+    "slug": "website-hero-ex3",
+    "description": "웹사이트 목업 예시 이미지 3.",
+    "imagePath": "/mockup-templates/website-hero-ex3.jpg",
+    "placement": {
+      "xPct": 9,
+      "yPct": 12,
+      "widthPct": 12,
+      "heightPct": 5
+    },
+    "fullDesignPlacement": {
+      "xPct": 8,
+      "yPct": 19,
+      "widthPct": 55,
+      "heightPct": 56
+    },
+    "prompt": "노트북 화면에 웹사이트 히어로 섹션이 떠 있는 목업 사진. 내비게이션 바에 가상의 브랜드 로고가 보이고, 책상 위에서 촬영되었다. 볼드하고 컬러풀한 톤 스타일. 하나의 통일된 목업 사진 한 장만 생성하세요. 여러 개의 시안이나 그리드를 한 이미지에 나열하지 마세요. 텍스트나 로고 형태가 깨지지 않게 선명하고 사실적으로 그려주세요. 실사 사진 스타일, 스튜디오 또는 자연광.",
+    "deliverableType": "웹사이트",
+    "visionScore": 0.79,
+    "visionSummary": "전반적으로 균형 잡힌 디자인이나 브랜드 정체성이 더 필요하다.",
+    "visionEvaluation": {
+      "hardConstraintsRespected": true,
+      "brandAlignment": {
+        "score": 0.7,
+        "reasoning": "브랜드 정보에 맞는 목업 이미지이나 특정 브랜드의 정체성이 부족하다."
+      },
+      "trendAlignment": {
+        "score": 0.8,
+        "reasoning": "2024년 최신 디자인 트렌드에 부합하나 다소 일반적인 구성이다."
+      },
+      "technicalQuality": {
+        "score": 0.9,
+        "reasoning": "텍스트와 형태가 선명하고 깨끗하게 표현되어 있다."
+      },
+      "singleConceptRespected": true,
+      "summary": "전반적으로 균형 잡힌 디자인이나 브랜드 정체성이 더 필요하다."
+    }
+  }
+]
