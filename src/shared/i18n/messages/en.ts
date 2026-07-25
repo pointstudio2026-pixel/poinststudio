@@ -394,10 +394,9 @@ export const en: Messages = {
     howItWorks: {
       eyebrow: "How it works",
       title: "How it works",
-      interview: { title: "Brand Interview", description: "Answer a few questions to define your brand's purpose and audience." },
-      strategy: { title: "Strategy Analysis", description: "AI analyzes your core values, target audience, positioning, and tone." },
-      style: { title: "Style Suggestions", description: "Get design direction, colors, and fonts suited to your brand." },
-      result: { title: "Create Results", description: "Build a concept board and mockups from your chosen direction." },
+      myProjects: { title: "My Projects", description: "Manage the entire production flow — from brand interview to mockups — in one project." },
+      myStyles: { title: "My Styles", description: "Save reference images and use them as your brand's own mood right at the style step.", tier: "Pro and above" },
+      team: { title: "Team", description: "Connect with teammates using a code to view and edit projects together.", tier: "Studio only" },
     },
     preview: {
       eyebrow: "Result Preview",

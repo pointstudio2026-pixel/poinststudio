@@ -394,10 +394,9 @@ export const fr: Messages = {
     howItWorks: {
       eyebrow: "How it works",
       title: "Comment ça marche",
-      interview: { title: "Entretien de marque", description: "Répondez à quelques questions pour définir l'objectif et le public de votre marque." },
-      strategy: { title: "Analyse stratégique", description: "L'IA analyse vos valeurs clés, votre public, votre positionnement et votre ton." },
-      style: { title: "Suggestions de style", description: "Obtenez une direction de design, des couleurs et des polices adaptées à votre marque." },
-      result: { title: "Création des résultats", description: "Créez une planche de concept et des maquettes à partir de la direction choisie." },
+      myProjects: { title: "Mes projets", description: "Gérez tout le flux de production — de l'entretien de marque aux maquettes — dans un seul projet." },
+      myStyles: { title: "Mes styles", description: "Enregistrez des images de référence et utilisez-les comme l'ambiance propre à votre marque dès l'étape de style.", tier: "Pro et plus" },
+      team: { title: "Équipe", description: "Connectez-vous avec vos coéquipiers via un code pour consulter et modifier les projets ensemble.", tier: "Studio uniquement" },
     },
     preview: {
       eyebrow: "Result Preview",

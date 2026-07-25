@@ -394,10 +394,9 @@ export const ja: Messages = {
     howItWorks: {
       eyebrow: "How it works",
       title: "使い方",
-      interview: { title: "ブランドインタビュー", description: "質問に答えるだけでブランドの目的とターゲットを整理します。" },
-      strategy: { title: "戦略分析", description: "AIがコアバリュー、ターゲット、ポジショニング、トーンを分析します。" },
-      style: { title: "スタイル提案", description: "ブランドに合ったデザインの方向性、カラー、フォントを提案します。" },
-      result: { title: "成果物の制作", description: "選んだ方向性をもとにコンセプトボードとモックアップを作成します。" },
+      myProjects: { title: "マイプロジェクト", description: "ブランドインタビューからモックアップまで、1つのプロジェクトで制作フロー全体を管理します。" },
+      myStyles: { title: "マイスタイル", description: "参考画像を登録しておくと、スタイル選択のステップで自分のブランドのムードとしてすぐに活用できます。", tier: "Pro以上" },
+      team: { title: "チーム", description: "コードでチームメンバーとつながり、プロジェクトを一緒に確認・編集できます。", tier: "Studio限定" },
     },
     preview: {
       eyebrow: "Result Preview",

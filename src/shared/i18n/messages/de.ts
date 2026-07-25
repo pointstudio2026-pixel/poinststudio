@@ -394,10 +394,9 @@ export const de: Messages = {
     howItWorks: {
       eyebrow: "How it works",
       title: "So funktioniert's",
-      interview: { title: "Marken-Interview", description: "Beantworten Sie ein paar Fragen, um Zweck und Zielgruppe Ihrer Marke festzulegen." },
-      strategy: { title: "Strategieanalyse", description: "Die KI analysiert Ihre Kernwerte, Zielgruppe, Positionierung und Ihren Ton." },
-      style: { title: "Stilvorschläge", description: "Erhalten Sie Designrichtung, Farben und Schriften, die zu Ihrer Marke passen." },
-      result: { title: "Ergebnisse erstellen", description: "Erstellen Sie aus der gewählten Richtung ein Concept Board und Mockups." },
+      myProjects: { title: "Meine Projekte", description: "Verwalten Sie den gesamten Erstellungsprozess – vom Marken-Interview bis zu den Mockups – in einem Projekt." },
+      myStyles: { title: "Meine Stile", description: "Speichern Sie Referenzbilder und nutzen Sie sie bereits im Stil-Schritt als eigene Markenstimmung.", tier: "Pro und höher" },
+      team: { title: "Team", description: "Verbinden Sie sich per Code mit Teammitgliedern, um Projekte gemeinsam anzusehen und zu bearbeiten.", tier: "Nur Studio" },
     },
     preview: {
       eyebrow: "Result Preview",

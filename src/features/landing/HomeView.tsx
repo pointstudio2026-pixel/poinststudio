@@ -15,10 +15,9 @@ import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 import { getPlanPrice } from "@/modules/subscriptions/domain/planPricing";
 import {
   IconBranch,
-  IconChat,
   IconCompass,
   IconFlag,
-  IconImage,
+  IconLayers,
   IconLink,
   IconPalette,
   IconSearch,
@@ -32,11 +31,10 @@ const BTN_SECONDARY =
   "inline-flex h-[52px] items-center justify-center rounded-full border border-line px-7 text-base font-medium transition hover:border-ink";
 
 const HOW_IT_WORKS = [
-  { step: "01", icon: IconChat, titleKey: "home.howItWorks.interview.title", descriptionKey: "home.howItWorks.interview.description" },
-  { step: "02", icon: IconCompass, titleKey: "home.howItWorks.strategy.title", descriptionKey: "home.howItWorks.strategy.description" },
-  { step: "03", icon: IconPalette, titleKey: "home.howItWorks.style.title", descriptionKey: "home.howItWorks.style.description" },
-  { step: "04", icon: IconImage, titleKey: "home.howItWorks.result.title", descriptionKey: "home.howItWorks.result.description" },
-] as const satisfies { step: string; icon: typeof IconChat; titleKey: MessageKey; descriptionKey: MessageKey }[];
+  { step: "01", icon: IconLayers, titleKey: "home.howItWorks.myProjects.title", descriptionKey: "home.howItWorks.myProjects.description", tierKey: null },
+  { step: "02", icon: IconPalette, titleKey: "home.howItWorks.myStyles.title", descriptionKey: "home.howItWorks.myStyles.description", tierKey: "home.howItWorks.myStyles.tier" },
+  { step: "03", icon: IconLink, titleKey: "home.howItWorks.team.title", descriptionKey: "home.howItWorks.team.description", tierKey: "home.howItWorks.team.tier" },
+] as const satisfies { step: string; icon: typeof IconLayers; titleKey: MessageKey; descriptionKey: MessageKey; tierKey: MessageKey | null }[];
 
 const ADVANTAGES = [
   { icon: IconSearch, titleKey: "home.advantages.understand.title", descriptionKey: "home.advantages.understand.description" },
@@ -169,7 +167,7 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
             <p className="eyebrow text-sm text-muted">{t("home.howItWorks.eyebrow")}</p>
             <h2 className="font-display mt-2 text-[32px] font-semibold sm:text-[36px] lg:text-[40px]">{t("home.howItWorks.title")}</h2>
 
-            <div className="relative mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="relative mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {HOW_IT_WORKS.map((item) => (
                 <div
                   key={item.step}
@@ -181,7 +179,14 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
                     </span>
                     <item.icon className="h-7 w-7 text-ink" />
                   </div>
-                  <h3 className="text-xl font-semibold">{t(item.titleKey)}</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-xl font-semibold">{t(item.titleKey)}</h3>
+                    {item.tierKey && (
+                      <span className="rounded-full bg-tint-beige px-2 py-0.5 text-xs font-medium text-ink">
+                        {t(item.tierKey)}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-base leading-relaxed text-muted">{t(item.descriptionKey)}</p>
                 </div>
               ))}

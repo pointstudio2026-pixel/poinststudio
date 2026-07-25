@@ -392,10 +392,9 @@ export const ko = {
     howItWorks: {
       eyebrow: "How it works",
       title: "사용 방법",
-      interview: { title: "브랜드 인터뷰", description: "질문에 답하면 브랜드의 목적과 고객을 정리합니다." },
-      strategy: { title: "전략 분석", description: "AI가 핵심 가치, 타깃, 포지셔닝과 톤을 분석합니다." },
-      style: { title: "스타일 제안", description: "브랜드에 맞는 디자인 방향, 컬러, 폰트를 제안합니다." },
-      result: { title: "결과물 제작", description: "선택한 방향을 바탕으로 콘셉트보드와 목업을 만듭니다." },
+      myProjects: { title: "내 프로젝트", description: "브랜드 인터뷰부터 목업까지, 프로젝트 하나로 전체 제작 흐름을 관리합니다." },
+      myStyles: { title: "내 스타일", description: "참고 이미지를 등록해두면 스타일 선택 단계에서 내 브랜드만의 무드로 바로 활용됩니다.", tier: "Pro 이상" },
+      team: { title: "팀", description: "팀원과 코드로 연결해 프로젝트를 함께 보고 수정합니다.", tier: "Studio 전용" },
     },
     preview: {
       eyebrow: "Result Preview",

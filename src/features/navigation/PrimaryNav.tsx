@@ -15,10 +15,11 @@ export interface PrimaryNavUser {
 
 /**
  * Shared "로그인 상태" 데스크톱 nav — 랜딩 페이지 헤더, 대시보드 헤더, 프로젝트
- * 작업 화면 헤더 세 곳에서 동일하게 쓴다. "내 프로젝트"(호버 시 "새 프로젝트"
- * 노출) + "내 스타일"(Pro/Studio 전용) + "팀"(Studio 전용) + "사용방법"/
- * "문의사항"(항상 노출) 최상위 피어 링크 + 프로필 클릭 드롭다운(내 정보/
- * 결제정보/로그아웃) 구조.
+ * 작업 화면 헤더 세 곳에서 동일하게 쓴다. "내 프로젝트"에 마우스를 올리면
+ * 내 프로젝트/새 프로젝트/내 스타일(Pro·Studio 전용)/팀(Studio 전용)이 한
+ * 드롭다운 안에 모여서 뜬다(2026-07-25, 이전엔 내 스타일/팀이 최상위
+ * 피어 링크로 따로 떠 있었음) + "사용방법"/"문의사항"(항상 노출) 최상위
+ * 피어 링크 + 프로필 클릭 드롭다운(내 정보/결제정보/로그아웃) 구조.
  */
 export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode: PlanCode }) {
   const { t } = useTranslation();
@@ -59,8 +60,11 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode:
           {t("nav.myProjects")}
         </Link>
         {projectsOpen && (
-          <div className="absolute left-0 top-full w-40 pt-2">
+          <div className="absolute left-0 top-full w-44 pt-2">
             <div className="rounded-xl border border-line bg-surface p-1.5 shadow-soft">
+              <Link href="/projects" className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper">
+                {t("nav.myProjects")}
+              </Link>
               <NewProjectButton
                 variant="menu-item"
                 onOpenChange={(open) => {
@@ -68,22 +72,20 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode:
                   if (!open) setProjectsOpen(false);
                 }}
               />
+              {planCode !== "free" && (
+                <Link href="/my-styles" className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper">
+                  {t("nav.myStyles")}
+                </Link>
+              )}
+              {planCode === "studio" && (
+                <Link href="/team" className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper">
+                  {t("nav.team")}
+                </Link>
+              )}
             </div>
           </div>
         )}
       </div>
-
-      {planCode !== "free" && (
-        <Link href="/my-styles" className={PILL}>
-          {t("nav.myStyles")}
-        </Link>
-      )}
-
-      {planCode === "studio" && (
-        <Link href="/team" className={PILL}>
-          {t("nav.team")}
-        </Link>
-      )}
 
       <Link href="/guide" className={PILL}>
         {t("nav.guide")}
