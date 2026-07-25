@@ -518,7 +518,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                   </button>
                 </div>
                 <p className="mt-1 text-neutral-500">
-                  {answers[q.key]?.trim() ? answers[q.key] : "(답변 없음)"}
+                  {answers[q.key]?.trim() ? answers[q.key] : t("interview.noAnswer")}
                 </p>
               </li>
             ))}

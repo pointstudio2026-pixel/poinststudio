@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,15 +12,12 @@ import {
 import { updateProfile, changePassword } from "@/services/auth-service";
 import { Spinner } from "@/components/Spinner";
 import { AppHeader } from "@/features/navigation/AppHeader";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 
-const changePasswordFormSchema = changePasswordSchema
-  .extend({ confirmPassword: z.string().min(1, "새 비밀번호를 다시 입력해주세요.") })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "새 비밀번호가 일치하지 않습니다.",
-    path: ["confirmPassword"],
-  });
-type ChangePasswordFormInput = z.infer<typeof changePasswordFormSchema>;
+type ChangePasswordFormInput = z.infer<typeof changePasswordSchema> & {
+  confirmPassword: string;
+};
 
 export function MyInfoView({
   email,
@@ -33,14 +30,16 @@ export function MyInfoView({
   hasPassword: boolean;
   planCode: PlanCode;
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen bg-paper">
       <AppHeader user={{ email, name: initialName }} planCode={planCode} />
       <main className="mx-auto flex max-w-2xl flex-col gap-6 p-8">
-      <h1 className="text-xl font-semibold">내 정보</h1>
+      <h1 className="text-xl font-semibold">{t("myInfo.title")}</h1>
 
       <section className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-4 shadow-soft">
-        <p className="text-sm text-muted">이메일</p>
+        <p className="text-sm text-muted">{t("myInfo.email")}</p>
         <p className="text-sm font-medium">{email}</p>
       </section>
 
@@ -50,9 +49,9 @@ export function MyInfoView({
         <PasswordChangeForm />
       ) : (
         <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
-          <h2 className="font-medium">비밀번호</h2>
+          <h2 className="font-medium">{t("myInfo.passwordTitle")}</h2>
           <p className="mt-2 text-sm text-muted">
-            소셜 로그인 계정은 비밀번호가 설정되어 있지 않습니다.
+            {t("myInfo.socialLoginNoPassword")}
           </p>
         </section>
       )}
@@ -62,6 +61,7 @@ export function MyInfoView({
 }
 
 function ProfileNameForm({ initialName }: { initialName: string | null }) {
+  const { t } = useTranslation();
   const [serverError, setServerError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -79,15 +79,15 @@ function ProfileNameForm({ initialName }: { initialName: string | null }) {
     setSuccessMessage(null);
     try {
       await updateProfile(values);
-      setSuccessMessage("이름이 변경되었습니다.");
+      setSuccessMessage(t("myInfo.nameUpdated"));
     } catch (err) {
-      setServerError(err instanceof Error ? err.message : "이름 변경에 실패했습니다.");
+      setServerError(err instanceof Error ? err.message : t("myInfo.nameUpdateFailed"));
     }
   });
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-soft">
-      <h2 className="font-medium">이름</h2>
+      <h2 className="font-medium">{t("myInfo.nameTitle")}</h2>
       <div className="flex flex-col gap-1">
         <input
           id="name"
@@ -107,15 +107,27 @@ function ProfileNameForm({ initialName }: { initialName: string | null }) {
         className="flex w-fit items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm text-paper transition hover:opacity-90 disabled:opacity-50"
       >
         {isSubmitting && <Spinner />}
-        {isSubmitting ? "저장 중..." : "저장"}
+        {isSubmitting ? t("myInfo.saving") : t("myInfo.save")}
       </button>
     </form>
   );
 }
 
 function PasswordChangeForm() {
+  const { t } = useTranslation();
   const [serverError, setServerError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const changePasswordFormSchema = useMemo(
+    () =>
+      changePasswordSchema
+        .extend({ confirmPassword: z.string().min(1, t("myInfo.confirmPasswordRequired")) })
+        .refine((data) => data.newPassword === data.confirmPassword, {
+          message: t("myInfo.passwordMismatch"),
+          path: ["confirmPassword"],
+        }),
+    [t],
+  );
 
   const {
     register,
@@ -130,19 +142,19 @@ function PasswordChangeForm() {
     try {
       await changePassword(values);
       reset();
-      setSuccessMessage("비밀번호가 변경되었습니다.");
+      setSuccessMessage(t("myInfo.passwordUpdated"));
     } catch (err) {
-      setServerError(err instanceof Error ? err.message : "비밀번호 변경에 실패했습니다.");
+      setServerError(err instanceof Error ? err.message : t("myInfo.passwordUpdateFailed"));
     }
   });
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-soft">
-      <h2 className="font-medium">비밀번호 변경</h2>
+      <h2 className="font-medium">{t("myInfo.changePasswordTitle")}</h2>
 
       <div className="flex flex-col gap-1">
         <label htmlFor="currentPassword" className="text-sm text-muted">
-          현재 비밀번호
+          {t("myInfo.currentPasswordLabel")}
         </label>
         <input
           id="currentPassword"
@@ -157,7 +169,7 @@ function PasswordChangeForm() {
 
       <div className="flex flex-col gap-1">
         <label htmlFor="newPassword" className="text-sm text-muted">
-          새 비밀번호
+          {t("myInfo.newPasswordLabel")}
         </label>
         <input
           id="newPassword"
@@ -170,7 +182,7 @@ function PasswordChangeForm() {
 
       <div className="flex flex-col gap-1">
         <label htmlFor="confirmPassword" className="text-sm text-muted">
-          새 비밀번호 확인
+          {t("myInfo.confirmPasswordLabel")}
         </label>
         <input
           id="confirmPassword"
@@ -192,7 +204,7 @@ function PasswordChangeForm() {
         className="flex w-fit items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm text-paper transition hover:opacity-90 disabled:opacity-50"
       >
         {isSubmitting && <Spinner />}
-        {isSubmitting ? "변경 중..." : "비밀번호 변경"}
+        {isSubmitting ? t("myInfo.changingPassword") : t("myInfo.changePasswordButton")}
       </button>
     </form>
   );

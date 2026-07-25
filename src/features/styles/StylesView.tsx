@@ -137,11 +137,7 @@ function CustomSwatchEditor({
   );
 }
 
-const DEFAULT_CUSTOM_SWATCHES: ColorSwatchDto[] = [
-  { hex: "#111827", label: "색상 1" },
-  { hex: "#6b7280", label: "색상 2" },
-  { hex: "#f3f4f6", label: "색상 3" },
-];
+const DEFAULT_CUSTOM_SWATCH_HEXES = ["#111827", "#6b7280", "#f3f4f6"];
 
 const MAX_SECONDARY = 2;
 
@@ -169,7 +165,12 @@ export function StylesView({
   const [selectedPaletteSlug, setSelectedPaletteSlug] = useState<string | null>(null);
   const [isCustomColorSelected, setIsCustomColorSelected] = useState(false);
   const [showCustomColorForm, setShowCustomColorForm] = useState(false);
-  const [customSwatches, setCustomSwatches] = useState<ColorSwatchDto[]>(DEFAULT_CUSTOM_SWATCHES);
+  const [customSwatches, setCustomSwatches] = useState<ColorSwatchDto[]>(() =>
+    DEFAULT_CUSTOM_SWATCH_HEXES.map((hex, index) => ({
+      hex,
+      label: t("styles.defaultColorLabel", { index: index + 1 }),
+    })),
+  );
   const [colorError, setColorError] = useState<string | null>(null);
   const [isSelectingColor, setIsSelectingColor] = useState(false);
   const [colorSuggestionDismissed, setColorSuggestionDismissed] = useState(false);

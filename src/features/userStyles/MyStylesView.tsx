@@ -15,6 +15,7 @@ import { MAX_REFERENCES_PER_CATEGORY } from "@/modules/userStyles/domain/userSty
 import { Spinner } from "@/components/Spinner";
 import { AppHeader } from "@/features/navigation/AppHeader";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
 export function MyStylesView({
   email,
@@ -25,6 +26,7 @@ export function MyStylesView({
   name: string | null;
   planCode: PlanCode;
 }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [newCategoryName, setNewCategoryName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
@@ -53,7 +55,7 @@ export function MyStylesView({
       setNewCategoryName("");
       await refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "카테고리 생성에 실패했습니다.");
+      setError(err instanceof Error ? err.message : t("myStyles.createCategoryFailed"));
     } finally {
       setIsCreating(false);
     }
@@ -66,7 +68,7 @@ export function MyStylesView({
       await addUserStyleReferenceImage(category.id, file);
       await refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "이미지 업로드에 실패했습니다.");
+      setError(err instanceof Error ? err.message : t("myStyles.uploadFailed"));
     } finally {
       setBusyCategoryId(null);
     }
@@ -79,14 +81,14 @@ export function MyStylesView({
       await reanalyzeUserStyleCategory(categoryId);
       await refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "재분석에 실패했습니다.");
+      setError(err instanceof Error ? err.message : t("myStyles.reanalyzeFailed"));
     } finally {
       setBusyCategoryId(null);
     }
   }
 
   async function handleDelete(categoryId: string) {
-    const confirmed = window.confirm("이 스타일 카테고리를 삭제하시겠습니까? 등록된 참고 이미지도 함께 삭제됩니다.");
+    const confirmed = window.confirm(t("myStyles.deleteConfirm"));
     if (!confirmed) return;
     setBusyCategoryId(categoryId);
     setError(null);
@@ -94,7 +96,7 @@ export function MyStylesView({
       await deleteUserStyleCategory(categoryId);
       await refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "삭제에 실패했습니다.");
+      setError(err instanceof Error ? err.message : t("myStyles.deleteFailed"));
     } finally {
       setBusyCategoryId(null);
     }
@@ -116,23 +118,20 @@ export function MyStylesView({
       <AppHeader user={{ email, name }} planCode={planCode} />
       <main className="mx-auto flex max-w-3xl flex-col gap-6 p-8">
       <header>
-        <h1 className="text-xl font-semibold">내 스타일</h1>
-        <p className="mt-1 text-sm text-muted">
-          직접 참고 이미지를 등록하면, 이미지 생성 전 프로젝트의 스타일 단계에서 내 스타일로
-          선택할 수 있습니다. 계정 전체에서 재사용됩니다.
-        </p>
+        <h1 className="text-xl font-semibold">{t("myStyles.title")}</h1>
+        <p className="mt-1 text-sm text-muted">{t("myStyles.description")}</p>
       </header>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
-        <h2 className="text-sm font-medium text-ink">새 카테고리 만들기</h2>
+        <h2 className="text-sm font-medium text-ink">{t("myStyles.newCategory.title")}</h2>
         <div className="mt-2 flex gap-2">
           <input
             type="text"
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
-            placeholder="예: 우리 브랜드 로고 스타일"
+            placeholder={t("myStyles.newCategory.placeholder")}
             className="flex-1 rounded-full border border-line px-3 py-2 text-sm"
           />
           <button
@@ -142,14 +141,14 @@ export function MyStylesView({
             className="flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm text-paper disabled:opacity-50"
           >
             {isCreating && <Spinner />}
-            만들기
+            {t("myStyles.newCategory.submit")}
           </button>
         </div>
       </section>
 
       {categories.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-line bg-surface p-8 text-center text-sm text-muted">
-          아직 등록한 스타일이 없습니다. 위에서 카테고리를 만들고 참고 이미지를 추가해보세요.
+          {t("myStyles.empty")}
         </div>
       ) : (
         <div className="flex flex-col gap-4">
@@ -161,7 +160,7 @@ export function MyStylesView({
                   <div>
                     <h3 className="text-sm font-semibold">{category.name}</h3>
                     <p className="mt-1 text-xs text-muted">
-                      {category.description ?? "아직 스타일 분석 결과가 없습니다. 이미지를 추가하면 자동으로 분석됩니다."}
+                      {category.description ?? t("myStyles.noAnalysisYet")}
                     </p>
                   </div>
                   <button
@@ -170,7 +169,7 @@ export function MyStylesView({
                     disabled={isBusy}
                     className="shrink-0 text-xs text-red-600 underline disabled:opacity-50"
                   >
-                    삭제
+                    {t("myStyles.delete")}
                   </button>
                 </div>
 
@@ -191,7 +190,7 @@ export function MyStylesView({
                       disabled={isBusy}
                       className="flex h-20 w-20 items-center justify-center rounded-xl border border-dashed border-line text-xs text-muted disabled:opacity-50"
                     >
-                      {isBusy ? <Spinner /> : "+ 추가"}
+                      {isBusy ? <Spinner /> : t("myStyles.addImage")}
                     </button>
                   )}
                   <input
@@ -216,7 +215,7 @@ export function MyStylesView({
                     disabled={isBusy}
                     className="mt-3 text-xs text-muted underline disabled:opacity-50"
                   >
-                    다시 분석
+                    {t("myStyles.reanalyze")}
                   </button>
                 )}
               </div>
