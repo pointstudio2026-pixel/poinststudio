@@ -60,6 +60,7 @@ export function TrainingExamplesView() {
   const [formError, setFormError] = useState<string | null>(null);
   const [isPromoting, setIsPromoting] = useState(false);
   const [promoteResult, setPromoteResult] = useState<{ evaluated: number; promoted: number } | null>(null);
+  const [promoteError, setPromoteError] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string>(ALL_OPTION);
   const [deliverableTypeFilter, setDeliverableTypeFilter] = useState<string>(ALL_OPTION);
   const [industryFilter, setIndustryFilter] = useState<string>(ALL_OPTION);
@@ -98,10 +99,13 @@ export function TrainingExamplesView() {
   async function handlePromote() {
     setIsPromoting(true);
     setPromoteResult(null);
+    setPromoteError(null);
     try {
       const { result } = await promoteGenerationsToReference();
       setPromoteResult(result);
       await queryClient.invalidateQueries({ queryKey: ["admin-training-examples"] });
+    } catch (err) {
+      setPromoteError(err instanceof Error ? err.message : "실행에 실패했습니다.");
     } finally {
       setIsPromoting(false);
     }
@@ -176,9 +180,11 @@ export function TrainingExamplesView() {
           지금 바로 실행
         </button>
         <p className="text-xs text-neutral-500">
-          {promoteResult
-            ? `${promoteResult.evaluated}건 평가, ${promoteResult.promoted}건 DB 반영(80점 이상 참고 · 60점 미만 회피, 60~79점은 저장 안 함)`
-            : "매일 자동으로도 실행됩니다. 실사용자 생성물 중 아직 평가 안 된 것들을 비용 없는 행동 신호(재시도/내보내기/프로젝트 완료 여부)와 사용자 평가로 채점해, 80점 이상은 참고자료로 60점 미만은 회피자료로 반영합니다. 60~79점은 애매한 신호로 보고 DB에 저장하지 않습니다."}
+          {promoteError
+            ? `실패: ${promoteError}`
+            : promoteResult
+              ? `${promoteResult.evaluated}건 평가, ${promoteResult.promoted}건 DB 반영(80점 이상 참고 · 60점 미만 회피, 60~79점은 저장 안 함)`
+              : "매일 자동으로도 실행됩니다. 실사용자 생성물 중 아직 평가 안 된 것들을 비용 없는 행동 신호(재시도/내보내기/프로젝트 완료 여부)와 사용자 평가로 채점해, 80점 이상은 참고자료로 60점 미만은 회피자료로 반영합니다. 60~79점은 애매한 신호로 보고 DB에 저장하지 않습니다."}
         </p>
       </div>
 

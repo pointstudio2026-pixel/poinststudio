@@ -141,7 +141,7 @@ export class PromoteGenerationsToReferenceUseCase {
       await this.trainingExampleRepository.create({
         prompt: prompt.userPrompt,
         deliverableType: project.deliverableType ?? "브랜딩 & 로고",
-        createdByUserId: generation.projectId, // 실사용자 프로젝트에서 승격된 것이라 실제 관리자 계정이 없음 -- projectId로 출처를 표시.
+        createdByUserId: project.userId, // 실사용자 프로젝트에서 승격된 것이라 실제 관리자 계정이 없음 -- 프로젝트 소유자로 출처를 표시(created_by_user_id는 User FK라 projectId를 넣으면 제약 위반으로 매번 insert가 실패한다).
         source: "USER_GENERATION",
         sourceGenerationVersionId: version.id,
         industry,
