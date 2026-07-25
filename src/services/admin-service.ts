@@ -233,3 +233,34 @@ export interface PromptDecisionRecordDto {
 export function fetchPromptDecisionRecords() {
   return apiFetch<{ records: PromptDecisionRecordDto[] }>("/api/admin/prompt-decisions");
 }
+
+export interface GiftCodeDto {
+  id: string;
+  code: string;
+  planCode: "free" | "pro" | "studio";
+  grantDays: number;
+  batchLabel: string | null;
+  expiresAt: string | null;
+  redeemedByUserId: string | null;
+  redeemedAt: string | null;
+  createdByUserId: string;
+  createdAt: string;
+}
+
+export function fetchGiftCodes(batchLabel?: string) {
+  const qs = batchLabel ? `?batchLabel=${encodeURIComponent(batchLabel)}` : "";
+  return apiFetch<{ codes: GiftCodeDto[] }>(`/api/admin/gift-codes${qs}`);
+}
+
+export function generateGiftCodes(input: {
+  planCode: "pro" | "studio";
+  grantDays: number;
+  count: number;
+  batchLabel?: string;
+  expiresAt?: string;
+}) {
+  return apiFetch<{ codes: GiftCodeDto[] }>("/api/admin/gift-codes", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}

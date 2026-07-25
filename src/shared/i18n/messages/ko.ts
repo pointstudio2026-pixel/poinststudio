@@ -292,6 +292,7 @@ export const ko = {
   subscription: {
     title: "구독 플랜",
     currentPlanLine: "현재 플랜: {plan}",
+    currentPlanLineWithExpiry: "현재 플랜: {plan} ({date}까지)",
     currentPlanBadge: "현재 플랜",
     upgradeButton: "업그레이드",
     highRes: "고해상도",
@@ -310,6 +311,15 @@ export const ko = {
       paypal: "PayPal",
       notReady: "정식 서비스 출시 이후 결제 가능합니다.",
       close: "닫기",
+    },
+    giftCode: {
+      title: "선물 코드",
+      description: "선물 코드를 입력하면 지정된 등급으로 즉시 업그레이드됩니다.",
+      placeholder: "코드를 입력하세요",
+      submit: "등록",
+      submitting: "등록 중...",
+      success: "선물 코드가 적용되었습니다! {plan} 플랜을 {date}까지 이용하실 수 있어요.",
+      genericError: "선물 코드 적용에 실패했습니다.",
     },
   },
   support: {

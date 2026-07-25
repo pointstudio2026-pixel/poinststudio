@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { AppHeader } from "@/features/navigation/AppHeader";
 import { PaymentMethodModal } from "@/features/subscription/PaymentMethodModal";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { MessageKey } from "@/shared/i18n/messages/types";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 import { getPlanPrice } from "@/modules/subscriptions/domain/planPricing";
+import { redeemGiftCode } from "@/services/subscription-service";
+import { Spinner } from "@/components/Spinner";
 
 const PLAN_LABELS: Record<PlanCode, string> = { free: "Free", pro: "Pro", studio: "Studio" };
 const ALLOWANCE_KEYS: Record<PlanCode, MessageKey> = {
@@ -26,15 +29,47 @@ export function SubscriptionView({
   email,
   name,
   currentPlanCode,
+  currentPeriodEnd,
   plans,
 }: {
   email: string;
   name: string | null;
   currentPlanCode: PlanCode;
+  currentPeriodEnd: string | null;
   plans: PlanRow[];
 }) {
   const { t, locale } = useTranslation();
+  const router = useRouter();
   const [paymentModalPlan, setPaymentModalPlan] = useState<PlanCode | null>(null);
+  const [giftCode, setGiftCode] = useState("");
+  const [isRedeeming, setIsRedeeming] = useState(false);
+  const [giftCodeError, setGiftCodeError] = useState<string | null>(null);
+  const [giftCodeSuccess, setGiftCodeSuccess] = useState<string | null>(null);
+
+  async function handleRedeemGiftCode(e: React.FormEvent) {
+    e.preventDefault();
+    if (!giftCode.trim()) return;
+    setIsRedeeming(true);
+    setGiftCodeError(null);
+    setGiftCodeSuccess(null);
+    try {
+      const { subscription } = await redeemGiftCode(giftCode.trim());
+      const dateLabel = subscription.currentPeriodEnd
+        ? new Date(subscription.currentPeriodEnd).toLocaleDateString(locale)
+        : "";
+      setGiftCodeSuccess(
+        t("subscription.giftCode.success", { plan: PLAN_LABELS[subscription.planCode], date: dateLabel }),
+      );
+      setGiftCode("");
+      router.refresh();
+    } catch (err) {
+      setGiftCodeError(err instanceof Error ? err.message : t("subscription.giftCode.genericError"));
+    } finally {
+      setIsRedeeming(false);
+    }
+  }
+
+  const periodEndLabel = currentPeriodEnd ? new Date(currentPeriodEnd).toLocaleDateString(locale) : null;
 
   return (
     <div className="min-h-screen bg-paper">
@@ -42,7 +77,9 @@ export function SubscriptionView({
       <main className="mx-auto flex max-w-4xl flex-col gap-6 p-8">
       <h1 className="text-xl font-semibold">{t("subscription.title")}</h1>
       <p className="text-sm text-muted">
-        {t("subscription.currentPlanLine", { plan: PLAN_LABELS[currentPlanCode] })}
+        {periodEndLabel
+          ? t("subscription.currentPlanLineWithExpiry", { plan: PLAN_LABELS[currentPlanCode], date: periodEndLabel })
+          : t("subscription.currentPlanLine", { plan: PLAN_LABELS[currentPlanCode] })}
       </p>
 
       {/* 메인페이지 요금제 섹션(PLANS in HomeView.tsx)과 동일한 카드 디자인 --
@@ -112,6 +149,34 @@ export function SubscriptionView({
 
       {paymentModalPlan && (
         <PaymentMethodModal planLabel={PLAN_LABELS[paymentModalPlan]} onClose={() => setPaymentModalPlan(null)} />
+      )}
+
+      {currentPlanCode === "free" && (
+        <div className="shadow-soft flex flex-col gap-3 rounded-2xl border border-line bg-surface p-6">
+          <div>
+            <h2 className="text-base font-semibold">{t("subscription.giftCode.title")}</h2>
+            <p className="mt-1 text-sm text-muted">{t("subscription.giftCode.description")}</p>
+          </div>
+          <form onSubmit={handleRedeemGiftCode} className="flex gap-2">
+            <input
+              type="text"
+              value={giftCode}
+              onChange={(e) => setGiftCode(e.target.value)}
+              placeholder={t("subscription.giftCode.placeholder")}
+              className="flex-1 rounded-full border border-line px-4 py-2 text-sm"
+            />
+            <button
+              type="submit"
+              disabled={isRedeeming || !giftCode.trim()}
+              className="flex items-center gap-2 rounded-full bg-ink px-5 py-2 text-sm font-medium text-paper transition hover:opacity-90 disabled:opacity-50"
+            >
+              {isRedeeming && <Spinner />}
+              {isRedeeming ? t("subscription.giftCode.submitting") : t("subscription.giftCode.submit")}
+            </button>
+          </form>
+          {giftCodeError && <p className="text-sm text-red-600">{giftCodeError}</p>}
+          {giftCodeSuccess && <p className="text-sm text-green-700">{giftCodeSuccess}</p>}
+        </div>
       )}
       </main>
     </div>

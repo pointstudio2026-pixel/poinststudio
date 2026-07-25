@@ -294,6 +294,7 @@ export const de: Messages = {
   subscription: {
     title: "Abo-Pläne",
     currentPlanLine: "Aktueller Plan: {plan}",
+    currentPlanLineWithExpiry: "Aktueller Plan: {plan} (bis {date})",
     currentPlanBadge: "Aktueller Plan",
     upgradeButton: "Upgrade",
     highRes: "Hohe Auflösung",
@@ -312,6 +313,15 @@ export const de: Messages = {
       paypal: "PayPal",
       notReady: "Die Zahlung ist nach dem offiziellen Launch verfügbar.",
       close: "Schließen",
+    },
+    giftCode: {
+      title: "Geschenkcode",
+      description: "Gib einen Geschenkcode ein, um sofort auf den zugewiesenen Plan hochzustufen.",
+      placeholder: "Code eingeben",
+      submit: "Einlösen",
+      submitting: "Wird eingelöst...",
+      success: "Geschenkcode angewendet! Du kannst den {plan}-Plan bis {date} nutzen.",
+      genericError: "Der Geschenkcode konnte nicht angewendet werden.",
     },
   },
   support: {

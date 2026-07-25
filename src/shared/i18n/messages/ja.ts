@@ -294,6 +294,7 @@ export const ja: Messages = {
   subscription: {
     title: "料金プラン",
     currentPlanLine: "現在のプラン: {plan}",
+    currentPlanLineWithExpiry: "現在のプラン: {plan}({date}まで)",
     currentPlanBadge: "現在のプラン",
     upgradeButton: "アップグレード",
     highRes: "高解像度",
@@ -312,6 +313,15 @@ export const ja: Messages = {
       paypal: "PayPal",
       notReady: "正式サービス開始後にお支払いいただけます。",
       close: "閉じる",
+    },
+    giftCode: {
+      title: "ギフトコード",
+      description: "ギフトコードを入力すると、指定されたプランにすぐアップグレードされます。",
+      placeholder: "コードを入力してください",
+      submit: "登録",
+      submitting: "登録中...",
+      success: "ギフトコードが適用されました！{plan}プランを{date}までご利用いただけます。",
+      genericError: "ギフトコードの適用に失敗しました。",
     },
   },
   support: {

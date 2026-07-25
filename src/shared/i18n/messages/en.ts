@@ -294,6 +294,7 @@ export const en: Messages = {
   subscription: {
     title: "Subscription Plans",
     currentPlanLine: "Current plan: {plan}",
+    currentPlanLineWithExpiry: "Current plan: {plan} (until {date})",
     currentPlanBadge: "Current plan",
     upgradeButton: "Upgrade",
     highRes: "High resolution",
@@ -312,6 +313,15 @@ export const en: Messages = {
       paypal: "PayPal",
       notReady: "Payment will be available after the official launch.",
       close: "Close",
+    },
+    giftCode: {
+      title: "Gift code",
+      description: "Enter a gift code to upgrade instantly to the granted plan.",
+      placeholder: "Enter your code",
+      submit: "Redeem",
+      submitting: "Redeeming...",
+      success: "Gift code applied! You can use the {plan} plan until {date}.",
+      genericError: "Failed to apply the gift code.",
     },
   },
   support: {

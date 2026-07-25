@@ -16,3 +16,13 @@ export const changeUserPlanSchema = z.object({
 });
 
 export type ChangeUserPlanInput = z.infer<typeof changeUserPlanSchema>;
+
+export const generateGiftCodesSchema = z.object({
+  planCode: z.enum(["pro", "studio"]),
+  grantDays: z.coerce.number().int().min(1).max(365).default(31),
+  count: z.coerce.number().int().min(1).max(500),
+  batchLabel: z.string().trim().max(100).optional(),
+  expiresAt: z.string().datetime().optional().or(z.literal("").transform(() => undefined)),
+});
+
+export type GenerateGiftCodesInput = z.infer<typeof generateGiftCodesSchema>;

@@ -31,4 +31,24 @@ export class PrismaSubscriptionRepository implements SubscriptionRepository {
   async updatePlan(userId: string, planCode: PlanCode): Promise<Subscription> {
     return prisma.subscription.update({ where: { userId }, data: { planCode } });
   }
+
+  async grantTemporaryPlan(
+    userId: string,
+    planCode: PlanCode,
+    periodStart: Date,
+    periodEnd: Date,
+  ): Promise<Subscription> {
+    return prisma.subscription.update({
+      where: { userId },
+      data: { planCode, status: "active", currentPeriodStart: periodStart, currentPeriodEnd: periodEnd },
+    });
+  }
+
+  async revertExpiredTemporaryPlans(now: Date): Promise<number> {
+    const result = await prisma.subscription.updateMany({
+      where: { currentPeriodEnd: { lt: now }, planCode: { not: "free" } },
+      data: { planCode: "free", currentPeriodStart: null, currentPeriodEnd: null },
+    });
+    return result.count;
+  }
 }

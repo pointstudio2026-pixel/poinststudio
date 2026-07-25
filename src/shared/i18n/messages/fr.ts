@@ -294,6 +294,7 @@ export const fr: Messages = {
   subscription: {
     title: "Offres d'abonnement",
     currentPlanLine: "Offre actuelle : {plan}",
+    currentPlanLineWithExpiry: "Offre actuelle : {plan} (jusqu'au {date})",
     currentPlanBadge: "Offre actuelle",
     upgradeButton: "Passer à niveau supérieur",
     highRes: "Haute résolution",
@@ -312,6 +313,15 @@ export const fr: Messages = {
       paypal: "PayPal",
       notReady: "Le paiement sera disponible après le lancement officiel.",
       close: "Fermer",
+    },
+    giftCode: {
+      title: "Code cadeau",
+      description: "Entrez un code cadeau pour passer immédiatement à l'offre indiquée.",
+      placeholder: "Entrez votre code",
+      submit: "Valider",
+      submitting: "Validation...",
+      success: "Code cadeau appliqué ! Vous pouvez utiliser l'offre {plan} jusqu'au {date}.",
+      genericError: "Échec de l'application du code cadeau.",
     },
   },
   support: {

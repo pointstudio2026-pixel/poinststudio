@@ -29,6 +29,10 @@ import { promptDecisionRecordRepositoryInstance } from "@/modules/promptPriority
 import { trainingExampleRepositoryInstance } from "@/modules/trainingExamples/container";
 import { scheduleReferencePromotion } from "@/shared/queue/referencePromotionQueue";
 import { startReferencePromotionWorker } from "@/workers/referencePromotionWorker";
+import { scheduleGiftCodeExpiry } from "@/shared/queue/giftCodeExpiryQueue";
+import { startGiftCodeExpiryWorker } from "@/workers/giftCodeExpiryWorker";
+import { RevertExpiredGiftPlansUseCase } from "@/modules/subscriptions/application/RevertExpiredGiftPlansUseCase";
+import { giftCodesContainer } from "@/modules/giftCodes/container";
 import { resolveTextCompletionProvider } from "@/shared/ai/textCompletionRouter";
 import { resolveImageGenerationProvider } from "@/shared/ai/imageGenerationRouter";
 import { resolveMockupRenderProvider } from "@/shared/ai/mockupRenderRouter";
@@ -36,7 +40,7 @@ import { imageGenerationQueue } from "@/shared/queue/imageGenerationQueue";
 import { imageEditQueue } from "@/shared/queue/imageEditQueue";
 import { mockupRenderQueue } from "@/shared/queue/mockupRenderQueue";
 import { exportQueue } from "@/shared/queue/exportQueue";
-import { subscriptionsContainer } from "@/modules/subscriptions/container";
+import { subscriptionRepository, subscriptionsContainer } from "@/modules/subscriptions/container";
 
 const adminRepository = new PrismaAdminRepository();
 const announcementRepository = new PrismaAnnouncementRepository();
@@ -92,6 +96,9 @@ export const adminContainer = {
     trainingExampleRepositoryInstance,
     userRepository,
   ),
+  generateGiftCodesUseCase: giftCodesContainer.generateGiftCodesUseCase,
+  listGiftCodesUseCase: giftCodesContainer.listGiftCodesUseCase,
+  revertExpiredGiftPlansUseCase: new RevertExpiredGiftPlansUseCase(subscriptionRepository),
 };
 
 // 매일 자동으로 미평가 생성물을 평가+승격한다(관리자 "지금 실행" 버튼과
@@ -103,4 +110,13 @@ if (!isBuildPhaseForReferencePromotion && !globalForReferencePromotionWorker.ref
   startReferencePromotionWorker(adminContainer.promoteGenerationsToReferenceUseCase);
   void scheduleReferencePromotion();
   globalForReferencePromotionWorker.referencePromotionWorkerStarted = true;
+}
+
+// 매일 자동으로 만료된 선물 코드 등급을 free로 되돌린다(2026-07-25). AI
+// 호출 없음, 비용 0 -- 위 reference-promotion 워커와 동일한 자동 시작 패턴.
+const globalForGiftCodeExpiryWorker = globalThis as unknown as { giftCodeExpiryWorkerStarted?: boolean };
+if (!isBuildPhaseForReferencePromotion && !globalForGiftCodeExpiryWorker.giftCodeExpiryWorkerStarted) {
+  startGiftCodeExpiryWorker(adminContainer.revertExpiredGiftPlansUseCase);
+  void scheduleGiftCodeExpiry();
+  globalForGiftCodeExpiryWorker.giftCodeExpiryWorkerStarted = true;
 }

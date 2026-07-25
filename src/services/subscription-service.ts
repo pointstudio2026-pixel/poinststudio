@@ -16,3 +16,10 @@ export function upgradePlan(planCode: PlanCode) {
     body: JSON.stringify({ planCode }),
   });
 }
+
+export function redeemGiftCode(code: string) {
+  return apiFetch<{ subscription: SubscriptionDto }>("/api/subscription/redeem-gift-code", {
+    method: "POST",
+    body: JSON.stringify({ code }),
+  });
+}

@@ -48,6 +48,41 @@ export class FakeSubscriptionRepository implements SubscriptionRepository {
     this.setPlan(userId, planCode);
     return this.subscriptions.get(userId)!;
   }
+
+  async grantTemporaryPlan(
+    userId: string,
+    planCode: PlanCode,
+    periodStart: Date,
+    periodEnd: Date,
+  ): Promise<Subscription> {
+    const existing = this.subscriptions.get(userId);
+    const subscription: Subscription = {
+      id: existing?.id ?? `sub-${this.subscriptions.size + 1}`,
+      userId,
+      planCode,
+      status: "active",
+      currentPeriodStart: periodStart,
+      currentPeriodEnd: periodEnd,
+    };
+    this.subscriptions.set(userId, subscription);
+    return subscription;
+  }
+
+  async revertExpiredTemporaryPlans(now: Date): Promise<number> {
+    let count = 0;
+    for (const [userId, sub] of this.subscriptions.entries()) {
+      if (sub.planCode !== "free" && sub.currentPeriodEnd && sub.currentPeriodEnd < now) {
+        this.subscriptions.set(userId, {
+          ...sub,
+          planCode: "free",
+          currentPeriodStart: null,
+          currentPeriodEnd: null,
+        });
+        count += 1;
+      }
+    }
+    return count;
+  }
 }
 
 interface StoredUsage extends RecordUsageInput {

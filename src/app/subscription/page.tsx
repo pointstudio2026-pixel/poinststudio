@@ -19,6 +19,7 @@ export default async function SubscriptionPage() {
       email={user.email}
       name={user.name}
       currentPlanCode={subscription.planCode}
+      currentPeriodEnd={subscription.currentPeriodEnd ? subscription.currentPeriodEnd.toISOString() : null}
       plans={plans}
     />
   );
