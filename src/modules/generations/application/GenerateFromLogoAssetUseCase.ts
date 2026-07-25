@@ -63,17 +63,19 @@ export class GenerateFromLogoAssetUseCase {
     const primaryStyle = styleSelection ? await this.styleRepository.findById(styleSelection.primaryStyleId) : null;
     const styleCategory = primaryStyle ? STYLE_CATEGORY_TEMPLATES[primaryStyle.category] : undefined;
 
-    // 브랜딩 & 로고 외 유형은 항상 "완성된 결과물 전체"를 합성한다(fullDesign) --
-    // ProcessMockupJobUseCase가 이미 쓰는 것과 같은 규칙(로고 마크 하나가
-    // 아니라 명함/포스터 등 완성된 지면 전체가 실제 사용 환경에 합성됨).
+    // 사용자가 첨부한 건 완성된 지면 전체가 아니라 로고 마크 하나뿐이므로
+    // "logo" 모드를 쓴다(ProcessMockupJobUseCase가 브랜딩 & 로고 프로젝트에
+    // 쓰는 것과 같은 모드) -- fullDesign 모드를 쓰면 "이 이미지가 이미 완성된
+    // 디자인이니 그대로 유지하라"는 프롬프트가 되어, 로고 하나만 담긴 이미지를
+    // 모델이 "미완성 스케치"로 오해하고 새로 다시 그려버리는 원인이 된다.
     const result = await this.mockupRenderProvider.render({
       logoImageUrl: logoDataUri,
       backgroundUrl: template.backgroundUrl,
-      placementArea: template.fullDesignPlacementArea ?? template.placementArea,
+      placementArea: template.placementArea,
       templateName: template.name,
       category,
       industry,
-      compositingMode: "fullDesign",
+      compositingMode: "logo",
       styleCategory,
     });
 

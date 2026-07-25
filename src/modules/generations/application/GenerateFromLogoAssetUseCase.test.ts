@@ -83,7 +83,7 @@ async function setup() {
 }
 
 describe("GenerateFromLogoAssetUseCase", () => {
-  it("composites the real logo onto a template for the deliverable type's mockup category, in fullDesign mode", async () => {
+  it("composites the real logo onto a template for the deliverable type's mockup category, in logo mode", async () => {
     const ctx = await setup();
     const project = buildProject();
 
@@ -91,7 +91,8 @@ describe("GenerateFromLogoAssetUseCase", () => {
 
     expect(ctx.captured).toHaveLength(1);
     expect(ctx.captured[0]?.category).toBe("poster");
-    expect(ctx.captured[0]?.compositingMode).toBe("fullDesign");
+    expect(ctx.captured[0]?.compositingMode).toBe("logo");
+    expect(ctx.captured[0]?.placementArea).toEqual({ xPct: 30, yPct: 35, widthPct: 40, heightPct: 30 });
     expect(ctx.captured[0]?.logoImageUrl).toBe("data:image/png;base64,ZmFrZS1sb2dvLWJ5dGVz");
     expect(result.images).toEqual([{ url: "data:image/png;base64,X", thumbnailUrl: "data:image/png;base64,X" }]);
     expect(result.provider).toBe("capturing");
