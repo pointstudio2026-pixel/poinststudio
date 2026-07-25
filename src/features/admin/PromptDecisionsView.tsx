@@ -11,16 +11,16 @@ function RecordRow({ record }: { record: PromptDecisionRecordDto }) {
   const hasConflicts = record.conflicts.length > 0;
 
   return (
-    <li className="rounded-md border border-neutral-200 p-3">
+    <li className="rounded-2xl border border-line bg-surface p-3 shadow-soft">
       <button type="button" onClick={() => setExpanded(!expanded)} className="flex w-full items-center justify-between text-left">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-neutral-400">{new Date(record.createdAt).toLocaleString("ko-KR")}</span>
+          <span className="text-xs text-muted">{new Date(record.createdAt).toLocaleString("ko-KR")}</span>
           {hasConflicts ? (
             <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-700">
               충돌 {record.conflicts.length}건 -- 사용자 우선 처리
             </span>
           ) : (
-            <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-500">충돌 없음</span>
+            <span className="rounded-full bg-line px-2 py-0.5 text-xs text-muted">충돌 없음</span>
           )}
           <span
             className={`rounded-full px-2 py-0.5 text-xs ${
@@ -29,24 +29,24 @@ function RecordRow({ record }: { record: PromptDecisionRecordDto }) {
           >
             {record.complianceCheck.passed ? "프롬프트 검증 통과" : "프롬프트 검증 실패"}
           </span>
-          <span className="text-xs text-neutral-400">
+          <span className="text-xs text-muted">
             DB 참고 {record.dbCandidatesUsed.length}/{record.dbCandidatesFound.length}건 사용
           </span>
         </div>
-        <span className="text-xs text-neutral-400">{expanded ? "접기" : "펼치기"}</span>
+        <span className="text-xs text-muted">{expanded ? "접기" : "펼치기"}</span>
       </button>
 
       {expanded && (
-        <div className="mt-3 flex flex-col gap-3 border-t border-neutral-100 pt-3 text-xs">
+        <div className="mt-3 flex flex-col gap-3 border-t border-line pt-3 text-xs">
           <div>
-            <p className="font-medium text-neutral-700">하드 제약조건</p>
-            <pre className="mt-1 overflow-x-auto rounded bg-neutral-50 p-2 text-[11px] text-neutral-600">
+            <p className="font-medium text-ink">하드 제약조건</p>
+            <pre className="mt-1 overflow-x-auto rounded-xl bg-line p-2 text-[11px] text-muted">
               {JSON.stringify(record.hardConstraints, null, 2)}
             </pre>
           </div>
           {hasConflicts && (
             <div>
-              <p className="font-medium text-neutral-700">충돌 및 처리 내역</p>
+              <p className="font-medium text-ink">충돌 및 처리 내역</p>
               <ul className="mt-1 flex flex-col gap-2">
                 {record.conflicts.map((c, i) => (
                   <li key={i} className="rounded bg-amber-50 p-2 text-[11px] text-amber-900">
@@ -86,7 +86,7 @@ export function PromptDecisionsView() {
       <header className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold">프롬프트 우선순위 판단 기록</h1>
-          <p className="mt-1 text-sm text-neutral-500">
+          <p className="mt-1 text-sm text-muted">
             프로젝트별로 사용자 필수 조건이 DB 추천과 충돌했는지, 충돌 시 어떻게 처리했는지 확인할 수 있습니다.
             일반 사용자에게는 노출되지 않습니다.
           </p>
@@ -102,7 +102,7 @@ export function PromptDecisionsView() {
         </div>
       )}
       {!isLoading && data?.records.length === 0 && (
-        <p className="text-center text-sm text-neutral-400">아직 기록이 없습니다.</p>
+        <p className="text-center text-sm text-muted">아직 기록이 없습니다.</p>
       )}
 
       <ul className="flex flex-col gap-2">

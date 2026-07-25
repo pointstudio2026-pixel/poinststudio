@@ -19,13 +19,13 @@ export function ImageLightbox({ src, alt, onClose }: { src: string; alt: string;
         src={src}
         alt={alt}
         onClick={(e) => e.stopPropagation()}
-        className="max-h-[85vh] max-w-[90vw] rounded-md object-contain"
+        className="max-h-[85vh] max-w-[90vw] rounded-2xl object-contain"
       />
       <button
         type="button"
         onClick={onClose}
         aria-label={t("imageLightbox.close")}
-        className="absolute right-6 top-6 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-lg text-neutral-700 shadow-soft"
+        className="absolute right-6 top-6 flex h-9 w-9 items-center justify-center rounded-full bg-paper/90 text-lg text-ink shadow-soft"
       >
         ×
       </button>

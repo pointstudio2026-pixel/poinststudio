@@ -110,7 +110,7 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
         <button
           type="button"
           onClick={handleExecute}
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm text-white"
+          className="rounded-full bg-ink px-4 py-2 text-sm text-paper"
         >
           {t("asterBrain.startAnalysis")}
         </button>
@@ -151,7 +151,7 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
             type="button"
             onClick={handleRebuild}
             disabled={isSelecting}
-            className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm disabled:opacity-50"
+            className="rounded-full border border-line px-3 py-1.5 text-sm disabled:opacity-50"
           >
             {t("asterBrain.regenerateDifferent")}
           </button>
@@ -168,7 +168,7 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
       <header className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold">{t("asterBrain.title")}</h1>
-          <p className="mt-1 flex items-center gap-2 text-xs text-neutral-400">
+          <p className="mt-1 flex items-center gap-2 text-xs text-muted">
             v{strategy.currentVersion.versionNumber} · {t("asterBrain.versionCount", { count: versions.length })}
             <span className={`rounded-full px-2 py-0.5 font-medium ${confidence.className}`}>
               {t(confidence.labelKey)}
@@ -180,7 +180,7 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
           <button
             type="button"
             onClick={handleRebuild}
-            className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm"
+            className="rounded-full border border-line px-3 py-1.5 text-sm"
           >
             {t("asterBrain.reanalyze")}
           </button>
@@ -190,52 +190,52 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
 
       {analyzeError && <p className="text-sm text-red-600">{analyzeError}</p>}
 
-      <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">{t("asterBrain.selectedDirection", { archetype: brandStrategy.brandArchetype })}</h2>
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+        <h2 className="text-sm font-medium text-ink">{t("asterBrain.selectedDirection", { archetype: brandStrategy.brandArchetype })}</h2>
         <p className="mt-2 text-sm">{strategy.currentVersion.reasoningSummary}</p>
-        <p className="mt-2 text-xs text-neutral-400">{brandKnowledge.confidenceNotes}</p>
+        <p className="mt-2 text-xs text-muted">{brandKnowledge.confidenceNotes}</p>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-md border border-neutral-200 p-4">
-          <h2 className="text-sm font-medium text-neutral-700">{t("asterBrain.brandKnowledge")}</h2>
+        <div className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+          <h2 className="text-sm font-medium text-ink">{t("asterBrain.brandKnowledge")}</h2>
           <dl className="mt-2 flex flex-col gap-2 text-sm">
             <div>
-              <dt className="text-xs text-neutral-400">{t("asterBrain.mission")}</dt>
+              <dt className="text-xs text-muted">{t("asterBrain.mission")}</dt>
               <dd>{brandKnowledge.mission || "—"}</dd>
             </div>
             <div>
-              <dt className="text-xs text-neutral-400">{t("asterBrain.vision")}</dt>
+              <dt className="text-xs text-muted">{t("asterBrain.vision")}</dt>
               <dd>{brandKnowledge.vision || "—"}</dd>
             </div>
             <div>
-              <dt className="text-xs text-neutral-400">{t("asterBrain.coreValues")}</dt>
+              <dt className="text-xs text-muted">{t("asterBrain.coreValues")}</dt>
               <dd>{brandKnowledge.values.length > 0 ? brandKnowledge.values.join(", ") : "—"}</dd>
             </div>
             <div>
-              <dt className="text-xs text-neutral-400">{t("asterBrain.positioning")}</dt>
+              <dt className="text-xs text-muted">{t("asterBrain.positioning")}</dt>
               <dd>{brandKnowledge.positioning || "—"}</dd>
             </div>
             <div>
-              <dt className="text-xs text-neutral-400">{t("asterBrain.targetAudience")}</dt>
+              <dt className="text-xs text-muted">{t("asterBrain.targetAudience")}</dt>
               <dd>{brandKnowledge.audience || "—"}</dd>
             </div>
           </dl>
         </div>
 
-        <div className="rounded-md border border-neutral-200 p-4">
-          <h2 className="text-sm font-medium text-neutral-700">{t("asterBrain.brandStrategyDraft")}</h2>
+        <div className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+          <h2 className="text-sm font-medium text-ink">{t("asterBrain.brandStrategyDraft")}</h2>
           <dl className="mt-2 flex flex-col gap-2 text-sm">
             <div>
-              <dt className="text-xs text-neutral-400">{t("asterBrain.brandArchetype")}</dt>
+              <dt className="text-xs text-muted">{t("asterBrain.brandArchetype")}</dt>
               <dd>{brandStrategy.brandArchetype}</dd>
             </div>
             <div>
-              <dt className="text-xs text-neutral-400">{t("asterBrain.toneAndManner")}</dt>
+              <dt className="text-xs text-muted">{t("asterBrain.toneAndManner")}</dt>
               <dd>{brandStrategy.toneAndManner}</dd>
             </div>
             <div>
-              <dt className="text-xs text-neutral-400">{t("asterBrain.coreMessage")}</dt>
+              <dt className="text-xs text-muted">{t("asterBrain.coreMessage")}</dt>
               <dd>{brandStrategy.coreMessage || "—"}</dd>
             </div>
             {(
@@ -247,11 +247,11 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
               ] as const
             ).map(([label, items]) => (
               <div key={label}>
-                <dt className="text-xs text-neutral-400">{label}</dt>
+                <dt className="text-xs text-muted">{label}</dt>
                 {items.map((item) => (
                   <dd key={item.value}>
                     {item.value}
-                    <span className="ml-1 text-xs text-neutral-400">({item.reason})</span>
+                    <span className="ml-1 text-xs text-muted">({item.reason})</span>
                   </dd>
                 ))}
               </div>
@@ -275,18 +275,18 @@ function StrategyCandidateCard({
   const { t } = useTranslation();
   const { brandKnowledge, brandStrategy } = candidate;
   return (
-    <div className="flex flex-col gap-3 rounded-md border border-neutral-200 p-4">
+    <div className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4 shadow-soft">
       <div>
         <h3 className="text-sm font-semibold">{brandStrategy.brandArchetype}</h3>
-        <p className="mt-1 text-xs text-neutral-500">{brandStrategy.toneAndManner}</p>
+        <p className="mt-1 text-xs text-muted">{brandStrategy.toneAndManner}</p>
       </div>
       <p className="text-sm">{brandStrategy.positioning}</p>
-      <p className="text-xs text-neutral-500">{brandKnowledge.reasoningSummary}</p>
+      <p className="text-xs text-muted">{brandKnowledge.reasoningSummary}</p>
       <button
         type="button"
         onClick={onSelect}
         disabled={disabled}
-        className="mt-auto rounded-md bg-neutral-900 px-3 py-1.5 text-sm text-white disabled:opacity-50"
+        className="mt-auto rounded-full bg-ink px-3 py-1.5 text-sm text-paper disabled:opacity-50"
       >
         {t("asterBrain.confirmThisStrategy")}
       </button>

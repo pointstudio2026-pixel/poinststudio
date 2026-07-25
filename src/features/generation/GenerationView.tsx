@@ -202,7 +202,7 @@ export function GenerationView({ projectId }: { projectId: string }) {
             <button
               type="button"
               onClick={() => setShowHistory(!showHistory)}
-              className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm"
+              className="rounded-full border border-line px-3 py-1.5 text-sm"
             >
               {t("generation.editHistory")}
             </button>
@@ -213,7 +213,7 @@ export function GenerationView({ projectId }: { projectId: string }) {
             type="button"
             onClick={handleGenerate}
             disabled={actionsDisabled}
-            className="flex items-center gap-2 rounded-md bg-neutral-900 px-4 py-2 text-sm text-white disabled:opacity-50"
+            className="flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm text-paper disabled:opacity-50"
           >
             {isSubmitting && <Spinner />}
             {t("generation.newGeneration")}
@@ -238,24 +238,24 @@ export function GenerationView({ projectId }: { projectId: string }) {
       )}
 
       {capReached && (
-        <p className="text-xs text-neutral-400">{t("generation.capReached", { max: String(MAX_PROJECT_RESULTS) })}</p>
+        <p className="text-xs text-muted">{t("generation.capReached", { max: String(MAX_PROJECT_RESULTS) })}</p>
       )}
 
       {versions.length === 0 && (
-        <div className="mt-8 rounded-md border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-400">
+        <div className="mt-8 rounded-2xl border border-dashed border-line bg-surface p-8 text-center text-sm text-muted">
           {t("generation.noResultsYet")}
         </div>
       )}
 
       {completedVersions.length > 0 && (
         <section>
-          <div className="mb-2 text-xs text-neutral-400">
+          <div className="mb-2 text-xs text-muted">
             {t("generation.resultCount", { count: String(completedVersions.length), max: String(MAX_PROJECT_RESULTS) })}
           </div>
           <div className="grid grid-cols-3 gap-3">
             {completedVersions.map((version, i) => (
               <div key={version.id} className="flex flex-col gap-2">
-                <div className="relative w-full overflow-hidden rounded-md border border-neutral-200">
+                <div className="relative w-full overflow-hidden rounded-2xl border border-line">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={version.images[0]?.url}
@@ -268,7 +268,7 @@ export function GenerationView({ projectId }: { projectId: string }) {
                       setLightboxImage({ url: version.images[0]!.url, alt: t("generation.resultAlt", { n: String(i + 1) }) })
                     }
                     aria-label={t("generation.viewLarger")}
-                    className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-neutral-900/80 text-white shadow-soft backdrop-blur-sm transition hover:bg-neutral-900"
+                    className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-ink/80 text-paper shadow-soft backdrop-blur-sm transition hover:bg-ink"
                   >
                     <svg
                       width="14"
@@ -284,7 +284,7 @@ export function GenerationView({ projectId }: { projectId: string }) {
                       <line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
                   </button>
-                  <span className="absolute left-1.5 top-1.5 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-medium text-neutral-600">
+                  <span className="absolute left-1.5 top-1.5 rounded-full bg-paper/90 px-2 py-0.5 text-[11px] font-medium text-muted">
                     {t("generation.resultAlt", { n: String(i + 1) })}
                   </span>
                 </div>
@@ -294,8 +294,8 @@ export function GenerationView({ projectId }: { projectId: string }) {
           </div>
 
           {!capReached && (
-            <div className="mt-4 rounded-md border border-neutral-200 p-4">
-              <p className="text-sm font-medium text-neutral-700">{t("generation.tryMore")}</p>
+            <div className="mt-4 rounded-2xl border border-line bg-surface p-4 shadow-soft">
+              <p className="text-sm font-medium text-ink">{t("generation.tryMore")}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {EDIT_PRESET_OPTIONS.map((preset) => (
                   <button
@@ -303,14 +303,14 @@ export function GenerationView({ projectId }: { projectId: string }) {
                     type="button"
                     onClick={() => handlePreset(preset.key)}
                     disabled={actionsDisabled}
-                    className="rounded-full border border-neutral-300 px-3 py-1 text-xs disabled:opacity-50"
+                    className="rounded-full border border-line px-3 py-1 text-xs disabled:opacity-50"
                   >
                     {preset.label}
                   </button>
                 ))}
               </div>
 
-              <p className="mt-4 text-xs text-neutral-400">{t("generation.customEditPrompt")}</p>
+              <p className="mt-4 text-xs text-muted">{t("generation.customEditPrompt")}</p>
               <div className="mt-2 flex flex-col gap-2">
                 <textarea
                   value={customInstructionDraft}
@@ -319,13 +319,13 @@ export function GenerationView({ projectId }: { projectId: string }) {
                   rows={2}
                   maxLength={500}
                   placeholder={t("generation.customEditPlaceholder")}
-                  className="rounded-md border border-neutral-300 px-3 py-2 text-sm disabled:opacity-50"
+                  className="rounded-xl border border-line px-3 py-2 text-sm disabled:opacity-50"
                 />
                 <button
                   type="button"
                   onClick={handleCustomEdit}
                   disabled={actionsDisabled || !customInstructionDraft.trim()}
-                  className="flex w-fit items-center gap-2 rounded-md border border-neutral-300 px-3 py-1.5 text-xs disabled:opacity-50"
+                  className="flex w-fit items-center gap-2 rounded-full border border-line px-3 py-1.5 text-xs disabled:opacity-50"
                 >
                   {isSubmitting && <Spinner />}
                   {t("generation.requestEdit")}
@@ -337,22 +337,22 @@ export function GenerationView({ projectId }: { projectId: string }) {
       )}
 
       {isPending && (
-        <div className="flex flex-col items-center justify-center gap-3 rounded-md border border-neutral-200 p-12 text-center">
+        <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-line bg-surface p-12 text-center">
           <Spinner />
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm text-muted">
             {current?.status === "pending" ? t("generation.queued") : t("generation.generating")}
           </p>
         </div>
       )}
 
       {!isPending && current?.status === "failed" && (
-        <div className="rounded-md border border-red-200 p-6 text-center">
+        <div className="rounded-2xl border border-red-200 p-6 text-center">
           <p className="text-sm text-red-600">{t("generation.failedWithMessage", { message: current.errorMessage ?? "" })}</p>
           <button
             type="button"
             onClick={handleRetryFailed}
             disabled={isSubmitting}
-            className="mt-3 rounded-md border border-neutral-300 px-4 py-2 text-sm disabled:opacity-50"
+            className="mt-3 rounded-full border border-line px-4 py-2 text-sm disabled:opacity-50"
           >
             {t("generation.tryAgain")}
           </button>
@@ -360,13 +360,13 @@ export function GenerationView({ projectId }: { projectId: string }) {
       )}
 
       {showHistory && (
-        <section className="rounded-md border border-neutral-200 p-4">
-          <h2 className="text-sm font-medium text-neutral-700">{t("generation.editHistory")}</h2>
+        <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+          <h2 className="text-sm font-medium text-ink">{t("generation.editHistory")}</h2>
           <ul className="mt-2 flex flex-col gap-2">
             {(editHistoryData?.history ?? []).map((entry) => (
               <li
                 key={entry.id}
-                className="flex items-center justify-between rounded-md border border-neutral-200 px-3 py-2 text-sm"
+                className="flex items-center justify-between rounded-xl border border-line bg-paper px-3 py-2 text-sm"
               >
                 <span>
                   {entry.customInstruction
@@ -387,7 +387,7 @@ export function GenerationView({ projectId }: { projectId: string }) {
               </li>
             ))}
             {editHistoryData?.history.length === 0 && (
-              <li className="text-sm text-neutral-400">{t("generation.noEditHistory")}</li>
+              <li className="text-sm text-muted">{t("generation.noEditHistory")}</li>
             )}
           </ul>
         </section>

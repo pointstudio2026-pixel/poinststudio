@@ -69,16 +69,16 @@ export function PromptView({ projectId }: { projectId: string }) {
         </Link>
       </header>
 
-      <section className="rounded-md border border-neutral-200 p-4">
-        <label className="text-xs font-medium text-neutral-500">Provider (관리자/실험용)</label>
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+        <label className="text-xs font-medium text-muted">Provider (관리자/실험용)</label>
         <div className="mt-2 flex gap-2">
           {PROVIDERS.map((p) => (
             <button
               key={p.value}
               type="button"
               onClick={() => setProvider(p.value)}
-              className={`rounded-md border px-3 py-1.5 text-sm ${
-                provider === p.value ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-300"
+              className={`rounded-full border px-3 py-1.5 text-sm ${
+                provider === p.value ? "border-ink bg-ink text-paper" : "border-line"
               }`}
             >
               {p.label}
@@ -89,35 +89,35 @@ export function PromptView({ projectId }: { projectId: string }) {
           type="button"
           onClick={handleBuild}
           disabled={isBuilding}
-          className="mt-4 flex items-center gap-2 rounded-md bg-neutral-900 px-4 py-2 text-sm text-white disabled:opacity-50"
+          className="mt-4 flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm text-paper disabled:opacity-50"
         >
           {isBuilding && <Spinner />}
           Prompt 생성
         </button>
         {buildError && <p className="mt-2 text-sm text-red-600">{buildError}</p>}
         {notBuilt && !buildError && (
-          <p className="mt-2 text-sm text-neutral-400">아직 생성된 Prompt가 없습니다. 위 버튼으로 생성하세요.</p>
+          <p className="mt-2 text-sm text-muted">아직 생성된 Prompt가 없습니다. 위 버튼으로 생성하세요.</p>
         )}
       </section>
 
       {data?.prompt && (
-        <section className="rounded-md border border-neutral-200 p-4">
+        <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-medium text-neutral-700">Prompt Preview</h2>
-            <span className="text-xs text-neutral-400">
+            <h2 className="text-sm font-medium text-ink">Prompt Preview</h2>
+            <span className="text-xs text-muted">
               v{data.prompt.currentVersion.versionNumber} · {data.prompt.currentVersion.provider}
             </span>
           </div>
           <div className="mt-3 flex flex-col gap-3 text-sm">
             <div>
-              <p className="text-xs font-medium text-neutral-500">System Prompt</p>
-              <p className="mt-1 whitespace-pre-wrap rounded-md bg-neutral-50 p-2">
+              <p className="text-xs font-medium text-muted">System Prompt</p>
+              <p className="mt-1 whitespace-pre-wrap rounded-xl bg-line p-2">
                 {data.prompt.currentVersion.systemPrompt}
               </p>
             </div>
             <div>
-              <p className="text-xs font-medium text-neutral-500">User Prompt</p>
-              <p className="mt-1 whitespace-pre-wrap rounded-md bg-neutral-50 p-2">
+              <p className="text-xs font-medium text-muted">User Prompt</p>
+              <p className="mt-1 whitespace-pre-wrap rounded-xl bg-line p-2">
                 {data.prompt.currentVersion.userPrompt}
               </p>
             </div>
@@ -136,7 +136,7 @@ export function PromptView({ projectId }: { projectId: string }) {
             {showAdvanced ? "고급 옵션 숨기기" : "고급 옵션 보기"}
           </button>
           {showAdvanced && (
-            <dl className="mt-2 flex flex-col gap-1 text-xs text-neutral-500">
+            <dl className="mt-2 flex flex-col gap-1 text-xs text-muted">
               <div>
                 <dt className="inline font-medium">Model: </dt>
                 <dd className="inline">{data.prompt.currentVersion.payload.model}</dd>
@@ -156,17 +156,17 @@ export function PromptView({ projectId }: { projectId: string }) {
 
       {versionsData && versionsData.versions.length > 0 && (
         <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium text-neutral-700">버전 기록</h2>
+          <h2 className="text-sm font-medium text-ink">버전 기록</h2>
           <ul className="flex flex-col gap-1">
             {versionsData.versions.map((v) => (
               <li
                 key={v.id}
-                className="flex items-center justify-between rounded-md border border-neutral-200 px-3 py-2 text-sm"
+                className="flex items-center justify-between rounded-xl border border-line bg-surface px-3 py-2 text-sm shadow-soft"
               >
                 <span>
                   v{v.versionNumber} · {v.provider} · {new Date(v.createdAt).toLocaleString("ko-KR")}
                 </span>
-                <span className="text-xs text-neutral-400">{v.hash.slice(0, 12)}...</span>
+                <span className="text-xs text-muted">{v.hash.slice(0, 12)}...</span>
               </li>
             ))}
           </ul>

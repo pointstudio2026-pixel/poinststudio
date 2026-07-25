@@ -45,7 +45,7 @@ export function AiProviderSelect({
           onChange(next);
         }}
         disabled={disabled}
-        className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm disabled:opacity-50"
+        className="rounded-full border border-line px-3 py-1.5 text-sm disabled:opacity-50"
       >
         <option value="">{t("aiProviderSelect.auto")}</option>
         {providers.map((p) => (

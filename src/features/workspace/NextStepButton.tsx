@@ -24,7 +24,7 @@ export function NextStepButton({
   return (
     <Link
       href={`/projects/${projectId}/${next.route}`}
-      className="inline-flex items-center gap-2 rounded-md bg-neutral-900 px-4 py-2 text-sm text-white transition hover:opacity-90"
+      className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm text-paper transition hover:opacity-90"
     >
       {t("workspaceSteps.nextStep", { label })}
       <span aria-hidden>→</span>

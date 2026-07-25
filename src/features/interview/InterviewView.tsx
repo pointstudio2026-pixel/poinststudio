@@ -264,9 +264,9 @@ export function InterviewView({ projectId }: { projectId: string }) {
           {data.questions.map((q) => {
             const record = data.interview.answers.find((a) => a.questionKey === q.key);
             return (
-              <li key={q.key} className="rounded-md border border-neutral-200 p-3 text-sm">
+              <li key={q.key} className="rounded-xl border border-line bg-surface p-3 text-sm">
                 <span className="font-medium">{q.text}</span>
-                <p className="mt-1 text-neutral-500">
+                <p className="mt-1 text-muted">
                   {record?.answer?.trim() ? record.answer : t("interview.noAnswer")}
                 </p>
               </li>
@@ -291,15 +291,15 @@ export function InterviewView({ projectId }: { projectId: string }) {
         </span>
       </header>
 
-      <div className="h-1.5 w-full rounded-full bg-neutral-100">
+      <div className="h-1.5 w-full rounded-full bg-line">
         <div
-          className="h-1.5 rounded-full bg-neutral-900 transition-all"
+          className="h-1.5 rounded-full bg-ink transition-all"
           style={{ width: `${showSummary ? 100 : progress}%` }}
         />
       </div>
 
       {isCheckingFollowUp && (
-        <div className="flex items-center justify-center gap-2 text-sm text-neutral-500">
+        <div className="flex items-center justify-center gap-2 text-sm text-muted">
           <Spinner />
           {t("interview.checkingFollowUp")}
         </div>
@@ -307,10 +307,10 @@ export function InterviewView({ projectId }: { projectId: string }) {
 
       {!isCheckingFollowUp && !showSummary && currentQuestion && (
         <section className="flex flex-col gap-3">
-          <p className="text-xs text-neutral-400">
+          <p className="text-xs text-muted">
             {displayIndex + 1} / {questions.length}
             {currentQuestion.key.startsWith("followUp_") && (
-              <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-amber-700">
+              <span className="ml-2 rounded-full bg-tint-blue px-2 py-0.5 text-ink">
                 {t("interview.aiFollowUpBadge")}
               </span>
             )}
@@ -330,10 +330,10 @@ export function InterviewView({ projectId }: { projectId: string }) {
                         <button
                           type="button"
                           onClick={() => setSelectedGroupName(g.group)}
-                          className="flex w-full items-center justify-between rounded-md border border-neutral-200 px-3 py-2 text-left text-sm hover:bg-neutral-100"
+                          className="flex w-full items-center justify-between rounded-xl border border-line px-3 py-2 text-left text-sm hover:bg-surface"
                         >
                           {g.group}
-                          <span aria-hidden className="text-neutral-400">
+                          <span aria-hidden className="text-muted">
                             ›
                           </span>
                         </button>
@@ -345,11 +345,11 @@ export function InterviewView({ projectId }: { projectId: string }) {
                     <button
                       type="button"
                       onClick={() => setSelectedGroupName(null)}
-                      className="w-fit text-xs text-neutral-500 underline"
+                      className="w-fit text-xs text-muted underline"
                     >
                       {t("interview.otherTopic")}
                     </button>
-                    <ul className="flex flex-col gap-1 rounded-md border border-neutral-200 p-1">
+                    <ul className="flex flex-col gap-1 rounded-xl border border-line p-1">
                       {(
                         currentQuestion.optionGroups.find((g) => g.group === selectedGroupName)?.options ?? []
                       ).map((option) => {
@@ -366,8 +366,8 @@ export function InterviewView({ projectId }: { projectId: string }) {
                               onClick={() =>
                                 currentQuestion.multiple ? handleToggleOption(option) : handleChange(option)
                               }
-                              className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm ${
-                                isSelected ? "bg-neutral-900 text-white" : "hover:bg-neutral-100"
+                              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${
+                                isSelected ? "bg-ink text-paper" : "hover:bg-surface"
                               }`}
                             >
                               {option}
@@ -387,9 +387,9 @@ export function InterviewView({ projectId }: { projectId: string }) {
                     onChange={(e) => setOptionSearch(e.target.value)}
                     placeholder={t("interview.searchOrSelect")}
                     autoFocus
-                    className="rounded-md border border-neutral-300 px-3 py-2"
+                    className="rounded-full border border-line px-3 py-2"
                   />
-                  <ul className="flex max-h-64 flex-col gap-1 overflow-y-auto rounded-md border border-neutral-200 p-1">
+                  <ul className="flex max-h-64 flex-col gap-1 overflow-y-auto rounded-xl border border-line p-1">
                     {(currentQuestion.options ?? [])
                       .filter((option) => option.toLowerCase().includes(optionSearch.trim().toLowerCase()))
                       .map((option) => {
@@ -406,8 +406,8 @@ export function InterviewView({ projectId }: { projectId: string }) {
                               onClick={() =>
                                 currentQuestion.multiple ? handleToggleOption(option) : handleChange(option)
                               }
-                              className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm ${
-                                isSelected ? "bg-neutral-900 text-white" : "hover:bg-neutral-100"
+                              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${
+                                isSelected ? "bg-ink text-paper" : "hover:bg-surface"
                               }`}
                             >
                               {option}
@@ -419,7 +419,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                     {(currentQuestion.options ?? []).filter((option) =>
                       option.toLowerCase().includes(optionSearch.trim().toLowerCase()),
                     ).length === 0 && (
-                      <li className="px-3 py-2 text-sm text-neutral-400">{t("interview.noSearchResults")}</li>
+                      <li className="px-3 py-2 text-sm text-muted">{t("interview.noSearchResults")}</li>
                     )}
                   </ul>
                 </>
@@ -430,8 +430,8 @@ export function InterviewView({ projectId }: { projectId: string }) {
                     <button
                       type="button"
                       onClick={handleToggleOther}
-                      className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm ${
-                        isOtherSelected() ? "bg-neutral-900 text-white" : "hover:bg-neutral-100"
+                      className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${
+                        isOtherSelected() ? "bg-ink text-paper" : "hover:bg-surface"
                       }`}
                     >
                       {t("interview.otherManualInput")}
@@ -447,7 +447,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                   onChange={(e) => handleOtherTextChange(e.target.value)}
                   placeholder={t("interview.pleaseTypeAnswer")}
                   autoFocus
-                  className="rounded-md border border-neutral-300 px-3 py-2"
+                  className="rounded-full border border-line px-3 py-2"
                 />
               )}
             </div>
@@ -458,10 +458,10 @@ export function InterviewView({ projectId }: { projectId: string }) {
                 onChange={(e) => handleChange(e.target.value)}
                 rows={5}
                 autoFocus
-                className="rounded-md border border-neutral-300 px-3 py-2"
+                className="rounded-xl border border-line px-3 py-2"
               />
               {!currentQuestion.required && (
-                <p className="text-xs text-neutral-400">{t("interview.optionalNotice")}</p>
+                <p className="text-xs text-muted">{t("interview.optionalNotice")}</p>
               )}
             </>
           ) : (
@@ -470,7 +470,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
               value={answers[currentQuestion.key] ?? ""}
               onChange={(e) => handleChange(e.target.value)}
               autoFocus
-              className="rounded-md border border-neutral-300 px-3 py-2"
+              className="rounded-full border border-line px-3 py-2"
             />
           )}
 
@@ -481,14 +481,14 @@ export function InterviewView({ projectId }: { projectId: string }) {
               type="button"
               onClick={goPrevious}
               disabled={displayIndex === 0}
-              className="rounded-md border border-neutral-300 px-4 py-2 text-sm disabled:opacity-40"
+              className="rounded-full border border-line px-4 py-2 text-sm disabled:opacity-40"
             >
               {t("interview.previous")}
             </button>
             <button
               type="button"
               onClick={goNext}
-              className="rounded-md bg-neutral-900 px-4 py-2 text-sm text-white"
+              className="rounded-full bg-ink px-4 py-2 text-sm text-paper"
             >
               {displayIndex < questions.length - 1 ? t("interview.next") : t("interview.review")}
             </button>

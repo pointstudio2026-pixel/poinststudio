@@ -32,7 +32,7 @@ export function LogoChoiceView({
   // 대비해 여기서도 명시적으로 막는다(MockupStudioView와 동일 패턴).
   if (isBrandingDeliverableType(deliverableType)) {
     return (
-      <div className="rounded-md border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-500">
+      <div className="rounded-2xl border border-dashed border-line bg-surface p-8 text-center text-sm text-muted">
         {t("logoChoice.notNeeded")}
       </div>
     );
@@ -79,16 +79,16 @@ export function LogoChoiceView({
     <div className="flex flex-col gap-8">
       <header>
         <h1 className="text-xl font-semibold">{t("logoChoice.title")}</h1>
-        <p className="mt-1 text-sm text-neutral-500">{t("logoChoice.subtitle")}</p>
+        <p className="mt-1 text-sm text-muted">{t("logoChoice.subtitle")}</p>
       </header>
 
       {submitError && <p className="text-sm text-red-600">{submitError}</p>}
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <div className="flex flex-col gap-3 rounded-2xl border border-neutral-200 p-5">
+        <div className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-5 shadow-soft">
           <div>
             <h2 className="text-base font-semibold">{t("logoChoice.uploadCardTitle")}</h2>
-            <p className="mt-1 text-sm text-neutral-500">{t("logoChoice.uploadCardBody")}</p>
+            <p className="mt-1 text-sm text-muted">{t("logoChoice.uploadCardBody")}</p>
           </div>
 
           <div
@@ -99,8 +99,8 @@ export function LogoChoiceView({
             }}
             onDragLeave={() => setIsDragging(false)}
             onDrop={handleDrop}
-            className={`flex min-h-[140px] cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-dashed p-6 text-center transition ${
-              isDragging ? "border-neutral-900 bg-neutral-50" : "border-neutral-300"
+            className={`flex min-h-[140px] cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed p-6 text-center transition ${
+              isDragging ? "border-ink bg-surface" : "border-line"
             }`}
           >
             {uploaded ? (
@@ -115,8 +115,8 @@ export function LogoChoiceView({
               <Spinner />
             ) : (
               <>
-                <p className="text-sm text-neutral-600">{t("logoChoice.dropzoneLabel")}</p>
-                <p className="text-xs text-neutral-400">{t("logoChoice.dropzoneHint")}</p>
+                <p className="text-sm text-ink">{t("logoChoice.dropzoneLabel")}</p>
+                <p className="text-xs text-muted">{t("logoChoice.dropzoneHint")}</p>
               </>
             )}
           </div>
@@ -137,23 +137,23 @@ export function LogoChoiceView({
             type="button"
             onClick={() => handleChoice("upload")}
             disabled={!uploaded || submitting !== null}
-            className="mt-auto flex items-center justify-center gap-2 rounded-full bg-neutral-900 px-4 py-2 text-sm text-white transition hover:opacity-90 disabled:opacity-40"
+            className="mt-auto flex items-center justify-center gap-2 rounded-full bg-ink px-4 py-2 text-sm text-paper transition hover:opacity-90 disabled:opacity-40"
           >
             {submitting === "upload" && <Spinner />}
             {t("logoChoice.confirmUpload")}
           </button>
         </div>
 
-        <div className="flex flex-col gap-3 rounded-2xl border border-neutral-200 p-5">
+        <div className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-5 shadow-soft">
           <div>
             <h2 className="text-base font-semibold">{t("logoChoice.skipCardTitle")}</h2>
-            <p className="mt-1 text-sm text-neutral-500">{t("logoChoice.skipCardBody")}</p>
+            <p className="mt-1 text-sm text-muted">{t("logoChoice.skipCardBody")}</p>
           </div>
           <button
             type="button"
             onClick={() => handleChoice("skip")}
             disabled={submitting !== null}
-            className="mt-auto flex items-center justify-center gap-2 rounded-full border border-neutral-300 px-4 py-2 text-sm transition hover:border-neutral-900 disabled:opacity-40"
+            className="mt-auto flex items-center justify-center gap-2 rounded-full border border-line px-4 py-2 text-sm transition hover:border-ink disabled:opacity-40"
           >
             {submitting === "skip" && <Spinner />}
             {t("logoChoice.skipButton")}

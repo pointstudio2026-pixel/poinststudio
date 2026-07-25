@@ -63,39 +63,39 @@ export function SupportView({
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-sm text-neutral-500">{t("support.subtitle")}</p>
+        <p className="text-sm text-muted">{t("support.subtitle")}</p>
         <button
           type="button"
           onClick={() => setShowForm((v) => !v)}
-          className="rounded-full bg-neutral-900 px-4 py-2 text-sm text-white transition hover:opacity-90"
+          className="rounded-full bg-ink px-4 py-2 text-sm text-paper transition hover:opacity-90"
         >
           {showForm ? t("support.cancel") : t("support.newInquiry")}
         </button>
       </div>
 
       {showForm && (
-        <form onSubmit={onSubmit} className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-4">
+        <form onSubmit={onSubmit} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-soft">
           <div className="flex flex-col gap-1">
-            <label htmlFor="subject" className="text-sm text-neutral-500">
+            <label htmlFor="subject" className="text-sm text-muted">
               {t("support.subjectLabel")}
             </label>
             <input
               id="subject"
               type="text"
-              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none transition focus:border-neutral-900"
+              className="rounded-full border border-line px-3 py-2 text-sm outline-none transition focus:border-ink"
               {...register("subject")}
             />
             {errors.subject && <p className="text-sm text-red-600">{errors.subject.message}</p>}
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="message" className="text-sm text-neutral-500">
+            <label htmlFor="message" className="text-sm text-muted">
               {t("support.messageLabel")}
             </label>
             <textarea
               id="message"
               rows={6}
-              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none transition focus:border-neutral-900"
+              className="rounded-xl border border-line px-3 py-2 text-sm outline-none transition focus:border-ink"
               {...register("message")}
             />
             {errors.message && <p className="text-sm text-red-600">{errors.message.message}</p>}
@@ -111,7 +111,7 @@ export function SupportView({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex w-fit items-center gap-2 rounded-full bg-neutral-900 px-4 py-2 text-sm text-white transition hover:opacity-90 disabled:opacity-50"
+            className="flex w-fit items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm text-paper transition hover:opacity-90 disabled:opacity-50"
           >
             {isSubmitting && <Spinner />}
             {isSubmitting ? t("support.submitting") : t("support.submit")}
@@ -119,23 +119,23 @@ export function SupportView({
         </form>
       )}
 
-      <ul className="flex flex-col divide-y divide-neutral-200 rounded-lg border border-neutral-200">
+      <ul className="flex flex-col divide-y divide-line rounded-2xl border border-line">
         {isLoading && (
           <li className="flex justify-center p-6">
             <Spinner />
           </li>
         )}
         {!isLoading && data?.inquiries.length === 0 && (
-          <li className="p-6 text-center text-sm text-neutral-400">{t("support.empty")}</li>
+          <li className="p-6 text-center text-sm text-muted">{t("support.empty")}</li>
         )}
         {data?.inquiries.map((inquiry) => (
           <li key={inquiry.id}>
             <Link
               href={`/support/${inquiry.id}`}
-              className="flex items-center justify-between gap-3 px-4 py-3 text-sm transition hover:bg-neutral-50"
+              className="flex items-center justify-between gap-3 px-4 py-3 text-sm transition hover:bg-surface"
             >
-              <span className={inquiry.isPublic ? "" : "italic text-neutral-400"}>{inquiry.subject}</span>
-              <span className="shrink-0 text-xs text-neutral-400">
+              <span className={inquiry.isPublic ? "" : "italic text-muted"}>{inquiry.subject}</span>
+              <span className="shrink-0 text-xs text-muted">
                 {new Date(inquiry.createdAt).toLocaleDateString(INTL_LOCALE[locale])}
               </span>
             </Link>

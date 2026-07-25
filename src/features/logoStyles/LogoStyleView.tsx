@@ -107,7 +107,7 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
         <h1 className="text-lg font-medium">
           {notReady ? t("logoStyle.strategyFirstTitle") : t("logoStyle.recommendLoadFailedTitle")}
         </h1>
-        <p className="text-sm text-neutral-400">
+        <p className="text-sm text-muted">
           {notReady && t("logoStyle.strategyFirstBody")}
         </p>
       </div>
@@ -120,7 +120,7 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
       <div className="flex flex-col gap-6">
         <div>
           <h1 className="text-xl font-semibold">{t("logoStyle.selectedTitle")}</h1>
-          <p className="mt-1 text-sm text-neutral-500">
+          <p className="mt-1 text-sm text-muted">
             {t("logoStyle.selectedBody", { names: chosen.map((c) => c.name).join(", ") })}
           </p>
         </div>
@@ -135,7 +135,7 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
     <div className="flex flex-col gap-8">
       <header>
         <h1 className="text-xl font-semibold">{t("logoStyle.headerTitle")}</h1>
-        <p className="mt-1 text-sm text-neutral-500">
+        <p className="mt-1 text-sm text-muted">
           {t("logoStyle.headerBody")}
         </p>
       </header>
@@ -146,17 +146,17 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
             <Stars count={5} />
             <span>{t("logoStyle.aiRecommendBadge")}</span>
           </div>
-          <p className="mt-2 text-sm text-neutral-700">
+          <p className="mt-2 text-sm text-ink">
             {t("logoStyle.topPickReasonPrefix")} <strong>&ldquo;{topPick.category.name}&rdquo;</strong>{t("logoStyle.topPickReasonSuffix")}
           </p>
-          <p className="mt-1 text-sm text-neutral-500">{topPick.reason}</p>
+          <p className="mt-1 text-sm text-muted">{topPick.reason}</p>
         </section>
       )}
 
-      <div className="flex items-center justify-between rounded-xl border border-neutral-200 px-4 py-3">
+      <div className="flex items-center justify-between rounded-xl border border-line bg-surface px-4 py-3 shadow-soft">
         <div>
           <p className="text-sm font-medium">{t("logoStyle.advancedOptions")}</p>
-          <p className="text-xs text-neutral-400">{t("logoStyle.advancedOptionsBody", { max: MAX_ADVANCED_SELECTIONS })}</p>
+          <p className="text-xs text-muted">{t("logoStyle.advancedOptionsBody", { max: MAX_ADVANCED_SELECTIONS })}</p>
         </div>
         <button
           type="button"
@@ -164,11 +164,11 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
           aria-checked={advancedMode}
           onClick={toggleAdvancedMode}
           className={`relative h-6 w-11 flex-shrink-0 rounded-full transition-colors ${
-            advancedMode ? "bg-neutral-900" : "bg-neutral-200"
+            advancedMode ? "bg-ink" : "bg-line"
           }`}
         >
           <span
-            className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+            className={`absolute top-0.5 h-5 w-5 rounded-full bg-paper shadow transition-transform ${
               advancedMode ? "translate-x-5" : "translate-x-0.5"
             }`}
           />
@@ -201,7 +201,7 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
           type="button"
           onClick={handleConfirm}
           disabled={selectedIds.length === 0 || isSelecting}
-          className="flex items-center gap-2 rounded-full bg-neutral-900 px-6 py-3 text-sm font-medium text-white shadow-lg transition hover:opacity-90 disabled:opacity-40"
+          className="flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-medium text-paper shadow-lg transition hover:opacity-90 disabled:opacity-40"
         >
           {isSelecting && <Spinner />}
           {selectedIds.length > 0
@@ -225,11 +225,11 @@ function LogoStyleCard({
   const { t } = useTranslation();
   return (
     <div
-      className={`group flex flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${
-        isSelected ? "border-neutral-900 ring-2 ring-neutral-900" : "border-neutral-200 hover:border-neutral-400"
+      className={`group flex flex-col overflow-hidden rounded-2xl border bg-surface shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${
+        isSelected ? "border-ink ring-2 ring-ink" : "border-line hover:border-ink"
       }`}
     >
-      <div className="relative aspect-square w-full overflow-hidden bg-neutral-50">
+      <div className="relative aspect-square w-full overflow-hidden bg-surface">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={category.sampleImageUrl}
@@ -237,7 +237,7 @@ function LogoStyleCard({
           className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
         />
         {isSelected && (
-          <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-neutral-900 text-white shadow">
+          <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-ink text-paper shadow">
             ✓
           </div>
         )}
@@ -245,11 +245,11 @@ function LogoStyleCard({
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
           <h3 className="text-base font-semibold">{category.name}</h3>
-          <p className="mt-1 text-sm text-neutral-500">{category.description}</p>
+          <p className="mt-1 text-sm text-muted">{category.description}</p>
         </div>
         <div className="flex flex-wrap gap-1.5">
           {category.subStyles.map((s) => (
-            <span key={s} className="rounded-full bg-neutral-100 px-2.5 py-1 text-xs text-neutral-600">
+            <span key={s} className="rounded-full bg-line px-2.5 py-1 text-xs text-ink">
               {s}
             </span>
           ))}
@@ -259,8 +259,8 @@ function LogoStyleCard({
           onClick={onSelect}
           className={`mt-auto rounded-full px-4 py-2 text-sm font-medium transition ${
             isSelected
-              ? "bg-neutral-900 text-white"
-              : "border border-neutral-300 text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"
+              ? "bg-ink text-paper"
+              : "border border-line text-ink hover:border-ink"
           }`}
         >
           {isSelected ? t("logoStyle.selected") : t("logoStyle.select")}
@@ -282,7 +282,7 @@ function AiRecommendedCard({
   const { t } = useTranslation();
   return (
     <div
-      className={`group flex flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${
+      className={`group flex flex-col overflow-hidden rounded-2xl border bg-surface shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${
         isSelected ? "border-amber-500 ring-2 ring-amber-500" : "border-amber-200 hover:border-amber-400"
       }`}
     >
@@ -302,7 +302,7 @@ function AiRecommendedCard({
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
           <h3 className="text-base font-semibold">{t("logoStyle.aiRecommendBadge")}</h3>
-          <p className="mt-1 text-sm text-neutral-500">{t("logoStyle.aiRecommendedDescription")}</p>
+          <p className="mt-1 text-sm text-muted">{t("logoStyle.aiRecommendedDescription")}</p>
         </div>
         <ul className="flex flex-col gap-1 text-sm">
           {topThree.map((r, i) => (

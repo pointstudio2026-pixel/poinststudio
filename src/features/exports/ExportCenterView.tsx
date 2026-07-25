@@ -101,8 +101,8 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
         <h1 className="text-xl font-semibold">{t("workspaceSteps.exportCenter")}</h1>
       </header>
 
-      <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">{t("exportCenter.newExport")}</h2>
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+        <h2 className="text-sm font-medium text-ink">{t("exportCenter.newExport")}</h2>
 
         <div className="mt-2 flex gap-2">
           {(Object.keys(SOURCE_LABEL_KEYS) as ExportSourceDto[]).map((key) => (
@@ -110,8 +110,8 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
               key={key}
               type="button"
               onClick={() => handleSourceChange(key)}
-              className={`rounded-md border px-3 py-1.5 text-sm ${
-                source === key ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-300"
+              className={`rounded-full border px-3 py-1.5 text-sm ${
+                source === key ? "border-ink bg-ink text-paper" : "border-line"
               }`}
             >
               {t(SOURCE_LABEL_KEYS[key])}
@@ -121,7 +121,7 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
 
         {source === "concept_board" && (
           <div className="mt-3">
-            <p className="text-xs font-medium text-neutral-500">{t("exportCenter.sectionsToInclude")}</p>
+            <p className="text-xs font-medium text-muted">{t("exportCenter.sectionsToInclude")}</p>
             <div className="mt-1 flex flex-wrap gap-2">
               {CONCEPT_BOARD_SECTIONS.map((section) => (
                 <label key={section} className="flex items-center gap-1 text-xs">
@@ -143,22 +143,22 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
               {t("exportCenter.includeBrandInfo")}
             </label>
             {!boardData?.board && (
-              <p className="mt-2 text-xs text-neutral-400">{t("exportCenter.conceptBoardNotGenerated")}</p>
+              <p className="mt-2 text-xs text-muted">{t("exportCenter.conceptBoardNotGenerated")}</p>
             )}
           </div>
         )}
 
         {source === "generation" && (
           <div className="mt-3">
-            <p className="text-xs font-medium text-neutral-500">{t("exportCenter.selectImage")}</p>
+            <p className="text-xs font-medium text-muted">{t("exportCenter.selectImage")}</p>
             <div className="mt-1 flex gap-2">
               {(generationData?.generation.currentVersion.images ?? []).map((img, i) => (
                 <button
                   key={i}
                   type="button"
                   onClick={() => setSourceRefId(generationData!.generation.currentVersion.id)}
-                  className={`h-16 w-16 overflow-hidden rounded-md border ${
-                    sourceRefId ? "border-neutral-900 ring-2 ring-neutral-900" : "border-neutral-200"
+                  className={`h-16 w-16 overflow-hidden rounded-xl border ${
+                    sourceRefId ? "border-ink ring-2 ring-ink" : "border-line"
                   }`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -179,7 +179,7 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
 
         {source === "mockup" && (
           <div className="mt-3">
-            <p className="text-xs font-medium text-neutral-500">{t("exportCenter.selectMockup")}</p>
+            <p className="text-xs font-medium text-muted">{t("exportCenter.selectMockup")}</p>
             <div className="mt-1 flex flex-wrap gap-2">
               {(mockupsData?.mockups ?? [])
                 .filter((m) => m.status === "completed")
@@ -188,8 +188,8 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
                     key={mockup.id}
                     type="button"
                     onClick={() => setSourceRefId(mockup.id)}
-                    className={`h-16 w-16 overflow-hidden rounded-md border ${
-                      sourceRefId === mockup.id ? "border-neutral-900 ring-2 ring-neutral-900" : "border-neutral-200"
+                    className={`h-16 w-16 overflow-hidden rounded-xl border ${
+                      sourceRefId === mockup.id ? "border-ink ring-2 ring-ink" : "border-line"
                     }`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -216,7 +216,7 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
           type="button"
           onClick={handleSubmit}
           disabled={!canSubmit || isSubmitting}
-          className="mt-4 flex items-center gap-2 rounded-md bg-neutral-900 px-4 py-2 text-sm text-white disabled:opacity-50"
+          className="mt-4 flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm text-paper disabled:opacity-50"
         >
           {isSubmitting && <Spinner />}
           {t("exportCenter.startExport")}
@@ -225,17 +225,17 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
       </section>
 
       <section>
-        <h2 className="mb-2 text-sm font-medium text-neutral-700">{t("exportCenter.downloadCenter")}</h2>
+        <h2 className="mb-2 text-sm font-medium text-ink">{t("exportCenter.downloadCenter")}</h2>
         <ul className="flex flex-col gap-2">
           {(exportsData?.exports ?? []).map((job) => (
             <li
               key={job.id}
-              className="flex items-center justify-between rounded-md border border-neutral-200 px-3 py-2 text-sm"
+              className="flex items-center justify-between rounded-2xl border border-line px-3 py-2 text-sm"
             >
               <span>
                 {t(SOURCE_LABEL_KEYS[job.source])} · {job.format.toUpperCase()} · {job.status}
                 {job.watermarked && <span className="ml-1 text-xs text-amber-600">{t("exportCenter.watermarked")}</span>}
-                <span className="ml-2 text-xs text-neutral-400">
+                <span className="ml-2 text-xs text-muted">
                   {new Date(job.createdAt).toLocaleString("ko-KR")}
                 </span>
               </span>
@@ -251,7 +251,7 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
             </li>
           ))}
           {exportsData?.exports.length === 0 && (
-            <li className="text-sm text-neutral-400">{t("exportCenter.noExportsYet")}</li>
+            <li className="text-sm text-muted">{t("exportCenter.noExportsYet")}</li>
           )}
         </ul>
       </section>

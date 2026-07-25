@@ -64,7 +64,7 @@ export function GenerationFeedbackWidget({ generationVersionId }: { generationVe
       <button
         type="button"
         onClick={() => setExpanded(true)}
-        className="text-xs text-neutral-400 underline underline-offset-2 hover:text-neutral-600"
+        className="text-xs text-muted underline underline-offset-2 hover:text-ink"
       >
         {t("generationFeedback.rateThisResult")}
       </button>
@@ -72,7 +72,7 @@ export function GenerationFeedbackWidget({ generationVersionId }: { generationVe
   }
 
   return (
-    <div className="flex flex-col gap-2 rounded-md border border-neutral-200 bg-neutral-50 p-3">
+    <div className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-3">
       <div className="flex flex-wrap gap-1.5">
         {LIKED_TAGS.map(({ value, labelKey }) => (
           <button
@@ -82,7 +82,7 @@ export function GenerationFeedbackWidget({ generationVersionId }: { generationVe
             className={`rounded-full border px-2.5 py-1 text-[11px] transition ${
               liked.includes(value)
                 ? "border-green-600 bg-green-50 text-green-700"
-                : "border-neutral-300 text-neutral-600 hover:border-neutral-500"
+                : "border-line text-muted hover:border-ink"
             }`}
           >
             {t(labelKey)}
@@ -96,7 +96,7 @@ export function GenerationFeedbackWidget({ generationVersionId }: { generationVe
             className={`rounded-full border px-2.5 py-1 text-[11px] transition ${
               disliked.includes(value)
                 ? "border-red-500 bg-red-50 text-red-600"
-                : "border-neutral-300 text-neutral-600 hover:border-neutral-500"
+                : "border-line text-muted hover:border-ink"
             }`}
           >
             {t(labelKey)}
@@ -113,12 +113,12 @@ export function GenerationFeedbackWidget({ generationVersionId }: { generationVe
           }}
           placeholder={t("generationFeedback.freeTextPlaceholder")}
           maxLength={1000}
-          className="flex-1 rounded-md border border-neutral-300 px-2 py-1 text-xs outline-none focus:border-neutral-500"
+          className="flex-1 rounded-full border border-line px-2 py-1 text-xs outline-none focus:border-ink"
         />
         <button
           type="button"
           onClick={() => void save(liked, disliked, freeText)}
-          className="rounded-md border border-neutral-300 px-2 py-1 text-xs hover:border-neutral-500"
+          className="rounded-full border border-line px-2 py-1 text-xs hover:border-ink"
         >
           {saved ? t("generationFeedback.saved") : t("generationFeedback.save")}
         </button>

@@ -105,7 +105,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
           type="button"
           onClick={handleGenerate}
           disabled={isGenerating}
-          className="flex items-center gap-2 rounded-md bg-neutral-900 px-4 py-2 text-sm text-white disabled:opacity-50"
+          className="flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm text-paper disabled:opacity-50"
         >
           {isGenerating && <Spinner />}
           {t("conceptBoard.generateButton")}
@@ -123,7 +123,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
       <header className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold">{t("conceptBoard.title")}</h1>
-          <p className="text-xs text-neutral-400">
+          <p className="text-xs text-muted">
             v{board.currentVersion.versionNumber} · {board.currentVersion.source === "ai" ? t("conceptBoard.sourceAi") : t("conceptBoard.sourceUser")}
           </p>
         </div>
@@ -131,7 +131,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
           <button
             type="button"
             onClick={() => setShowVersions(!showVersions)}
-            className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm"
+            className="rounded-full border border-line px-3 py-1.5 text-sm"
           >
             {t("conceptBoard.versionHistory")}
           </button>
@@ -139,7 +139,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
             type="button"
             onClick={handleGenerate}
             disabled={isGenerating}
-            className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm disabled:opacity-50"
+            className="rounded-full border border-line px-3 py-1.5 text-sm disabled:opacity-50"
           >
             {isGenerating ? t("conceptBoard.regenerating") : t("conceptBoard.regenerate")}
           </button>
@@ -150,13 +150,13 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
       {generateError && <p className="text-sm text-red-600">{generateError}</p>}
 
       {showVersions && (
-        <section className="flex flex-col gap-2 rounded-md border border-neutral-200 p-4">
-          <h2 className="text-sm font-medium text-neutral-700">{t("conceptBoard.versionTimeline")}</h2>
+        <section className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-4 shadow-soft">
+          <h2 className="text-sm font-medium text-ink">{t("conceptBoard.versionTimeline")}</h2>
           <ul className="flex flex-col gap-1">
             {versions.map((v) => (
               <li
                 key={v.id}
-                className="flex items-center justify-between rounded-md border border-neutral-200 px-3 py-2 text-sm"
+                className="flex items-center justify-between rounded-xl border border-line px-3 py-2 text-sm"
               >
                 <span>
                   v{v.versionNumber} · {v.source === "ai" ? t("conceptBoard.sourceAi") : t("conceptBoard.sourceUser")} ·{" "}
@@ -175,10 +175,10 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
 
       <div className="flex flex-col gap-4">
         {d.sectionOrder.map((section, index) => (
-          <section key={section} className="rounded-md border border-neutral-200 p-4">
+          <section key={section} className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
             <div className="mb-2 flex items-center justify-between">
-              <h2 className="text-sm font-medium text-neutral-700">{SECTION_LABELS[section]}</h2>
-              <div className="flex gap-1 text-xs text-neutral-400">
+              <h2 className="text-sm font-medium text-ink">{SECTION_LABELS[section]}</h2>
+              <div className="flex gap-1 text-xs text-muted">
                 <button
                   type="button"
                   onClick={() => moveSection(d.sectionOrder, index, -1)}
@@ -204,13 +204,13 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
               (d.heroImageUrl ? (
                 <div
                   onClick={() => setLightboxImage({ url: d.heroImageUrl!, alt: "Hero" })}
-                  className="w-full cursor-pointer overflow-hidden rounded-md"
+                  className="w-full cursor-pointer overflow-hidden rounded-2xl"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={d.heroImageUrl} alt="Hero" className="block h-auto w-full" />
                 </div>
               ) : (
-                <p className="text-sm text-neutral-400">{t("conceptBoard.noImagesYet")}</p>
+                <p className="text-sm text-muted">{t("conceptBoard.noImagesYet")}</p>
               ))}
 
             {section === "brand_summary" &&
@@ -220,9 +220,9 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
                     value={draft}
                     onChange={(e) => setDraft(e.target.value)}
                     rows={3}
-                    className="rounded-md border border-neutral-300 p-2 text-sm"
+                    className="rounded-xl border border-line p-2 text-sm"
                   />
-                  <button type="button" onClick={saveField} className="self-start rounded-md bg-neutral-900 px-3 py-1 text-xs text-white">
+                  <button type="button" onClick={saveField} className="self-start rounded-full bg-ink px-3 py-1 text-xs text-paper">
                     {t("conceptBoard.save")}
                   </button>
                 </div>
@@ -248,10 +248,10 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
                 {d.colorPalette.map((swatch) => (
                   <div key={swatch.hex} className="flex flex-col items-center gap-1">
                     <div
-                      className="h-12 w-12 rounded-md border border-neutral-200"
+                      className="h-12 w-12 rounded-xl border border-line"
                       style={{ backgroundColor: swatch.hex }}
                     />
-                    <span className="text-[10px] text-neutral-500">{swatch.label}</span>
+                    <span className="text-[10px] text-muted">{swatch.label}</span>
                   </div>
                 ))}
               </div>
@@ -264,9 +264,9 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
                     value={draft}
                     onChange={(e) => setDraft(e.target.value)}
                     rows={2}
-                    className="rounded-md border border-neutral-300 p-2 text-sm"
+                    className="rounded-xl border border-line p-2 text-sm"
                   />
-                  <button type="button" onClick={saveField} className="self-start rounded-md bg-neutral-900 px-3 py-1 text-xs text-white">
+                  <button type="button" onClick={saveField} className="self-start rounded-full bg-ink px-3 py-1 text-xs text-paper">
                     {t("conceptBoard.save")}
                   </button>
                 </div>
@@ -283,14 +283,14 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
                     <div
                       key={i}
                       onClick={() => setLightboxImage({ url, alt: `Logo concept ${i + 1}` })}
-                      className="w-full cursor-pointer overflow-hidden rounded-md"
+                      className="w-full cursor-pointer overflow-hidden rounded-xl"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={url} alt={`Logo concept ${i + 1}`} className="block h-auto w-full" />
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-neutral-400">{t("conceptBoard.noImagesYet")}</p>
+                  <p className="text-sm text-muted">{t("conceptBoard.noImagesYet")}</p>
                 )}
               </div>
             )}
@@ -302,14 +302,14 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
                     value={draft}
                     onChange={(e) => setDraft(e.target.value)}
                     rows={3}
-                    className="rounded-md border border-neutral-300 p-2 text-sm"
+                    className="rounded-xl border border-line p-2 text-sm"
                   />
-                  <button type="button" onClick={saveField} className="self-start rounded-md bg-neutral-900 px-3 py-1 text-xs text-white">
+                  <button type="button" onClick={saveField} className="self-start rounded-full bg-ink px-3 py-1 text-xs text-paper">
                     {t("conceptBoard.save")}
                   </button>
                 </div>
               ) : (
-                <p onClick={() => startEditingField("designNotes", d.designNotes)} className="cursor-text text-sm text-neutral-600">
+                <p onClick={() => startEditingField("designNotes", d.designNotes)} className="cursor-text text-sm text-muted">
                   {d.designNotes || t("conceptBoard.addNotePrompt")}
                 </p>
               ))}

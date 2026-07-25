@@ -190,11 +190,11 @@ export function AdminDashboardView() {
         />
       </section>
 
-      <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">이번 달 AI 원가 세부항목</h2>
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+        <h2 className="text-sm font-medium text-ink">이번 달 AI 원가 세부항목</h2>
         <table className="mt-2 w-full text-left text-sm">
           <thead>
-            <tr className="text-xs text-neutral-400">
+            <tr className="text-xs text-muted">
               <th className="pr-4">구분</th>
               <th className="pr-4">횟수</th>
               <th className="pr-4">비용</th>
@@ -210,21 +210,21 @@ export function AdminDashboardView() {
             ))}
             {(analytics?.costBreakdown ?? []).length === 0 && (
               <tr>
-                <td colSpan={3} className="text-neutral-400">
+                <td colSpan={3} className="text-muted">
                   이번 달 기록된 비용이 없습니다.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
-        <p className="mt-3 text-xs text-neutral-400">
+        <p className="mt-3 text-xs text-muted">
           ⚠ 이 표는 이미지 생성/수정/목업 비용만 집계합니다. 브랜드 전략·인터뷰·추천 등 텍스트 생성(GPT) 비용은 아직
           추적되지 않아 실제 OpenAI 청구액이 이 합계보다 클 수 있습니다.
         </p>
       </section>
 
-      <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">플랜별 사용자 분포</h2>
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+        <h2 className="text-sm font-medium text-ink">플랜별 사용자 분포</h2>
         <div className="mt-2 flex gap-4 text-sm">
           {(summary?.planDistribution ?? []).map((p) => (
             <span key={p.planCode}>
@@ -232,18 +232,18 @@ export function AdminDashboardView() {
             </span>
           ))}
           {(summary?.planDistribution ?? []).length === 0 && (
-            <span className="text-neutral-400">데이터 없음 (실제 결제 연동 전, Task-023 범위)</span>
+            <span className="text-muted">데이터 없음 (실제 결제 연동 전, Task-023 범위)</span>
           )}
         </div>
       </section>
 
-      <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">Provider Health</h2>
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+        <h2 className="text-sm font-medium text-ink">Provider Health</h2>
         <div className="mt-2 flex gap-3">
           {(summary?.providerHealth ?? []).map((p) => (
             <div
               key={p.provider}
-              className={`rounded-md border px-3 py-2 text-sm ${
+              className={`rounded-xl border px-3 py-2 text-sm ${
                 p.healthy ? "border-green-300 bg-green-50 text-green-700" : "border-red-300 bg-red-50 text-red-700"
               }`}
             >
@@ -253,11 +253,11 @@ export function AdminDashboardView() {
         </div>
       </section>
 
-      <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">Queue 상태</h2>
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+        <h2 className="text-sm font-medium text-ink">Queue 상태</h2>
         <table className="mt-2 w-full text-left text-sm">
           <thead>
-            <tr className="text-xs text-neutral-400">
+            <tr className="text-xs text-muted">
               <th className="pr-4">Queue</th>
               <th className="pr-4">대기</th>
               <th className="pr-4">진행중</th>
@@ -279,13 +279,13 @@ export function AdminDashboardView() {
         </table>
       </section>
 
-      <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">Usage Trend (최근 14일, image_generation)</h2>
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+        <h2 className="text-sm font-medium text-ink">Usage Trend (최근 14일, image_generation)</h2>
         <div className="mt-2 flex items-end gap-1">
           {(analytics?.usageTrend ?? []).map((point) => (
             <div key={point.date} className="flex flex-col items-center gap-1">
               <div
-                className="w-4 bg-neutral-900"
+                className="w-4 bg-ink"
                 style={{ height: `${Math.max(point.count * 8, 2)}px` }}
                 title={`${point.date}: ${point.count}`}
               />
@@ -294,18 +294,18 @@ export function AdminDashboardView() {
         </div>
       </section>
 
-      <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">사용자 검색</h2>
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+        <h2 className="text-sm font-medium text-ink">사용자 검색</h2>
         <input
           value={userQuery}
           onChange={(e) => setUserQuery(e.target.value)}
           placeholder="이메일로 검색"
-          className="mt-2 w-full rounded-md border border-neutral-300 px-2 py-1 text-sm"
+          className="mt-2 w-full rounded-full border border-line px-2 py-1 text-sm"
         />
         {userActionError && <p className="mt-2 text-sm text-red-600">{userActionError}</p>}
         <table className="mt-3 w-full text-left text-sm">
           <thead>
-            <tr className="text-xs text-neutral-400">
+            <tr className="text-xs text-muted">
               <th className="pr-4">Email</th>
               <th className="pr-4">닉네임</th>
               <th className="pr-4">등급</th>
@@ -319,7 +319,7 @@ export function AdminDashboardView() {
           </thead>
           <tbody>
             {(usersData?.users ?? []).map((u) => (
-              <tr key={u.id} className="border-t border-neutral-100">
+              <tr key={u.id} className="border-t border-line">
                 <td className="py-1.5 pr-4">
                   <Link href={`/ops-portal-7x2q/users/${u.id}`} className="underline underline-offset-2">
                     {u.email}
@@ -334,7 +334,7 @@ export function AdminDashboardView() {
                         ? "text-amber-600"
                         : u.status === "deleted"
                           ? "text-red-600"
-                          : "text-neutral-500"
+                          : "text-muted"
                     }
                   >
                     {u.status === "active" ? "정상" : u.status === "suspended" ? "정지됨" : "삭제됨"}
@@ -345,7 +345,7 @@ export function AdminDashboardView() {
                     <select
                       value={u.planCode}
                       onChange={(e) => handleChangePlan(u.id, e.target.value as "free" | "pro" | "studio")}
-                      className="rounded-md border border-neutral-300 px-1 py-1 text-xs"
+                      className="rounded-full border border-line px-1 py-1 text-xs"
                     >
                       {Object.entries(PLAN_CODE_LABELS).map(([code, label]) => (
                         <option key={code} value={code}>
@@ -365,7 +365,7 @@ export function AdminDashboardView() {
                     <button
                       type="button"
                       onClick={() => handleSuspendToggle(u.id, u.status === "suspended")}
-                      className="rounded-md border border-neutral-300 px-2 py-1 text-xs"
+                      className="rounded-full border border-line px-2 py-1 text-xs"
                     >
                       {u.status === "suspended" ? "정지 해제" : "정지"}
                     </button>
@@ -374,7 +374,7 @@ export function AdminDashboardView() {
                         <button
                           type="button"
                           onClick={() => handleDeleteUser(u.id)}
-                          className="rounded-md border border-red-300 px-2 py-1 text-xs text-red-600"
+                          className="rounded-full border border-red-300 px-2 py-1 text-xs text-red-600"
                         >
                           삭제
                         </button>
@@ -382,7 +382,7 @@ export function AdminDashboardView() {
                           <button
                             type="button"
                             onClick={() => handleDemote(u.id)}
-                            className="rounded-md border border-neutral-300 px-2 py-1 text-xs"
+                            className="rounded-full border border-line px-2 py-1 text-xs"
                           >
                             일반 회원으로
                           </button>
@@ -392,7 +392,7 @@ export function AdminDashboardView() {
                             onChange={(e) => {
                               if (e.target.value) handlePromote(u.id, e.target.value as AdminTierDto);
                             }}
-                            className="rounded-md border border-neutral-300 px-1 py-1 text-xs"
+                            className="rounded-full border border-line px-1 py-1 text-xs"
                           >
                             <option value="" disabled>
                               관리자로 승격...
@@ -414,19 +414,19 @@ export function AdminDashboardView() {
         </table>
       </section>
 
-      <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">시스템 공지</h2>
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+        <h2 className="text-sm font-medium text-ink">시스템 공지</h2>
         <div className="mt-2 flex gap-2">
           <input
             value={announcementDraft}
             onChange={(e) => setAnnouncementDraft(e.target.value)}
             placeholder="공지 내용"
-            className="flex-1 rounded-md border border-neutral-300 px-2 py-1 text-sm"
+            className="flex-1 rounded-full border border-line px-2 py-1 text-sm"
           />
           <button
             type="button"
             onClick={handleCreateAnnouncement}
-            className="rounded-md bg-neutral-900 px-3 py-1.5 text-sm text-white"
+            className="rounded-full bg-ink px-3 py-1.5 text-sm text-paper"
           >
             등록
           </button>
@@ -434,7 +434,7 @@ export function AdminDashboardView() {
         {actionError && <p className="mt-1 text-sm text-red-600">{actionError}</p>}
         <ul className="mt-3 flex flex-col gap-1">
           {(announcementsData?.announcements ?? []).map((a) => (
-            <li key={a.id} className="flex items-center justify-between rounded-md border border-neutral-200 px-3 py-2 text-sm">
+            <li key={a.id} className="flex items-center justify-between rounded-xl border border-line px-3 py-2 text-sm">
               <span>{a.message}</span>
               <button type="button" onClick={() => handleDeactivateAnnouncement(a.id)} className="text-xs underline">
                 비활성화
@@ -444,11 +444,11 @@ export function AdminDashboardView() {
         </ul>
       </section>
 
-      <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">Audit Log</h2>
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+        <h2 className="text-sm font-medium text-ink">Audit Log</h2>
         <ul className="mt-2 flex flex-col gap-1 text-sm">
           {(auditData?.logs ?? []).map((log) => (
-            <li key={log.id} className="flex items-center justify-between text-xs text-neutral-500">
+            <li key={log.id} className="flex items-center justify-between text-xs text-muted">
               <span>
                 {activityLabel(log.eventType)} · {log.userId ?? "-"}
               </span>
@@ -463,8 +463,8 @@ export function AdminDashboardView() {
 
 function StatTile({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="rounded-md border border-neutral-200 p-4">
-      <p className="text-xs text-neutral-400">{label}</p>
+    <div className="rounded-xl border border-line bg-surface p-4 shadow-soft">
+      <p className="text-xs text-muted">{label}</p>
       <p className="mt-1 text-lg font-semibold">{value}</p>
     </div>
   );

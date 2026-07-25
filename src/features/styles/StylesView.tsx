@@ -66,20 +66,20 @@ function CustomSwatchEditor({
   }
 
   return (
-    <div className="flex flex-col gap-1.5 rounded-md border border-neutral-100 p-2">
+    <div className="flex flex-col gap-1.5 rounded-xl border border-line p-2">
       <div className="flex items-center gap-2">
         <input
           type="color"
           value={swatch.hex}
           onChange={(e) => onConfirmHex(e.target.value)}
-          className="h-7 w-9 rounded border border-neutral-300"
+          className="h-7 w-9 rounded border border-line"
           aria-label={t("styles.colorPickerLabel", { index: index + 1 })}
         />
         <input
           type="text"
           value={swatch.label}
           onChange={(e) => onChangeLabel(e.target.value)}
-          className="w-full rounded-md border border-neutral-300 px-2 py-1 text-xs"
+          className="w-full rounded-full border border-line px-2 py-1 text-xs"
           placeholder={t("styles.colorNamePlaceholder")}
         />
       </div>
@@ -87,14 +87,14 @@ function CustomSwatchEditor({
         <button
           type="button"
           onClick={() => setMode(mode === "hex" ? null : "hex")}
-          className={`rounded border px-1.5 py-0.5 text-[11px] ${mode === "hex" ? "border-neutral-900" : "border-neutral-300"}`}
+          className={`rounded-full border px-1.5 py-0.5 text-[11px] ${mode === "hex" ? "border-ink" : "border-line"}`}
         >
           {t("styles.hexInputLabel")}
         </button>
         <button
           type="button"
           onClick={() => setMode(mode === "cmyk" ? null : "cmyk")}
-          className={`rounded border px-1.5 py-0.5 text-[11px] ${mode === "cmyk" ? "border-neutral-900" : "border-neutral-300"}`}
+          className={`rounded-full border px-1.5 py-0.5 text-[11px] ${mode === "cmyk" ? "border-ink" : "border-line"}`}
         >
           {t("styles.cmykInputLabel")}
         </button>
@@ -106,9 +106,9 @@ function CustomSwatchEditor({
             value={hexDraft}
             onChange={(e) => setHexDraft(e.target.value)}
             placeholder="#RRGGBB"
-            className="w-24 rounded-md border border-neutral-300 px-2 py-1 text-xs"
+            className="w-24 rounded-full border border-line px-2 py-1 text-xs"
           />
-          <button type="button" onClick={confirmHex} className="rounded-md border border-neutral-300 px-2 py-1 text-xs">
+          <button type="button" onClick={confirmHex} className="rounded-full border border-line px-2 py-1 text-xs">
             {t("styles.confirm")}
           </button>
         </div>
@@ -124,10 +124,10 @@ function CustomSwatchEditor({
               value={cmykDraft[key]}
               onChange={(e) => setCmykDraft((prev) => ({ ...prev, [key]: e.target.value }))}
               placeholder={key.toUpperCase()}
-              className="w-12 rounded-md border border-neutral-300 px-1 py-1 text-xs"
+              className="w-12 rounded-full border border-line px-1 py-1 text-xs"
             />
           ))}
-          <button type="button" onClick={confirmCmyk} className="rounded-md border border-neutral-300 px-2 py-1 text-xs">
+          <button type="button" onClick={confirmCmyk} className="rounded-full border border-line px-2 py-1 text-xs">
             {t("styles.confirm")}
           </button>
         </div>
@@ -430,22 +430,22 @@ export function StylesView({
       </header>
       {selectError && <p className="text-sm text-red-600">{selectError}</p>}
       {selected && (
-        <div className="flex items-center gap-3 rounded-md border border-line bg-surface p-4">
+        <div className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-4">
           <p className="text-sm text-muted">{t("styles.selectedNotice")}</p>
           <NextStepButton projectId={projectId} currentStepKey="style" deliverableType={deliverableType} />
         </div>
       )}
 
-      <section className="rounded-md border border-neutral-200 p-4">
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-medium text-neutral-700">{t("styles.myStylesSectionTitle")}</h2>
+          <h2 className="text-sm font-medium text-ink">{t("styles.myStylesSectionTitle")}</h2>
           <Link href="/my-styles" className="text-xs underline">
             {t("styles.manageMyStyles")}
           </Link>
         </div>
         {userStyleError && <p className="mt-2 text-sm text-red-600">{userStyleError}</p>}
         {userStyleCategories.length === 0 ? (
-          <p className="mt-2 text-sm text-neutral-400">
+          <p className="mt-2 text-sm text-muted">
             {t("styles.noUserStyles")}
           </p>
         ) : (
@@ -453,8 +453,8 @@ export function StylesView({
             {userStyleCategories.map((category) => (
               <div
                 key={category.id}
-                className={`rounded-md border p-3 text-sm ${
-                  selectedUserStyleId === category.id ? "border-neutral-900 bg-neutral-50" : "border-neutral-200"
+                className={`rounded-xl border p-3 text-sm ${
+                  selectedUserStyleId === category.id ? "border-ink bg-paper" : "border-line bg-paper"
                 }`}
               >
                 <div className="flex gap-1">
@@ -473,7 +473,7 @@ export function StylesView({
                   type="button"
                   onClick={() => handleSelectUserStyle(category.id)}
                   disabled={isSelectingUserStyle}
-                  className="mt-2 rounded-md border border-neutral-300 px-2 py-1 text-xs disabled:opacity-50"
+                  className="mt-2 rounded-full border border-line px-2 py-1 text-xs disabled:opacity-50"
                 >
                   {selectedUserStyleId === category.id ? t("styles.selected") : t("styles.select")}
                 </button>
@@ -483,27 +483,27 @@ export function StylesView({
         )}
       </section>
 
-      <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">{t("styles.brandColorSectionTitle")}</h2>
-        <p className="mt-1 text-xs text-neutral-400">
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+        <h2 className="text-sm font-medium text-ink">{t("styles.brandColorSectionTitle")}</h2>
+        <p className="mt-1 text-xs text-muted">
           {t("styles.brandColorDescription")}
         </p>
         {colorError && <p className="mt-2 text-sm text-red-600">{colorError}</p>}
 
         {showColorSuggestion && suggestedColorSwatches && (
-          <div className="mt-3 rounded-md border border-dashed border-neutral-300 bg-neutral-50 p-3">
-            <p className="text-xs font-medium text-neutral-700">
+          <div className="mt-3 rounded-xl border border-dashed border-line bg-paper p-3">
+            <p className="text-xs font-medium text-ink">
               {t("styles.colorSuggestionText")}
             </p>
             <div className="mt-2 flex gap-3">
               {suggestedColorSwatches.map((swatch) => (
                 <div key={swatch.hex} className="flex flex-col items-center gap-1">
                   <div
-                    className="h-8 w-8 rounded-sm border border-neutral-200"
+                    className="h-8 w-8 rounded-sm border border-line"
                     style={{ backgroundColor: swatch.hex }}
                     title={swatch.label}
                   />
-                  <span className="text-[10px] text-neutral-500">{swatch.label}</span>
+                  <span className="text-[10px] text-muted">{swatch.label}</span>
                 </div>
               ))}
             </div>
@@ -511,14 +511,14 @@ export function StylesView({
               <button
                 type="button"
                 onClick={handleApplyColorSuggestion}
-                className="rounded-md bg-neutral-900 px-2 py-1 text-xs text-white"
+                className="rounded-full bg-ink px-2 py-1 text-xs text-paper"
               >
                 {t("styles.apply")}
               </button>
               <button
                 type="button"
                 onClick={handleDismissColorSuggestion}
-                className="rounded-md border border-neutral-300 px-2 py-1 text-xs"
+                className="rounded-full border border-line px-2 py-1 text-xs"
               >
                 {t("styles.dismiss")}
               </button>
@@ -530,15 +530,15 @@ export function StylesView({
           {colorPalettes.map((palette) => (
             <div
               key={palette.slug}
-              className={`rounded-md border p-3 text-sm ${
-                selectedPaletteSlug === palette.slug ? "border-neutral-900 bg-neutral-50" : "border-neutral-200"
+              className={`rounded-xl border p-3 text-sm ${
+                selectedPaletteSlug === palette.slug ? "border-ink bg-paper" : "border-line bg-paper"
               }`}
             >
               <div className="flex gap-1">
                 {palette.swatches.map((swatch) => (
                   <div
                     key={swatch.hex}
-                    className="h-8 w-8 rounded-sm border border-neutral-200"
+                    className="h-8 w-8 rounded-sm border border-line"
                     style={{ backgroundColor: swatch.hex }}
                     title={swatch.label}
                   />
@@ -549,7 +549,7 @@ export function StylesView({
                 type="button"
                 onClick={() => handleSelectColorPreset(palette.slug)}
                 disabled={isSelectingColor}
-                className="mt-2 rounded-md border border-neutral-300 px-2 py-1 text-xs disabled:opacity-50"
+                className="mt-2 rounded-full border border-line px-2 py-1 text-xs disabled:opacity-50"
               >
                 {selectedPaletteSlug === palette.slug ? t("styles.selected") : t("styles.select")}
               </button>
@@ -557,17 +557,17 @@ export function StylesView({
           ))}
 
           <div
-            className={`rounded-md border p-3 text-sm ${
-              isCustomColorSelected ? "border-neutral-900 bg-neutral-50" : "border-neutral-200"
+            className={`rounded-xl border p-3 text-sm ${
+              isCustomColorSelected ? "border-ink bg-paper" : "border-line bg-paper"
             }`}
           >
             <p className="font-medium">{t("styles.customColorTitle")}</p>
-            <p className="mt-1 text-xs text-neutral-400">{t("styles.customColorDescription")}</p>
+            <p className="mt-1 text-xs text-muted">{t("styles.customColorDescription")}</p>
             {!showCustomColorForm ? (
               <button
                 type="button"
                 onClick={() => setShowCustomColorForm(true)}
-                className="mt-2 rounded-md border border-neutral-300 px-2 py-1 text-xs"
+                className="mt-2 rounded-full border border-line px-2 py-1 text-xs"
               >
                 {isCustomColorSelected ? t("styles.customColorSelectedEdit") : t("styles.customColorTitle")}
               </button>
@@ -586,7 +586,7 @@ export function StylesView({
                   type="button"
                   onClick={handleConfirmCustomColor}
                   disabled={isSelectingColor}
-                  className="rounded-md bg-neutral-900 px-2 py-1 text-xs text-white disabled:opacity-50"
+                  className="rounded-full bg-ink px-2 py-1 text-xs text-paper disabled:opacity-50"
                 >
                   {isSelectingColor && <Spinner />}
                   {t("styles.confirmThisColor")}
@@ -596,9 +596,9 @@ export function StylesView({
           </div>
         </div>
 
-        <div className="mt-4 border-t border-neutral-100 pt-3">
-          <h3 className="text-xs font-medium text-neutral-700">{t("styles.forbiddenColorsTitle")}</h3>
-          <p className="mt-1 text-xs text-neutral-400">
+        <div className="mt-4 border-t border-line pt-3">
+          <h3 className="text-xs font-medium text-ink">{t("styles.forbiddenColorsTitle")}</h3>
+          <p className="mt-1 text-xs text-muted">
             {t("styles.forbiddenColorsDescription")}
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -607,13 +607,13 @@ export function StylesView({
               value={forbiddenColorsInput}
               onChange={(e) => setForbiddenColorsInput(e.target.value)}
               placeholder="#ff0000, #000000"
-              className="min-w-[220px] flex-1 rounded-md border border-neutral-300 px-2 py-1 text-xs"
+              className="min-w-[220px] flex-1 rounded-full border border-line px-2 py-1 text-xs"
             />
             <button
               type="button"
               onClick={handleApplyForbiddenColors}
               disabled={isSelectingColor}
-              className="rounded-md border border-neutral-300 px-2 py-1 text-xs disabled:opacity-50"
+              className="rounded-full border border-line px-2 py-1 text-xs disabled:opacity-50"
             >
               {t("styles.apply")}
             </button>
@@ -621,9 +621,9 @@ export function StylesView({
           {forbiddenColors.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-2">
               {forbiddenColors.map((hex) => (
-                <div key={hex} className="flex items-center gap-1 rounded-full border border-neutral-200 px-2 py-0.5">
-                  <div className="h-3 w-3 rounded-full border border-neutral-200" style={{ backgroundColor: hex }} />
-                  <span className="text-[10px] text-neutral-500">{hex}</span>
+                <div key={hex} className="flex items-center gap-1 rounded-full border border-line px-2 py-0.5">
+                  <div className="h-3 w-3 rounded-full border border-line" style={{ backgroundColor: hex }} />
+                  <span className="text-[10px] text-muted">{hex}</span>
                 </div>
               ))}
             </div>
@@ -632,7 +632,7 @@ export function StylesView({
       </section>
 
       <section>
-        <h2 className="text-sm font-medium text-neutral-700">{t("styles.recommendedTitle")}</h2>
+        <h2 className="text-sm font-medium text-ink">{t("styles.recommendedTitle")}</h2>
         {isLoadingRecommendations ? (
           <div className="mt-4 flex justify-center">
             <Spinner />
@@ -658,16 +658,16 @@ export function StylesView({
       </section>
 
       <section>
-        <h2 className="text-sm font-medium text-neutral-700">{t("styles.browseTitle")}</h2>
+        <h2 className="text-sm font-medium text-ink">{t("styles.browseTitle")}</h2>
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t("styles.searchPlaceholder")}
-          className="mt-2 w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
+          className="mt-2 w-full rounded-full border border-line px-2 py-1.5 text-sm"
         />
 
         {search ? (
-          <div className="mt-3 flex items-center gap-2 text-xs text-neutral-500">
+          <div className="mt-3 flex items-center gap-2 text-xs text-muted">
             <span>{t("styles.searchResultsFor", { search })}</span>
             <button type="button" onClick={clearSearch} className="underline">
               {t("styles.clearSearch")}
@@ -684,8 +684,8 @@ export function StylesView({
                   onClick={() => selectL1(l1)}
                   className={`rounded-full border px-3 py-1.5 text-sm transition ${
                     browseL1?.id === l1.id
-                      ? "border-neutral-900 bg-neutral-900 text-white"
-                      : "border-neutral-300 hover:border-neutral-500"
+                      ? "border-ink bg-ink text-paper"
+                      : "border-line hover:border-ink"
                   }`}
                 >
                   {l1.name}
@@ -695,7 +695,7 @@ export function StylesView({
 
             {/* 중분류 */}
             {browseL1 && (
-              <div className="mt-2 flex flex-wrap gap-2 border-l-2 border-neutral-100 pl-3">
+              <div className="mt-2 flex flex-wrap gap-2 border-l-2 border-line pl-3">
                 {(l2Data?.styles ?? []).map((l2) => (
                   <button
                     key={l2.id}
@@ -703,8 +703,8 @@ export function StylesView({
                     onClick={() => selectL2(l2)}
                     className={`rounded-full border px-3 py-1 text-xs transition ${
                       browseL2?.id === l2.id
-                        ? "border-neutral-700 bg-neutral-700 text-white"
-                        : "border-neutral-200 text-neutral-600 hover:border-neutral-400"
+                        ? "border-ink bg-ink text-paper"
+                        : "border-line text-muted hover:border-ink"
                     }`}
                   >
                     {l2.name}
@@ -715,7 +715,7 @@ export function StylesView({
 
             {/* 현재 위치(breadcrumb) */}
             {(browseL1 || browseL2) && (
-              <p className="mt-2 text-xs text-neutral-400">
+              <p className="mt-2 text-xs text-muted">
                 {browseL1?.name}
                 {browseL2 && ` > ${browseL2.name}`}
               </p>
@@ -739,24 +739,24 @@ export function StylesView({
             />
           ))}
           {!search && browseL1 && !browseL2 && (
-            <p className="col-span-4 text-sm text-neutral-400">{t("styles.selectSubcategoryPrompt")}</p>
+            <p className="col-span-4 text-sm text-muted">{t("styles.selectSubcategoryPrompt")}</p>
           )}
           {!search && !browseL1 && (
-            <p className="col-span-4 text-sm text-neutral-400">{t("styles.selectCategoryPrompt")}</p>
+            <p className="col-span-4 text-sm text-muted">{t("styles.selectCategoryPrompt")}</p>
           )}
         </div>
       </section>
 
       {compareStyles.length > 0 && (
-        <section className="rounded-md border border-neutral-200 p-4">
-          <h2 className="text-sm font-medium text-neutral-700">{t("styles.compareTitle")}</h2>
+        <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+          <h2 className="text-sm font-medium text-ink">{t("styles.compareTitle")}</h2>
           <div className="mt-3 grid gap-3 sm:grid-cols-3">
             {compareStyles.map((style) => (
-              <div key={style.id} className="rounded-md border border-neutral-200 p-3 text-sm">
+              <div key={style.id} className="rounded-xl border border-line bg-paper p-3 text-sm">
                 <p className="font-medium">
                   {style.name} {style.id === primaryId ? "(Primary)" : "(Secondary)"}
                 </p>
-                <p className="mt-1 text-xs text-neutral-500">{style.description}</p>
+                <p className="mt-1 text-xs text-muted">{style.description}</p>
               </div>
             ))}
           </div>
@@ -767,7 +767,7 @@ export function StylesView({
           버튼을 하단에도 한 번 더 노출한다 -- 위쪽 sticky 버튼과 같은
           selected/primaryId 상태를 그대로 참조한다. */}
       {primaryId && (
-        <div className="flex flex-col items-start gap-3 rounded-md border border-line bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col items-start gap-3 rounded-2xl border border-line bg-surface p-4 shadow-soft sm:flex-row sm:items-center sm:justify-between">
           <span className="text-sm">
             {compareStyles[0]?.name}
             {compareStyles.length > 1
@@ -786,7 +786,7 @@ export function StylesView({
         </div>
       )}
       {selected && (
-        <div className="flex items-center gap-3 rounded-md border border-line bg-surface p-4">
+        <div className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-4 shadow-soft">
           <p className="text-sm text-muted">{t("styles.selectedNotice")}</p>
           <NextStepButton projectId={projectId} currentStepKey="style" deliverableType={deliverableType} />
         </div>
@@ -798,7 +798,7 @@ export function StylesView({
           onClick={() => setDetailStyle(null)}
         >
           <div
-            className="h-full w-full max-w-sm overflow-y-auto bg-white p-6"
+            className="h-full w-full max-w-sm overflow-y-auto bg-paper p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <button type="button" onClick={() => setDetailStyle(null)} className="text-sm underline">
@@ -809,13 +809,13 @@ export function StylesView({
               <img
                 src={detailStyle.sampleImageUrl}
                 alt={detailStyle.name}
-                className="mt-4 aspect-square w-full rounded-md object-cover"
+                className="mt-4 aspect-square w-full rounded-2xl object-cover"
               />
             )}
             <h3 className="mt-4 text-lg font-semibold">{detailStyle.name}</h3>
-            <p className="mt-1 text-xs text-neutral-400">{detailStyle.category}</p>
+            <p className="mt-1 text-xs text-muted">{detailStyle.category}</p>
             <p className="mt-3 text-sm">{detailStyle.description}</p>
-            <p className="mt-3 text-xs text-neutral-500">{detailStyle.keywords.join(", ")}</p>
+            <p className="mt-3 text-xs text-muted">{detailStyle.keywords.join(", ")}</p>
           </div>
         </div>
       )}
@@ -849,12 +849,12 @@ function StyleCard({
   const { t } = useTranslation();
   return (
     <div
-      className={`overflow-hidden rounded-md border text-sm ${
+      className={`overflow-hidden rounded-xl border text-sm ${
         isPrimary
-          ? "border-neutral-900 bg-neutral-50"
+          ? "border-ink bg-surface"
           : isSecondary
-            ? "border-neutral-500 bg-neutral-50"
-            : "border-neutral-200"
+            ? "border-ink/60 bg-surface"
+            : "border-line bg-paper"
       }`}
     >
       {style.sampleImageUrl ? (
@@ -866,7 +866,7 @@ function StyleCard({
           loading="lazy"
         />
       ) : (
-        <div className="aspect-square w-full bg-neutral-100" aria-hidden />
+        <div className="aspect-square w-full bg-line" aria-hidden />
       )}
       <div className="p-3">
         <div className="flex items-start justify-between">
@@ -877,15 +877,15 @@ function StyleCard({
             {isFavorite ? "★" : "☆"}
           </button>
         </div>
-        <p className="mt-1 text-xs text-neutral-400">{style.category}</p>
+        <p className="mt-1 text-xs text-muted">{style.category}</p>
         {!compact && score !== undefined && (
-          <p className="mt-1 text-xs text-neutral-500">{t("styles.scorePercent", { percent: Math.round(score * 100) })}</p>
+          <p className="mt-1 text-xs text-muted">{t("styles.scorePercent", { percent: Math.round(score * 100) })}</p>
         )}
-        {!compact && reason && <p className="mt-1 text-xs text-neutral-500">{reason}</p>}
+        {!compact && reason && <p className="mt-1 text-xs text-muted">{reason}</p>}
         <button
           type="button"
           onClick={onSelect}
-          className="mt-2 rounded-md border border-neutral-300 px-2 py-1 text-xs"
+          className="mt-2 rounded-full border border-line px-2 py-1 text-xs"
         >
           {isPrimary ? t("styles.primarySelected") : isSecondary ? t("styles.secondarySelected") : t("styles.select")}
         </button>

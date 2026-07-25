@@ -152,7 +152,7 @@ export function TrainingExamplesView() {
       <header className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold">작업물 스타일 학습 자료</h1>
-          <p className="mt-1 text-sm text-neutral-500">
+          <p className="mt-1 text-sm text-muted">
             프롬프트와 그 프롬프트로 만든 생성 이미지를 등록하면, 같은 작업물 유형의 실제 프로젝트 프롬프트를
             만들 때 참고 자료로 자동 반영됩니다. (AI 분석 없이 텍스트 매칭만 사용 -- 비용 없음)
             &quot;이미지생성&quot; 카테고리는 이미지 생성 파이프라인에만, &quot;목업&quot; 카테고리는 목업 생성
@@ -169,17 +169,17 @@ export function TrainingExamplesView() {
         </div>
       </header>
 
-      <div className="flex items-center gap-3 rounded-md border border-neutral-200 bg-neutral-50 p-4">
+      <div className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-4 shadow-soft">
         <button
           type="button"
           onClick={handlePromote}
           disabled={isPromoting}
-          className="flex items-center gap-2 rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm disabled:opacity-50"
+          className="flex items-center gap-2 rounded-full border border-line bg-paper px-3 py-1.5 text-sm disabled:opacity-50"
         >
           {isPromoting && <Spinner />}
           지금 바로 실행
         </button>
-        <p className="text-xs text-neutral-500">
+        <p className="text-xs text-muted">
           {promoteError
             ? `실패: ${promoteError}`
             : promoteResult
@@ -188,16 +188,16 @@ export function TrainingExamplesView() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded-md border border-neutral-200 p-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-soft">
         <div className="flex flex-col gap-1">
-          <label htmlFor="deliverableType" className="text-sm text-neutral-500">
+          <label htmlFor="deliverableType" className="text-sm text-muted">
             작업물 유형
           </label>
           <select
             id="deliverableType"
             value={deliverableType}
             onChange={(e) => setDeliverableType(e.target.value)}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm"
+            className="rounded-full border border-line px-3 py-2 text-sm"
           >
             {DELIVERABLE_TYPE_OPTIONS.map((option) => (
               <option key={option} value={option}>
@@ -209,14 +209,14 @@ export function TrainingExamplesView() {
 
         <div className="flex gap-3">
           <div className="flex flex-1 flex-col gap-1">
-            <label htmlFor="category" className="text-sm text-neutral-500">
+            <label htmlFor="category" className="text-sm text-muted">
               카테고리
             </label>
             <select
               id="category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="rounded-md border border-neutral-300 px-3 py-2 text-sm"
+              className="rounded-full border border-line px-3 py-2 text-sm"
             >
               {KNOWN_TRAINING_EXAMPLE_CATEGORIES.map((option) => (
                 <option key={option} value={option}>
@@ -231,20 +231,20 @@ export function TrainingExamplesView() {
                 value={customCategory}
                 onChange={(e) => setCustomCategory(e.target.value)}
                 placeholder="새 카테고리 이름"
-                className="mt-1 rounded-md border border-neutral-300 px-3 py-2 text-sm"
+                className="mt-1 rounded-full border border-line px-3 py-2 text-sm"
               />
             )}
           </div>
 
           <div className="flex flex-1 flex-col gap-1">
-            <label htmlFor="industry" className="text-sm text-neutral-500">
+            <label htmlFor="industry" className="text-sm text-muted">
               업종 (선택 사항)
             </label>
             <select
               id="industry"
               value={industry}
               onChange={(e) => setIndustry(e.target.value)}
-              className="rounded-md border border-neutral-300 px-3 py-2 text-sm"
+              className="rounded-full border border-line px-3 py-2 text-sm"
             >
               <option value="">선택 안 함</option>
               {INDUSTRY_OPTIONS.map((option) => (
@@ -257,7 +257,7 @@ export function TrainingExamplesView() {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="prompt" className="text-sm text-neutral-500">
+          <label htmlFor="prompt" className="text-sm text-muted">
             프롬프트
           </label>
           <textarea
@@ -265,13 +265,13 @@ export function TrainingExamplesView() {
             rows={4}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm"
+            className="rounded-xl border border-line px-3 py-2 text-sm"
             required
           />
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="image" className="text-sm text-neutral-500">
+          <label htmlFor="image" className="text-sm text-muted">
             생성 이미지 (PNG/JPEG, 5MB 이하)
           </label>
           <input
@@ -288,16 +288,16 @@ export function TrainingExamplesView() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-fit items-center gap-2 rounded-md bg-neutral-900 px-4 py-2 text-sm text-white transition hover:opacity-90 disabled:opacity-50"
+          className="flex w-fit items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm text-paper transition hover:opacity-90 disabled:opacity-50"
         >
           {isSubmitting && <Spinner />}
           {isSubmitting ? "등록 중..." : "등록"}
         </button>
       </form>
 
-      <div className="flex flex-col gap-3 rounded-md border border-neutral-200 bg-neutral-50 p-3">
+      <div className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-3 shadow-soft">
         <div>
-          <p className="mb-1 text-xs font-medium text-neutral-500">카테고리</p>
+          <p className="mb-1 text-xs font-medium text-muted">카테고리</p>
           <div className="flex flex-wrap gap-2">
             {categoryTabs.map((tab) => (
               <button
@@ -306,8 +306,8 @@ export function TrainingExamplesView() {
                 onClick={() => setCategoryFilter(tab)}
                 className={`rounded-full border px-3 py-1 text-xs ${
                   categoryFilter === tab
-                    ? "border-neutral-900 bg-neutral-900 text-white"
-                    : "border-neutral-300 bg-white text-neutral-600"
+                    ? "border-ink bg-ink text-paper"
+                    : "border-line bg-paper text-ink"
                 }`}
               >
                 {tab}
@@ -318,14 +318,14 @@ export function TrainingExamplesView() {
 
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="flex flex-col gap-1">
-            <label htmlFor="filter-deliverableType" className="text-xs font-medium text-neutral-500">
+            <label htmlFor="filter-deliverableType" className="text-xs font-medium text-muted">
               작업물 유형
             </label>
             <select
               id="filter-deliverableType"
               value={deliverableTypeFilter}
               onChange={(e) => setDeliverableTypeFilter(e.target.value)}
-              className="rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
+              className="rounded-full border border-line px-2 py-1.5 text-sm"
             >
               {deliverableTypeTabs.map((option) => (
                 <option key={option} value={option}>
@@ -336,14 +336,14 @@ export function TrainingExamplesView() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="filter-industry" className="text-xs font-medium text-neutral-500">
+            <label htmlFor="filter-industry" className="text-xs font-medium text-muted">
               업종
             </label>
             <select
               id="filter-industry"
               value={industryFilter}
               onChange={(e) => setIndustryFilter(e.target.value)}
-              className="rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
+              className="rounded-full border border-line px-2 py-1.5 text-sm"
             >
               {industryTabs.map((option) => (
                 <option key={option} value={option}>
@@ -354,14 +354,14 @@ export function TrainingExamplesView() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="filter-evaluation" className="text-xs font-medium text-neutral-500">
+            <label htmlFor="filter-evaluation" className="text-xs font-medium text-muted">
               평가 상태
             </label>
             <select
               id="filter-evaluation"
               value={evaluationFilter}
               onChange={(e) => setEvaluationFilter(e.target.value as EvaluationFilter)}
-              className="rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
+              className="rounded-full border border-line px-2 py-1.5 text-sm"
             >
               {EVALUATION_FILTERS.map((option) => (
                 <option key={option} value={option}>
@@ -371,7 +371,7 @@ export function TrainingExamplesView() {
             </select>
           </div>
         </div>
-        <p className="text-xs text-neutral-400">{visibleExamples.length}건 표시 중 (전체 {data?.examples.length ?? 0}건)</p>
+        <p className="text-xs text-muted">{visibleExamples.length}건 표시 중 (전체 {data?.examples.length ?? 0}건)</p>
       </div>
 
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -381,21 +381,21 @@ export function TrainingExamplesView() {
           </div>
         )}
         {!isLoading && visibleExamples.length === 0 && (
-          <p className="col-span-full text-center text-sm text-neutral-400">조건에 맞는 학습 자료가 없습니다.</p>
+          <p className="col-span-full text-center text-sm text-muted">조건에 맞는 학습 자료가 없습니다.</p>
         )}
         {visibleExamples.map((example) => (
-          <div key={example.id} className="flex flex-col gap-2 rounded-md border border-neutral-200 p-3">
+          <div key={example.id} className="flex flex-col gap-2 rounded-xl border border-line bg-surface p-3 shadow-soft">
             <div className="flex flex-wrap gap-1">
-              <span className="w-fit rounded-full bg-neutral-800 px-2 py-0.5 text-xs text-white">
+              <span className="w-fit rounded-full bg-ink px-2 py-0.5 text-xs text-paper">
                 {example.category}
               </span>
-              <span className="w-fit rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600">
+              <span className="w-fit rounded-full bg-line px-2 py-0.5 text-xs text-muted">
                 {example.deliverableType}
               </span>
-              <span className="w-fit rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600">
+              <span className="w-fit rounded-full bg-line px-2 py-0.5 text-xs text-muted">
                 {example.industry ?? UNSET_INDUSTRY_OPTION}
               </span>
-              <span className="w-fit rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600">
+              <span className="w-fit rounded-full bg-line px-2 py-0.5 text-xs text-muted">
                 {example.source === "ADMIN" ? "관리자 입력" : example.source === "USER_GENERATION" ? "사용자 생성물" : "리서치"}
               </span>
               {example.evaluationScore !== null ? (
@@ -409,12 +409,12 @@ export function TrainingExamplesView() {
                   {example.evaluationScore >= 0.8 ? "참고자료" : "회피대상"} {Math.round(example.evaluationScore * 100)}점
                 </span>
               ) : (
-                <span className="w-fit rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-400">미평가</span>
+                <span className="w-fit rounded-full bg-line px-2 py-0.5 text-xs text-muted">미평가</span>
               )}
             </div>
-            <p className="text-sm text-neutral-700">{example.prompt}</p>
+            <p className="text-sm text-ink">{example.prompt}</p>
             {interpretBreakdown(example.evaluationBreakdown).length > 0 && (
-              <ul className="flex flex-col gap-0.5 rounded-md bg-neutral-50 p-2 text-xs text-neutral-500">
+              <ul className="flex flex-col gap-0.5 rounded-xl bg-line p-2 text-xs text-muted">
                 {interpretBreakdown(example.evaluationBreakdown).map((line, i) => (
                   <li key={i}>· {line}</li>
                 ))}

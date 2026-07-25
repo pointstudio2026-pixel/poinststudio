@@ -41,24 +41,24 @@ export function InquiryDetailView({
       </div>
 
       {inquiry ? (
-        <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-4">
+        <div className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-soft">
           <div className="flex items-center gap-2">
             <span
               className={`rounded-full px-2 py-0.5 text-xs ${
-                inquiry.isPublic ? "bg-neutral-100 text-neutral-600" : "bg-amber-50 text-amber-700"
+                inquiry.isPublic ? "bg-line text-muted" : "bg-amber-50 text-amber-700"
               }`}
             >
               {inquiry.isPublic ? t("support.detail.public") : t("support.detail.private")}
             </span>
-            <span className="text-xs text-neutral-400">
+            <span className="text-xs text-muted">
               {new Date(inquiry.createdAt).toLocaleString(INTL_LOCALE[locale])}
             </span>
           </div>
           <h2 className="text-lg font-medium">{inquiry.subject}</h2>
-          <p className="whitespace-pre-wrap text-sm text-neutral-700">{inquiry.message}</p>
+          <p className="whitespace-pre-wrap text-sm text-ink">{inquiry.message}</p>
         </div>
       ) : (
-        <div className="rounded-lg border border-neutral-200 p-6 text-center text-sm text-neutral-500">
+        <div className="rounded-2xl border border-line bg-surface p-6 text-center text-sm text-muted shadow-soft">
           {t(inquiryErrorMessage(errorCode))}
         </div>
       )}

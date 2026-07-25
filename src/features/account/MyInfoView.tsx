@@ -39,8 +39,8 @@ export function MyInfoView({
       <main className="mx-auto flex max-w-2xl flex-col gap-6 p-8">
       <h1 className="text-xl font-semibold">내 정보</h1>
 
-      <section className="flex flex-col gap-2 rounded-lg border border-neutral-200 p-4">
-        <p className="text-sm text-neutral-500">이메일</p>
+      <section className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-4 shadow-soft">
+        <p className="text-sm text-muted">이메일</p>
         <p className="text-sm font-medium">{email}</p>
       </section>
 
@@ -49,9 +49,9 @@ export function MyInfoView({
       {hasPassword ? (
         <PasswordChangeForm />
       ) : (
-        <section className="rounded-lg border border-neutral-200 p-4">
+        <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
           <h2 className="font-medium">비밀번호</h2>
-          <p className="mt-2 text-sm text-neutral-500">
+          <p className="mt-2 text-sm text-muted">
             소셜 로그인 계정은 비밀번호가 설정되어 있지 않습니다.
           </p>
         </section>
@@ -86,13 +86,13 @@ function ProfileNameForm({ initialName }: { initialName: string | null }) {
   });
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-4">
+    <form onSubmit={onSubmit} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-soft">
       <h2 className="font-medium">이름</h2>
       <div className="flex flex-col gap-1">
         <input
           id="name"
           type="text"
-          className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none transition focus:border-neutral-900"
+          className="rounded-full border border-line px-3 py-2 text-sm outline-none transition focus:border-ink"
           {...register("name")}
         />
         {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
@@ -104,7 +104,7 @@ function ProfileNameForm({ initialName }: { initialName: string | null }) {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="flex w-fit items-center gap-2 rounded-full bg-neutral-900 px-4 py-2 text-sm text-white transition hover:opacity-90 disabled:opacity-50"
+        className="flex w-fit items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm text-paper transition hover:opacity-90 disabled:opacity-50"
       >
         {isSubmitting && <Spinner />}
         {isSubmitting ? "저장 중..." : "저장"}
@@ -137,17 +137,17 @@ function PasswordChangeForm() {
   });
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-4">
+    <form onSubmit={onSubmit} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-soft">
       <h2 className="font-medium">비밀번호 변경</h2>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="currentPassword" className="text-sm text-neutral-500">
+        <label htmlFor="currentPassword" className="text-sm text-muted">
           현재 비밀번호
         </label>
         <input
           id="currentPassword"
           type="password"
-          className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none transition focus:border-neutral-900"
+          className="rounded-full border border-line px-3 py-2 text-sm outline-none transition focus:border-ink"
           {...register("currentPassword")}
         />
         {errors.currentPassword && (
@@ -156,26 +156,26 @@ function PasswordChangeForm() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="newPassword" className="text-sm text-neutral-500">
+        <label htmlFor="newPassword" className="text-sm text-muted">
           새 비밀번호
         </label>
         <input
           id="newPassword"
           type="password"
-          className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none transition focus:border-neutral-900"
+          className="rounded-full border border-line px-3 py-2 text-sm outline-none transition focus:border-ink"
           {...register("newPassword")}
         />
         {errors.newPassword && <p className="text-sm text-red-600">{errors.newPassword.message}</p>}
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="confirmPassword" className="text-sm text-neutral-500">
+        <label htmlFor="confirmPassword" className="text-sm text-muted">
           새 비밀번호 확인
         </label>
         <input
           id="confirmPassword"
           type="password"
-          className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none transition focus:border-neutral-900"
+          className="rounded-full border border-line px-3 py-2 text-sm outline-none transition focus:border-ink"
           {...register("confirmPassword")}
         />
         {errors.confirmPassword && (
@@ -189,7 +189,7 @@ function PasswordChangeForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="flex w-fit items-center gap-2 rounded-full bg-neutral-900 px-4 py-2 text-sm text-white transition hover:opacity-90 disabled:opacity-50"
+        className="flex w-fit items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm text-paper transition hover:opacity-90 disabled:opacity-50"
       >
         {isSubmitting && <Spinner />}
         {isSubmitting ? "변경 중..." : "비밀번호 변경"}

@@ -40,7 +40,7 @@ export function UpgradeButton({ planCode }: { planCode: PlanCode }) {
         type="button"
         onClick={handleUpgrade}
         disabled={isSubmitting}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-md border border-neutral-300 px-3 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-line px-3 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isSubmitting && <Spinner />}
         업그레이드

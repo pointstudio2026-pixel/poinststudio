@@ -31,14 +31,14 @@ export function VerifyEmailView() {
       {status === "verifying" && (
         <>
           <Spinner />
-          <p className="text-sm text-neutral-500">이메일을 인증하는 중입니다...</p>
+          <p className="text-sm text-muted">이메일을 인증하는 중입니다...</p>
         </>
       )}
 
       {status === "success" && (
         <>
           <h1 className="text-lg font-semibold">이메일이 인증되었습니다.</h1>
-          <Link href="/projects" className="mt-2 rounded-full bg-neutral-900 px-4 py-2 text-sm text-white">
+          <Link href="/projects" className="mt-2 rounded-full bg-ink px-4 py-2 text-sm text-paper">
             내 프로젝트로 이동
           </Link>
         </>
@@ -47,7 +47,7 @@ export function VerifyEmailView() {
       {status === "error" && (
         <>
           <h1 className="text-lg font-semibold text-red-600">인증에 실패했습니다.</h1>
-          <p className="text-sm text-neutral-500">{errorMessage}</p>
+          <p className="text-sm text-muted">{errorMessage}</p>
           <Link href="/projects" className="mt-2 text-sm underline">
             내 프로젝트로 이동해서 재발송 요청하기
           </Link>

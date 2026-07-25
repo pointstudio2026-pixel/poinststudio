@@ -39,7 +39,7 @@ export function DeliverableTypeView({ projectId }: { projectId: string }) {
     <div className="flex flex-col gap-8">
       <header>
         <h1 className="text-xl font-semibold">{t("deliverableType.title")}</h1>
-        <p className="mt-1 text-sm text-neutral-500">
+        <p className="mt-1 text-sm text-muted">
           {t("deliverableType.subtitle")}
         </p>
       </header>
@@ -57,8 +57,8 @@ export function DeliverableTypeView({ projectId }: { projectId: string }) {
               onClick={() => handleSelect(type)}
               className={`flex items-center justify-between rounded-2xl border px-5 py-4 text-left text-sm font-medium transition disabled:opacity-50 ${
                 isSelected
-                  ? "border-neutral-900 bg-neutral-900 text-white"
-                  : "border-neutral-200 text-neutral-800 hover:border-neutral-900"
+                  ? "border-ink bg-ink text-paper"
+                  : "border-line text-ink hover:border-ink"
               }`}
             >
               {type}

@@ -47,7 +47,7 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
         </Link>
       </header>
 
-      <section className="rounded-md border border-neutral-200 p-4">
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
         <h1 className="text-lg font-semibold">{profile.name ?? profile.email}</h1>
         <dl className="mt-3 grid grid-cols-2 gap-y-2 text-sm sm:grid-cols-3">
           <DetailRow label="Email" value={profile.email} />
@@ -71,24 +71,24 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
         </dl>
       </section>
 
-      <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">이번 달 사용량</h2>
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+        <h2 className="text-sm font-medium text-ink">이번 달 사용량</h2>
         <p className="mt-2 text-sm">
           {usage.planCode} 플랜 · 이미지 생성 {usage.generation.used} / {usage.generation.limit} (남음{" "}
           {usage.generation.remaining})
         </p>
       </section>
 
-      <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">최근 활동</h2>
+      <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+        <h2 className="text-sm font-medium text-ink">최근 활동</h2>
         <ul className="mt-2 flex flex-col gap-1 text-sm">
           {recentActivity.map((log) => (
-            <li key={log.id} className="flex items-center justify-between text-xs text-neutral-500">
+            <li key={log.id} className="flex items-center justify-between text-xs text-muted">
               <span>{activityLabel(log.eventType)}</span>
               <span>{new Date(log.createdAt).toLocaleString("ko-KR")}</span>
             </li>
           ))}
-          {recentActivity.length === 0 && <li className="text-xs text-neutral-400">활동 기록이 없습니다.</li>}
+          {recentActivity.length === 0 && <li className="text-xs text-muted">활동 기록이 없습니다.</li>}
         </ul>
       </section>
     </main>
@@ -98,7 +98,7 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs text-neutral-400">{label}</dt>
+      <dt className="text-xs text-muted">{label}</dt>
       <dd className="mt-0.5">{value}</dd>
     </div>
   );
