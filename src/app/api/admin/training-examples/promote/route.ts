@@ -3,7 +3,7 @@ import { apiSuccess, toApiError } from "@/shared/http/response";
 import { requireAdminTier } from "@/shared/auth/session";
 import { adminContainer } from "@/modules/admin/container";
 
-/** 관리자 수동 트리거(§6) -- 아직 평가 안 된 완료 생성물을 비용 없는 행동 신호로 평가하고, 80점 이상만 DB 참고자료로, 60점 미만은 회피자료로 승격한다(60~79점은 저장하지 않음). */
+/** 관리자 수동 트리거(§6) -- 아직 평가 안 된 완료 생성물을 사용자 평가로 채점하고, 80점 이상만 DB 참고자료로, 60점 미만은 회피자료로 승격한다(60~79점은 저장하지 않음). */
 export async function POST(request: NextRequest) {
   try {
     requireAdminTier(request, ["super_admin", "manager"]);

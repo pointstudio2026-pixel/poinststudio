@@ -13,34 +13,36 @@ export const REFERENCE_PROMOTION_THRESHOLD = 0.6;
 /** 참고(reference) 자료로 저장/사용하는 컷오프 -- 이 값 이상만 DB에 남는다(2026-07-25). */
 export const REFERENCE_PROMOTION_UPPER_THRESHOLD = 0.8;
 
+/**
+ * 평가가 전혀 없을 때의 기본 점수. 60~79점 구간(NEUTRAL_SCORE 포함)은
+ * DB에 저장되지 않으므로, 사실상 "평가 안 남긴 결과물은 DB에 안 쌓인다"는
+ * 뜻이다(2026-07-25 사용자 지시).
+ */
+const NEUTRAL_SCORE = 0.7;
+
 export interface GenerationUsageSignals {
-  /** 사용자가 직접 남긴 평가(있으면 이게 최우선 신호). */
+  /** 사용자가 직접 남긴 평가 -- 이제 이게 유일한 신호다. */
   feedback?: { likedTags: string[]; dislikedTags: string[] } | null;
-  /** 이 생성 이후 RetryGenerationUseCase가 호출된 적 있는지. */
-  wasRetried: boolean;
-  /** ExportJob에서 실제로 내보냈는지. */
-  wasExported: boolean;
-  /** 프로젝트가 mockup 단계 이후까지 진행됐는지(만족했다는 방증). */
-  projectReachedMockupStage: boolean;
 }
 
 /**
  * 실제 생성 결과물이 DB 참고자료로 승격할 만한지 판단하는 점수. Vision AI
- * 호출 없음, AI 비용 0 -- 사용자가 직접 남긴 평가(있으면)를 최우선으로,
- * 없으면 행동 신호(재시도/내보내기/프로젝트 완료 여부)로 대체한다.
+ * 호출 없음, AI 비용 0 -- 사용자가 직접 남긴 평가만 본다. 재시도/내보내기/
+ * 프로젝트 진행도 같은 행동 신호는 더 이상 쓰지 않는다(2026-07-25 사용자
+ * 지시: "사용자가 export하지 않았다고 점수 깎는건 아닌 것 같아" -- 내보내기
+ * 안 했다고 나쁜 결과물이라는 보장이 없는데 감점하는 건 잘못된 대리 신호였다).
+ * 평가가 없으면 보통(neutral) 점수를 줘서 애초에 DB에 안 쌓이게 하고,
+ * 아쉬운 점을 남기면 회피(avoid)로, 좋았던 점을 남기면 참고(reference)로
+ * 자연스럽게 갈린다.
  */
 export function computeGenerationUsageScore(signals: GenerationUsageSignals): number {
   const { feedback } = signals;
-  if (feedback && (feedback.likedTags.length > 0 || feedback.dislikedTags.length > 0)) {
-    const liked = feedback.likedTags.length;
-    const disliked = feedback.dislikedTags.length;
-    const total = liked + disliked;
-    return Math.round((liked / total) * 100) / 100;
+  if (!feedback || (feedback.likedTags.length === 0 && feedback.dislikedTags.length === 0)) {
+    return NEUTRAL_SCORE;
   }
 
-  let score = 0.5;
-  if (signals.wasRetried) score -= 0.3;
-  if (signals.wasExported) score += 0.3;
-  if (signals.projectReachedMockupStage) score += 0.2;
-  return Math.min(1, Math.max(0, Math.round(score * 100) / 100));
+  const liked = feedback.likedTags.length;
+  const disliked = feedback.dislikedTags.length;
+  const total = liked + disliked;
+  return Math.round((liked / total) * 100) / 100;
 }

@@ -21,7 +21,6 @@ import {
   generationFeedbackRepositoryInstance,
   generationRepositoryInstance,
 } from "@/modules/generations/container";
-import { exportRepositoryInstance } from "@/modules/exports/container";
 import { projectRepositoryInstance } from "@/modules/projects/container";
 import { interviewRepositoryInstance } from "@/modules/interviews/container";
 import { promptRepositoryInstance } from "@/modules/prompts/container";
@@ -80,7 +79,6 @@ export const adminContainer = {
     generationEvaluationRepositoryInstance,
     generationRepositoryInstance,
     generationFeedbackRepositoryInstance,
-    exportRepositoryInstance,
     projectRepositoryInstance,
     interviewRepositoryInstance,
     promptRepositoryInstance,

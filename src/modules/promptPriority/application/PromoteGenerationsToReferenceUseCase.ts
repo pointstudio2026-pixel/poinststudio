@@ -1,13 +1,11 @@
 import type { GenerationEvaluationRepository } from "@/modules/generations/domain/GenerationEvaluationRepository";
 import type { GenerationRepository } from "@/modules/generations/domain/GenerationRepository";
 import type { GenerationFeedbackRepository } from "@/modules/generations/domain/GenerationFeedbackRepository";
-import type { ExportRepository } from "@/modules/exports/domain/ExportRepository";
 import type { ProjectRepository } from "@/modules/projects/domain/ProjectRepository";
 import type { InterviewRepository } from "@/modules/interviews/domain/InterviewRepository";
 import type { PromptRepository } from "@/modules/prompts/domain/PromptRepository";
 import type { PromptDecisionRecordRepository } from "@/modules/promptPriority/domain/PromptDecisionRecordRepository";
 import type { TrainingExampleRepository } from "@/modules/trainingExamples/domain/TrainingExampleRepository";
-import { getWorkspaceSteps } from "@/modules/projects/domain/Project";
 import {
   computeGenerationUsageScore,
   REFERENCE_PROMOTION_THRESHOLD,
@@ -25,19 +23,25 @@ const BELOW_THRESHOLD_CAPACITY = 10000;
 
 /**
  * 관리자 수동 트리거(§6) -- 아직 평가 안 된(usageScore=null) 완료 생성물을
- * 비용 없는 행동 신호로 평가하고, 80점 이상만 참고 DB(TrainingExample,
- * source:"USER_GENERATION")로 승격하고 60점 미만은 회피 자료로 저장한다.
- * 60~79점은 애매한 신호로 보고 DB에 남기지 않는다(2026-07-25). Vision AI
- * 호출 없음, AI 비용 0. Phase 1은 스케줄러 없이(다만 매일 자동 실행되는
- * referencePromotionWorker가 이미 이 유스케이스를 24시간마다 자동 호출한다
- * -- "관리자가 버튼으로"는 그 사이 즉시 확인하고 싶을 때 쓰는 수동 트리거다).
+ * 사용자가 직접 남긴 평가(GenerationFeedback)로 채점하고, 80점 이상만
+ * 참고 DB(TrainingExample, source:"USER_GENERATION")로 승격하고 60점
+ * 미만은 회피 자료로 저장한다. 60~79점은 애매한 신호로 보고 DB에 남기지
+ * 않는다(2026-07-25). 재시도/내보내기/프로젝트 진행도 같은 행동 신호는
+ * 더 이상 쓰지 않는다(2026-07-25 사용자 지시 -- "내보내기 안 했다고
+ * 점수 깎는 건 아닌 것 같다": 그런 대리 신호는 실제 품질과 무관하게 감점될
+ * 수 있어 잘못됐다). 평가가 아예 없으면 보통 점수(0.7, 저장 안 되는
+ * 구간)로 처리해 애매한 자료가 쌓이지 않는다. Vision AI 호출 없음, AI
+ * 비용 0(생성 직후 이미 채워진 Vision 판단이 있으면 평균으로 결합할 뿐,
+ * 이 유스케이스 자체는 새 AI 호출을 하지 않는다). Phase 1은 스케줄러
+ * 없이(다만 매일 자동 실행되는 referencePromotionWorker가 이미 이
+ * 유스케이스를 24시간마다 자동 호출한다 -- "관리자가 버튼으로"는 그 사이
+ * 즉시 확인하고 싶을 때 쓰는 수동 트리거다).
  */
 export class PromoteGenerationsToReferenceUseCase {
   constructor(
     private readonly generationEvaluationRepository: GenerationEvaluationRepository,
     private readonly generationRepository: GenerationRepository,
     private readonly generationFeedbackRepository: GenerationFeedbackRepository,
-    private readonly exportRepository: ExportRepository,
     private readonly projectRepository: ProjectRepository,
     private readonly interviewRepository: InterviewRepository,
     private readonly promptRepository: PromptRepository,
@@ -74,25 +78,9 @@ export class PromoteGenerationsToReferenceUseCase {
       if (!project) continue;
 
       const feedback = await this.generationFeedbackRepository.findByGenerationVersionId(version.id);
-      const siblingVersions = await this.generationRepository.listVersions(generation.id);
-      const maxVersionNumber = Math.max(...siblingVersions.map((v) => v.versionNumber));
-      // 이 결과 이후 새 버전이 또 생겼다는 건(수정/재시도) 사용자가 이 결과에
-      // 완전히 만족하지 못했을 가능성이 있다는 저렴한 대리 신호.
-      const wasRetried = version.versionNumber < maxVersionNumber;
-
-      const exportJobs = await this.exportRepository.listByProjectId(generation.projectId);
-      const wasExported = exportJobs.some((job) => job.sourceRefId === version.id && job.status === "completed");
-
-      const steps = getWorkspaceSteps(project.deliverableType);
-      const mockupIndex = steps.findIndex((s) => s.key === "mockup");
-      const currentIndex = steps.findIndex((s) => s.key === project.currentStep);
-      const projectReachedMockupStage = mockupIndex >= 0 && currentIndex >= mockupIndex;
 
       const behavioralScore = computeGenerationUsageScore({
         feedback: feedback ? { likedTags: feedback.likedTags, dislikedTags: feedback.dislikedTags } : null,
-        wasRetried,
-        wasExported,
-        projectReachedMockupStage,
       });
 
       // Vision AI(GPT) 판단이 생성 직후 이미 채워져 있으면(2026-07-24 신규
@@ -127,16 +115,12 @@ export class PromoteGenerationsToReferenceUseCase {
       // 관리자가 "왜 이 점수인지" 실제로 판단할 수 있도록, 이 예시 하나에
       // 실제로 반영된 신호를 그대로 서술한다(고정 문구가 아니라 매번 다른
       // 실제 근거) -- 사용자 요청 2026-07-24: "프롬프트를 해석까지 해주면
-      // 좋겠다, 점수가 높고 낮은지 판단할 수 있도록".
+      // 좋겠다, 점수가 높고 낮은지 판단할 수 있도록". feedback이 없으면(예:
+      // Vision 판단만으로 finalScore가 기준을 넘긴 경우) 빈 문자열로 남고
+      // 아래 visionQuality 항목이 실제 근거를 대신 설명한다.
       const signalNotes: string[] = [];
-      if (feedback && (feedback.likedTags.length > 0 || feedback.dislikedTags.length > 0)) {
-        if (feedback.likedTags.length > 0) signalNotes.push(`사용자가 좋았던 점으로 선택: ${feedback.likedTags.join(", ")}`);
-        if (feedback.dislikedTags.length > 0) signalNotes.push(`사용자가 아쉬운 점으로 선택: ${feedback.dislikedTags.join(", ")}`);
-      } else {
-        signalNotes.push(wasRetried ? "이후 재시도/수정됨(만족스럽지 않았을 가능성)" : "재시도 없이 그대로 사용됨");
-        signalNotes.push(wasExported ? "실제로 내보내기(export)함" : "아직 내보내지 않음");
-        signalNotes.push(projectReachedMockupStage ? "목업 단계까지 진행함" : "목업 단계 전");
-      }
+      if (feedback?.likedTags.length) signalNotes.push(`사용자가 좋았던 점으로 선택: ${feedback.likedTags.join(", ")}`);
+      if (feedback?.dislikedTags.length) signalNotes.push(`사용자가 아쉬운 점으로 선택: ${feedback.dislikedTags.join(", ")}`);
 
       await this.trainingExampleRepository.create({
         prompt: prompt.userPrompt,

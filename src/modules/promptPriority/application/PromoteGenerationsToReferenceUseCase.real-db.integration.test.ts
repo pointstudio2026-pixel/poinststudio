@@ -4,7 +4,6 @@ import { PromoteGenerationsToReferenceUseCase } from "@/modules/promptPriority/a
 import { PrismaGenerationEvaluationRepository } from "@/modules/generations/infrastructure/PrismaGenerationEvaluationRepository";
 import { PrismaGenerationRepository } from "@/modules/generations/infrastructure/PrismaGenerationRepository";
 import { PrismaGenerationFeedbackRepository } from "@/modules/generations/infrastructure/PrismaGenerationFeedbackRepository";
-import { PrismaExportRepository } from "@/modules/exports/infrastructure/PrismaExportRepository";
 import { PrismaProjectRepository } from "@/modules/projects/infrastructure/PrismaProjectRepository";
 import { PrismaInterviewRepository } from "@/modules/interviews/infrastructure/PrismaInterviewRepository";
 import { PrismaPromptRepository } from "@/modules/prompts/infrastructure/PrismaPromptRepository";
@@ -91,11 +90,18 @@ describe("PromoteGenerationsToReferenceUseCase (real Prisma repositories, real P
       completedAt: new Date(),
     });
 
+    const feedbackRepository = new PrismaGenerationFeedbackRepository();
+    await feedbackRepository.upsert({
+      generationVersionId: generation.currentVersion.id,
+      likedTags: [],
+      dislikedTags: ["너무 복잡해요"],
+      freeText: null,
+    });
+
     const useCase = new PromoteGenerationsToReferenceUseCase(
       new PrismaGenerationEvaluationRepository(),
       generationRepository,
-      new PrismaGenerationFeedbackRepository(),
-      new PrismaExportRepository(),
+      feedbackRepository,
       new PrismaProjectRepository(),
       new PrismaInterviewRepository(),
       promptRepository,
@@ -103,7 +109,7 @@ describe("PromoteGenerationsToReferenceUseCase (real Prisma repositories, real P
       new PrismaTrainingExampleRepository(),
     );
 
-    // 재시도 없음/미내보냄/목업 전 -- baseline 0.5, below the 0.6 threshold -> "회피" 버킷에 저장돼야 한다.
+    // 사용자가 아쉬운 점만 선택함(disliked-only) -> 0점, 0.6 미만이라 "회피" 버킷에 저장돼야 한다.
     const result = await useCase.execute();
 
     expect(result.promoted).toBeGreaterThanOrEqual(1);

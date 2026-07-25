@@ -5,9 +5,10 @@ import type { PromoteGenerationsToReferenceUseCase } from "@/modules/promptPrior
 import { logger } from "@/shared/logging/logger";
 
 /**
- * 매일 자동으로 아직 평가 안 된 완료 생성물을 평가하고(비용 없는 행동
- * 신호 + 사용자 평가), 60점 이상만 참고 DB로 승격한다. AI 호출 없음.
- * 이미지 생성 워커와 동일하게 Use Case를 파라미터로 받아 container.ts와의
+ * 매일 자동으로 아직 평가 안 된 완료 생성물을 사용자가 남긴 평가로
+ * 채점하고, 80점 이상만 참고 DB로, 60점 미만은 회피 DB로 승격한다
+ * (60~79점과 평가 없는 결과물은 저장하지 않음). AI 호출 없음. 이미지
+ * 생성 워커와 동일하게 Use Case를 파라미터로 받아 container.ts와의
  * 순환 참조를 피한다.
  */
 export function startReferencePromotionWorker(useCase: PromoteGenerationsToReferenceUseCase): Worker {
