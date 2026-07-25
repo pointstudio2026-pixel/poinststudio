@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,9 +24,20 @@ export function NewProjectButton({
   const [serverError, setServerError] = useState<string | null>(null);
   const { t } = useTranslation();
 
-  useEffect(() => {
-    onOpenChange?.(isOpen);
-  }, [isOpen, onOpenChange]);
+  // 마운트 시점에 한 번 도는 useEffect로 이 상태를 부모에 알리면(예: 이전
+  // 구현) 그 첫 실행에서 isOpen이 항상 초기값 false라 "방금 닫혔다"로
+  // 오해되어, 부모의 호버 드롭다운(PrimaryNav)이 열리자마자 스스로
+  // 닫혀버리는 실제 버그가 있었다(2026-07-25 발견) -- 실제 사용자 조작으로
+  // 열고 닫는 시점에만 명시적으로 알리도록 바꿔서 마운트 타이밍과 완전히
+  // 무관하게 만든다.
+  function openModal() {
+    setIsOpen(true);
+    onOpenChange?.(true);
+  }
+  function closeModal() {
+    setIsOpen(false);
+    onOpenChange?.(false);
+  }
 
   const {
     register,
@@ -39,7 +50,7 @@ export function NewProjectButton({
     setServerError(null);
     try {
       const { projectId } = await createProject(values.name);
-      setIsOpen(false);
+      closeModal();
       reset();
       router.push(`/projects/${projectId}`);
     } catch (err) {
@@ -51,7 +62,7 @@ export function NewProjectButton({
     <>
       <button
         type="button"
-        onClick={() => setIsOpen(true)}
+        onClick={openModal}
         className={
           variant === "menu-item"
             ? "w-full rounded-lg px-3 py-2 text-left text-sm transition hover:bg-paper"
@@ -85,7 +96,7 @@ export function NewProjectButton({
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setIsOpen(false)}
+                  onClick={closeModal}
                   className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-ink"
                 >
                   {t("dashboard.newProject.cancel")}
