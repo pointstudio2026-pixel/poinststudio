@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getWorkspaceSteps } from "@/modules/projects/domain/Project";
-import { STEP_ROUTES } from "@/features/workspace/stepRoutes";
+import { STEP_ROUTES, STEP_LABEL_MESSAGE_KEYS } from "@/features/workspace/stepRoutes";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 
 export function ProjectSidebar({
@@ -17,6 +18,7 @@ export function ProjectSidebar({
   deliverableType: string | null;
   planCode: PlanCode;
 }) {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const steps = getWorkspaceSteps(deliverableType);
   const currentStepIndex = steps.findIndex((s) => s.key === currentStep);
@@ -28,6 +30,7 @@ export function ProjectSidebar({
           const route = STEP_ROUTES[step.key];
           const href = route ? `/projects/${projectId}/${route}` : null;
           const isActive = Boolean(href && pathname === href);
+          const label = t(STEP_LABEL_MESSAGE_KEYS[step.key] ?? "workspaceSteps.deliverableType");
           const className = `whitespace-nowrap rounded-full px-3.5 py-2.5 text-sm transition ${
             isActive
               ? "bg-ink text-paper"
@@ -39,14 +42,14 @@ export function ProjectSidebar({
           if (!href) {
             return (
               <span key={step.key} className={className}>
-                {step.label}
+                {label}
               </span>
             );
           }
 
           return (
             <Link key={step.key} href={href} className={className}>
-              {step.label}
+              {label}
             </Link>
           );
         })}
@@ -58,7 +61,7 @@ export function ProjectSidebar({
           pathname === `/projects/${projectId}/export` ? "border-ink bg-ink text-paper" : "border-line"
         }`}
       >
-        Export Center
+        {t("workspaceSteps.exportCenter")}
       </Link>
     </aside>
   );

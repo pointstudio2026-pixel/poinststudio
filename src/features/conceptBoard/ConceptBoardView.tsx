@@ -13,6 +13,7 @@ import {
 import { Spinner } from "@/components/Spinner";
 import { ImageLightbox } from "@/components/ImageLightbox";
 import { NextStepButton } from "@/features/workspace/NextStepButton";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
 const SECTION_LABELS: Record<ConceptBoardSectionKeyDto, string> = {
   hero_image: "Hero Image",
@@ -26,6 +27,7 @@ const SECTION_LABELS: Record<ConceptBoardSectionKeyDto, string> = {
 };
 
 export function ConceptBoardView({ projectId }: { projectId: string }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["concept-board", projectId],
@@ -49,7 +51,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
       await generateConceptBoard(projectId);
       await queryClient.invalidateQueries({ queryKey: ["concept-board", projectId] });
     } catch (err) {
-      setGenerateError(err instanceof Error ? err.message : "컨셉 보드 생성에 실패했습니다.");
+      setGenerateError(err instanceof Error ? err.message : t("conceptBoard.generateFailed"));
     } finally {
       setIsGenerating(false);
     }
@@ -97,7 +99,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
     return (
       <div className="flex flex-col items-center gap-4 py-16 text-center">
         <h1 className="text-lg font-medium">
-          {notGenerated ? "아직 컨셉 보드가 없습니다" : "컨셉 보드를 불러오지 못했습니다"}
+          {notGenerated ? t("conceptBoard.notGeneratedTitle") : t("conceptBoard.loadFailedTitle")}
         </h1>
         <button
           type="button"
@@ -106,7 +108,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
           className="flex items-center gap-2 rounded-md bg-neutral-900 px-4 py-2 text-sm text-white disabled:opacity-50"
         >
           {isGenerating && <Spinner />}
-          컨셉 보드 생성하기
+          {t("conceptBoard.generateButton")}
         </button>
         {generateError && <p className="text-sm text-red-600">{generateError}</p>}
       </div>
@@ -120,9 +122,9 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
     <div className="flex flex-col gap-6">
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold">컨셉 보드</h1>
+          <h1 className="text-xl font-semibold">{t("conceptBoard.title")}</h1>
           <p className="text-xs text-neutral-400">
-            v{board.currentVersion.versionNumber} · {board.currentVersion.source === "ai" ? "AI 생성" : "사용자 수정"}
+            v{board.currentVersion.versionNumber} · {board.currentVersion.source === "ai" ? t("conceptBoard.sourceAi") : t("conceptBoard.sourceUser")}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -131,7 +133,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
             onClick={() => setShowVersions(!showVersions)}
             className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm"
           >
-            버전 기록
+            {t("conceptBoard.versionHistory")}
           </button>
           <button
             type="button"
@@ -139,7 +141,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
             disabled={isGenerating}
             className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm disabled:opacity-50"
           >
-            {isGenerating ? "재생성 중..." : "다시 생성"}
+            {isGenerating ? t("conceptBoard.regenerating") : t("conceptBoard.regenerate")}
           </button>
           <NextStepButton projectId={projectId} currentStepKey="concept_board" />
         </div>
@@ -149,7 +151,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
 
       {showVersions && (
         <section className="flex flex-col gap-2 rounded-md border border-neutral-200 p-4">
-          <h2 className="text-sm font-medium text-neutral-700">버전 타임라인</h2>
+          <h2 className="text-sm font-medium text-neutral-700">{t("conceptBoard.versionTimeline")}</h2>
           <ul className="flex flex-col gap-1">
             {versions.map((v) => (
               <li
@@ -157,12 +159,12 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
                 className="flex items-center justify-between rounded-md border border-neutral-200 px-3 py-2 text-sm"
               >
                 <span>
-                  v{v.versionNumber} · {v.source === "ai" ? "AI 생성" : "사용자 수정"} ·{" "}
+                  v{v.versionNumber} · {v.source === "ai" ? t("conceptBoard.sourceAi") : t("conceptBoard.sourceUser")} ·{" "}
                   {new Date(v.createdAt).toLocaleString("ko-KR")}
                 </span>
                 {v.versionNumber !== board.currentVersion.versionNumber && (
                   <button type="button" onClick={() => handleRestore(v.versionNumber)} className="text-xs underline">
-                    이 버전으로 복원
+                    {t("conceptBoard.restoreVersion")}
                   </button>
                 )}
               </li>
@@ -182,7 +184,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
                   onClick={() => moveSection(d.sectionOrder, index, -1)}
                   disabled={index === 0}
                   className="disabled:opacity-30"
-                  aria-label="위로 이동"
+                  aria-label={t("conceptBoard.moveUp")}
                 >
                   ▲
                 </button>
@@ -191,7 +193,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
                   onClick={() => moveSection(d.sectionOrder, index, 1)}
                   disabled={index === d.sectionOrder.length - 1}
                   className="disabled:opacity-30"
-                  aria-label="아래로 이동"
+                  aria-label={t("conceptBoard.moveDown")}
                 >
                   ▼
                 </button>
@@ -208,7 +210,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
                   <img src={d.heroImageUrl} alt="Hero" className="block h-auto w-full" />
                 </div>
               ) : (
-                <p className="text-sm text-neutral-400">아직 생성된 이미지가 없습니다.</p>
+                <p className="text-sm text-neutral-400">{t("conceptBoard.noImagesYet")}</p>
               ))}
 
             {section === "brand_summary" &&
@@ -221,7 +223,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
                     className="rounded-md border border-neutral-300 p-2 text-sm"
                   />
                   <button type="button" onClick={saveField} className="self-start rounded-md bg-neutral-900 px-3 py-1 text-xs text-white">
-                    저장
+                    {t("conceptBoard.save")}
                   </button>
                 </div>
               ) : (
@@ -265,7 +267,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
                     className="rounded-md border border-neutral-300 p-2 text-sm"
                   />
                   <button type="button" onClick={saveField} className="self-start rounded-md bg-neutral-900 px-3 py-1 text-xs text-white">
-                    저장
+                    {t("conceptBoard.save")}
                   </button>
                 </div>
               ) : (
@@ -288,7 +290,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-neutral-400">아직 생성된 이미지가 없습니다.</p>
+                  <p className="text-sm text-neutral-400">{t("conceptBoard.noImagesYet")}</p>
                 )}
               </div>
             )}
@@ -303,12 +305,12 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
                     className="rounded-md border border-neutral-300 p-2 text-sm"
                   />
                   <button type="button" onClick={saveField} className="self-start rounded-md bg-neutral-900 px-3 py-1 text-xs text-white">
-                    저장
+                    {t("conceptBoard.save")}
                   </button>
                 </div>
               ) : (
                 <p onClick={() => startEditingField("designNotes", d.designNotes)} className="cursor-text text-sm text-neutral-600">
-                  {d.designNotes || "클릭하여 메모를 추가하세요."}
+                  {d.designNotes || t("conceptBoard.addNotePrompt")}
                 </p>
               ))}
           </section>

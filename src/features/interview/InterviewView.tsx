@@ -13,6 +13,7 @@ import {
 } from "@/services/interview-service";
 import { Spinner } from "@/components/Spinner";
 import { NextStepButton } from "@/features/workspace/NextStepButton";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 
@@ -27,6 +28,7 @@ function matchGroupForAnswer(question: InterviewQuestionDto, answer: string): st
 }
 
 export function InterviewView({ projectId }: { projectId: string }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["interview", projectId],
@@ -169,7 +171,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
     if (!currentQuestion) return;
     const value = answers[currentQuestion.key] ?? "";
     if (currentQuestion.required && !value.trim()) {
-      setValidationError("필수 질문입니다. 답변을 입력해주세요.");
+      setValidationError(t("interview.requiredValidation"));
       return;
     }
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -228,7 +230,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
       await completeInterview(projectId);
       await queryClient.invalidateQueries({ queryKey: ["interview", projectId] });
     } catch (err) {
-      setCompleteError(err instanceof Error ? err.message : "완료 처리에 실패했습니다.");
+      setCompleteError(err instanceof Error ? err.message : t("interview.completeFailed"));
     } finally {
       setIsCompleting(false);
     }
@@ -245,7 +247,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
   if (isError || !data) {
     return (
       <div className="flex items-center justify-center py-24 text-sm text-red-600">
-        인터뷰를 불러오지 못했습니다.
+        {t("interview.loadFailed")}
       </div>
     );
   }
@@ -254,8 +256,8 @@ export function InterviewView({ projectId }: { projectId: string }) {
     return (
       <div className="flex flex-col gap-6">
         <div>
-          <h1 className="text-xl font-semibold">인터뷰가 완료되었습니다</h1>
-          <p className="mt-1 text-sm text-muted">입력하신 답변은 스타일 추천과 브랜드 전략 분석에 사용됩니다.</p>
+          <h1 className="text-xl font-semibold">{t("interview.completedTitle")}</h1>
+          <p className="mt-1 text-sm text-muted">{t("interview.completedSubtitle")}</p>
         </div>
 
         <ul className="flex flex-col gap-3">
@@ -265,7 +267,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
               <li key={q.key} className="rounded-md border border-neutral-200 p-3 text-sm">
                 <span className="font-medium">{q.text}</span>
                 <p className="mt-1 text-neutral-500">
-                  {record?.answer?.trim() ? record.answer : "(답변 없음)"}
+                  {record?.answer?.trim() ? record.answer : t("interview.noAnswer")}
                 </p>
               </li>
             );
@@ -283,9 +285,9 @@ export function InterviewView({ projectId }: { projectId: string }) {
     <div className="flex flex-col gap-6">
       <header className="flex items-center justify-end">
         <span className="text-xs text-muted">
-          {saveStatus === "saving" && "저장 중..."}
-          {saveStatus === "saved" && "저장됨"}
-          {saveStatus === "error" && "저장 실패"}
+          {saveStatus === "saving" && t("interview.saving")}
+          {saveStatus === "saved" && t("interview.saved")}
+          {saveStatus === "error" && t("interview.saveFailed")}
         </span>
       </header>
 
@@ -299,7 +301,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
       {isCheckingFollowUp && (
         <div className="flex items-center justify-center gap-2 text-sm text-neutral-500">
           <Spinner />
-          답변을 검토하고 있어요...
+          {t("interview.checkingFollowUp")}
         </div>
       )}
 
@@ -309,7 +311,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
             {displayIndex + 1} / {questions.length}
             {currentQuestion.key.startsWith("followUp_") && (
               <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-amber-700">
-                AI 추가 질문
+                {t("interview.aiFollowUpBadge")}
               </span>
             )}
           </p>
@@ -345,7 +347,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                       onClick={() => setSelectedGroupName(null)}
                       className="w-fit text-xs text-neutral-500 underline"
                     >
-                      ‹ 다른 주제 선택
+                      {t("interview.otherTopic")}
                     </button>
                     <ul className="flex flex-col gap-1 rounded-md border border-neutral-200 p-1">
                       {(
@@ -383,7 +385,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                     type="text"
                     value={optionSearch}
                     onChange={(e) => setOptionSearch(e.target.value)}
-                    placeholder="검색 또는 목록에서 선택"
+                    placeholder={t("interview.searchOrSelect")}
                     autoFocus
                     className="rounded-md border border-neutral-300 px-3 py-2"
                   />
@@ -417,7 +419,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                     {(currentQuestion.options ?? []).filter((option) =>
                       option.toLowerCase().includes(optionSearch.trim().toLowerCase()),
                     ).length === 0 && (
-                      <li className="px-3 py-2 text-sm text-neutral-400">검색 결과가 없습니다.</li>
+                      <li className="px-3 py-2 text-sm text-neutral-400">{t("interview.noSearchResults")}</li>
                     )}
                   </ul>
                 </>
@@ -432,7 +434,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                         isOtherSelected() ? "bg-neutral-900 text-white" : "hover:bg-neutral-100"
                       }`}
                     >
-                      기타 (직접 입력)
+                      {t("interview.otherManualInput")}
                       {isOtherSelected() && <span aria-hidden>✓</span>}
                     </button>
                   </li>
@@ -443,7 +445,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                   type="text"
                   value={otherDraft}
                   onChange={(e) => handleOtherTextChange(e.target.value)}
-                  placeholder="직접 입력해주세요"
+                  placeholder={t("interview.pleaseTypeAnswer")}
                   autoFocus
                   className="rounded-md border border-neutral-300 px-3 py-2"
                 />
@@ -459,7 +461,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                 className="rounded-md border border-neutral-300 px-3 py-2"
               />
               {!currentQuestion.required && (
-                <p className="text-xs text-neutral-400">작성하지 않아도 다음 단계로 넘어갈 수 있습니다.</p>
+                <p className="text-xs text-neutral-400">{t("interview.optionalNotice")}</p>
               )}
             </>
           ) : (
@@ -481,14 +483,14 @@ export function InterviewView({ projectId }: { projectId: string }) {
               disabled={displayIndex === 0}
               className="rounded-md border border-neutral-300 px-4 py-2 text-sm disabled:opacity-40"
             >
-              이전
+              {t("interview.previous")}
             </button>
             <button
               type="button"
               onClick={goNext}
               className="rounded-md bg-neutral-900 px-4 py-2 text-sm text-white"
             >
-              {displayIndex < questions.length - 1 ? "다음" : "검토하기"}
+              {displayIndex < questions.length - 1 ? t("interview.next") : t("interview.review")}
             </button>
           </div>
         </section>
@@ -496,7 +498,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
 
       {!isCheckingFollowUp && showSummary && (
         <section className="flex flex-col gap-4">
-          <h1 className="text-lg font-medium">답변 검토</h1>
+          <h1 className="text-lg font-medium">{t("interview.reviewTitle")}</h1>
           <ul className="flex flex-col gap-3">
             {questions.map((q, i) => (
               <li key={q.key} className="rounded-md border border-neutral-200 p-3 text-sm">
@@ -512,7 +514,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                     }}
                     className="text-xs underline"
                   >
-                    수정
+                    {t("interview.edit")}
                   </button>
                 </div>
                 <p className="mt-1 text-neutral-500">
@@ -524,7 +526,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
 
           {missingRequired.length > 0 && (
             <p className="text-sm text-red-600">
-              필수 질문에 답변하지 않았습니다: {missingRequired.map((q) => q.text).join(", ")}
+              {t("interview.missingRequired", { list: missingRequired.map((q) => q.text).join(", ") })}
             </p>
           )}
           {completeError && <p className="text-sm text-red-600">{completeError}</p>}
@@ -535,7 +537,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
               onClick={goPrevious}
               className="rounded-md border border-neutral-300 px-4 py-2 text-sm"
             >
-              이전
+              {t("interview.previous")}
             </button>
             <button
               type="button"
@@ -544,7 +546,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
               className="flex items-center gap-2 rounded-md bg-neutral-900 px-4 py-2 text-sm text-white disabled:opacity-50"
             >
               {isCompleting && <Spinner />}
-              인터뷰 완료
+              {t("interview.completeButton")}
             </button>
           </div>
         </section>

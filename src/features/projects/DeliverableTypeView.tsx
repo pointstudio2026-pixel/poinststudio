@@ -6,8 +6,10 @@ import { DELIVERABLE_TYPE_OPTIONS } from "@/modules/projects/domain/deliverableT
 import { selectDeliverableType } from "@/services/project-service";
 import { STEP_ROUTES } from "@/features/workspace/stepRoutes";
 import { Spinner } from "@/components/Spinner";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
 export function DeliverableTypeView({ projectId }: { projectId: string }) {
+  const { t } = useTranslation();
   const router = useRouter();
   const [selected, setSelected] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -26,7 +28,7 @@ export function DeliverableTypeView({ projectId }: { projectId: string }) {
       router.push(`/projects/${projectId}/${STEP_ROUTES.brand_interview}`);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "작업물 유형 선택에 실패했습니다.");
+      setError(err instanceof Error ? err.message : t("deliverableType.selectFailed"));
       setSelected(null);
     } finally {
       setIsSaving(false);
@@ -36,9 +38,9 @@ export function DeliverableTypeView({ projectId }: { projectId: string }) {
   return (
     <div className="flex flex-col gap-8">
       <header>
-        <h1 className="text-xl font-semibold">어떤 종류의 작업물을 만들고 싶으신가요?</h1>
+        <h1 className="text-xl font-semibold">{t("deliverableType.title")}</h1>
         <p className="mt-1 text-sm text-neutral-500">
-          선택한 유형에 따라 이후 인터뷰 질문과 진행 단계가 달라집니다.
+          {t("deliverableType.subtitle")}
         </p>
       </header>
 

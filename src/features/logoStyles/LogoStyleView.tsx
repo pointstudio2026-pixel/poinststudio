@@ -11,12 +11,14 @@ import {
 } from "@/services/logo-styles-service";
 import { Spinner } from "@/components/Spinner";
 import { NextStepButton } from "@/features/workspace/NextStepButton";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
 const MAX_ADVANCED_SELECTIONS = 3;
 
 function Stars({ count }: { count: number }) {
+  const { t } = useTranslation();
   return (
-    <span className="text-amber-500" aria-label={`추천도 ${count}/5`}>
+    <span className="text-amber-500" aria-label={t("logoStyle.starsLabel", { count })}>
       {"★".repeat(count)}
       <span className="text-neutral-300">{"★".repeat(5 - count)}</span>
     </span>
@@ -24,6 +26,7 @@ function Stars({ count }: { count: number }) {
 }
 
 export function LogoStyleView({ projectId }: { projectId: string }) {
+  const { t } = useTranslation();
   const [advancedMode, setAdvancedMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isSelecting, setIsSelecting] = useState(false);
@@ -77,7 +80,7 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
       await selectLogoStyle(projectId, selectedIds);
       setSelected(true);
     } catch (err) {
-      setSelectError(err instanceof Error ? err.message : "로고 스타일 선택에 실패했습니다.");
+      setSelectError(err instanceof Error ? err.message : t("logoStyle.selectFailed"));
     } finally {
       setIsSelecting(false);
     }
@@ -102,10 +105,10 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
     return (
       <div className="flex flex-col items-center gap-2 py-24 text-center">
         <h1 className="text-lg font-medium">
-          {notReady ? "브랜드 전략을 먼저 확정해주세요" : "로고 스타일 추천을 불러오지 못했습니다"}
+          {notReady ? t("logoStyle.strategyFirstTitle") : t("logoStyle.recommendLoadFailedTitle")}
         </h1>
         <p className="text-sm text-neutral-400">
-          {notReady && "브랜드 전략 선택을 마치면 이 단계로 자동으로 넘어올 수 있습니다."}
+          {notReady && t("logoStyle.strategyFirstBody")}
         </p>
       </div>
     );
@@ -116,9 +119,9 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
     return (
       <div className="flex flex-col gap-6">
         <div>
-          <h1 className="text-xl font-semibold">로고 스타일이 선택되었습니다</h1>
+          <h1 className="text-xl font-semibold">{t("logoStyle.selectedTitle")}</h1>
           <p className="mt-1 text-sm text-neutral-500">
-            {chosen.map((c) => c.name).join(", ")} 방향으로 이미지를 생성합니다.
+            {t("logoStyle.selectedBody", { names: chosen.map((c) => c.name).join(", ") })}
           </p>
         </div>
         <div>
@@ -131,9 +134,9 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
   return (
     <div className="flex flex-col gap-8">
       <header>
-        <h1 className="text-xl font-semibold">어떤 스타일의 로고를 원하시나요?</h1>
+        <h1 className="text-xl font-semibold">{t("logoStyle.headerTitle")}</h1>
         <p className="mt-1 text-sm text-neutral-500">
-          브랜드 분석을 바탕으로 추천 스타일을 먼저 제안드립니다. 원하는 스타일을 선택하면 해당 방향으로 로고를 생성합니다.
+          {t("logoStyle.headerBody")}
         </p>
       </header>
 
@@ -141,10 +144,10 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
         <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
           <div className="flex items-center gap-2 text-sm font-medium text-amber-800">
             <Stars count={5} />
-            <span>AI 추천</span>
+            <span>{t("logoStyle.aiRecommendBadge")}</span>
           </div>
           <p className="mt-2 text-sm text-neutral-700">
-            브랜드 분석 결과, <strong>&ldquo;{topPick.category.name}&rdquo;</strong>이(가) 현재 브랜드에 가장 적합합니다.
+            {t("logoStyle.topPickReasonPrefix")} <strong>&ldquo;{topPick.category.name}&rdquo;</strong>{t("logoStyle.topPickReasonSuffix")}
           </p>
           <p className="mt-1 text-sm text-neutral-500">{topPick.reason}</p>
         </section>
@@ -152,8 +155,8 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
 
       <div className="flex items-center justify-between rounded-xl border border-neutral-200 px-4 py-3">
         <div>
-          <p className="text-sm font-medium">고급 옵션</p>
-          <p className="text-xs text-neutral-400">최대 {MAX_ADVANCED_SELECTIONS}개까지 스타일을 조합해서 선택할 수 있습니다.</p>
+          <p className="text-sm font-medium">{t("logoStyle.advancedOptions")}</p>
+          <p className="text-xs text-neutral-400">{t("logoStyle.advancedOptionsBody", { max: MAX_ADVANCED_SELECTIONS })}</p>
         </div>
         <button
           type="button"
@@ -201,7 +204,9 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
           className="flex items-center gap-2 rounded-full bg-neutral-900 px-6 py-3 text-sm font-medium text-white shadow-lg transition hover:opacity-90 disabled:opacity-40"
         >
           {isSelecting && <Spinner />}
-          {selectedIds.length > 0 ? `${selectedIds.length}개 스타일로 이미지 생성하기` : "스타일을 선택해주세요"}
+          {selectedIds.length > 0
+            ? t("logoStyle.generateWithCount", { count: selectedIds.length })
+            : t("logoStyle.pleaseSelect")}
         </button>
       </div>
     </div>
@@ -217,6 +222,7 @@ function LogoStyleCard({
   isSelected: boolean;
   onSelect: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div
       className={`group flex flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${
@@ -257,7 +263,7 @@ function LogoStyleCard({
               : "border border-neutral-300 text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"
           }`}
         >
-          {isSelected ? "선택됨" : "선택"}
+          {isSelected ? t("logoStyle.selected") : t("logoStyle.select")}
         </button>
       </div>
     </div>
@@ -273,6 +279,7 @@ function AiRecommendedCard({
   isSelected: boolean;
   onSelect: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div
       className={`group flex flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${
@@ -283,7 +290,7 @@ function AiRecommendedCard({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/logo-styles/ai-recommended.png"
-          alt="AI 추천"
+          alt={t("logoStyle.aiRecommendBadge")}
           className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
         />
         {isSelected && (
@@ -294,8 +301,8 @@ function AiRecommendedCard({
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
-          <h3 className="text-base font-semibold">AI 추천</h3>
-          <p className="mt-1 text-sm text-neutral-500">ASTER가 브랜드 분석을 바탕으로 가장 적합한 스타일을 추천합니다.</p>
+          <h3 className="text-base font-semibold">{t("logoStyle.aiRecommendBadge")}</h3>
+          <p className="mt-1 text-sm text-neutral-500">{t("logoStyle.aiRecommendedDescription")}</p>
         </div>
         <ul className="flex flex-col gap-1 text-sm">
           {topThree.map((r, i) => (
@@ -314,7 +321,7 @@ function AiRecommendedCard({
               : "border border-amber-300 text-amber-700 hover:border-amber-500 hover:text-amber-900"
           }`}
         >
-          {isSelected ? "선택됨" : "1순위 추천으로 선택"}
+          {isSelected ? t("logoStyle.selected") : t("logoStyle.selectTopPick")}
         </button>
       </div>
     </div>

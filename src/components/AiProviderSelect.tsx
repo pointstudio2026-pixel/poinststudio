@@ -47,7 +47,7 @@ export function AiProviderSelect({
         disabled={disabled}
         className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm disabled:opacity-50"
       >
-        <option value="">AI 모델: 자동</option>
+        <option value="">{t("aiProviderSelect.auto")}</option>
         {providers.map((p) => (
           <option key={p} value={p}>
             {PROVIDER_LABELS[p] ?? p}

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getNextStep } from "@/features/workspace/stepRoutes";
+import { getNextStep, STEP_LABEL_MESSAGE_KEYS } from "@/features/workspace/stepRoutes";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
 export function NextStepButton({
   projectId,
@@ -15,15 +16,17 @@ export function NextStepButton({
    */
   deliverableType?: string | null;
 }) {
+  const { t } = useTranslation();
   const next = getNextStep(currentStepKey, deliverableType);
   if (!next) return null;
+  const label = t(STEP_LABEL_MESSAGE_KEYS[next.key] ?? "workspaceSteps.deliverableType");
 
   return (
     <Link
       href={`/projects/${projectId}/${next.route}`}
       className="inline-flex items-center gap-2 rounded-md bg-neutral-900 px-4 py-2 text-sm text-white transition hover:opacity-90"
     >
-      다음 단계: {next.label}
+      {t("workspaceSteps.nextStep", { label })}
       <span aria-hidden>→</span>
     </Link>
   );

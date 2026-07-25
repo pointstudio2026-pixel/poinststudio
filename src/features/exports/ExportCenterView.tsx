@@ -15,14 +15,17 @@ import { fetchMockups } from "@/services/mockups-service";
 import { CONCEPT_BOARD_SECTIONS } from "@/modules/conceptBoards/domain/ConceptBoard";
 import type { ConceptBoardSectionKeyDto } from "@/services/concept-board-service";
 import { Spinner } from "@/components/Spinner";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
+import type { MessageKey } from "@/shared/i18n/messages/types";
 
-const SOURCE_LABELS: Record<ExportSourceDto, string> = {
-  concept_board: "Concept Board (PDF)",
-  generation: "Generation 이미지",
-  mockup: "Mockup 이미지",
+const SOURCE_LABEL_KEYS: Record<ExportSourceDto, MessageKey> = {
+  concept_board: "exportCenter.sourceConceptBoard",
+  generation: "exportCenter.sourceGeneration",
+  mockup: "exportCenter.sourceMockup",
 };
 
 export function ExportCenterView({ projectId }: { projectId: string }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [source, setSource] = useState<ExportSourceDto>("concept_board");
   const [format, setFormat] = useState<ExportFormatDto>("pdf");
@@ -83,7 +86,7 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
       });
       await queryClient.invalidateQueries({ queryKey: ["exports", projectId] });
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "Export 요청에 실패했습니다.");
+      setActionError(err instanceof Error ? err.message : t("exportCenter.requestFailed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -95,14 +98,14 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-xl font-semibold">Export Center</h1>
+        <h1 className="text-xl font-semibold">{t("workspaceSteps.exportCenter")}</h1>
       </header>
 
       <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">새 Export</h2>
+        <h2 className="text-sm font-medium text-neutral-700">{t("exportCenter.newExport")}</h2>
 
         <div className="mt-2 flex gap-2">
-          {(Object.keys(SOURCE_LABELS) as ExportSourceDto[]).map((key) => (
+          {(Object.keys(SOURCE_LABEL_KEYS) as ExportSourceDto[]).map((key) => (
             <button
               key={key}
               type="button"
@@ -111,14 +114,14 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
                 source === key ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-300"
               }`}
             >
-              {SOURCE_LABELS[key]}
+              {t(SOURCE_LABEL_KEYS[key])}
             </button>
           ))}
         </div>
 
         {source === "concept_board" && (
           <div className="mt-3">
-            <p className="text-xs font-medium text-neutral-500">포함할 섹션</p>
+            <p className="text-xs font-medium text-neutral-500">{t("exportCenter.sectionsToInclude")}</p>
             <div className="mt-1 flex flex-wrap gap-2">
               {CONCEPT_BOARD_SECTIONS.map((section) => (
                 <label key={section} className="flex items-center gap-1 text-xs">
@@ -137,17 +140,17 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
                 checked={includeBrandInfo}
                 onChange={(e) => setIncludeBrandInfo(e.target.checked)}
               />
-              브랜드 텍스트 정보 포함 (요약/핵심가치/메모)
+              {t("exportCenter.includeBrandInfo")}
             </label>
             {!boardData?.board && (
-              <p className="mt-2 text-xs text-neutral-400">Concept Board가 아직 생성되지 않았습니다.</p>
+              <p className="mt-2 text-xs text-neutral-400">{t("exportCenter.conceptBoardNotGenerated")}</p>
             )}
           </div>
         )}
 
         {source === "generation" && (
           <div className="mt-3">
-            <p className="text-xs font-medium text-neutral-500">이미지 선택</p>
+            <p className="text-xs font-medium text-neutral-500">{t("exportCenter.selectImage")}</p>
             <div className="mt-1 flex gap-2">
               {(generationData?.generation.currentVersion.images ?? []).map((img, i) => (
                 <button
@@ -176,7 +179,7 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
 
         {source === "mockup" && (
           <div className="mt-3">
-            <p className="text-xs font-medium text-neutral-500">목업 선택</p>
+            <p className="text-xs font-medium text-neutral-500">{t("exportCenter.selectMockup")}</p>
             <div className="mt-1 flex flex-wrap gap-2">
               {(mockupsData?.mockups ?? [])
                 .filter((m) => m.status === "completed")
@@ -216,13 +219,13 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
           className="mt-4 flex items-center gap-2 rounded-md bg-neutral-900 px-4 py-2 text-sm text-white disabled:opacity-50"
         >
           {isSubmitting && <Spinner />}
-          Export 시작
+          {t("exportCenter.startExport")}
         </button>
         {actionError && <p className="mt-2 text-sm text-red-600">{actionError}</p>}
       </section>
 
       <section>
-        <h2 className="mb-2 text-sm font-medium text-neutral-700">다운로드 센터</h2>
+        <h2 className="mb-2 text-sm font-medium text-neutral-700">{t("exportCenter.downloadCenter")}</h2>
         <ul className="flex flex-col gap-2">
           {(exportsData?.exports ?? []).map((job) => (
             <li
@@ -230,25 +233,25 @@ export function ExportCenterView({ projectId }: { projectId: string }) {
               className="flex items-center justify-between rounded-md border border-neutral-200 px-3 py-2 text-sm"
             >
               <span>
-                {SOURCE_LABELS[job.source]} · {job.format.toUpperCase()} · {job.status}
-                {job.watermarked && <span className="ml-1 text-xs text-amber-600">(워터마크)</span>}
+                {t(SOURCE_LABEL_KEYS[job.source])} · {job.format.toUpperCase()} · {job.status}
+                {job.watermarked && <span className="ml-1 text-xs text-amber-600">{t("exportCenter.watermarked")}</span>}
                 <span className="ml-2 text-xs text-neutral-400">
                   {new Date(job.createdAt).toLocaleString("ko-KR")}
                 </span>
               </span>
               {job.status === "completed" ? (
                 <a href={downloadExportUrl(job.id)} className="text-xs underline">
-                  다운로드
+                  {t("exportCenter.download")}
                 </a>
               ) : job.status === "failed" ? (
-                <span className="text-xs text-red-600">실패: {job.errorMessage}</span>
+                <span className="text-xs text-red-600">{t("exportCenter.failedWithMessage", { message: job.errorMessage ?? "" })}</span>
               ) : (
                 <Spinner />
               )}
             </li>
           ))}
           {exportsData?.exports.length === 0 && (
-            <li className="text-sm text-neutral-400">아직 Export 이력이 없습니다.</li>
+            <li className="text-sm text-neutral-400">{t("exportCenter.noExportsYet")}</li>
           )}
         </ul>
       </section>

@@ -9,21 +9,23 @@ import {
   type ProjectDto,
 } from "@/services/project-service";
 import { getWorkspaceSteps } from "@/modules/projects/domain/Project";
-import { STEP_ROUTES } from "@/features/workspace/stepRoutes";
+import { STEP_ROUTES, STEP_LABEL_MESSAGE_KEYS } from "@/features/workspace/stepRoutes";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
+import type { MessageKey } from "@/shared/i18n/messages/types";
 
 type SaveStatus = "idle" | "editing" | "saving" | "saved" | "error";
 
-const SAVE_STATUS_LABELS: Record<SaveStatus, string> = {
-  idle: "",
-  editing: "수정 중...",
-  saving: "저장 중...",
-  saved: "저장됨",
-  error: "저장 실패",
+const SAVE_STATUS_MESSAGE_KEYS: Record<Exclude<SaveStatus, "idle">, MessageKey> = {
+  editing: "workspaceView.editing",
+  saving: "workspaceView.saving",
+  saved: "workspaceView.saved",
+  error: "workspaceView.saveFailed",
 };
 
 const AUTOSAVE_DELAY_MS = 1500;
 
 export function WorkspaceView({ project: initialProject }: { project: ProjectDto }) {
+  const { t } = useTranslation();
   const router = useRouter();
   const [project, setProject] = useState(initialProject);
   const [name, setName] = useState(initialProject.name);
@@ -79,9 +81,7 @@ export function WorkspaceView({ project: initialProject }: { project: ProjectDto
   }
 
   async function handleDelete() {
-    const confirmed = window.confirm(
-      "이 프로젝트를 삭제하시겠습니까? 삭제된 프로젝트는 휴지통으로 이동합니다.",
-    );
+    const confirmed = window.confirm(t("workspaceView.confirmDelete"));
     if (!confirmed) return;
     await deleteProject(project.id);
     router.push("/projects");
@@ -89,6 +89,10 @@ export function WorkspaceView({ project: initialProject }: { project: ProjectDto
 
   const steps = getWorkspaceSteps(project.deliverableType);
   const currentStepIndex = steps.findIndex((s) => s.key === project.currentStep);
+  const currentStepKey = steps[currentStepIndex]?.key;
+  const currentStepLabel = currentStepKey && STEP_LABEL_MESSAGE_KEYS[currentStepKey]
+    ? t(STEP_LABEL_MESSAGE_KEYS[currentStepKey])
+    : (steps[currentStepIndex]?.label ?? project.currentStep);
 
   return (
     <div>
@@ -96,24 +100,24 @@ export function WorkspaceView({ project: initialProject }: { project: ProjectDto
         <input
           value={name}
           onChange={handleNameChange}
-          aria-label="프로젝트 이름"
+          aria-label={t("workspaceView.projectNameLabel")}
           className="flex-1 border-b border-transparent px-1 py-1 text-xl font-semibold outline-none focus:border-line"
         />
-        <button type="button" onClick={toggleFavorite} aria-label="즐겨찾기">
+        <button type="button" onClick={toggleFavorite} aria-label={t("workspaceView.favoriteLabel")}>
           {project.isFavorite ? "★" : "☆"}
         </button>
       </header>
       <p className="mt-1 h-4 text-xs text-muted">
-        {SAVE_STATUS_LABELS[saveStatus]}
+        {saveStatus !== "idle" && t(SAVE_STATUS_MESSAGE_KEYS[saveStatus])}
         {saveStatus === "error" && (
           <button type="button" onClick={() => saveName(name)} className="ml-2 underline">
-            다시 시도
+            {t("workspaceView.retry")}
           </button>
         )}
       </p>
 
       <p className="eyebrow mt-6 text-sm text-muted">
-        현재 단계: {steps[currentStepIndex]?.label ?? project.currentStep} (
+        {t("workspaceView.currentStep", { label: currentStepLabel })} (
         {currentStepIndex + 1}/{steps.length})
       </p>
       <div className="mt-4 rounded-2xl border border-dashed border-line bg-surface p-8 text-center text-sm">
@@ -122,12 +126,11 @@ export function WorkspaceView({ project: initialProject }: { project: ProjectDto
             href={`/projects/${project.id}/${STEP_ROUTES[project.currentStep]}`}
             className="rounded-full bg-ink px-4 py-2 text-paper transition hover:opacity-90"
           >
-            {steps[currentStepIndex]?.label ?? project.currentStep} 이동
+            {t("workspaceView.goToStep", { label: currentStepLabel })}
           </Link>
         ) : (
           <p className="text-muted">
-            {steps[currentStepIndex]?.label ?? project.currentStep} 화면은 다음 작업에서
-            구현됩니다.
+            {t("workspaceView.stepNotImplemented", { label: currentStepLabel })}
           </p>
         )}
       </div>
@@ -138,14 +141,14 @@ export function WorkspaceView({ project: initialProject }: { project: ProjectDto
           onClick={toggleArchive}
           className="rounded-full border border-line px-3 py-1.5 text-sm transition hover:border-ink"
         >
-          {project.archivedAt ? "보관 해제" : "보관"}
+          {project.archivedAt ? t("workspaceView.unarchive") : t("workspaceView.archive")}
         </button>
         <button
           type="button"
           onClick={handleDelete}
           className="rounded-full border border-red-300 px-3 py-1.5 text-sm text-red-600"
         >
-          삭제
+          {t("workspaceView.delete")}
         </button>
       </div>
     </div>

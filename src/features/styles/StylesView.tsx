@@ -18,6 +18,7 @@ import { fetchInterview } from "@/services/interview-service";
 import { suggestColorSwatchesFromNotes } from "@/modules/colorPalettes/domain/interviewColorSuggestion";
 import { Spinner } from "@/components/Spinner";
 import { NextStepButton } from "@/features/workspace/NextStepButton";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
 const HEX_PATTERN = /^#[0-9a-fA-F]{6}$/;
 
@@ -38,6 +39,7 @@ function CustomSwatchEditor({
   onChangeLabel: (label: string) => void;
   onConfirmHex: (hex: string) => void;
 }) {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<"hex" | "cmyk" | null>(null);
   const [hexDraft, setHexDraft] = useState(swatch.hex);
   const [cmykDraft, setCmykDraft] = useState({ c: "", m: "", y: "", k: "" });
@@ -45,7 +47,7 @@ function CustomSwatchEditor({
 
   function confirmHex() {
     if (!HEX_PATTERN.test(hexDraft)) {
-      setError("#RRGGBB 형식(6자리)으로 입력해주세요.");
+      setError(t("styles.hexFormatError"));
       return;
     }
     setError(null);
@@ -55,7 +57,7 @@ function CustomSwatchEditor({
   function confirmCmyk() {
     const values = [cmykDraft.c, cmykDraft.m, cmykDraft.y, cmykDraft.k].map(Number);
     if (values.some((v) => Number.isNaN(v) || v < 0 || v > 100)) {
-      setError("C/M/Y/K는 0~100 사이 숫자로 입력해주세요.");
+      setError(t("styles.cmykFormatError"));
       return;
     }
     setError(null);
@@ -71,14 +73,14 @@ function CustomSwatchEditor({
           value={swatch.hex}
           onChange={(e) => onConfirmHex(e.target.value)}
           className="h-7 w-9 rounded border border-neutral-300"
-          aria-label={`색상 ${index + 1} 피커`}
+          aria-label={t("styles.colorPickerLabel", { index: index + 1 })}
         />
         <input
           type="text"
           value={swatch.label}
           onChange={(e) => onChangeLabel(e.target.value)}
           className="w-full rounded-md border border-neutral-300 px-2 py-1 text-xs"
-          placeholder="색상 이름"
+          placeholder={t("styles.colorNamePlaceholder")}
         />
       </div>
       <div className="flex gap-1">
@@ -87,14 +89,14 @@ function CustomSwatchEditor({
           onClick={() => setMode(mode === "hex" ? null : "hex")}
           className={`rounded border px-1.5 py-0.5 text-[11px] ${mode === "hex" ? "border-neutral-900" : "border-neutral-300"}`}
         >
-          HEX 입력
+          {t("styles.hexInputLabel")}
         </button>
         <button
           type="button"
           onClick={() => setMode(mode === "cmyk" ? null : "cmyk")}
           className={`rounded border px-1.5 py-0.5 text-[11px] ${mode === "cmyk" ? "border-neutral-900" : "border-neutral-300"}`}
         >
-          CMYK 입력
+          {t("styles.cmykInputLabel")}
         </button>
       </div>
       {mode === "hex" && (
@@ -107,7 +109,7 @@ function CustomSwatchEditor({
             className="w-24 rounded-md border border-neutral-300 px-2 py-1 text-xs"
           />
           <button type="button" onClick={confirmHex} className="rounded-md border border-neutral-300 px-2 py-1 text-xs">
-            확인
+            {t("styles.confirm")}
           </button>
         </div>
       )}
@@ -126,7 +128,7 @@ function CustomSwatchEditor({
             />
           ))}
           <button type="button" onClick={confirmCmyk} className="rounded-md border border-neutral-300 px-2 py-1 text-xs">
-            확인
+            {t("styles.confirm")}
           </button>
         </div>
       )}
@@ -150,6 +152,7 @@ export function StylesView({
   projectId: string;
   deliverableType: string | null;
 }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [browseL1, setBrowseL1] = useState<StyleDto | null>(null);
   const [browseL2, setBrowseL2] = useState<StyleDto | null>(null);
@@ -291,7 +294,7 @@ export function StylesView({
       await queryClient.invalidateQueries({ queryKey: ["style-history", projectId] });
       setSelected(true);
     } catch (err) {
-      setSelectError(err instanceof Error ? err.message : "스타일 선택에 실패했습니다.");
+      setSelectError(err instanceof Error ? err.message : t("styles.selectStyleFailed"));
     } finally {
       setIsSelecting(false);
     }
@@ -304,7 +307,7 @@ export function StylesView({
       await selectProjectUserStyle(projectId, categoryId);
       setSelectedUserStyleId(categoryId);
     } catch (err) {
-      setUserStyleError(err instanceof Error ? err.message : "내 스타일 선택에 실패했습니다.");
+      setUserStyleError(err instanceof Error ? err.message : t("styles.selectUserStyleFailed"));
     } finally {
       setIsSelectingUserStyle(false);
     }
@@ -319,7 +322,7 @@ export function StylesView({
       setIsCustomColorSelected(false);
       setShowCustomColorForm(false);
     } catch (err) {
-      setColorError(err instanceof Error ? err.message : "컬러 팔레트 선택에 실패했습니다.");
+      setColorError(err instanceof Error ? err.message : t("styles.selectColorFailed"));
     } finally {
       setIsSelectingColor(false);
     }
@@ -351,7 +354,7 @@ export function StylesView({
       }
       setForbiddenColors(parsed);
     } catch (err) {
-      setColorError(err instanceof Error ? err.message : "제외할 색상 저장에 실패했습니다.");
+      setColorError(err instanceof Error ? err.message : t("styles.forbiddenColorsSaveFailed"));
     } finally {
       setIsSelectingColor(false);
     }
@@ -380,7 +383,7 @@ export function StylesView({
       setSelectedPaletteSlug(null);
       setIsCustomColorSelected(true);
     } catch (err) {
-      setColorError(err instanceof Error ? err.message : "컬러 팔레트 선택에 실패했습니다.");
+      setColorError(err instanceof Error ? err.message : t("styles.selectColorFailed"));
     } finally {
       setIsSelectingColor(false);
     }
@@ -402,14 +405,16 @@ export function StylesView({
     <div className="flex flex-col gap-6">
       <header className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold">스타일</h1>
+          <h1 className="text-xl font-semibold">{t("styles.title")}</h1>
         </div>
 
         {primaryId && (
           <div className="sticky top-20 z-10 flex flex-shrink-0 items-center gap-3 rounded-full border border-line bg-surface px-4 py-2 shadow-soft">
             <span className="text-sm">
               {compareStyles[0]?.name}
-              {compareStyles.length > 1 && ` 외 ${compareStyles.length - 1}개`} 선택됨
+              {compareStyles.length > 1
+                ? t("styles.selectedSuffixWithCount", { count: compareStyles.length - 1 })
+                : t("styles.selectedSuffix")}
             </span>
             <button
               type="button"
@@ -418,7 +423,7 @@ export function StylesView({
               className="flex items-center gap-2 rounded-full bg-ink px-4 py-1.5 text-sm text-paper transition hover:opacity-90 disabled:opacity-50"
             >
               {isSelecting && <Spinner />}
-              선택 확정
+              {t("styles.confirmSelection")}
             </button>
           </div>
         )}
@@ -426,22 +431,22 @@ export function StylesView({
       {selectError && <p className="text-sm text-red-600">{selectError}</p>}
       {selected && (
         <div className="flex items-center gap-3 rounded-md border border-line bg-surface p-4">
-          <p className="text-sm text-muted">스타일이 선택되었습니다.</p>
+          <p className="text-sm text-muted">{t("styles.selectedNotice")}</p>
           <NextStepButton projectId={projectId} currentStepKey="style" deliverableType={deliverableType} />
         </div>
       )}
 
       <section className="rounded-md border border-neutral-200 p-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-medium text-neutral-700">내 스타일에서 선택 (선택 사항)</h2>
+          <h2 className="text-sm font-medium text-neutral-700">{t("styles.myStylesSectionTitle")}</h2>
           <Link href="/my-styles" className="text-xs underline">
-            내 스타일 관리하기 →
+            {t("styles.manageMyStyles")}
           </Link>
         </div>
         {userStyleError && <p className="mt-2 text-sm text-red-600">{userStyleError}</p>}
         {userStyleCategories.length === 0 ? (
           <p className="mt-2 text-sm text-neutral-400">
-            아직 등록한 스타일이 없습니다. 내 스타일에서 참고 이미지를 추가해보세요.
+            {t("styles.noUserStyles")}
           </p>
         ) : (
           <div className="mt-3 grid gap-3 sm:grid-cols-3">
@@ -470,7 +475,7 @@ export function StylesView({
                   disabled={isSelectingUserStyle}
                   className="mt-2 rounded-md border border-neutral-300 px-2 py-1 text-xs disabled:opacity-50"
                 >
-                  {selectedUserStyleId === category.id ? "선택됨" : "선택"}
+                  {selectedUserStyleId === category.id ? t("styles.selected") : t("styles.select")}
                 </button>
               </div>
             ))}
@@ -479,17 +484,16 @@ export function StylesView({
       </section>
 
       <section className="rounded-md border border-neutral-200 p-4">
-        <h2 className="text-sm font-medium text-neutral-700">브랜드 컬러 선택 (선택 사항)</h2>
+        <h2 className="text-sm font-medium text-neutral-700">{t("styles.brandColorSectionTitle")}</h2>
         <p className="mt-1 text-xs text-neutral-400">
-          미리 골라두면 실제 이미지 생성에 이 색상이 정확히 반영되고, 컨셉 보드의 컬러
-          팔레트도 이 색으로 표시됩니다.
+          {t("styles.brandColorDescription")}
         </p>
         {colorError && <p className="mt-2 text-sm text-red-600">{colorError}</p>}
 
         {showColorSuggestion && suggestedColorSwatches && (
           <div className="mt-3 rounded-md border border-dashed border-neutral-300 bg-neutral-50 p-3">
             <p className="text-xs font-medium text-neutral-700">
-              인터뷰에 남겨주신 내용에서 이런 색상을 찾았어요. 적용하면 직접 수정할 수 있는 화면으로 이동합니다.
+              {t("styles.colorSuggestionText")}
             </p>
             <div className="mt-2 flex gap-3">
               {suggestedColorSwatches.map((swatch) => (
@@ -509,14 +513,14 @@ export function StylesView({
                 onClick={handleApplyColorSuggestion}
                 className="rounded-md bg-neutral-900 px-2 py-1 text-xs text-white"
               >
-                적용
+                {t("styles.apply")}
               </button>
               <button
                 type="button"
                 onClick={handleDismissColorSuggestion}
                 className="rounded-md border border-neutral-300 px-2 py-1 text-xs"
               >
-                무시
+                {t("styles.dismiss")}
               </button>
             </div>
           </div>
@@ -547,7 +551,7 @@ export function StylesView({
                 disabled={isSelectingColor}
                 className="mt-2 rounded-md border border-neutral-300 px-2 py-1 text-xs disabled:opacity-50"
               >
-                {selectedPaletteSlug === palette.slug ? "선택됨" : "선택"}
+                {selectedPaletteSlug === palette.slug ? t("styles.selected") : t("styles.select")}
               </button>
             </div>
           ))}
@@ -557,15 +561,15 @@ export function StylesView({
               isCustomColorSelected ? "border-neutral-900 bg-neutral-50" : "border-neutral-200"
             }`}
           >
-            <p className="font-medium">직접 입력</p>
-            <p className="mt-1 text-xs text-neutral-400">원하는 색상을 직접 골라보세요.</p>
+            <p className="font-medium">{t("styles.customColorTitle")}</p>
+            <p className="mt-1 text-xs text-neutral-400">{t("styles.customColorDescription")}</p>
             {!showCustomColorForm ? (
               <button
                 type="button"
                 onClick={() => setShowCustomColorForm(true)}
                 className="mt-2 rounded-md border border-neutral-300 px-2 py-1 text-xs"
               >
-                {isCustomColorSelected ? "선택됨 · 수정" : "직접 입력"}
+                {isCustomColorSelected ? t("styles.customColorSelectedEdit") : t("styles.customColorTitle")}
               </button>
             ) : (
               <div className="mt-2 flex flex-col gap-2">
@@ -585,7 +589,7 @@ export function StylesView({
                   className="rounded-md bg-neutral-900 px-2 py-1 text-xs text-white disabled:opacity-50"
                 >
                   {isSelectingColor && <Spinner />}
-                  이 색상으로 선택
+                  {t("styles.confirmThisColor")}
                 </button>
               </div>
             )}
@@ -593,9 +597,9 @@ export function StylesView({
         </div>
 
         <div className="mt-4 border-t border-neutral-100 pt-3">
-          <h3 className="text-xs font-medium text-neutral-700">절대 사용하면 안 되는 색상 (선택 사항)</h3>
+          <h3 className="text-xs font-medium text-neutral-700">{t("styles.forbiddenColorsTitle")}</h3>
           <p className="mt-1 text-xs text-neutral-400">
-            HEX 코드를 쉼표로 구분해 입력하면(예: #ff0000, #000000) 이미지 생성 시 해당 색상을 절대 사용하지 않습니다.
+            {t("styles.forbiddenColorsDescription")}
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <input
@@ -611,7 +615,7 @@ export function StylesView({
               disabled={isSelectingColor}
               className="rounded-md border border-neutral-300 px-2 py-1 text-xs disabled:opacity-50"
             >
-              적용
+              {t("styles.apply")}
             </button>
           </div>
           {forbiddenColors.length > 0 && (
@@ -628,7 +632,7 @@ export function StylesView({
       </section>
 
       <section>
-        <h2 className="text-sm font-medium text-neutral-700">추천 스타일</h2>
+        <h2 className="text-sm font-medium text-neutral-700">{t("styles.recommendedTitle")}</h2>
         {isLoadingRecommendations ? (
           <div className="mt-4 flex justify-center">
             <Spinner />
@@ -654,19 +658,19 @@ export function StylesView({
       </section>
 
       <section>
-        <h2 className="text-sm font-medium text-neutral-700">스타일 둘러보기</h2>
+        <h2 className="text-sm font-medium text-neutral-700">{t("styles.browseTitle")}</h2>
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="스타일 검색"
+          placeholder={t("styles.searchPlaceholder")}
           className="mt-2 w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
         />
 
         {search ? (
           <div className="mt-3 flex items-center gap-2 text-xs text-neutral-500">
-            <span>&ldquo;{search}&rdquo; 검색 결과</span>
+            <span>{t("styles.searchResultsFor", { search })}</span>
             <button type="button" onClick={clearSearch} className="underline">
-              검색 지우고 카테고리로 보기
+              {t("styles.clearSearch")}
             </button>
           </div>
         ) : (
@@ -735,17 +739,17 @@ export function StylesView({
             />
           ))}
           {!search && browseL1 && !browseL2 && (
-            <p className="col-span-4 text-sm text-neutral-400">중분류를 선택하면 스타일이 나타납니다.</p>
+            <p className="col-span-4 text-sm text-neutral-400">{t("styles.selectSubcategoryPrompt")}</p>
           )}
           {!search && !browseL1 && (
-            <p className="col-span-4 text-sm text-neutral-400">대분류를 선택해서 스타일을 둘러보세요.</p>
+            <p className="col-span-4 text-sm text-neutral-400">{t("styles.selectCategoryPrompt")}</p>
           )}
         </div>
       </section>
 
       {compareStyles.length > 0 && (
         <section className="rounded-md border border-neutral-200 p-4">
-          <h2 className="text-sm font-medium text-neutral-700">선택 비교</h2>
+          <h2 className="text-sm font-medium text-neutral-700">{t("styles.compareTitle")}</h2>
           <div className="mt-3 grid gap-3 sm:grid-cols-3">
             {compareStyles.map((style) => (
               <div key={style.id} className="rounded-md border border-neutral-200 p-3 text-sm">
@@ -766,7 +770,9 @@ export function StylesView({
         <div className="flex flex-col items-start gap-3 rounded-md border border-line bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-sm">
             {compareStyles[0]?.name}
-            {compareStyles.length > 1 && ` 외 ${compareStyles.length - 1}개`} 선택됨
+            {compareStyles.length > 1
+              ? t("styles.selectedSuffixWithCount", { count: compareStyles.length - 1 })
+              : t("styles.selectedSuffix")}
           </span>
           <button
             type="button"
@@ -775,13 +781,13 @@ export function StylesView({
             className="flex items-center gap-2 rounded-full bg-ink px-4 py-1.5 text-sm text-paper transition hover:opacity-90 disabled:opacity-50"
           >
             {isSelecting && <Spinner />}
-            선택 확정
+            {t("styles.confirmSelection")}
           </button>
         </div>
       )}
       {selected && (
         <div className="flex items-center gap-3 rounded-md border border-line bg-surface p-4">
-          <p className="text-sm text-muted">스타일이 선택되었습니다.</p>
+          <p className="text-sm text-muted">{t("styles.selectedNotice")}</p>
           <NextStepButton projectId={projectId} currentStepKey="style" deliverableType={deliverableType} />
         </div>
       )}
@@ -796,7 +802,7 @@ export function StylesView({
             onClick={(e) => e.stopPropagation()}
           >
             <button type="button" onClick={() => setDetailStyle(null)} className="text-sm underline">
-              닫기
+              {t("styles.close")}
             </button>
             {detailStyle.sampleImageUrl && (
               // eslint-disable-next-line @next/next/no-img-element
@@ -840,6 +846,7 @@ function StyleCard({
   onFavorite: () => void;
   compact?: boolean;
 }) {
+  const { t } = useTranslation();
   return (
     <div
       className={`overflow-hidden rounded-md border text-sm ${
@@ -866,13 +873,13 @@ function StyleCard({
           <button type="button" onClick={onDetail} className="text-left font-medium underline-offset-2 hover:underline">
             {style.name}
           </button>
-          <button type="button" onClick={onFavorite} aria-label="즐겨찾기">
+          <button type="button" onClick={onFavorite} aria-label={t("styles.favoriteLabel")}>
             {isFavorite ? "★" : "☆"}
           </button>
         </div>
         <p className="mt-1 text-xs text-neutral-400">{style.category}</p>
         {!compact && score !== undefined && (
-          <p className="mt-1 text-xs text-neutral-500">점수 {Math.round(score * 100)}%</p>
+          <p className="mt-1 text-xs text-neutral-500">{t("styles.scorePercent", { percent: Math.round(score * 100) })}</p>
         )}
         {!compact && reason && <p className="mt-1 text-xs text-neutral-500">{reason}</p>}
         <button
@@ -880,7 +887,7 @@ function StyleCard({
           onClick={onSelect}
           className="mt-2 rounded-md border border-neutral-300 px-2 py-1 text-xs"
         >
-          {isPrimary ? "Primary 선택됨" : isSecondary ? "Secondary 선택됨" : "선택"}
+          {isPrimary ? t("styles.primarySelected") : isSecondary ? t("styles.secondarySelected") : t("styles.select")}
         </button>
       </div>
     </div>
