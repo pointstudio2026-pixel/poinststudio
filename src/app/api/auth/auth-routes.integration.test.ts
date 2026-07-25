@@ -186,7 +186,11 @@ describe("Auth API routes", () => {
     });
 
     const res = await oauthConsentHandler(
-      jsonRequest("/api/auth/oauth/consent", { agreedToTerms: true }, `${OAUTH_PENDING_SIGNUP_COOKIE}=${pendingToken}`),
+      jsonRequest(
+        "/api/auth/oauth/consent",
+        { agreedToTerms: true, name: "New OAuth User", birthDate: "1990-01-01" },
+        `${OAUTH_PENDING_SIGNUP_COOKIE}=${pendingToken}`,
+      ),
     );
     const body = await res.json();
 
@@ -219,7 +223,9 @@ describe("Auth API routes", () => {
   });
 
   it("rejects OAuth consent completion with no pending signup cookie (AUTH-012)", async () => {
-    const res = await oauthConsentHandler(jsonRequest("/api/auth/oauth/consent", { agreedToTerms: true }));
+    const res = await oauthConsentHandler(
+      jsonRequest("/api/auth/oauth/consent", { agreedToTerms: true, name: "No Cookie", birthDate: "1990-01-01" }),
+    );
     const body = await res.json();
 
     expect(res.status).toBe(401);
@@ -233,6 +239,8 @@ describe("Auth API routes", () => {
     const first = await authContainer.completeOAuthSignupUseCase.execute({
       provider: "google",
       profile: { providerAccountId, email, name: "Returning User", emailVerified: true },
+      name: "Returning User",
+      birthDate: new Date("1990-01-01"),
     });
 
     const second = await authContainer.oauthLoginUseCase.execute({

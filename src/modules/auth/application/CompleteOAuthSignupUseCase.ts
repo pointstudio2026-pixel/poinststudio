@@ -9,6 +9,14 @@ import { recordActivity } from "@/shared/activity/activityLogger";
 export interface CompleteOAuthSignupInput {
   provider: OAuthProviderCode;
   profile: OAuthProfile;
+  /**
+   * /oauth/consent 화면에서 약관 동의 체크 직후 사용자가 직접 입력한 값
+   * (2026-07-25) -- OAuth 프로바이더가 준 profile.name을 그대로 쓰지 않고
+   * 사용자가 실제로 원하는 표시 이름을 직접 받는다. 생년월일은 OAuth
+   * 프로필에 아예 없는 정보라 여기서만 수집한다.
+   */
+  name: string;
+  birthDate: Date;
 }
 
 /**
@@ -27,7 +35,8 @@ export class CompleteOAuthSignupUseCase {
   async execute(input: CompleteOAuthSignupInput): Promise<OAuthLoginOutput> {
     const user = await this.userRepository.create({
       email: input.profile.email,
-      name: input.profile.name ?? undefined,
+      name: input.name,
+      birthDate: input.birthDate,
       emailVerifiedAt: input.profile.emailVerified ? new Date() : undefined,
     });
 

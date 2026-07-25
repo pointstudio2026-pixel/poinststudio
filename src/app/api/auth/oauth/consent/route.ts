@@ -28,6 +28,8 @@ export async function POST(request: NextRequest) {
         name: pending.name,
         emailVerified: pending.emailVerified,
       },
+      name: parsed.data.name,
+      birthDate: new Date(parsed.data.birthDate),
     });
 
     const res = apiSuccess({ user: result.user }, { status: 201 });

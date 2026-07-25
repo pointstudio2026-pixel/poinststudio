@@ -12,9 +12,13 @@ export function OAuthConsentForm() {
   const router = useRouter();
   const setUser = useAuthStore((s) => s.setUser);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [name, setName] = useState("");
+  const [birthDate, setBirthDate] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const { t } = useTranslation();
+
+  const canSubmit = agreedToTerms && name.trim().length > 0 && birthDate.length > 0;
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,10 +26,11 @@ export function OAuthConsentForm() {
       setServerError(t("oauthConsent.mustAgree"));
       return;
     }
+    if (!canSubmit) return;
     setServerError(null);
     setIsSubmitting(true);
     try {
-      const { user } = await completeOAuthSignup({ agreedToTerms });
+      const { user } = await completeOAuthSignup({ agreedToTerms, name: name.trim(), birthDate });
       setUser(user);
       router.push("/projects");
     } catch (err) {
@@ -57,11 +62,43 @@ export function OAuthConsentForm() {
         </label>
       </div>
 
+      {agreedToTerms && (
+        <div className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="oauth-consent-name" className="text-sm font-medium text-ink">
+              {t("oauthConsent.nameLabel")}
+            </label>
+            <input
+              id="oauth-consent-name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder={t("oauthConsent.namePlaceholder")}
+              autoFocus
+              className="rounded-full border border-line bg-paper px-3 py-2 text-sm outline-none transition focus:border-ink"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="oauth-consent-birthdate" className="text-sm font-medium text-ink">
+              {t("oauthConsent.birthDateLabel")}
+            </label>
+            <input
+              id="oauth-consent-birthdate"
+              type="date"
+              value={birthDate}
+              onChange={(e) => setBirthDate(e.target.value)}
+              max={new Date().toISOString().slice(0, 10)}
+              className="rounded-full border border-line bg-paper px-3 py-2 text-sm outline-none transition focus:border-ink"
+            />
+          </div>
+        </div>
+      )}
+
       {serverError && <p className="text-sm text-red-600">{serverError}</p>}
 
       <button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isSubmitting || !canSubmit}
         className="mt-2 flex items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm text-paper transition hover:opacity-90 disabled:opacity-50"
       >
         {isSubmitting && <Spinner />}

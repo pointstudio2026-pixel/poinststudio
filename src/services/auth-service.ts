@@ -18,7 +18,7 @@ export function registerUser(input: { email: string; password: string; name?: st
   });
 }
 
-export function completeOAuthSignup(input: { agreedToTerms: boolean }) {
+export function completeOAuthSignup(input: { agreedToTerms: boolean; name: string; birthDate: string }) {
   return apiFetch<{ user: PublicUser }>("/api/auth/oauth/consent", {
     method: "POST",
     body: JSON.stringify(input),

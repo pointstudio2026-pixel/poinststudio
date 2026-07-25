@@ -5,6 +5,7 @@ export interface AuthUser {
   email: string;
   passwordHash: string | null;
   name: string | null;
+  birthDate: Date | null;
   role: UserRole;
   adminTier: AdminTier | null;
   emailVerifiedAt: Date | null;
@@ -19,6 +20,8 @@ export interface CreateUserInput {
   /** Omitted for OAuth-only sign-ups (Google/Kakao) -- they never set a password. */
   passwordHash?: string;
   name?: string;
+  /** 2026-07-25부터 구글/카카오 회원가입 동의 화면에서 함께 입력받는다(OAuth 프로필엔 없는 정보). 비밀번호 가입은 아직 수집하지 않는다. */
+  birthDate?: Date;
   /** Set when the identity is already verified by an OAuth provider (e.g. Google). */
   emailVerifiedAt?: Date;
 }

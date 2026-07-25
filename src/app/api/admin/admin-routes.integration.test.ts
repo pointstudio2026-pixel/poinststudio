@@ -219,6 +219,8 @@ describe("Admin API routes", () => {
     const signup = await authContainer.completeOAuthSignupUseCase.execute({
       provider: "google",
       profile: { providerAccountId, email: targetEmail, name: "Target", emailVerified: true },
+      name: "Target",
+      birthDate: new Date("1990-01-01"),
     });
 
     const deleteRes = await deleteUserHandler(

@@ -32,13 +32,17 @@ describe("CompleteOAuthSignupUseCase", () => {
     const result = await useCase.execute({
       provider: "google",
       profile: { providerAccountId: "g-1", email: "new@gmail.com", name: "New User", emailVerified: true },
+      name: "New User",
+      birthDate: new Date("1990-01-01"),
     });
 
     expect(result.isNewUser).toBe(true);
     expect(result.user.email).toBe("new@gmail.com");
+    expect(result.user.name).toBe("New User");
     expect(result.accessToken).toBeTruthy();
     expect(userRepository.users).toHaveLength(1);
     expect(userRepository.users[0]?.emailVerifiedAt).toBeTruthy();
+    expect(userRepository.users[0]?.birthDate).toEqual(new Date("1990-01-01"));
     expect(oauthAccountRepository.accounts).toHaveLength(1);
   });
 
@@ -48,6 +52,8 @@ describe("CompleteOAuthSignupUseCase", () => {
     await useCase.execute({
       provider: "kakao",
       profile: { providerAccountId: "k-1", email: "consent@aster.dev", name: null, emailVerified: false },
+      name: "Consent User",
+      birthDate: new Date("1990-01-01"),
     });
 
     expect(recordActivity).toHaveBeenCalledWith(
@@ -64,6 +70,8 @@ describe("CompleteOAuthSignupUseCase", () => {
     await useCase.execute({
       provider: "kakao",
       profile: { providerAccountId: "k-2", email: "unverified@aster.dev", name: null, emailVerified: false },
+      name: "Unverified User",
+      birthDate: new Date("1990-01-01"),
     });
 
     expect(userRepository.users[0]?.emailVerifiedAt).toBeNull();

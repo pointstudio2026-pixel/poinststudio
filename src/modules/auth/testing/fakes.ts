@@ -39,6 +39,7 @@ export class FakeUserRepository implements UserRepository {
       email: input.email,
       passwordHash: input.passwordHash ?? null,
       name: input.name ?? null,
+      birthDate: input.birthDate ?? null,
       role: "designer",
       adminTier: null,
       emailVerifiedAt: input.emailVerifiedAt ?? null,

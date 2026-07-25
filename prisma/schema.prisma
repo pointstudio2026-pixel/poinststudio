@@ -30,6 +30,7 @@ model User {
   email           String    @unique @db.VarChar(255)
   passwordHash    String?   @map("password_hash")
   name            String?   @db.VarChar(120)
+  birthDate       DateTime? @map("birth_date") @db.Date
   role            UserRole  @default(designer)
   adminTier       AdminTier? @map("admin_tier")
   emailVerifiedAt DateTime? @map("email_verified_at") @db.Timestamptz()

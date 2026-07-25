@@ -66,7 +66,7 @@ export function ProjectsView({
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="eyebrow text-sm text-muted">{t("dashboard.myProjects")}</p>
-            <h1 className="mt-1 text-2xl font-semibold">{t("dashboard.heading", { email })}</h1>
+            <h1 className="mt-1 text-2xl font-semibold">{t("dashboard.heading", { name: name?.trim() || email })}</h1>
             <p className="font-script mt-1 text-sm text-muted">{t("dashboard.tagline")}</p>
           </div>
           <NewProjectButton />

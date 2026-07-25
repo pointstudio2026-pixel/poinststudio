@@ -43,7 +43,12 @@ describe("OAuthLoginUseCase", () => {
     const { useCase, signupUseCase, userRepository } = buildUseCase();
     const profile = { providerAccountId: "g-2", email: "repeat@gmail.com", name: "Repeat", emailVerified: true };
 
-    const first = await signupUseCase.execute({ provider: "google", profile });
+    const first = await signupUseCase.execute({
+      provider: "google",
+      profile,
+      name: "Repeat",
+      birthDate: new Date("1990-01-01"),
+    });
     const second = await useCase.execute({ provider: "google", profile });
 
     expect(second.isNewUser).toBe(false);
@@ -82,7 +87,7 @@ describe("OAuthLoginUseCase", () => {
   it("returns tokens usable like a normal session on repeat sign-in", async () => {
     const { useCase, signupUseCase } = buildUseCase();
     const profile = { providerAccountId: "g-3", email: "tok@gmail.com", name: null, emailVerified: true };
-    await signupUseCase.execute({ provider: "google", profile });
+    await signupUseCase.execute({ provider: "google", profile, name: "Tok", birthDate: new Date("1990-01-01") });
 
     const result = await useCase.execute({ provider: "google", profile });
 
@@ -93,7 +98,7 @@ describe("OAuthLoginUseCase", () => {
   it("rejects a suspended account on repeat sign-in with AUTH-011", async () => {
     const { useCase, signupUseCase, userRepository } = buildUseCase();
     const profile = { providerAccountId: "g-4", email: "suspended@gmail.com", name: null, emailVerified: true };
-    await signupUseCase.execute({ provider: "google", profile });
+    await signupUseCase.execute({ provider: "google", profile, name: "Suspended", birthDate: new Date("1990-01-01") });
     userRepository.users[0]!.suspendedAt = new Date();
 
     const attempt = useCase.execute({ provider: "google", profile });
@@ -104,7 +109,7 @@ describe("OAuthLoginUseCase", () => {
   it("rejects a deleted account on repeat sign-in with AUTH-010", async () => {
     const { useCase, signupUseCase, userRepository } = buildUseCase();
     const profile = { providerAccountId: "g-5", email: "deleted@gmail.com", name: null, emailVerified: true };
-    await signupUseCase.execute({ provider: "google", profile });
+    await signupUseCase.execute({ provider: "google", profile, name: "Deleted", birthDate: new Date("1990-01-01") });
     userRepository.users[0]!.deletedAt = new Date();
 
     await expect(useCase.execute({ provider: "google", profile })).rejects.toMatchObject({ code: "AUTH-010" });

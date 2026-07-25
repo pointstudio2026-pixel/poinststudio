@@ -21,6 +21,11 @@ export const oauthConsentSchema = z.object({
   agreedToTerms: z
     .boolean()
     .refine((v) => v === true, { message: "이용약관 및 개인정보처리방침에 동의해야 가입할 수 있습니다." }),
+  name: z.string().min(1, "이름을 입력해주세요.").max(120),
+  birthDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "생년월일을 올바르게 입력해주세요.")
+    .refine((v) => !Number.isNaN(Date.parse(v)), { message: "생년월일을 올바르게 입력해주세요." }),
 });
 
 export const loginSchema = z.object({

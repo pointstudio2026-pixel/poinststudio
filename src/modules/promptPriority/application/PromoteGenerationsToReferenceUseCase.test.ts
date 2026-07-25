@@ -263,6 +263,7 @@ describe("PromoteGenerationsToReferenceUseCase", () => {
       email: "admin@aster.dev",
       passwordHash: null,
       name: "Admin",
+      birthDate: null,
       role: "admin",
       adminTier: "super_admin",
       emailVerifiedAt: new Date(),
