@@ -88,4 +88,25 @@ describe("buildMockupCategorySceneDirective (2026-07-25 신설)", () => {
     const directives = MOCKUP_CATEGORIES.map((c) => buildMockupCategorySceneDirective(c));
     expect(new Set(directives).size).toBe(MOCKUP_CATEGORIES.length);
   });
+
+  it("picks the medical gown for a hospital/clinic industry instead of the default apron (2026-07-25 업종별 유니폼)", () => {
+    const directive = buildMockupCategorySceneDirective("uniform", "병원/의원/클리닉");
+    expect(directive).toContain("의료 가운");
+    expect(directive).not.toContain("앞치마 또는 폴로셔츠");
+  });
+
+  it("picks construction workwear for 제조업", () => {
+    const directive = buildMockupCategorySceneDirective("uniform", "제조업");
+    expect(directive).toContain("안전 조끼");
+  });
+
+  it("falls back to a generic apron/polo when industry is unknown or missing", () => {
+    expect(buildMockupCategorySceneDirective("uniform", undefined)).toContain("앞치마 또는 폴로셔츠");
+    expect(buildMockupCategorySceneDirective("uniform", "기타")).toContain("앞치마 또는 폴로셔츠");
+  });
+
+  it("never lets a cafe apron slip in for a medical industry (regression guard for the reported mismatch)", () => {
+    const directive = buildMockupCategorySceneDirective("uniform", "병원/의원/클리닉");
+    expect(directive).not.toContain("카페 직원이 착용한 앞치마");
+  });
 });

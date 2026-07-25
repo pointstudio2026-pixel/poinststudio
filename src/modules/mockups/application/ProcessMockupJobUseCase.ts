@@ -61,10 +61,14 @@ export class ProcessMockupJobUseCase {
     // 분리, 사용자 지시사항).
     let referenceExampleText: string | undefined;
     let avoidPatternText: string | undefined;
+    // uniform 카테고리의 의류 종류를 업종에 맞게 고르는 데 쓰인다(2026-07-25) --
+    // deliverableType 유무와 무관하게 항상 조회한다(브랜딩 & 로고 프로젝트도
+    // uniform/signboard/banner 같은 "보너스" 카테고리를 쓸 수 있으므로).
+    const interviewForIndustry = await this.interviewRepository.findLatestByProjectId(project.id);
+    const industry = interviewForIndustry?.answers.find((a) => a.questionKey === "industry")?.answer ?? undefined;
+
     if (project.deliverableType) {
       const deliverableType = project.deliverableType;
-      const interview = await this.interviewRepository.findLatestByProjectId(project.id);
-      const industry = interview?.answers.find((a) => a.questionKey === "industry")?.answer ?? undefined;
 
       const candidates = await this.trainingExampleRepository.listCandidates({
         deliverableType,
@@ -105,6 +109,7 @@ export class ProcessMockupJobUseCase {
         placementArea,
         templateName: template.name,
         category: template.category,
+        industry,
         compositingMode,
         referenceExampleText,
         avoidPatternText,

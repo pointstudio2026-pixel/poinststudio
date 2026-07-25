@@ -128,7 +128,7 @@ describe("Mockup Studio API routes", () => {
     expect(res.status).toBe(200);
     expect(body.data.templates.length).toBeGreaterThan(0);
     expect(body.data.templates.every((t: { category: string }) => t.category === "business_card")).toBe(true);
-    expect(body.data.categories.length).toBe(6);
+    expect(body.data.categories.length).toBe(10);
   });
 
   it("renders a mockup end-to-end through the real Queue/Worker (Mockup 생성 성공 / Queue 기반 렌더링)", async () => {

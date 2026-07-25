@@ -22,6 +22,8 @@ export interface MockupRenderRequest {
   templateName: string;
   /** MockupCategory 값(business_card, poster, ...) -- 카테고리별 연출 지침을 고르는 데만 쓰인다. */
   category: string;
+  /** 프로젝트 인터뷰의 업종 답변(있으면) -- uniform 카테고리의 의류 종류를 업종에 맞게 고르는 데만 쓰인다. */
+  industry?: string;
   compositingMode: MockupCompositingMode;
   /**
    * TrainingExample(category="목업")에서 찾은 참고 문구(연출/합성 스타일

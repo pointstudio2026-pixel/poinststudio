@@ -37,13 +37,16 @@ export const BRANDING_WORKSPACE_STEPS = [
   { key: "mockup", label: "목업" },
 ] as const;
 
+// 2026-07-25 사용자 결정: 브랜딩 & 로고를 제외한 작업물 유형은 별도 목업
+// 스튜디오 단계가 필요 없다 -- 생성 자체가 이미 완성된 목업 사진 형태로
+// 나오도록 프롬프트가 바뀌었기 때문(promptBuilder.ts의 DELIVERABLE_OBJECTIVES
+// 참고). 그래서 이 목록에는 "mockup" 단계가 없다(브랜딩 & 로고만 갖는다).
 export const NON_BRANDING_WORKSPACE_STEPS = [
   { key: "deliverable_type", label: "작업물 유형" },
   { key: "brand_interview", label: "브랜드 인터뷰" },
   { key: "style", label: "스타일" },
   { key: "generation", label: "이미지 생성" },
   { key: "concept_board", label: "컨셉 보드" },
-  { key: "mockup", label: "목업" },
 ] as const;
 
 /**

@@ -61,14 +61,6 @@ export class ProcessGenerationJobUseCase {
         sizePreset: promptVersion.payload.sizePreset,
       });
 
-      await this.generationRepository.updateVersionResult(version.id, {
-        status: "completed",
-        provider: result.provider,
-        images: result.images,
-        costAmount: result.costAmount,
-        completedAt: new Date(),
-      });
-
       // 프롬프트 조립 시점에 이미 계산해둔 텍스트 레벨 준수 검증 결과를
       // 생성 결과에도 남긴다 -- 이미지 자체는 검증하지 않는다(비용 없음,
       // status로 명시). PromptDecisionRecord가 없으면(하드제약 없는
@@ -125,6 +117,18 @@ export class ProcessGenerationJobUseCase {
           payload: { generationVersionId: version.id, imageCount: result.images.length },
         });
       }
+
+      // 상태를 "completed"로 표시하는 시점을 currentStep 전진 이후로 미룬다 --
+      // 그래야 폴링 중인 클라이언트가 completed 상태를 관측했을 때 project의
+      // currentStep도 이미 다음 단계로 넘어가 있음이 보장된다(둘을 따로
+      // 읽는 클라이언트 입장에서의 경쟁 상태 방지).
+      await this.generationRepository.updateVersionResult(version.id, {
+        status: "completed",
+        provider: result.provider,
+        images: result.images,
+        costAmount: result.costAmount,
+        completedAt: new Date(),
+      });
     } catch (err) {
       logger.error("Image generation job failed", {
         generationVersionId: version.id,

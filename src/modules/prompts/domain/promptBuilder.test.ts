@@ -332,7 +332,8 @@ describe("buildPromptLayers -- 명함 앞뒷면 / 리플렛 6패널 예외", () 
       primaryStyle: PRIMARY_STYLE,
       secondaryStyles: [],
     });
-    expect(layers.generationObjective).toContain("앞면과 뒷면");
+    expect(layers.generationObjective).toContain("앞면");
+    expect(layers.generationObjective).toContain("뒷면");
   });
 
   it("requires a 6-panel unfolded tri-fold strip for leaflets", () => {

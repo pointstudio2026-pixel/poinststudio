@@ -14,7 +14,6 @@ import { POST as recommendStylesHandler } from "@/app/api/styles/recommend/route
 import { POST as selectStyleHandler } from "@/app/api/styles/select/route";
 import { POST as buildPromptHandler } from "@/app/api/prompts/build/route";
 import { POST as generateConceptBoardHandler } from "@/app/api/concept-board/generate/route";
-import { INTERVIEW_QUESTIONS } from "@/modules/interviews/domain/interviewQuestions";
 
 const TEST_EMAIL_PREFIX = "task022-deliverable-type";
 
@@ -72,7 +71,10 @@ describe("Non-branding deliverable type flow (포스터)", () => {
     const interviewBody = await interviewRes.json();
     expect(interviewBody.data.questions.map((q: { key: string }) => q.key)).toContain("posterContext");
 
-    for (const q of INTERVIEW_QUESTIONS.filter((q) => q.required)) {
+    // 포스터 전용 필수 질문(posterContext/posterRequiredElements 등)까지 전부
+    // 포함해서 답변해야 한다 -- 정적 INTERVIEW_QUESTIONS 배열만으로는 유형별
+    // 추가 질문(selectQuestions()가 덧붙이는 것)을 놓친다.
+    for (const q of interviewBody.data.questions.filter((q: { required: boolean }) => q.required)) {
       await saveAnswerHandler(
         postRequest("/api/interview/answer", { projectId, questionKey: q.key, answer: `구체적인 ${q.key} 답변` }, cookie),
       );

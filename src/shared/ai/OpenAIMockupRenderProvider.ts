@@ -43,10 +43,13 @@ function buildPrompt(request: MockupRenderRequest): string {
       : `첨부된 두 이미지 중 첫 번째(브랜드 로고)를 다시 그리거나 새로 해석하지 말고 ` +
         `정확히 그대로, ${request.templateName} 목업에 자연스럽게 배치한 사실적인 제품 ` +
         `사진을 만들어줘. 로고의 텍스트, 심볼, 색상을 완전히 동일하게 유지하고, 배경과 ` +
-        `소품은 실제 사용 환경처럼 유지해줘.`;
+        `소품은 실제 사용 환경처럼 유지해줘. 로고 하나만 텅 빈 배경 위에 덩그러니 놓인 ` +
+        `초라한 결과물이 되면 안 돼 -- ${request.templateName}이 실제로 완성되어 사용되고 ` +
+        `있는 것처럼, 그 결과물 종류에 맞는 그럴듯한 내용(문구/이미지/UI 요소 등)으로 ` +
+        `화면 또는 지면을 채운 완성도 있는 장면으로 표현해줘.`;
   const isKnownCategory = (MOCKUP_CATEGORIES as readonly string[]).includes(request.category);
   const sceneDirective = isKnownCategory
-    ? buildMockupCategorySceneDirective(request.category as (typeof MOCKUP_CATEGORIES)[number])
+    ? buildMockupCategorySceneDirective(request.category as (typeof MOCKUP_CATEGORIES)[number], request.industry)
     : "";
   const sceneClause = sceneDirective ? ` 연출 지침: ${sceneDirective}` : "";
   const referenceClause = request.referenceExampleText ? ` 참고 연출 가이드: ${request.referenceExampleText}` : "";

@@ -17,7 +17,7 @@ describe("getWorkspaceSteps", () => {
     ]);
   });
 
-  it("returns the shorter 6-step list for any other deliverable type, skipping brand_strategy/logo_style", () => {
+  it("returns the shorter 5-step list for any other deliverable type, skipping brand_strategy/logo_style/mockup (2026-07-25: 목업 단계 자체가 불필요)", () => {
     const steps = getWorkspaceSteps("포스터");
     expect(steps).toBe(NON_BRANDING_WORKSPACE_STEPS);
     expect(steps.map((s) => s.key)).toEqual([
@@ -26,7 +26,6 @@ describe("getWorkspaceSteps", () => {
       "style",
       "generation",
       "concept_board",
-      "mockup",
     ]);
   });
 
