@@ -52,9 +52,10 @@ function buildPrompt(request: MockupRenderRequest): string {
     ? buildMockupCategorySceneDirective(request.category as (typeof MOCKUP_CATEGORIES)[number], request.industry)
     : "";
   const sceneClause = sceneDirective ? ` 연출 지침: ${sceneDirective}` : "";
+  const styleClause = request.styleCategory ? ` 스타일 표현 방식: ${request.styleCategory}` : "";
   const referenceClause = request.referenceExampleText ? ` 참고 연출 가이드: ${request.referenceExampleText}` : "";
   const avoidClause = request.avoidPatternText ? ` 회피 지침(과거에 반응이 좋지 않았던 연출, 피할 것): ${request.avoidPatternText}` : "";
-  return `${base}${sceneClause}${referenceClause}${avoidClause}`;
+  return `${base}${sceneClause}${styleClause}${referenceClause}${avoidClause}`;
 }
 
 export class OpenAIMockupRenderProvider implements MockupRenderProvider {

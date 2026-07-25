@@ -12,6 +12,7 @@ import { POST as saveAnswerHandler } from "@/app/api/interview/answer/route";
 import { POST as completeInterviewHandler } from "@/app/api/interview/complete/route";
 import { POST as recommendStylesHandler } from "@/app/api/styles/recommend/route";
 import { POST as selectStyleHandler } from "@/app/api/styles/select/route";
+import { POST as selectLogoChoiceHandler } from "@/app/api/projects/[id]/logo-choice/route";
 import { POST as buildPromptHandler } from "@/app/api/prompts/build/route";
 import { POST as generateConceptBoardHandler } from "@/app/api/concept-board/generate/route";
 
@@ -96,9 +97,20 @@ describe("Non-branding deliverable type flow (포스터)", () => {
     );
     expect(selectStyleRes.status).toBe(201);
 
-    // 스타일 선택 직후 "브랜드 전략"/"로고 스타일"을 건너뛰고 곧장 이미지 생성으로 전진한다.
+    // 스타일 선택 직후 "브랜드 전략"/"로고 스타일"을 건너뛰고 "로고 선택"
+    // 단계로 전진한다(2026-07-25: 실제 로고 첨부 기능 추가).
     const project3 = await prisma.project.findUnique({ where: { id: projectId } });
-    expect(project3?.currentStep).toBe("generation");
+    expect(project3?.currentStep).toBe("logo_choice");
+
+    // "상호명만으로 자동 생성"을 선택해 기존 AI 전체 생성 경로를 그대로 검증한다.
+    const logoChoiceRes = await selectLogoChoiceHandler(
+      postRequest(`/api/projects/${projectId}/logo-choice`, { choice: "skip" }, cookie),
+      { params: Promise.resolve({ id: projectId }) },
+    );
+    expect(logoChoiceRes.status).toBe(201);
+
+    const project3b = await prisma.project.findUnique({ where: { id: projectId } });
+    expect(project3b?.currentStep).toBe("generation");
 
     // Brand Strategy/Logo Style 단계 없이도 Prompt Engine이 폴백 데이터로 성공한다.
     const promptRes = await buildPromptHandler(postRequest("/api/prompts/build", { projectId }, cookie));

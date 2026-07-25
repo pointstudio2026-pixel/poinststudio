@@ -10,6 +10,7 @@ import type { MockupTemplate } from "@/modules/mockups/domain/Mockup";
 import { FakeGenerationRepository } from "@/modules/generations/testing/fakes";
 import { FakeTrainingExampleRepository } from "@/modules/trainingExamples/testing/fakes";
 import { FakeInterviewRepository } from "@/modules/interviews/testing/fakes";
+import { FakeStyleRepository, FakeStyleSelectionRepository } from "@/modules/styles/testing/fakes";
 import { CreateProjectUseCase } from "@/modules/projects/application/CreateProjectUseCase";
 import { FakeProjectRepository } from "@/modules/projects/testing/fakes";
 import { CheckPlanUseCase } from "@/modules/subscriptions/application/CheckPlanUseCase";
@@ -47,6 +48,8 @@ async function setup() {
   const provider = new MockMockupRenderProvider();
   const trainingExamples = new FakeTrainingExampleRepository();
   const interviews = new FakeInterviewRepository();
+  const styleSelections = new FakeStyleSelectionRepository();
+  const styles = new FakeStyleRepository();
 
   templates.templates = [TEMPLATE];
 
@@ -74,12 +77,25 @@ async function setup() {
     usage,
     trainingExamples,
     interviews,
+    styleSelections,
+    styles,
     create: new CreateMockupUseCase(projects, generations, templates, checkPlan, mockups, queue),
     getMockups: new GetMockupsUseCase(projects, mockups),
     getTemplates: new GetMockupTemplatesUseCase(templates),
     favorite: new ToggleMockupFavoriteUseCase(projects, mockups),
     remove: new DeleteMockupUseCase(projects, mockups),
-    process: new ProcessMockupJobUseCase(projects, generations, mockups, templates, recordUsage, provider, trainingExamples, interviews),
+    process: new ProcessMockupJobUseCase(
+      projects,
+      generations,
+      mockups,
+      templates,
+      recordUsage,
+      provider,
+      trainingExamples,
+      interviews,
+      styleSelections,
+      styles,
+    ),
   };
 }
 
@@ -268,6 +284,8 @@ describe("ProcessMockupJobUseCase", () => {
       capturingProvider,
       ctx.trainingExamples,
       ctx.interviews,
+      ctx.styleSelections,
+      ctx.styles,
     );
 
     const mockup = await ctx.create.execute({
@@ -318,6 +336,8 @@ describe("ProcessMockupJobUseCase", () => {
       capturingProvider,
       ctx.trainingExamples,
       ctx.interviews,
+      ctx.styleSelections,
+      ctx.styles,
     );
 
     const mockup = await ctx.create.execute({

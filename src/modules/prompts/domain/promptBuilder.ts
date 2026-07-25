@@ -170,7 +170,9 @@ function buildGenerationObjective(deliverableType: string | undefined): string {
 // 각 항목 끝의 서체 지침("~한 서체/타이포그래피로 표현한다")은 "폰트가
 // 단조롭다"는 피드백을 반영해 추가했다 -- 스타일마다 실제로 다른 서체
 // 인상을 요구해야 매번 같은 무난한 산세리프로 수렴하지 않는다.
-const STYLE_CATEGORY_TEMPLATES: Record<string, string> = {
+// 로고 첨부 목업 경로(GenerateFromLogoAssetUseCase)도 같은 무드 텍스트를
+// 써야 일반 AI 생성 결과와 스타일 표현이 동등해지므로 export한다.
+export const STYLE_CATEGORY_TEMPLATES: Record<string, string> = {
   모던:
     "스위스 그리드 기반의 정확한 기하학적 구성과 절제된 네거티브 스페이스로 표현한다. 여백을 " +
     "매우 넉넉하게 두고, 모노크롬에 가까운 배경에 포인트 컬러 하나만 대비시켜 임팩트를 준다. " +

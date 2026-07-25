@@ -5,7 +5,12 @@ import { GetGenerationUseCase } from "@/modules/generations/application/GetGener
 import { GetGenerationStatusUseCase } from "@/modules/generations/application/GetGenerationStatusUseCase";
 import { ProcessGenerationJobUseCase } from "@/modules/generations/application/ProcessGenerationJobUseCase";
 import { EvaluateGenerationVisionUseCase } from "@/modules/generations/application/EvaluateGenerationVisionUseCase";
+import { GenerateFromLogoAssetUseCase } from "@/modules/generations/application/GenerateFromLogoAssetUseCase";
 import { MockVisionEvaluationProvider } from "@/shared/ai/MockVisionEvaluationProvider";
+import { FakeProjectLogoAssetRepository } from "@/modules/projectLogos/testing/fakes";
+import { FakeMockupTemplateRepository } from "@/modules/mockups/testing/fakes";
+import { MockMockupRenderProvider } from "@/shared/ai/MockMockupRenderProvider";
+import { FakeFileStorage } from "@/shared/storage/testing/FakeFileStorage";
 import {
   FakeGenerationRepository,
   FakeImageGenerationQueue,
@@ -184,6 +189,15 @@ async function setup() {
         promptDecisionRecords,
         interviews,
         new MockVisionEvaluationProvider(),
+      ),
+      new FakeProjectLogoAssetRepository(),
+      new GenerateFromLogoAssetUseCase(
+        new FakeFileStorage(),
+        new FakeMockupTemplateRepository(),
+        interviews,
+        selections,
+        styles,
+        new MockMockupRenderProvider(),
       ),
     ),
   };

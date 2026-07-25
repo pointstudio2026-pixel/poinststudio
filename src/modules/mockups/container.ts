@@ -12,13 +12,15 @@ import { interviewRepositoryInstance } from "@/modules/interviews/container";
 import { generationRepositoryInstance } from "@/modules/generations/container";
 import { subscriptionsContainer } from "@/modules/subscriptions/container";
 import { trainingExampleRepositoryInstance } from "@/modules/trainingExamples/container";
+import { styleRepositoryInstance, styleSelectionRepositoryInstance } from "@/modules/styles/container";
 import { BullMqMockupRenderQueue } from "@/shared/queue/mockupRenderQueue";
 import { resolveMockupRenderProvider } from "@/shared/ai/mockupRenderRouter";
 import { startMockupRenderWorker } from "@/workers/mockupRenderWorker";
 
 export const mockupRepositoryInstance = new PrismaMockupRepository();
 const mockupRepository = mockupRepositoryInstance;
-const templateRepository = new PrismaMockupTemplateRepository();
+export const mockupTemplateRepositoryInstance = new PrismaMockupTemplateRepository();
+const templateRepository = mockupTemplateRepositoryInstance;
 const queue = new BullMqMockupRenderQueue();
 
 export const mockupsContainer = {
@@ -49,6 +51,8 @@ const processMockupJobUseCase = new ProcessMockupJobUseCase(
   resolveMockupRenderProvider(),
   trainingExampleRepositoryInstance,
   interviewRepositoryInstance,
+  styleSelectionRepositoryInstance,
+  styleRepositoryInstance,
 );
 
 // Same MVP monolith auto-start pattern as generations/edits containers.

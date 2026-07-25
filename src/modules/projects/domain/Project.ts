@@ -41,10 +41,18 @@ export const BRANDING_WORKSPACE_STEPS = [
 // 스튜디오 단계가 필요 없다 -- 생성 자체가 이미 완성된 목업 사진 형태로
 // 나오도록 프롬프트가 바뀌었기 때문(promptBuilder.ts의 DELIVERABLE_OBJECTIVES
 // 참고). 그래서 이 목록에는 "mockup" 단계가 없다(브랜딩 & 로고만 갖는다).
+//
+// "로고 선택"(logo_choice)은 "style"과 "generation" 사이에 끼워 넣는다 --
+// 디자이너가 이미 만들어둔 실제 로고를 첨부해서 그대로 목업에 합성할지,
+// 아니면 지금처럼 AI가 상호명만 보고 전부 상상해서 그리게 둘지 고르는
+// 단계다(ProjectLogoAsset/GenerateFromLogoAssetUseCase 참고). SelectStyleUseCase는
+// 배열 위치로만 다음 단계를 찾으므로 이 배열에 추가하는 것만으로 자동
+// 연결된다.
 export const NON_BRANDING_WORKSPACE_STEPS = [
   { key: "deliverable_type", label: "작업물 유형" },
   { key: "brand_interview", label: "브랜드 인터뷰" },
   { key: "style", label: "스타일" },
+  { key: "logo_choice", label: "로고 선택" },
   { key: "generation", label: "이미지 생성" },
   { key: "concept_board", label: "컨셉 보드" },
 ] as const;

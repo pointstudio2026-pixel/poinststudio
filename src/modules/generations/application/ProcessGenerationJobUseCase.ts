@@ -5,6 +5,8 @@ import type { GenerationEvaluationRepository } from "@/modules/generations/domai
 import type { RecordUsageUseCase } from "@/modules/subscriptions/application/RecordUsageUseCase";
 import type { PromptDecisionRecordRepository } from "@/modules/promptPriority/domain/PromptDecisionRecordRepository";
 import type { EvaluateGenerationVisionUseCase } from "@/modules/generations/application/EvaluateGenerationVisionUseCase";
+import type { GenerateFromLogoAssetUseCase } from "@/modules/generations/application/GenerateFromLogoAssetUseCase";
+import type { ProjectLogoAssetRepository } from "@/modules/projectLogos/domain/ProjectLogoAssetRepository";
 import { resolveImageGenerationProvider } from "@/shared/ai/imageGenerationRouter";
 import { GENERATION_EVENT_TYPE } from "@/modules/subscriptions/domain/planLimits";
 import { getWorkspaceSteps } from "@/modules/projects/domain/Project";
@@ -29,6 +31,8 @@ export class ProcessGenerationJobUseCase {
     private readonly promptDecisionRecordRepository: PromptDecisionRecordRepository,
     private readonly generationEvaluationRepository: GenerationEvaluationRepository,
     private readonly evaluateGenerationVisionUseCase: EvaluateGenerationVisionUseCase,
+    private readonly projectLogoAssetRepository: ProjectLogoAssetRepository,
+    private readonly generateFromLogoAssetUseCase: GenerateFromLogoAssetUseCase,
   ) {}
 
   async execute(input: {
@@ -53,13 +57,23 @@ export class ProcessGenerationJobUseCase {
     }
 
     try {
-      const imageGenerationProvider = resolveImageGenerationProvider(version.providerPreference);
-      const result = await imageGenerationProvider.generate({
-        systemPrompt: promptVersion.systemPrompt,
-        userPrompt: promptVersion.userPrompt,
-        count: IMAGES_PER_GENERATION,
-        sizePreset: promptVersion.payload.sizePreset,
-      });
+      // 프로젝트에 실제 로고가 첨부돼 있으면(브랜딩 & 로고 외 유형에서
+      // "로고 직접 첨부"를 선택한 경우) AI가 텍스트만으로 로고를 상상해
+      // 그리는 대신, 그 로고를 그대로 목업 템플릿에 합성한다
+      // (GenerateFromLogoAssetUseCase). 반환 형태가 일반 이미지 생성과
+      // 동일해서 이 아래 로직(Vision 평가/사용량 기록/currentStep 전진/최종
+      // 완료 처리)은 어느 경로든 손댈 필요가 없다.
+      const project = await this.projectRepository.findById(generation.projectId);
+      const logoAsset = project ? await this.projectLogoAssetRepository.findByProjectId(project.id) : null;
+      const result =
+        project && logoAsset
+          ? await this.generateFromLogoAssetUseCase.execute({ project, logoAsset })
+          : await resolveImageGenerationProvider(version.providerPreference).generate({
+              systemPrompt: promptVersion.systemPrompt,
+              userPrompt: promptVersion.userPrompt,
+              count: IMAGES_PER_GENERATION,
+              sizePreset: promptVersion.payload.sizePreset,
+            });
 
       // 프롬프트 조립 시점에 이미 계산해둔 텍스트 레벨 준수 검증 결과를
       // 생성 결과에도 남긴다 -- 이미지 자체는 검증하지 않는다(비용 없음,
@@ -92,7 +106,6 @@ export class ProcessGenerationJobUseCase {
         }
       }
 
-      const project = await this.projectRepository.findById(generation.projectId);
       if (project) {
         await this.recordUsageUseCase.execute({
           userId: input.requestedByUserId,

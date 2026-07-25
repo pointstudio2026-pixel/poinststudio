@@ -24,6 +24,7 @@ const WORKSPACE_STEP_LABEL_KEYS: Record<string, MessageKey> = {
   style: "dashboard.card.steps.style",
   brand_strategy: "dashboard.card.steps.brandStrategy",
   logo_style: "dashboard.card.steps.logoStyle",
+  logo_choice: "dashboard.card.steps.logoChoice",
   generation: "dashboard.card.steps.generation",
   concept_board: "dashboard.card.steps.conceptBoard",
   mockup: "dashboard.card.steps.mockup",

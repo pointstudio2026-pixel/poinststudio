@@ -17,13 +17,14 @@ describe("getWorkspaceSteps", () => {
     ]);
   });
 
-  it("returns the shorter 5-step list for any other deliverable type, skipping brand_strategy/logo_style/mockup (2026-07-25: 목업 단계 자체가 불필요)", () => {
+  it("returns the shorter 6-step list for any other deliverable type, skipping brand_strategy/logo_style/mockup but adding logo_choice (2026-07-25: 목업 단계 자체가 불필요, 실제 로고 첨부 선택 단계 추가)", () => {
     const steps = getWorkspaceSteps("포스터");
     expect(steps).toBe(NON_BRANDING_WORKSPACE_STEPS);
     expect(steps.map((s) => s.key)).toEqual([
       "deliverable_type",
       "brand_interview",
       "style",
+      "logo_choice",
       "generation",
       "concept_board",
     ]);

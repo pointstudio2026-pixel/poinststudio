@@ -8,9 +8,12 @@ import type { TrainingExampleRepository } from "@/modules/trainingExamples/domai
 import { TRAINING_EXAMPLE_CATEGORY_MOCKUP } from "@/modules/trainingExamples/domain/TrainingExample";
 import { rankTrainingExamples } from "@/modules/trainingExamples/domain/trainingExampleRules";
 import type { InterviewRepository } from "@/modules/interviews/domain/InterviewRepository";
+import type { StyleSelectionRepository } from "@/modules/styles/domain/StyleSelectionRepository";
+import type { StyleRepository } from "@/modules/styles/domain/StyleRepository";
 import { REFERENCE_PROMOTION_THRESHOLD } from "@/modules/promptPriority/domain/generationUsageScore";
 import { GENERATION_EVENT_TYPE } from "@/modules/subscriptions/domain/planLimits";
 import { isBrandingDeliverableType } from "@/modules/projects/domain/deliverableTypes";
+import { STYLE_CATEGORY_TEMPLATES } from "@/modules/prompts/domain/promptBuilder";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { logger } from "@/shared/logging/logger";
 
@@ -25,6 +28,8 @@ export class ProcessMockupJobUseCase {
     private readonly mockupRenderProvider: MockupRenderProvider,
     private readonly trainingExampleRepository: TrainingExampleRepository,
     private readonly interviewRepository: InterviewRepository,
+    private readonly styleSelectionRepository: StyleSelectionRepository,
+    private readonly styleRepository: StyleRepository,
   ) {}
 
   async execute(input: { mockupId: string; isFinalAttempt: boolean; requestedByUserId: string }): Promise<void> {
@@ -66,6 +71,13 @@ export class ProcessMockupJobUseCase {
     // uniform/signboard/banner 같은 "보너스" 카테고리를 쓸 수 있으므로).
     const interviewForIndustry = await this.interviewRepository.findLatestByProjectId(project.id);
     const industry = interviewForIndustry?.answers.find((a) => a.questionKey === "industry")?.answer ?? undefined;
+
+    // 사용자가 고른 스타일 대분류(무드) 텍스트 -- 없으면(아직 스타일 미선택)
+    // 생략된다. 일반 이미지 생성 프롬프트가 쓰는 것과 동일한 소스(promptBuilder.ts
+    // STYLE_CATEGORY_TEMPLATES)라서 목업도 같은 무드 표현을 반영한다.
+    const styleSelection = await this.styleSelectionRepository.findLatestByProjectId(project.id);
+    const primaryStyle = styleSelection ? await this.styleRepository.findById(styleSelection.primaryStyleId) : null;
+    const styleCategory = primaryStyle ? STYLE_CATEGORY_TEMPLATES[primaryStyle.category] : undefined;
 
     if (project.deliverableType) {
       const deliverableType = project.deliverableType;
@@ -113,6 +125,7 @@ export class ProcessMockupJobUseCase {
         compositingMode,
         referenceExampleText,
         avoidPatternText,
+        styleCategory,
       });
 
       await this.mockupRepository.updateResult(mockup.id, {
