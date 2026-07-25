@@ -107,6 +107,7 @@ describe("PromoteGenerationsToReferenceUseCase (real Prisma repositories, real P
       promptRepository,
       decisionRecordRepository,
       new PrismaTrainingExampleRepository(),
+      userRepository,
     );
 
     // 사용자가 아쉬운 점만 선택함(disliked-only) -> 0점, 0.6 미만이라 "회피" 버킷에 저장돼야 한다.

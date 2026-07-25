@@ -16,6 +16,7 @@ import { DeleteUserUseCase } from "@/modules/admin/application/DeleteUserUseCase
 import { ChangeUserRoleUseCase } from "@/modules/admin/application/ChangeUserRoleUseCase";
 import { GetUserDetailUseCase } from "@/modules/admin/application/GetUserDetailUseCase";
 import { PromoteGenerationsToReferenceUseCase } from "@/modules/promptPriority/application/PromoteGenerationsToReferenceUseCase";
+import { PrismaUserRepository } from "@/modules/auth/infrastructure/PrismaUserRepository";
 import {
   generationEvaluationRepositoryInstance,
   generationFeedbackRepositoryInstance,
@@ -39,6 +40,11 @@ import { subscriptionsContainer } from "@/modules/subscriptions/container";
 
 const adminRepository = new PrismaAdminRepository();
 const announcementRepository = new PrismaAnnouncementRepository();
+// authContainer가 아니라 직접 인스턴스화 -- authContainer는 RegisterUseCase 등
+// 이 모듈에 필요 없는 유스케이스까지 줄줄이 끌고 오므로, 상태 없는(stateless)
+// 리포지토리 하나만 필요할 땐 직접 만드는 게 더 가볍다(같은 파일의 다른
+// *RepositoryInstance들과 달리 auth 모듈은 컨테이너 인스턴스를 export하지 않음).
+const userRepository = new PrismaUserRepository();
 const textCompletionProvider = resolveTextCompletionProvider();
 const imageGenerationProvider = resolveImageGenerationProvider();
 const mockupRenderProvider = resolveMockupRenderProvider();
@@ -84,6 +90,7 @@ export const adminContainer = {
     promptRepositoryInstance,
     promptDecisionRecordRepositoryInstance,
     trainingExampleRepositoryInstance,
+    userRepository,
   ),
 };
 

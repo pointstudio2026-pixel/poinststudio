@@ -46,3 +46,42 @@ export function computeGenerationUsageScore(signals: GenerationUsageSignals): nu
   const total = liked + disliked;
   return Math.round((liked / total) * 100) / 100;
 }
+
+/**
+ * 사용자 평가(행동 패턴) 점수와 Vision AI 판단 점수, 두 개의 서로 다른
+ * 기준으로 따로 매겨지던 점수가 행마다 들쑥날쑥해 보인다는 문제 제기
+ * (2026-07-25) -- 하나의 100점 만점 점수로 통합한다. 사용자 평가 30%,
+ * Vision AI 판단 70% 가중 평균(사용자 지시: "vision ai 판단을 70%로,
+ * 사용자평가를 30% 비중으로"). Vision 판단이 없는 행(과거 데이터, 또는
+ * best-effort 호출이 실패한 경우)은 어쩔 수 없이 사용자 평가 점수만으로
+ * 판단한다 -- 이 유스케이스 자체는 Vision AI를 새로 호출하지 않으므로
+ * (비용 0 원칙) 여기서 보정할 방법이 없다.
+ */
+export const USAGE_SCORE_WEIGHT = 0.3;
+export const VISION_SCORE_WEIGHT = 0.7;
+
+export function combineUsageAndVisionScore(usageScore: number, visionScore: number | null): number {
+  if (visionScore == null) return usageScore;
+  return Math.round((USAGE_SCORE_WEIGHT * usageScore + VISION_SCORE_WEIGHT * visionScore) * 100) / 100;
+}
+
+/**
+ * 관리자 본인 계정(role="admin")으로 만든 생성물은 실제 고객이 아니라
+ * 개발/테스트용이라 사용자 평가(좋아요/싫어요)를 일일이 남길 수 없다
+ * (2026-07-25 사용자 지시: "내가 너한테 생성하라고 시킨 이미지들은
+ * 내가 일일이 평가할 수 없으니 vision ai 100퍼센트 비중으로 해줘") --
+ * 이런 행은 사용자 평가 점수를 아예 배제하고 Vision AI 판단만 그대로
+ * 쓴다. Vision 판단이 없으면(드문 실패 케이스) 대체할 신호가 없으므로
+ * 어쩔 수 없이 사용자 평가 점수(대부분 neutral)로 대체한다. 실제
+ * 고객(role="designer") 소유 생성물은 기존 30/70 가중치를 그대로 쓴다.
+ */
+export function resolveGenerationScore(
+  usageScore: number,
+  visionScore: number | null,
+  ownerIsAdmin: boolean,
+): number {
+  if (ownerIsAdmin) {
+    return visionScore != null ? Math.round(visionScore * 100) / 100 : usageScore;
+  }
+  return combineUsageAndVisionScore(usageScore, visionScore);
+}

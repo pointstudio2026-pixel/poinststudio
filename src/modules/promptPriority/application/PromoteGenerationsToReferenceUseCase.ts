@@ -6,10 +6,12 @@ import type { InterviewRepository } from "@/modules/interviews/domain/InterviewR
 import type { PromptRepository } from "@/modules/prompts/domain/PromptRepository";
 import type { PromptDecisionRecordRepository } from "@/modules/promptPriority/domain/PromptDecisionRecordRepository";
 import type { TrainingExampleRepository } from "@/modules/trainingExamples/domain/TrainingExampleRepository";
+import type { UserRepository } from "@/modules/auth/domain/UserRepository";
 import {
   computeGenerationUsageScore,
   REFERENCE_PROMOTION_THRESHOLD,
   REFERENCE_PROMOTION_UPPER_THRESHOLD,
+  resolveGenerationScore,
 } from "@/modules/promptPriority/domain/generationUsageScore";
 
 /**
@@ -30,8 +32,11 @@ const BELOW_THRESHOLD_CAPACITY = 10000;
  * 더 이상 쓰지 않는다(2026-07-25 사용자 지시 -- "내보내기 안 했다고
  * 점수 깎는 건 아닌 것 같다": 그런 대리 신호는 실제 품질과 무관하게 감점될
  * 수 있어 잘못됐다). 평가가 아예 없으면 보통 점수(0.7, 저장 안 되는
- * 구간)로 처리해 애매한 자료가 쌓이지 않는다. Vision AI 호출 없음, AI
- * 비용 0(생성 직후 이미 채워진 Vision 판단이 있으면 평균으로 결합할 뿐,
+ * 구간)로 처리해 애매한 자료가 쌓이지 않는다. 실제 고객(role="designer")
+ * 소유 생성물은 사용자 평가 30% + Vision AI 판단 70%로 합산하고, 관리자
+ * 본인 계정(role="admin")의 테스트 생성물은 일일이 평가할 수 없으므로
+ * Vision AI 판단 100%로 채점한다(resolveGenerationScore 참고). Vision AI
+ * 호출 없음, AI 비용 0(생성 직후 이미 채워진 Vision 판단을 재사용할 뿐,
  * 이 유스케이스 자체는 새 AI 호출을 하지 않는다). Phase 1은 스케줄러
  * 없이(다만 매일 자동 실행되는 referencePromotionWorker가 이미 이
  * 유스케이스를 24시간마다 자동 호출한다 -- "관리자가 버튼으로"는 그 사이
@@ -47,6 +52,7 @@ export class PromoteGenerationsToReferenceUseCase {
     private readonly promptRepository: PromptRepository,
     private readonly promptDecisionRecordRepository: PromptDecisionRecordRepository,
     private readonly trainingExampleRepository: TrainingExampleRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async execute(input: { limit?: number } = {}): Promise<{ evaluated: number; promoted: number }> {
@@ -83,16 +89,16 @@ export class PromoteGenerationsToReferenceUseCase {
         feedback: feedback ? { likedTags: feedback.likedTags, dislikedTags: feedback.dislikedTags } : null,
       });
 
-      // Vision AI(GPT) 판단이 생성 직후 이미 채워져 있으면(2026-07-24 신규
-      // 기능) 행동 신호와 동등 가중 평균으로 결합한다 -- 재시도 없이 그대로
-      // 썼더라도(행동 신호는 좋음) 실제로 금지 요소가 그려졌거나 여러 시안이
-      // 섞였다면(Vision 신호는 나쁨) 참고자료로는 부적합하다는 판단을 반영.
-      // Vision 판단이 없는(아직 미실행/실패한) 기존 행은 행동 신호만으로
+      // 관리자 본인 계정 소유 생성물은 개발/테스트용이라 사용자 평가를
+      // 배제하고 Vision AI 판단 100%로, 실제 고객 소유 생성물은 사용자
+      // 평가 30% + Vision AI 판단 70%로 하나의 점수로 합친다(2026-07-25
+      // 사용자 지시 -- 두 기준을 따로 매기니 행마다 점수가 들쑥날쑥해
+      // 보인다는 문제 제기 + "내가 너한테 생성하라고 시킨 이미지들은
+      // 일일이 평가할 수 없으니 vision ai 100퍼센트로"). Vision 판단이
+      // 없는(아직 미실행/실패한) 행은 어느 쪽이든 사용자 평가만으로
       // 그대로 판단한다(하위 호환).
-      const finalScore =
-        evaluation.visionScore != null
-          ? Math.round(((evaluation.visionScore + behavioralScore) / 2) * 100) / 100
-          : behavioralScore;
+      const owner = await this.userRepository.findById(project.userId);
+      const finalScore = resolveGenerationScore(behavioralScore, evaluation.visionScore, owner?.role === "admin");
 
       // 80점 이상만 참고(reference)로 승격, 60점 미만만 회피(avoid)로 저장,
       // 그 사이(60~79점)는 "애매한" 신호라 DB에 아예 남기지 않는다(사용자
