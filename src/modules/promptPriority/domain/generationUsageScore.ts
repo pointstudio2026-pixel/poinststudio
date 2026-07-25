@@ -2,9 +2,16 @@
  * 리서치 브랜드 자료/실사용자 생성물 승격 기준선. 처음엔 80점으로
  * 시작했지만(2026-07-23), 그 기준으로는 DB가 너무 천천히 쌓여서
  * 2026-07-24 사용자 지시로 60점으로 낮춤 -- "일단 60점 이상이면 다
- * 넣어놓자, 80점 기준으론 발전하는데 시간이 꽤 걸리겠다".
+ * 넣어놓자, 80점 기준으론 발전하는데 시간이 꽤 걸리겠다". 2026-07-25
+ * 사용자 재지시로 다시 나눔: 60~79점은 "애매한" 신호라 아예 저장하지
+ * 않고, 80점 이상만 참고(reference)로, 이 값(60점) 미만만 회피(avoid)로
+ * 남긴다. 이 상수는 이제 회피(avoid) 컷오프 전용이다 -- 참고 컷오프는
+ * REFERENCE_PROMOTION_UPPER_THRESHOLD.
  */
 export const REFERENCE_PROMOTION_THRESHOLD = 0.6;
+
+/** 참고(reference) 자료로 저장/사용하는 컷오프 -- 이 값 이상만 DB에 남는다(2026-07-25). */
+export const REFERENCE_PROMOTION_UPPER_THRESHOLD = 0.8;
 
 export interface GenerationUsageSignals {
   /** 사용자가 직접 남긴 평가(있으면 이게 최우선 신호). */

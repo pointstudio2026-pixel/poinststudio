@@ -30,7 +30,10 @@ import {
 } from "@/modules/promptPriority/domain/conflictDetection";
 import { preserveGoal } from "@/modules/promptPriority/domain/goalPreservationRules";
 import { checkPromptCompliance } from "@/modules/promptPriority/domain/promptComplianceCheck";
-import { REFERENCE_PROMOTION_THRESHOLD } from "@/modules/promptPriority/domain/generationUsageScore";
+import {
+  REFERENCE_PROMOTION_THRESHOLD,
+  REFERENCE_PROMOTION_UPPER_THRESHOLD,
+} from "@/modules/promptPriority/domain/generationUsageScore";
 import type { PromptDecisionRecordRepository } from "@/modules/promptPriority/domain/PromptDecisionRecordRepository";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { ConflictError, NotFoundError } from "@/shared/errors/AppError";
@@ -169,7 +172,7 @@ export class BuildPromptUseCase {
         category: TRAINING_EXAMPLE_CATEGORY_IMAGE_GENERATION,
         industry: answers.industry,
         bucket: "above",
-        threshold: REFERENCE_PROMOTION_THRESHOLD,
+        threshold: REFERENCE_PROMOTION_UPPER_THRESHOLD,
         limit: CANDIDATE_FETCH_LIMIT,
       });
       dbCandidatesFound = candidates.map((c) => c.id);

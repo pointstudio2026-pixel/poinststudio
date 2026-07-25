@@ -8,10 +8,14 @@ import type { PromptRepository } from "@/modules/prompts/domain/PromptRepository
 import type { PromptDecisionRecordRepository } from "@/modules/promptPriority/domain/PromptDecisionRecordRepository";
 import type { TrainingExampleRepository } from "@/modules/trainingExamples/domain/TrainingExampleRepository";
 import { getWorkspaceSteps } from "@/modules/projects/domain/Project";
-import { computeGenerationUsageScore, REFERENCE_PROMOTION_THRESHOLD } from "@/modules/promptPriority/domain/generationUsageScore";
+import {
+  computeGenerationUsageScore,
+  REFERENCE_PROMOTION_THRESHOLD,
+  REFERENCE_PROMOTION_UPPER_THRESHOLD,
+} from "@/modules/promptPriority/domain/generationUsageScore";
 
 /**
- * DB 용량 상한(사용자 결정 2026-07-24) -- 참고(60점 이상)/회피(60점 미만)
+ * DB 용량 상한(사용자 결정 2026-07-24) -- 참고(80점 이상)/회피(60점 미만)
  * 버킷을 따로 관리한다. 프롬프트 텍스트만 저장하므로(이미지 없음) 이 정도
  * 규모는 사실상 무료라 넉넉하게 잡았다 -- 조회 성능은 listCandidates의
  * limit(상위 N개만 조회)이 총량과 무관하게 항상 보장한다.
@@ -21,9 +25,12 @@ const BELOW_THRESHOLD_CAPACITY = 10000;
 
 /**
  * 관리자 수동 트리거(§6) -- 아직 평가 안 된(usageScore=null) 완료 생성물을
- * 비용 없는 행동 신호로 평가하고, 60점 이상만 참고 DB(TrainingExample,
- * source:"USER_GENERATION")로 승격한다. Vision AI 호출 없음, AI 비용 0.
- * Phase 1은 스케줄러 없이 이 유스케이스를 관리자가 버튼으로 직접 실행한다.
+ * 비용 없는 행동 신호로 평가하고, 80점 이상만 참고 DB(TrainingExample,
+ * source:"USER_GENERATION")로 승격하고 60점 미만은 회피 자료로 저장한다.
+ * 60~79점은 애매한 신호로 보고 DB에 남기지 않는다(2026-07-25). Vision AI
+ * 호출 없음, AI 비용 0. Phase 1은 스케줄러 없이(다만 매일 자동 실행되는
+ * referencePromotionWorker가 이미 이 유스케이스를 24시간마다 자동 호출한다
+ * -- "관리자가 버튼으로"는 그 사이 즉시 확인하고 싶을 때 쓰는 수동 트리거다).
  */
 export class PromoteGenerationsToReferenceUseCase {
   constructor(
@@ -99,16 +106,16 @@ export class PromoteGenerationsToReferenceUseCase {
           ? Math.round(((evaluation.visionScore + behavioralScore) / 2) * 100) / 100
           : behavioralScore;
 
-      const meetsThreshold = finalScore >= REFERENCE_PROMOTION_THRESHOLD;
-      await this.generationEvaluationRepository.updateUsageScore(evaluation.id, finalScore, meetsThreshold);
+      // 80점 이상만 참고(reference)로 승격, 60점 미만만 회피(avoid)로 저장,
+      // 그 사이(60~79점)는 "애매한" 신호라 DB에 아예 남기지 않는다(사용자
+      // 재지시 2026-07-25 -- 이전엔 점수 무관 전량 저장이었으나, 그러면
+      // 애매한 자료가 쌓여 실제로 DB가 잘 쌓이는지 판단하기 어렵다는 문제
+      // 제기가 있었음).
+      const promotedToReference = finalScore >= REFERENCE_PROMOTION_UPPER_THRESHOLD;
+      const shouldStore = promotedToReference || finalScore < REFERENCE_PROMOTION_THRESHOLD;
+      await this.generationEvaluationRepository.updateUsageScore(evaluation.id, finalScore, promotedToReference);
+      if (!shouldStore) continue;
 
-      // 점수와 무관하게 완료된 생성물은 전부 DB에 쌓는다(사용자 결정,
-      // 2026-07-24: "모든 생성물들은 다 저장해, 점수 상관없이") -- 대신
-      // 실제 프롬프트 조립 시점(scoreTrainingExample)에서 기준 미달
-      // 자료는 후보에서 제외한다. 이러면 시간이 지날수록 실사용자 결과가
-      // 쌓이면서도, 실제로 쓰이는 건 항상 기준을 넘은 것들뿐이라 전체
-      // 품질이 점점 올라가는 구조가 된다. 즉시 삭제하지 않고 남겨두는 건
-      // 나중에 기준선을 조정하거나 재평가할 여지를 남기기 위함이다.
       const prompt = await this.promptRepository.getVersionById(version.promptVersionId);
       if (!prompt) continue;
 
@@ -150,11 +157,11 @@ export class PromoteGenerationsToReferenceUseCase {
       promoted += 1;
     }
 
-    // 용량 관리: 참고(60점 이상)/회피(60점 미만) 버킷을 각각 따로 관리 --
+    // 용량 관리: 참고(80점 이상)/회피(60점 미만) 버킷을 각각 따로 관리 --
     // 참고 버킷은 낮은 점수부터, 회피 버킷은 threshold에 가까운(가장 덜
     // 나쁜) 것부터 삭제한다(사용자 결정: 점수가 낮을수록 회피 지침으로서
     // 가치가 크다).
-    await this.trainingExampleRepository.pruneAboveThreshold(REFERENCE_PROMOTION_THRESHOLD, ABOVE_THRESHOLD_CAPACITY);
+    await this.trainingExampleRepository.pruneAboveThreshold(REFERENCE_PROMOTION_UPPER_THRESHOLD, ABOVE_THRESHOLD_CAPACITY);
     await this.trainingExampleRepository.pruneBelowThreshold(REFERENCE_PROMOTION_THRESHOLD, BELOW_THRESHOLD_CAPACITY);
 
     return { evaluated: unscored.length, promoted };

@@ -18,8 +18,8 @@ const CUSTOM_CATEGORY_OPTION = "직접 입력";
 const ALL_OPTION = "전체";
 const UNSET_INDUSTRY_OPTION = "업종 미지정";
 
-type EvaluationFilter = "전체" | "참고자료(60점 이상)" | "회피대상(60점 미만)" | "미평가";
-const EVALUATION_FILTERS: EvaluationFilter[] = ["전체", "참고자료(60점 이상)", "회피대상(60점 미만)", "미평가"];
+type EvaluationFilter = "전체" | "참고자료(80점 이상)" | "회피대상(60점 미만)" | "미평가";
+const EVALUATION_FILTERS: EvaluationFilter[] = ["전체", "참고자료(80점 이상)", "회피대상(60점 미만)", "미평가"];
 
 const BREAKDOWN_LABELS: Record<string, string> = {
   safety: "안전성",
@@ -89,7 +89,7 @@ export function TrainingExamplesView() {
     if (deliverableTypeFilter !== ALL_OPTION && e.deliverableType !== deliverableTypeFilter) return false;
     if (industryFilter === UNSET_INDUSTRY_OPTION && e.industry) return false;
     if (industryFilter !== ALL_OPTION && industryFilter !== UNSET_INDUSTRY_OPTION && e.industry !== industryFilter) return false;
-    if (evaluationFilter === "참고자료(60점 이상)" && !(e.evaluationScore !== null && e.evaluationScore >= 0.6)) return false;
+    if (evaluationFilter === "참고자료(80점 이상)" && !(e.evaluationScore !== null && e.evaluationScore >= 0.8)) return false;
     if (evaluationFilter === "회피대상(60점 미만)" && !(e.evaluationScore !== null && e.evaluationScore < 0.6)) return false;
     if (evaluationFilter === "미평가" && e.evaluationScore !== null) return false;
     return true;
@@ -177,8 +177,8 @@ export function TrainingExamplesView() {
         </button>
         <p className="text-xs text-neutral-500">
           {promoteResult
-            ? `${promoteResult.evaluated}건 평가, ${promoteResult.promoted}건 DB 반영(60점 이상)`
-            : "매일 자동으로도 실행됩니다. 실사용자 생성물 중 아직 평가 안 된 것들을 비용 없는 행동 신호(재시도/내보내기/프로젝트 완료 여부)와 사용자 평가로 채점하고 60점 이상만 참고자료로 반영합니다."}
+            ? `${promoteResult.evaluated}건 평가, ${promoteResult.promoted}건 DB 반영(80점 이상 참고 · 60점 미만 회피, 60~79점은 저장 안 함)`
+            : "매일 자동으로도 실행됩니다. 실사용자 생성물 중 아직 평가 안 된 것들을 비용 없는 행동 신호(재시도/내보내기/프로젝트 완료 여부)와 사용자 평가로 채점해, 80점 이상은 참고자료로 60점 미만은 회피자료로 반영합니다. 60~79점은 애매한 신호로 보고 DB에 저장하지 않습니다."}
         </p>
       </div>
 
@@ -395,12 +395,12 @@ export function TrainingExamplesView() {
               {example.evaluationScore !== null ? (
                 <span
                   className={`w-fit rounded-full px-2 py-0.5 text-xs ${
-                    example.evaluationScore >= 0.6
+                    example.evaluationScore >= 0.8
                       ? "bg-green-100 text-green-700"
                       : "bg-amber-100 text-amber-700"
                   }`}
                 >
-                  {example.evaluationScore >= 0.6 ? "참고자료" : "회피대상"} {Math.round(example.evaluationScore * 100)}점
+                  {example.evaluationScore >= 0.8 ? "참고자료" : "회피대상"} {Math.round(example.evaluationScore * 100)}점
                 </span>
               ) : (
                 <span className="w-fit rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-400">미평가</span>

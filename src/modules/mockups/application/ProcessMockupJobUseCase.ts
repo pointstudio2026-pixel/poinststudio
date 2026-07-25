@@ -10,7 +10,10 @@ import { rankTrainingExamples } from "@/modules/trainingExamples/domain/training
 import type { InterviewRepository } from "@/modules/interviews/domain/InterviewRepository";
 import type { StyleSelectionRepository } from "@/modules/styles/domain/StyleSelectionRepository";
 import type { StyleRepository } from "@/modules/styles/domain/StyleRepository";
-import { REFERENCE_PROMOTION_THRESHOLD } from "@/modules/promptPriority/domain/generationUsageScore";
+import {
+  REFERENCE_PROMOTION_THRESHOLD,
+  REFERENCE_PROMOTION_UPPER_THRESHOLD,
+} from "@/modules/promptPriority/domain/generationUsageScore";
 import { GENERATION_EVENT_TYPE } from "@/modules/subscriptions/domain/planLimits";
 import { isBrandingDeliverableType } from "@/modules/projects/domain/deliverableTypes";
 import { STYLE_CATEGORY_TEMPLATES } from "@/modules/prompts/domain/promptBuilder";
@@ -87,7 +90,7 @@ export class ProcessMockupJobUseCase {
         category: TRAINING_EXAMPLE_CATEGORY_MOCKUP,
         industry,
         bucket: "above",
-        threshold: REFERENCE_PROMOTION_THRESHOLD,
+        threshold: REFERENCE_PROMOTION_UPPER_THRESHOLD,
         limit: 50,
       });
       const [top] = rankTrainingExamples(candidates, {
