@@ -11,6 +11,7 @@ import { classifyInterviewInput } from "@/modules/promptPriority/domain/classify
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { ConflictError, NotFoundError } from "@/shared/errors/AppError";
 import type { Locale } from "@/shared/i18n/locale";
+import { MESSAGES } from "@/shared/i18n/messages";
 
 export type ExecuteAsterBrainMode = "execute" | "rebuild";
 
@@ -25,6 +26,7 @@ export type ExecuteAsterBrainMode = "execute" | "rebuild";
 function overrideRecommendedColorsWithUserSelection(
   candidates: BrandStrategyData[],
   swatches: ColorSwatch[],
+  locale: Locale,
 ): BrandStrategyData[] {
   return candidates.map((candidate) => ({
     ...candidate,
@@ -33,7 +35,7 @@ function overrideRecommendedColorsWithUserSelection(
       recommendedColors: [
         {
           value: swatches.map((s) => `${s.label}(${s.hex})`).join(", "),
-          reason: "스타일 단계에서 직접 선택한 브랜드 컬러입니다.",
+          reason: MESSAGES[locale].asterBrain.userSelectedColorReason,
         },
       ],
     },
@@ -127,7 +129,7 @@ export class ExecuteAsterBrainUseCase {
 
     const colorSelection = await this.colorPaletteSelectionRepository.findLatestByProjectId(input.projectId);
     const candidates = colorSelection
-      ? overrideRecommendedColorsWithUserSelection(rawCandidates, colorSelection.swatches)
+      ? overrideRecommendedColorsWithUserSelection(rawCandidates, colorSelection.swatches, input.locale ?? "ko")
       : rawCandidates;
 
     const strategy = existing

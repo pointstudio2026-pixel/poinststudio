@@ -23,5 +23,7 @@ export interface LogoStyleRecommendation {
   category: LogoStyleCategory;
   score: number;
   reason: string;
+  /** reason의 한국어 문장을 화면에서 다시 조립할 때 쓰는 원자료(매칭된 키워드) -- 언어별로 다시 번역해 보여줄 때 사용한다. */
+  matchedKeywords: string[];
   representativeSubStyle: string;
 }

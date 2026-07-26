@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchDesignMemory, resetDesignMemory, updateDesignMemorySettings } from "@/services/design-memory-service";
-import { MOCKUP_CATEGORY_LABELS } from "@/services/mockups-service";
+import { MOCKUP_CATEGORY_LABEL_KEYS } from "@/features/mockups/mockupCategoryLabels";
+import { EDIT_PRESET_LABEL_KEYS } from "@/features/generation/editPresetLabels";
 import { Spinner } from "@/components/Spinner";
 import { AppHeader } from "@/features/navigation/AppHeader";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
@@ -120,7 +121,10 @@ export function DesignMemoryView({
               <ul className="mt-2 flex flex-col gap-1 text-sm">
                 {profile.topStyles.map((s) => (
                   <li key={s.style.id}>
-                    {s.style.name} <span className="text-xs text-muted">— {s.reason}</span>
+                    {s.style.name}{" "}
+                    <span className="text-xs text-muted">
+                      — {t("designMemory.styleReason", { count: s.count })}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -131,11 +135,18 @@ export function DesignMemoryView({
             <div className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
               <p className="text-xs font-medium text-muted">{t("designMemory.topEditPresetsLabel")}</p>
               <ul className="mt-2 flex flex-col gap-1 text-sm">
-                {profile.topEditPresets.map((p) => (
-                  <li key={p.presetKey}>
-                    {p.label} <span className="text-xs text-muted">— {p.reason}</span>
-                  </li>
-                ))}
+                {profile.topEditPresets.map((p) => {
+                  const presetLabelKey = EDIT_PRESET_LABEL_KEYS[p.presetKey];
+                  const presetLabel = presetLabelKey ? t(presetLabelKey) : p.label;
+                  return (
+                    <li key={p.presetKey}>
+                      {presetLabel}{" "}
+                      <span className="text-xs text-muted">
+                        — {t("designMemory.editPresetReason", { label: presetLabel, count: p.count })}
+                      </span>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           )}
@@ -153,7 +164,10 @@ export function DesignMemoryView({
               <ul className="mt-2 flex flex-col gap-1 text-sm">
                 {profile.favoriteMockupCategories.map((c) => (
                   <li key={c.category}>
-                    {MOCKUP_CATEGORY_LABELS[c.category]} <span className="text-xs text-muted">— {c.reason}</span>
+                    {t(MOCKUP_CATEGORY_LABEL_KEYS[c.category])}{" "}
+                    <span className="text-xs text-muted">
+                      — {t("designMemory.mockupReason", { count: c.count })}
+                    </span>
                   </li>
                 ))}
               </ul>

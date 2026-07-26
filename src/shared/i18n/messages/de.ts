@@ -4,6 +4,9 @@ export const de: Messages = {
   common: {
     perMonth: "/Monat",
   },
+  meta: {
+    description: "Design beginnt mit der Richtung Ihrer Marke.",
+  },
   generationFeedback: {
     rateThisResult: "Dieses Ergebnis bewerten (optional)",
     likedColor: "Farben gefallen mir",
@@ -119,6 +122,22 @@ export const de: Messages = {
     selectUserStyleFailed: "Auswahl aus Meine Stile fehlgeschlagen.",
     selectColorFailed: "Auswahl der Farbpalette fehlgeschlagen.",
     forbiddenColorsSaveFailed: "Speichern der ausgeschlossenen Farben fehlgeschlagen.",
+    reasonPrimaryCategory: "Entspricht Ihrer aus dem Interview abgeleiteten Top-Stilrichtung ({category}).",
+    reasonKeywords: "Enthält Schlüsselwörter ({keywords}), die zu Ton/Persönlichkeit Ihrer Marke passen.",
+    reasonAlternative: "Ein Stil, der als Alternative aus der Kategorie {category} interessant sein könnte.",
+    colorRoleBackground: "Hintergrund",
+    colorRoleText: "Text",
+    colorRoleAccent: "Akzent",
+    colorPalettes: {
+      warmTerracotta: "Warmes Terrakotta",
+      deepOcean: "Tiefes Ozeanblau",
+      onyxGold: "Onyx & Gold",
+      forestGreen: "Waldgrün",
+      softPastel: "Sanftes Pastell",
+      monochrome: "Monochrom",
+      vividPop: "Leuchtende Farben",
+      earthTone: "Erdiges Braun",
+    },
   },
   logoStyle: {
     starsLabel: "Empfehlung {count}/5",
@@ -141,6 +160,8 @@ export const de: Messages = {
     select: "Auswählen",
     aiRecommendedDescription: "ASTER empfiehlt den am besten passenden Stil basierend auf Ihrer Markenanalyse.",
     selectTopPick: "Top-Empfehlung auswählen",
+    reasonWithKeywords: "Empfohlen basierend auf Schlüsselwörtern ({keywords}), die zu Ton/Positionierung Ihrer Marke passen.",
+    reasonGeneric: "Eine vielseitige Richtung, die zu vielen Marken passt.",
   },
   conceptBoard: {
     generateFailed: "Erstellung des Konzeptboards fehlgeschlagen.",
@@ -212,6 +233,42 @@ export const de: Messages = {
     recommendedTypography: "Empfohlene Typografie",
     recommendedSymbols: "Empfohlene Symbole",
     confirmThisStrategy: "Diese Strategie bestätigen",
+    userSelectedColorReason: "Die Markenfarbe, die Sie im Style-Schritt direkt ausgewählt haben.",
+    tone_warm: "Herzlich und freundlich",
+    tone_professional: "Professionell und vertrauenswürdig",
+    tone_premium: "Raffiniert und hochwertig",
+    tone_trendy: "Energiegeladen und trendig",
+    tone_balanced: "Ausgewogen und authentisch",
+    defaultPreferredColor: "Eine neutrale Farbpalette, die zum Markenton passt",
+    defaultTypography: "Eine gut lesbare serifenlose Schrift",
+    defaultStyle: "Minimalistisch",
+    defaultSymbol: "Ein einfaches geometrisches Symbol",
+    visionTemplate: "{brand} entwickelt sich zu einer Marke, der {audience} in {industry} dauerhaft vertraut.",
+    positioningTemplate: "Eine Marke, die {audience} in {industry} mit einem {tone} Image erreicht.",
+    fallbackBrand: "Die Marke",
+    fallbackIndustry: "diesem Bereich",
+    fallbackAudience: "Kunden",
+    fallbackIndustryGeneric: "der Branche",
+    fallbackTargetAudience: "die Zielgruppe",
+    fallbackBrandOwn: "Unsere Marke",
+    fallbackTagline: "Die Wahl für Sie",
+    archetype_sage: "Der Weise",
+    archetype_everyman: "Der Jedermann",
+    archetype_ruler: "Der Herrscher",
+    positioningTemplate_sage: "Eine Marke, die mit Expertise und Vertrauen {audience} in {industry} erreicht.",
+    positioningTemplate_everyman: "Eine Marke, die mit Wärme und Nahbarkeit {audience} in {industry} erreicht.",
+    positioningTemplate_ruler: "Eine Marke, die mit Raffinesse und einem Premium-Image {audience} in {industry} erreicht.",
+    styleReasonTemplate: "Ein Stil, der zur Richtung {archetype} passt.",
+    colorReasonTemplate: "Eine Farbrichtung, die das Image {archetype} unterstützt.",
+    typographyReasonTemplate: "Eine Schriftrichtung, die für {audience} gut lesbar ist.",
+    symbolReasonTemplate: "Fasst die Markenpersönlichkeit ({tone}) visuell zusammen.",
+    fallbackReasoningTemplate: "{brand} hat in {industry} eine {archetype}-Persönlichkeit und erreicht {audience} mit einem {tone} Ton. Positionierung: {positioning}",
+    fallbackBrandThis: "Diese Marke",
+    fallbackIndustryThis: "dieser Branche",
+    fallbackUniqueTone: "einen eigenen",
+    fallbackPositioning: "Eine differenzierte Ausrichtung wird noch definiert.",
+    confidenceNotesLow: "Je mehr zusätzliche Fragen Sie beantworten, desto höher die Analysesicherheit.",
+    confidenceNotesHigh: "Basierend auf ausreichenden Informationen analysiert.",
   },
   workspaceView: {
     editing: "Wird bearbeitet...",
@@ -752,6 +809,9 @@ export const de: Messages = {
     colorLabel: "Farbe: ",
     typographyLabel: "Typografie: ",
     topIndustriesLabel: "Wichtigste Branchen",
+    styleReason: "Sie haben diesen Stil in letzten Projekten {count} Mal ausgewählt.",
+    editPresetReason: "Sie haben die Bearbeitung \"{label}\" {count} Mal angewendet.",
+    mockupReason: "Sie haben Mockups dieser Kategorie {count} Mal favorisiert.",
   },
   interviewQuestions: {
     brandName: "Wie lautet der Markenname?",
@@ -982,6 +1042,278 @@ export const de: Messages = {
       mainHeadline: "Hauptüberschrift",
       ctaButton: "CTA-Button",
       footer: "Footer",
+    },
+  },
+  verifyEmail: {
+    invalidLink: "Dieser Bestätigungslink ist ungültig.",
+    failed: "Bestätigung fehlgeschlagen.",
+    verifying: "Ihre E-Mail-Adresse wird bestätigt...",
+    success: "Ihre E-Mail-Adresse wurde bestätigt.",
+    goToProjects: "Zu meinen Projekten",
+    goToProjectsResend: "Zu meinen Projekten, um einen neuen Link anzufordern",
+  },
+  editPresets: {
+    simpler: "Einfacher",
+    moreLuxurious: "Edler",
+    moreMinimal: "Minimalistischer",
+    moreDynamic: "Dynamischer",
+    changeColor: "Farbe ändern",
+    emphasizeTypography: "Typografie betonen",
+    iconOnly: "Nur Icon",
+    symbolOnly: "Nur Symbol",
+    layoutChange: "Layout ändern",
+    regenerate: "Neu generieren",
+  },
+  mockupCategories: {
+    businessCard: "Visitenkarte",
+    signboard: "Schild",
+    mobileApp: "Mobile App",
+    websiteHero: "Website",
+    brochure: "Broschüre",
+    poster: "Poster",
+    package: "Verpackung",
+    leaflet: "Flyer",
+    banner: "Banner",
+    uniform: "Uniform",
+  },
+  privacyPolicy: {
+    backToHome: "Startseite",
+    title: "Datenschutzerklärung",
+    effectiveDate: "Gültig ab: 20. Juli 2026",
+    summary: {
+      heading: "Kurz gesagt",
+      item1:
+        "Bei der Registrierung erfassen wir Ihre E-Mail-Adresse, Ihr Passwort (verschlüsselt gespeichert) und Ihren Namen (optional).",
+      item2:
+        "Ihre Antworten aus dem Marken-Interview sowie die von Ihnen hochgeladenen oder generierten Bilder werden an Anbieter wie OpenAI und Google übermittelt, um Bilder zu erstellen.",
+      item3:
+        "Wir speichern Ihr Passwort niemals im Klartext, sondern bewahren es in einer nicht umkehrbar verschlüsselten Form auf.",
+      item4:
+        "Wir verkaufen oder übergeben die erfassten Informationen nicht zu Werbezwecken an andere Unternehmen.",
+      item5:
+        "Wenn Sie die Löschung Ihres Kontos beantragen, löschen wir Ihre Informationen, sofern nicht geltendes Recht etwas anderes verlangt.",
+    },
+    section1: {
+      title: "1. Erhobene personenbezogene Daten",
+      signupHeading: "Bei der Registrierung",
+      signupItem1:
+        "E-Mail-Adresse, Passwort (verschlüsselt gespeichert), Name (optionale Eingabe)",
+      signupItem2:
+        "Bei der Registrierung mit Google oder Kakao: E-Mail-Adresse, Name und Profilinformationen des betreffenden Kontos",
+      usageHeading: "Während der Nutzung des Dienstes",
+      usageItem1:
+        "Antworten aus dem Marken-Interview (Markenname, Branche, Tonalität und weitere von Ihnen eingegebene Inhalte)",
+      usageItem2:
+        "Von Ihnen hochgeladene Referenzbilder sowie von der KI generierte Bilder und Markenmaterialien",
+      usageItem3:
+        "Nutzungsprotokolle: Anmeldezeiten, Anzahl der Bildgenerierungen, Zugriffs-IP-Adresse, Fehlerprotokolle",
+    },
+    section2: {
+      title: "2. Zwecke der Erhebung personenbezogener Daten",
+      item1: "Kontoverwaltung wie Registrierung und Anmeldung",
+      item2:
+        "Bereitstellung von KI-Generierungsdiensten wie Markenstrategie, Logos und Mockups",
+      item3:
+        "Verwaltung der kostenlosen Nutzungsgrenzen und Verhinderung von Missbrauch wie Mehrfachkonten",
+      item4: "Behebung von Dienstfehlern und Qualitätsverbesserung",
+      item5:
+        "E-Mail-Verifizierung, Ankündigungen und Beantwortung von Anfragen",
+    },
+    section3: {
+      title: "3. Weitergabe an Dritte und Übermittlung ins Ausland",
+      intro:
+        "Um Bilder und Texte zu generieren, übermittelt der Dienst die von Ihnen eingegebenen Markeninformationen, Prompts und hochgeladenen Bilder an die unten aufgeführten ausländischen KI-Anbieter. Dies ist ein für die Erstellung der generierten Ergebnisse unerlässlicher Verarbeitungsschritt.",
+      item1: "OpenAI (USA) — Text- und Bildgenerierung",
+      item2: "Google Gemini (USA) — Text- und Bildgenerierung",
+      item3: "Anthropic Claude (USA) — Textgenerierung",
+      item4:
+        "Resend (Anbieter für den E-Mail-Versand, sofern die tatsächliche E-Mail-Versandfunktion genutzt wird) — E-Mail-Adresse des Empfängers für den Versand von Verifizierungs-E-Mails",
+      outro:
+        "Die vorgenannten Anbieter verarbeiten die Informationen gemäß ihren eigenen Datenschutzerklärungen, und das Unternehmen übermittelt nur die für die Erbringung des Dienstes erforderlichen Mindestinformationen. Zu anderen Zwecken verkaufen oder übermitteln wir keine personenbezogenen Daten an Dritte.",
+    },
+    section4: {
+      title: "4. Speicherung und Nutzungsdauer personenbezogener Daten",
+      intro:
+        "Bei der Löschung Ihres Kontos löschen wir Ihre personenbezogenen Daten unverzüglich. In den folgenden Fällen können wir sie jedoch ausnahmsweise für einen bestimmten Zeitraum aufbewahren.",
+      item1:
+        "Zugriffsprotokolle im erforderlichen Umfang zur Verhinderung von Missbrauch und zur Beilegung von Streitigkeiten: bis zu 3 Monate",
+      item2:
+        "Sofern einschlägige Gesetze eine gesonderte Aufbewahrungsfrist vorschreiben: der von diesem Gesetz festgelegte Zeitraum",
+    },
+    section5: {
+      title: "5. Rechte der Nutzer",
+      bodyBefore:
+        "Sie können jederzeit die Einsicht, Berichtigung oder Löschung Ihrer personenbezogenen Daten verlangen. Unter „Meine Daten“ auf Meiner Seite können Sie Ihren Namen und Ihr Passwort selbst ändern; für die Kontolöschung oder sonstige Anliegen wenden Sie sich bitte über ",
+      contactLink: "Kontakt",
+      bodyAfter: " an uns.",
+    },
+    section6: {
+      title:
+        "6. Maßnahmen zur Gewährleistung der Sicherheit personenbezogener Daten",
+      item1:
+        "Passwörter werden mit einem nicht umkehrbaren Verschlüsselungsalgorithmus (Argon2) gespeichert.",
+      item2:
+        "Anmeldesitzungen werden mit verschlüsselten Tokens verwaltet, die eine Gültigkeitsdauer haben.",
+      item3:
+        "Administratorfunktionen sind so beschränkt, dass nur autorisierte Personen mit gesonderten Berechtigungen darauf zugreifen können.",
+    },
+    section7: {
+      title: "7. Cookies (automatisch erfasste Informationen)",
+      body:
+        "Der Dienst speichert ein Authentifizierungstoken in einem Browser-Cookie, um Sie angemeldet zu halten. Dies ist eine wesentliche Funktion zur Aufrechterhaltung Ihrer Anmeldesitzung und dient nicht Werbe- oder Tracking-Zwecken. Wenn Sie das Cookie löschen, müssen Sie sich erneut anmelden.",
+    },
+    section8: {
+      title: "8. Kontakt",
+      bodyBefore:
+        "Für Anfragen zur Verarbeitung personenbezogener Daten sowie für Anträge auf Einsicht oder Löschung wenden Sie sich bitte über ",
+      contactLink: "das Kontaktformular im Dienst",
+      bodyAfter: " an uns.",
+    },
+    disclaimer:
+      "Hinweis: Diese Erklärung ist ein vom Dienstbetreiber ohne formelle Rechtsberatung erstellter Entwurf. Formelle Hinweispflichten nach dem südkoreanischen Gesetz zum Schutz personenbezogener Daten (PIPA), wie die Benennung eines Datenschutzbeauftragten, müssen ergänzt werden, sobald die tatsächliche Form des Dienstbetriebs feststeht; wir empfehlen, die Erklärung vor der offiziellen Veröffentlichung von einer Rechtsexpertin oder einem Rechtsexperten prüfen zu lassen.",
+  },
+  termsOfService: {
+    backToHome: "← Startseite",
+    title: "Nutzungsbedingungen",
+    effectiveDate: "Inkrafttreten: 20. Juli 2026",
+    summary: {
+      title: "Kurz gesagt",
+      item1: "ASTER ist ein Dienst, der Logo- und Markendesigns mit KI erstellt.",
+      item2: "Die von Ihnen eingegebenen Markeninformationen und Bilder werden zur Bilderzeugung an KI-Anbieter wie OpenAI und Google übermittelt.",
+      item3: "Der kostenlose Tarif hat eine Begrenzung, wie viele Generierungen Sie pro Monat vornehmen können.",
+      item4: "Das Erstellen von Inhalten, die Marken oder Urheberrechte anderer verletzen, sowie das Umgehen des kostenlosen Limits durch mehrere Konten sind untersagt.",
+      item5: "Bei Verstoß gegen diese Bedingungen kann Ihr Konto gesperrt oder gelöscht werden.",
+    },
+    article1: {
+      title: "Artikel 1 (Zweck)",
+      body: "Zweck dieser Bedingungen ist es, die Rechte, Pflichten und Verantwortlichkeiten zwischen dem Unternehmen und den Nutzern im Zusammenhang mit der Nutzung des von ASTER (dem „Unternehmen“) bereitgestellten KI-basierten Markendesign-Generierungsdienstes (des „Dienstes“) festzulegen.",
+    },
+    article2: {
+      title: "Artikel 2 (Inhalt des Dienstes)",
+      intro: "Der Dienst bietet die folgenden Funktionen.",
+      item1: "Markenstrategie- und Stilempfehlungen auf Grundlage eines Markeninterviews",
+      item2: "Erzeugung und Bearbeitung von Logos und Markenbildern mithilfe von KI",
+      item3: "Erstellung von Mockups (Produktmockup-Bildern) unter Verwendung der erzeugten Bilder",
+      item4: "Speichern, Verwalten und Exportieren (Export) der erzeugten Ergebnisse",
+      outro:
+        "Der Dienst besteht aus einem kostenlosen Tarif und kostenpflichtigen Tarifen (Pro, Studio). Die kostenpflichtige Zahlungsfunktion befindet sich noch in Vorbereitung vor der offiziellen Einführung. Sollte eine Zahlungsfunktion eingeführt werden, informieren wir vorab über die entsprechenden Einzelheiten und holen eine gesonderte Einwilligung ein.",
+    },
+    article3: {
+      title: "Artikel 3 (Konten und Registrierung)",
+      item1: "Sie können ein Konto mit einer E-Mail-Adresse und einem Passwort oder über die Social-Login-Funktion von Google oder Kakao erstellen.",
+      item2: "Um einen Missbrauch des kostenlosen Nutzungslimits zu verhindern, kann ein E-Mail-Verifizierungsverfahren erforderlich sein.",
+      item3: "Das missbräuchliche Verwenden der E-Mail-Adresse einer anderen Person oder das wiederholte Umgehen des kostenlosen Nutzungslimits durch das Erstellen mehrerer Konten ist untersagt.",
+      item4: "Sie müssen Ihre Mitgliedsdaten korrekt eingeben und tragen etwaige Nachteile, die aus falschen Angaben entstehen.",
+    },
+    article4: {
+      title: "Artikel 4 (KI-Verarbeitung und Nutzung externer Dienste)",
+      body1Before:
+        "Zur Erzeugung von Bildern und Texten nutzt der Dienst die APIs externer KI-Anbieter wie OpenAI, Google (Gemini) und Anthropic (Claude). Die von Ihnen eingegebenen Markeninformationen, Interviewantworten und hochgeladenen Bilder können zur Erzeugung der Ergebnisse an diese Anbieter übermittelt werden. Weitere Einzelheiten finden Sie in unserer ",
+      body1Link: "Datenschutzerklärung",
+      body1After: ".",
+      body2:
+        "Aufgrund der Beschaffenheit KI-erzeugter Ergebnisse können die resultierenden Bilder nicht genau wie beabsichtigt ausfallen und in seltenen Fällen unangemessene oder ungenaue Ergebnisse enthalten. Das Unternehmen bemüht sich, dies auf ein Minimum zu reduzieren, garantiert jedoch keine vollständige Genauigkeit.",
+    },
+    article5: {
+      title: "Artikel 5 (Nutzung von und Rechte an erzeugten Inhalten)",
+      item1: "Die von Ihnen mit dem Dienst erzeugten Bilder dürfen von Ihnen frei genutzt werden, einschließlich zu kommerziellen Zwecken.",
+      item2:
+        "Sie sind jedoch selbst dafür verantwortlich zu prüfen, dass die bei der Erzeugung eingegebenen Prompts oder Referenzbilder keine Marken-, Urheber- oder sonstigen Rechte des geistigen Eigentums Dritter verletzen.",
+      item3:
+        "Ob ein Urheberrecht an KI-erzeugten Inhalten anerkannt wird, kann je nach Land und Gesetzgebung unterschiedlich sein, und das Unternehmen garantiert kein vollständiges Urheberrecht an den erzeugten Inhalten.",
+    },
+    article6: {
+      title: "Artikel 6 (Verbotene Handlungen)",
+      intro: "Der Nutzer darf die folgenden Handlungen nicht vornehmen.",
+      item1: "Das Erzeugen von Inhalten, die personenbezogene Daten, Marken, Urheberrechte oder sonstige Rechte anderer verletzen",
+      item2: "Das wiederholte Umgehen des kostenlosen Nutzungslimits durch das Erstellen mehrerer Konten",
+      item3: "Das Beeinträchtigen des normalen Betriebs des Dienstes oder der unbefugte Zugriff auf das System",
+      item4: "Das Erzeugen oder Verbreiten von Inhalten, die rechtswidrig sind oder gegen die guten Sitten verstoßen",
+    },
+    article7: {
+      title: "Artikel 7 (Nutzungsbeschränkungen)",
+      bodyBefore:
+        "Wenn Sie gegen Artikel 6 verstoßen oder den Betrieb des Dienstes erheblich stören, kann das Unternehmen die Nutzung des betreffenden Kontos ohne Vorankündigung sperren oder löschen. Für ein gesperrtes oder gelöschtes Konto können Sie über ",
+      bodyLink: "Kontakt",
+      bodyAfter: " eine Stellungnahme einreichen.",
+    },
+    article8: {
+      title: "Artikel 8 (Änderung und Einstellung des Dienstes)",
+      body: "Das Unternehmen kann den Dienst ganz oder teilweise aus betrieblichen oder technischen Gründen ändern oder einstellen. Bei Änderungen, die sich wesentlich auf die Nutzer auswirken, informieren wir vorab.",
+    },
+    article9: {
+      title: "Artikel 9 (Haftungsbeschränkung)",
+      body: "Das Unternehmen haftet nicht für Dienstunterbrechungen, die aus Gründen außerhalb seiner Kontrolle entstehen, wie höhere Gewalt oder Dienststörungen der KI-Anbieter. Das Unternehmen haftet ferner nicht für Rechtsstreitigkeiten, die aus Ihrer tatsächlichen Nutzung der erzeugten Ergebnisse entstehen (etwa Markenanmeldungen oder die Herstellung von Druckerzeugnissen).",
+    },
+    article10: {
+      title: "Artikel 10 (Änderung der Bedingungen)",
+      body: "Das Unternehmen kann diese Bedingungen bei Bedarf ändern und wird über Änderungen vorab durch eine Mitteilung innerhalb des Dienstes oder per E-Mail informieren. Wenn Sie den geänderten Bedingungen nicht zustimmen, können Sie die Kündigung Ihrer Mitgliedschaft beantragen.",
+    },
+    article11: {
+      title: "Artikel 11 (Anfragen)",
+      bodyBefore: "Anfragen zur Nutzung des Dienstes reichen Sie bitte über ",
+      bodyLink: "die Kontaktseite im Dienst",
+      bodyAfter: " ein.",
+    },
+    disclaimer:
+      "Hinweis: Diese Bedingungen sind ein Entwurf, der vom Betreiber des Dienstes ohne formelle Rechtsberatung erstellt wurde. Angaben zur Gewerbeanmeldung (Firmenname, Vertreter, Gewerberegisternummer, Adresse) und Bestimmungen zu kostenpflichtigen Zahlungen müssen ergänzt werden, sobald die tatsächliche Form des Dienstbetriebs feststeht und eine Zahlungsfunktion eingeführt wird; wir empfehlen, sie vor der offiziellen Veröffentlichung von einer Rechtsexpertin oder einem Rechtsexperten prüfen zu lassen.",
+  },
+  guidePage: {
+    eyebrow: "How it works",
+    title: "So nutzen Sie Meine Projekte, Meine Stile und Team",
+    intro:
+      "Hier finden Sie den gesamten Ablauf zum Erstellen von Markenvisuals, wie Sie Stile speichern und wiederverwenden und wie Sie gemeinsam mit Teammitgliedern an Projekten arbeiten.",
+    myProjects: {
+      title: "Meine Projekte",
+      descLink: "Meine Projekte",
+      descAfter:
+        " ein neues Projekt erstellen, durchlaufen Sie die folgenden Schritte der Reihe nach bis zu Ihrem Ergebnis. Sie können jederzeit zum Dashboard zurückkehren und jeden Schritt fortsetzen.",
+      steps: {
+        deliverable_type: "Art des Ergebnisses",
+        brand_interview: "Marken-Interview",
+        style: "Stil",
+        brand_strategy: "Markenstrategie",
+        logo_style: "Logo-Stil",
+        generation: "Generierung",
+        concept_board: "Concept Board",
+        mockup: "Mockups",
+      },
+      note: "Bei anderen Ergebnistypen als Logo/Branding, etwa Postern oder Flyern, werden die beiden Schritte „Markenstrategie\" und „Logo-Stil\" übersprungen.",
+    },
+    myStyles: {
+      title: "Meine Stile",
+      tier: "Pro und höher",
+      introBefore: "Meine Stile ist ab dem ",
+      introStrong: "Pro-Tarif",
+      introAfter:
+        " verfügbar. Verwenden Sie die von Ihnen hochgeladenen Referenzbilder in Ihrem gesamten Konto wieder, sodass Sie einen Stil sofort anwenden können, ohne in jedem Projekt dieselbe Stimmung erneut beschreiben zu müssen.",
+      step1Title: "1. Kategorie erstellen",
+      step1Link: "Meine Stile",
+      step1After: " eine Kategorie mit einem Namen Ihrer Wahl (z. B. „Logo-Stil unserer Marke\").",
+      step2Title: "2. Referenzbilder hinzufügen",
+      step2Body:
+        "Laden Sie pro Kategorie bis zu 5 Referenzbilder hoch, und die KI analysiert und fasst den Stil automatisch für Sie zusammen.",
+      step3Title: "3. Im Stil-Schritt nutzen",
+      step3Body:
+        "Wählen Sie im Stil-Auswahlschritt eines Projekts einen Ihrer gespeicherten Stile aus, und diese Stimmung fließt direkt in die Bildgenerierung ein.",
+    },
+    team: {
+      title: "Team",
+      tier: "Nur Studio",
+      introBefore: "Die Team-Funktion ist im ",
+      introStrong: "Studio-Tarif",
+      introAfter:
+        " verfügbar. In den Tarifen Free und Pro können Sie mit einem Code dem Team einer anderen Person beitreten, aber kein eigenes Team erstellen.",
+      step1Title: "1. Team erstellen",
+      step1Before: "Wenn ein Studio-Nutzer auf der Seite ",
+      step1Link: "Team",
+      step1After: " ein Team erstellt, wird ein eindeutiger 6-stelliger Code ausgegeben.",
+      step2Title: "2. Code teilen und beitreten",
+      step2Body:
+        "Geben Sie diesen Code an Ihre Teammitglieder weiter; sie treten dem Team bei, indem sie ihn auf derselben Team-Seite eingeben.",
+      step3Title: "3. Projekte teilen",
+      step3Body:
+        "Aktivieren Sie im Dashboard über das Menü „⋯\" eines Projekts „Mit Team teilen\" nur für die gewünschten Projekte, und Ihre Teammitglieder können diese Projekte in ihrem Dashboard ansehen und bearbeiten.",
     },
   },
 };

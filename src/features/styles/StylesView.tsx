@@ -19,6 +19,7 @@ import { suggestColorSwatchesFromNotes } from "@/modules/colorPalettes/domain/in
 import { Spinner } from "@/components/Spinner";
 import { NextStepButton } from "@/features/workspace/NextStepButton";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
+import { COLOR_PALETTE_LABEL_KEYS } from "@/features/styles/colorPaletteLabels";
 
 const HEX_PATTERN = /^#[0-9a-fA-F]{6}$/;
 
@@ -239,8 +240,14 @@ export function StylesView({
     [interviewData],
   );
   const suggestedColorSwatches = useMemo(
-    () => suggestColorSwatchesFromNotes(additionalNotesText),
-    [additionalNotesText],
+    () =>
+      suggestColorSwatchesFromNotes(additionalNotesText, {
+        background: t("styles.colorRoleBackground"),
+        text: t("styles.colorRoleText"),
+        accent: t("styles.colorRoleAccent"),
+        fallback: (index) => t("styles.defaultColorLabel", { index }),
+      }),
+    [additionalNotesText, t],
   );
   const showColorSuggestion =
     Boolean(suggestedColorSwatches) &&
@@ -545,7 +552,9 @@ export function StylesView({
                   />
                 ))}
               </div>
-              <p className="mt-2 font-medium">{palette.name}</p>
+              <p className="mt-2 font-medium">
+                {COLOR_PALETTE_LABEL_KEYS[palette.slug] ? t(COLOR_PALETTE_LABEL_KEYS[palette.slug]!) : palette.name}
+              </p>
               <button
                 type="button"
                 onClick={() => handleSelectColorPreset(palette.slug)}
@@ -640,12 +649,13 @@ export function StylesView({
           </div>
         ) : (
           <div className="mt-3 grid gap-3 sm:grid-cols-3">
-            {(recommendData?.recommendations ?? []).map(({ style, score, reason }) => (
+            {(recommendData?.recommendations ?? []).map(({ style, score, reasonKind, matchedKeywords }) => (
               <StyleCard
                 key={style.id}
                 style={style}
                 score={score}
-                reason={reason}
+                reasonKind={reasonKind}
+                matchedKeywords={matchedKeywords}
                 isPrimary={primaryId === style.id}
                 isSecondary={secondaryIds.includes(style.id)}
                 isFavorite={favoriteIds.has(style.id)}
@@ -827,7 +837,8 @@ export function StylesView({
 function StyleCard({
   style,
   score,
-  reason,
+  reasonKind,
+  matchedKeywords,
   isPrimary,
   isSecondary,
   isFavorite,
@@ -838,7 +849,8 @@ function StyleCard({
 }: {
   style: StyleDto;
   score?: number;
-  reason?: string;
+  reasonKind?: "primaryCategory" | "keywords" | "alternative";
+  matchedKeywords?: string[];
   isPrimary: boolean;
   isSecondary: boolean;
   isFavorite: boolean;
@@ -848,6 +860,14 @@ function StyleCard({
   compact?: boolean;
 }) {
   const { t } = useTranslation();
+  const reason =
+    reasonKind === "primaryCategory"
+      ? t("styles.reasonPrimaryCategory", { category: style.category })
+      : reasonKind === "keywords"
+        ? t("styles.reasonKeywords", { keywords: (matchedKeywords ?? []).join(", ") })
+        : reasonKind === "alternative"
+          ? t("styles.reasonAlternative", { category: style.category })
+          : undefined;
   return (
     <div
       className={`overflow-hidden rounded-xl border text-sm ${

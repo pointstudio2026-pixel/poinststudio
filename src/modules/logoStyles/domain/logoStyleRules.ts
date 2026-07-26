@@ -20,9 +20,13 @@ export function scoreLogoStyleCategory(category: LogoStyleCategory, input: LogoS
   return Math.round((matched.length / category.keywords.length) * 100) / 100;
 }
 
-export function buildLogoStyleReason(category: LogoStyleCategory, input: LogoStyleScoreInput): string {
+function matchLogoStyleKeywords(category: LogoStyleCategory, input: LogoStyleScoreInput): string[] {
   const text = input.brandText.toLowerCase();
-  const matched = category.keywords.filter((k) => text.includes(k.toLowerCase()));
+  return category.keywords.filter((k) => text.includes(k.toLowerCase()));
+}
+
+export function buildLogoStyleReason(category: LogoStyleCategory, input: LogoStyleScoreInput): string {
+  const matched = matchLogoStyleKeywords(category, input);
   if (matched.length > 0) {
     return `브랜드 톤/포지셔닝과 일치하는 키워드(${matched.join(", ")})를 바탕으로 "${category.name}" 방향을 추천합니다.`;
   }
@@ -43,6 +47,7 @@ export function rankLogoStyleCategories(
       category,
       score: scoreLogoStyleCategory(category, input),
       reason: buildLogoStyleReason(category, input),
+      matchedKeywords: matchLogoStyleKeywords(category, input),
       representativeSubStyle: category.subStyles[0] ?? category.name,
     }))
     .sort((a, b) => b.score - a.score);

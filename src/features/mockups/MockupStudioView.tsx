@@ -21,6 +21,7 @@ import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 import { DELIVERABLE_TYPE_TO_MOCKUP_CATEGORY } from "@/modules/mockups/domain/mockupRules";
 import { isBrandingDeliverableType } from "@/modules/projects/domain/deliverableTypes";
+import { MOCKUP_CATEGORY_LABEL_KEYS } from "@/features/mockups/mockupCategoryLabels";
 
 const ALL_CATEGORIES = Object.keys(MOCKUP_CATEGORY_LABELS) as MockupCategoryDto[];
 
@@ -232,7 +233,7 @@ export function MockupStudioView({
                           : "border-line hover:border-ink"
                       }`}
                     >
-                      {MOCKUP_CATEGORY_LABELS[category]}
+                      {t(MOCKUP_CATEGORY_LABEL_KEYS[category])}
                     </button>
                   ))}
                 </div>
@@ -276,7 +277,7 @@ export function MockupStudioView({
                 className="flex items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-medium text-paper transition hover:opacity-90 disabled:opacity-50"
               >
                 {creatingTemplateId && <Spinner />}
-                {MOCKUP_CATEGORY_LABELS[activeCategory]} {t("mockupStudio.select")}
+                {t(MOCKUP_CATEGORY_LABEL_KEYS[activeCategory])} {t("mockupStudio.select")}
               </button>
             )}
           </div>

@@ -5,15 +5,17 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { verifyEmail } from "@/services/auth-service";
 import { Spinner } from "@/components/Spinner";
+import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
 type Status = "verifying" | "success" | "error";
 
 export function VerifyEmailView() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const [status, setStatus] = useState<Status>(() => (token ? "verifying" : "error"));
   const [errorMessage, setErrorMessage] = useState<string | null>(() =>
-    token ? null : "인증 링크가 올바르지 않습니다.",
+    token ? null : t("verifyEmail.invalidLink"),
   );
 
   useEffect(() => {
@@ -22,34 +24,34 @@ export function VerifyEmailView() {
       .then(() => setStatus("success"))
       .catch((err) => {
         setStatus("error");
-        setErrorMessage(err instanceof Error ? err.message : "인증에 실패했습니다.");
+        setErrorMessage(err instanceof Error ? err.message : t("verifyEmail.failed"));
       });
-  }, [token]);
+  }, [token, t]);
 
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center gap-4 p-8 text-center">
       {status === "verifying" && (
         <>
           <Spinner />
-          <p className="text-sm text-muted">이메일을 인증하는 중입니다...</p>
+          <p className="text-sm text-muted">{t("verifyEmail.verifying")}</p>
         </>
       )}
 
       {status === "success" && (
         <>
-          <h1 className="text-lg font-semibold">이메일이 인증되었습니다.</h1>
+          <h1 className="text-lg font-semibold">{t("verifyEmail.success")}</h1>
           <Link href="/projects" className="mt-2 rounded-full bg-ink px-4 py-2 text-sm text-paper">
-            내 프로젝트로 이동
+            {t("verifyEmail.goToProjects")}
           </Link>
         </>
       )}
 
       {status === "error" && (
         <>
-          <h1 className="text-lg font-semibold text-red-600">인증에 실패했습니다.</h1>
+          <h1 className="text-lg font-semibold text-red-600">{t("verifyEmail.failed")}</h1>
           <p className="text-sm text-muted">{errorMessage}</p>
           <Link href="/projects" className="mt-2 text-sm underline">
-            내 프로젝트로 이동해서 재발송 요청하기
+            {t("verifyEmail.goToProjectsResend")}
           </Link>
         </>
       )}

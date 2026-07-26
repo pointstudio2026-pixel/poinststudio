@@ -4,11 +4,15 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { SessionBootstrap } from "@/features/auth/SessionBootstrap";
 import { getServerLocale } from "@/shared/i18n/serverLocale";
+import { MESSAGES } from "@/shared/i18n/messages";
 
-export const metadata: Metadata = {
-  title: "ASTER",
-  description: "브랜드의 방향성에서 디자인이 시작됩니다.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale();
+  return {
+    title: "ASTER",
+    description: MESSAGES[locale].meta.description,
+  };
+}
 
 // 홈페이지 헤드라인 전용 에디토리얼 세리프 -- 라틴 문자는 Fraunces, 한글은
 // Gowun Batang이 담당한다(폴백 체인으로 연결, .font-display 참고). 다른

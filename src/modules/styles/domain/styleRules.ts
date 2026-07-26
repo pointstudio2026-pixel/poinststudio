@@ -50,10 +50,14 @@ export function scoreStyle(style: Style, input: ScoreInput): number {
   return Math.min(1, Math.round(score * 100) / 100);
 }
 
+export function matchStyleKeywords(style: Style, input: ScoreInput): string[] {
+  const text = input.keywordText.toLowerCase();
+  return style.keywords.filter((k) => text.includes(k.toLowerCase()));
+}
+
 export function buildRecommendationReason(style: Style, input: ScoreInput): string {
   const primaryMatch = input.candidateCategoryNames[0]?.toLowerCase() === style.category.toLowerCase();
-  const text = input.keywordText.toLowerCase();
-  const matchedKeywords = style.keywords.filter((k) => text.includes(k.toLowerCase()));
+  const matchedKeywords = matchStyleKeywords(style, input);
 
   if (primaryMatch) {
     return `인터뷰 답변에서 추론한 1순위 스타일 방향(${style.category})과 일치합니다.`;
@@ -62,6 +66,13 @@ export function buildRecommendationReason(style: Style, input: ScoreInput): stri
     return `브랜드 톤/성격과 일치하는 키워드(${matchedKeywords.join(", ")})가 있습니다.`;
   }
   return `${style.category} 계열의 대안으로 참고할 수 있는 스타일입니다.`;
+}
+
+export function buildRecommendationReasonKind(style: Style, input: ScoreInput): "primaryCategory" | "keywords" | "alternative" {
+  const primaryMatch = input.candidateCategoryNames[0]?.toLowerCase() === style.category.toLowerCase();
+  if (primaryMatch) return "primaryCategory";
+  if (matchStyleKeywords(style, input).length > 0) return "keywords";
+  return "alternative";
 }
 
 interface ConflictCheckInput {

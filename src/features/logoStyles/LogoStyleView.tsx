@@ -149,7 +149,11 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
           <p className="mt-2 text-sm text-ink">
             {t("logoStyle.topPickReasonPrefix")} <strong>&ldquo;{topPick.category.name}&rdquo;</strong>{t("logoStyle.topPickReasonSuffix")}
           </p>
-          <p className="mt-1 text-sm text-muted">{topPick.reason}</p>
+          <p className="mt-1 text-sm text-muted">
+            {topPick.matchedKeywords.length > 0
+              ? t("logoStyle.reasonWithKeywords", { keywords: topPick.matchedKeywords.join(", ") })
+              : t("logoStyle.reasonGeneric")}
+          </p>
         </section>
       )}
 

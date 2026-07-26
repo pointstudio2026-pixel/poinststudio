@@ -6,6 +6,8 @@ import type {
   BrandStrategyProfile,
   ConfidenceLevel,
 } from "@/modules/brandStrategies/domain/BrandStrategy";
+import type { Locale } from "@/shared/i18n/locale";
+import { MESSAGES } from "@/shared/i18n/messages";
 
 /**
  * Interview answers -> Brand Knowledge mapping (13_PRD_AsterBrain.md
@@ -15,14 +17,14 @@ import type {
  */
 export function buildBrandKnowledge(
   answers: Record<string, string>,
+  locale: Locale = "ko",
 ): Omit<BrandKnowledge, "confidenceNotes" | "reasoningSummary"> {
-  return buildBrandKnowledgeFields(answers);
+  return buildBrandKnowledgeFields(answers, locale);
 }
 
 interface ArchetypeTemplate {
-  archetype: string;
-  toneAndManner: string;
-  positioningAngle: string;
+  archetypeKey: "sage" | "everyman" | "ruler";
+  toneKey: "professional" | "warm" | "premium";
 }
 
 /**
@@ -33,46 +35,45 @@ interface ArchetypeTemplate {
  * selection's recommend-then-select pattern).
  */
 const ARCHETYPE_TEMPLATES: ArchetypeTemplate[] = [
-  {
-    archetype: "전문가 (The Sage)",
-    toneAndManner: "전문적이고 신뢰감 있는",
-    positioningAngle: "전문성과 신뢰를 앞세워",
-  },
-  {
-    archetype: "동반자 (The Everyman)",
-    toneAndManner: "친근하고 따뜻한",
-    positioningAngle: "편안함과 친근함을 앞세워",
-  },
-  {
-    archetype: "지배자 (The Ruler)",
-    toneAndManner: "세련되고 고급스러운",
-    positioningAngle: "세련됨과 프리미엄 이미지를 앞세워",
-  },
+  { archetypeKey: "sage", toneKey: "professional" },
+  { archetypeKey: "everyman", toneKey: "warm" },
+  { archetypeKey: "ruler", toneKey: "premium" },
 ];
 
 export function buildStrategyProfile(
   answers: Record<string, string>,
   knowledge: BrandKnowledgeFields,
   template: ArchetypeTemplate,
+  locale: Locale = "ko",
 ): BrandStrategyProfile {
+  const m = MESSAGES[locale].asterBrain;
+  const archetype = m[`archetype_${template.archetypeKey}`];
+  const toneAndManner = m[`tone_${template.toneKey}`];
+  const positioning = m[`positioningTemplate_${template.archetypeKey}`]
+    .replace("{industry}", answers.industry || m.fallbackIndustryGeneric)
+    .replace("{audience}", knowledge.audience || m.fallbackTargetAudience);
+
   return {
-    positioning: `${answers.industry || "업종"} 내에서 ${template.positioningAngle} ${knowledge.audience || "타깃 고객"}에게 다가가는 브랜드.`,
+    positioning,
     coreMessage: knowledge.tagline,
-    toneAndManner: template.toneAndManner,
-    personality: template.toneAndManner,
-    brandArchetype: template.archetype,
+    toneAndManner,
+    personality: toneAndManner,
+    brandArchetype: archetype,
     visualDirection: knowledge.visualDirection,
     recommendedStyles: [
-      { value: "미니멀", reason: `${template.archetype} 방향과 어울리는 스타일입니다.` },
+      { value: m.defaultStyle, reason: m.styleReasonTemplate.replace("{archetype}", archetype) },
     ],
     recommendedColors: [
-      { value: knowledge.preferredColor, reason: `${template.archetype} 이미지를 뒷받침하는 컬러 방향입니다.` },
+      { value: knowledge.preferredColor, reason: m.colorReasonTemplate.replace("{archetype}", archetype) },
     ],
     recommendedTypography: [
-      { value: knowledge.typographyDirection, reason: `${knowledge.audience || "타깃 고객"}에게 가독성 있게 다가가는 서체 방향입니다.` },
+      {
+        value: knowledge.typographyDirection,
+        reason: m.typographyReasonTemplate.replace("{audience}", knowledge.audience || m.fallbackTargetAudience),
+      },
     ],
     recommendedSymbols: [
-      { value: "심플한 기하학적 심볼", reason: `브랜드 성격(${template.toneAndManner})을 시각적으로 요약합니다.` },
+      { value: m.defaultSymbol, reason: m.symbolReasonTemplate.replace("{tone}", toneAndManner) },
     ],
   };
 }
@@ -80,19 +81,24 @@ export function buildStrategyProfile(
 export function buildFallbackStrategyProfiles(
   answers: Record<string, string>,
   knowledge: BrandKnowledgeFields,
+  locale: Locale = "ko",
 ): BrandStrategyProfile[] {
-  return ARCHETYPE_TEMPLATES.map((template) => buildStrategyProfile(answers, knowledge, template));
+  return ARCHETYPE_TEMPLATES.map((template) => buildStrategyProfile(answers, knowledge, template, locale));
 }
 
 export function buildFallbackReasoningSummary(
   answers: Record<string, string>,
   profile: BrandStrategyProfile,
+  locale: Locale = "ko",
 ): string {
-  return (
-    `${answers.brandName || "이 브랜드"}는 ${answers.industry || "해당 업종"}에서 ${profile.brandArchetype} 성격으로, ` +
-    `${profile.toneAndManner || "고유한"} 톤을 통해 ${answers.targetAudience || "타깃 고객"}에게 다가갑니다. ` +
-    `포지셔닝: ${profile.positioning || "차별화된 방향성을 정의하는 중입니다."}`
-  );
+  const m = MESSAGES[locale].asterBrain;
+  return m.fallbackReasoningTemplate
+    .replace("{brand}", answers.brandName || m.fallbackBrandThis)
+    .replace("{industry}", answers.industry || m.fallbackIndustryThis)
+    .replace("{archetype}", profile.brandArchetype)
+    .replace("{tone}", profile.toneAndManner || m.fallbackUniqueTone)
+    .replace("{audience}", answers.targetAudience || m.fallbackTargetAudience)
+    .replace("{positioning}", profile.positioning || m.fallbackPositioning);
 }
 
 /**
@@ -137,17 +143,15 @@ const REQUIRED_ANSWER_KEYS = new Set([
  * always yields a 0.5 base; each additional answered question (industry-
  * specific follow-ups, AI follow-up questions) adds richness signal.
  */
-export function calculateConfidence(answers: Record<string, string>): ConfidenceResult {
+export function calculateConfidence(answers: Record<string, string>, locale: Locale = "ko"): ConfidenceResult {
   const optionalAnswered = Object.entries(answers).filter(
     ([key, value]) => !REQUIRED_ANSWER_KEYS.has(key) && value?.trim(),
   ).length;
 
   const score = Math.min(0.5 + optionalAnswered * 0.1, 1);
   const level: ConfidenceLevel = score >= 0.8 ? "high" : score >= 0.5 ? "medium" : "low";
-  const notes =
-    optionalAnswered === 0
-      ? "추가 질문에 답변할수록 분석 신뢰도가 높아집니다."
-      : "충분한 정보를 바탕으로 분석했습니다.";
+  const m = MESSAGES[locale].asterBrain;
+  const notes = optionalAnswered === 0 ? m.confidenceNotesLow : m.confidenceNotesHigh;
 
   return { score, level, notes };
 }

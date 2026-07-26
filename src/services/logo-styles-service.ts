@@ -15,6 +15,7 @@ export interface LogoStyleRecommendationDto {
   category: LogoStyleCategoryDto;
   score: number;
   reason: string;
+  matchedKeywords: string[];
   representativeSubStyle: string;
 }
 

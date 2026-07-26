@@ -29,10 +29,10 @@ const COLOR_KEYWORD_RULES: { pattern: RegExp; hex: string }[] = [
   { pattern: /형광|네온/g, hex: "#ccff00" },
 ];
 
-const ROLE_KEYWORD_RULES: { pattern: RegExp; label: string }[] = [
-  { pattern: /배경/, label: "배경" },
-  { pattern: /글씨|텍스트|폰트|글자/, label: "글씨" },
-  { pattern: /포인트|강조|악센트/, label: "포인트" },
+const ROLE_KEYWORD_RULES: { pattern: RegExp; roleKey: "background" | "text" | "accent" }[] = [
+  { pattern: /배경/, roleKey: "background" },
+  { pattern: /글씨|텍스트|폰트|글자/, roleKey: "text" },
+  { pattern: /포인트|강조|악센트/, roleKey: "accent" },
 ];
 
 const ROLE_SEARCH_WINDOW = 15;
@@ -45,16 +45,20 @@ interface RawColorMatch {
   hex: string;
 }
 
-function findNearbyRoleLabel(text: string, match: RawColorMatch, usedLabels: Set<string>): string | null {
+function findNearbyRole(
+  text: string,
+  match: RawColorMatch,
+  usedRoles: Set<string>,
+): "background" | "text" | "accent" | null {
   const windowStart = Math.max(0, match.index - ROLE_SEARCH_WINDOW);
   const windowEnd = Math.min(text.length, match.index + match.length + ROLE_SEARCH_WINDOW);
   const windowText = text.slice(windowStart, windowEnd);
 
   for (const rule of ROLE_KEYWORD_RULES) {
-    if (usedLabels.has(rule.label)) continue;
+    if (usedRoles.has(rule.roleKey)) continue;
     if (rule.pattern.test(windowText)) {
-      usedLabels.add(rule.label);
-      return rule.label;
+      usedRoles.add(rule.roleKey);
+      return rule.roleKey;
     }
   }
   return null;
@@ -77,7 +81,28 @@ export function getColorNameHints(hex: string): string[] {
   return hints;
 }
 
-export function suggestColorSwatchesFromNotes(text: string | null | undefined): ColorSwatch[] | null {
+export interface SwatchRoleLabels {
+  background: string;
+  text: string;
+  accent: string;
+  /** roleKey가 못 잡힐 때 대체 라벨(예: "색상 {index}") -- {index}가 있으면 순번으로 치환한다. */
+  fallback: (index: number) => string;
+}
+
+/**
+ * label은 색상 피커에서 사용자가 그대로 편집할 수 있는 실제 입력값(단순
+ * 표시용 키가 아님)이라, 호출자가 선택한 언어의 문구를 생성 시점에 그대로
+ * 채워 넣는다 -- roleLabels가 없으면 한국어 기본값을 쓴다(기존 동작 유지).
+ */
+export function suggestColorSwatchesFromNotes(
+  text: string | null | undefined,
+  roleLabels: SwatchRoleLabels = {
+    background: "배경",
+    text: "글씨",
+    accent: "포인트",
+    fallback: (index) => `색상 ${index}`,
+  },
+): ColorSwatch[] | null {
   if (!text || !text.trim()) return null;
 
   const rawMatches: RawColorMatch[] = [];
@@ -89,7 +114,7 @@ export function suggestColorSwatchesFromNotes(text: string | null | undefined): 
   rawMatches.sort((a, b) => a.index - b.index);
 
   const seenHex = new Set<string>();
-  const usedLabels = new Set<string>();
+  const usedRoles = new Set<string>();
   const swatches: ColorSwatch[] = [];
   let ordinal = 0;
 
@@ -98,7 +123,8 @@ export function suggestColorSwatchesFromNotes(text: string | null | undefined): 
     if (seenHex.has(match.hex)) continue;
     seenHex.add(match.hex);
     ordinal += 1;
-    const label = findNearbyRoleLabel(text, match, usedLabels) ?? `색상 ${ordinal}`;
+    const role = findNearbyRole(text, match, usedRoles);
+    const label = role ? roleLabels[role] : roleLabels.fallback(ordinal);
     swatches.push({ hex: match.hex, label });
   }
 

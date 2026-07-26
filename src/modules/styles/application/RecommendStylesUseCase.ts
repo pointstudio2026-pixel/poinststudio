@@ -5,7 +5,9 @@ import type { StyleRecommendation } from "@/modules/styles/domain/Style";
 import {
   MAX_RECOMMENDATIONS,
   buildRecommendationReason,
+  buildRecommendationReasonKind,
   buildStyleCandidatesFromAnswers,
+  matchStyleKeywords,
   scoreStyle,
 } from "@/modules/styles/domain/styleRules";
 import { classifyInterviewInput } from "@/modules/promptPriority/domain/classifyInterviewInput";
@@ -70,6 +72,8 @@ export class RecommendStylesUseCase {
         style,
         score,
         reason: buildRecommendationReason(style, { candidateCategoryNames, keywordText }),
+        reasonKind: buildRecommendationReasonKind(style, { candidateCategoryNames, keywordText }),
+        matchedKeywords: matchStyleKeywords(style, { candidateCategoryNames, keywordText }),
         alternatives,
       });
     }

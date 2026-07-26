@@ -18,11 +18,13 @@ import {
   retryEdit,
   type EditPresetKeyDto,
 } from "@/services/edits-service";
+import { EDIT_PRESET_LABEL_KEYS } from "@/features/generation/editPresetLabels";
 import { Spinner } from "@/components/Spinner";
 import { ImageLightbox } from "@/components/ImageLightbox";
 import { GenerationFeedbackWidget } from "@/features/generation/GenerationFeedbackWidget";
 import { NextStepButton } from "@/features/workspace/NextStepButton";
 import { AiProviderSelect } from "@/components/AiProviderSelect";
+import { INTL_LOCALE } from "@/shared/i18n/locale";
 import { ApiError } from "@/services/http-client";
 import { resendVerificationEmail } from "@/services/auth-service";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
@@ -31,7 +33,7 @@ const POLL_INTERVAL_MS = 1500;
 const IMAGE_PROVIDERS: AiImageProvider[] = ["openai", "gemini"];
 
 export function GenerationView({ projectId }: { projectId: string }) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const queryClient = useQueryClient();
   const [pendingVersionId, setPendingVersionId] = useState<string | null>(null);
   const [pendingEditId, setPendingEditId] = useState<string | null>(null);
@@ -305,7 +307,7 @@ export function GenerationView({ projectId }: { projectId: string }) {
                     disabled={actionsDisabled}
                     className="rounded-full border border-line px-3 py-1 text-xs disabled:opacity-50"
                   >
-                    {preset.label}
+                    {t(EDIT_PRESET_LABEL_KEYS[preset.key])}
                   </button>
                 ))}
               </div>
@@ -371,8 +373,10 @@ export function GenerationView({ projectId }: { projectId: string }) {
                 <span>
                   {entry.customInstruction
                     ? t("generation.customInstructionPrefix", { text: entry.customInstruction })
-                    : (EDIT_PRESET_OPTIONS.find((p) => p.key === entry.presetKey)?.label ?? entry.presetKey)}{" "}
-                  · {entry.status} · {new Date(entry.createdAt).toLocaleString("ko-KR")}
+                    : entry.presetKey
+                      ? t(EDIT_PRESET_LABEL_KEYS[entry.presetKey])
+                      : entry.presetKey}{" "}
+                  · {entry.status} · {new Date(entry.createdAt).toLocaleString(INTL_LOCALE[locale])}
                 </span>
                 {entry.status === "failed" && (
                   <button

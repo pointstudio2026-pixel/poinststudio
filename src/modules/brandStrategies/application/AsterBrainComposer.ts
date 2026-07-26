@@ -73,8 +73,8 @@ export class AsterBrainComposer {
     providerPreference?: string,
   ): Promise<AsterBrainComposeResult> {
     const textCompletionProvider = resolveTextCompletionProvider(providerPreference);
-    const knowledgeBase = buildBrandKnowledge(answers);
-    const confidence = calculateConfidence(answers);
+    const knowledgeBase = buildBrandKnowledge(answers, locale);
+    const confidence = calculateConfidence(answers, locale);
 
     const profiles = await this.buildStrategyProfiles(answers, knowledgeBase, textCompletionProvider, locale);
 
@@ -97,10 +97,10 @@ export class AsterBrainComposer {
     textCompletionProvider: TextCompletionProvider,
     locale: Locale,
   ): Promise<{ strategy: BrandStrategyProfile; reasoningSummary: string }[]> {
-    const fallbackProfiles = buildFallbackStrategyProfiles(answers, knowledge);
+    const fallbackProfiles = buildFallbackStrategyProfiles(answers, knowledge, locale);
     const fallback = fallbackProfiles.map((strategy) => ({
       strategy,
-      reasoningSummary: buildFallbackReasoningSummary(answers, strategy),
+      reasoningSummary: buildFallbackReasoningSummary(answers, strategy, locale),
     }));
 
     if (textCompletionProvider.name === "mock") {

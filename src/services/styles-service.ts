@@ -16,6 +16,8 @@ export interface StyleRecommendationDto {
   style: StyleDto;
   score: number;
   reason: string;
+  reasonKind: "primaryCategory" | "keywords" | "alternative";
+  matchedKeywords: string[];
   alternatives: StyleDto[];
 }
 

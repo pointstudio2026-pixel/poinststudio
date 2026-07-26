@@ -4,6 +4,9 @@ export const fr: Messages = {
   common: {
     perMonth: "/mois",
   },
+  meta: {
+    description: "Le design commence par la direction de votre marque.",
+  },
   generationFeedback: {
     rateThisResult: "Évaluer ce résultat (facultatif)",
     likedColor: "Belles couleurs",
@@ -119,6 +122,22 @@ export const fr: Messages = {
     selectUserStyleFailed: "Échec de la sélection dans Mes styles.",
     selectColorFailed: "Échec de la sélection de la palette de couleurs.",
     forbiddenColorsSaveFailed: "Échec de l'enregistrement des couleurs exclues.",
+    reasonPrimaryCategory: "Correspond à votre principale direction de style ({category}) déduite de votre entretien.",
+    reasonKeywords: "Comporte des mots-clés ({keywords}) qui correspondent au ton/à la personnalité de votre marque.",
+    reasonAlternative: "Un style à considérer comme alternative dans la famille {category}.",
+    colorRoleBackground: "Arrière-plan",
+    colorRoleText: "Texte",
+    colorRoleAccent: "Accent",
+    colorPalettes: {
+      warmTerracotta: "Terracotta chaud",
+      deepOcean: "Océan profond",
+      onyxGold: "Onyx & Or",
+      forestGreen: "Vert forêt",
+      softPastel: "Pastel doux",
+      monochrome: "Monochrome",
+      vividPop: "Couleurs vives",
+      earthTone: "Brun terreux",
+    },
   },
   logoStyle: {
     starsLabel: "Recommandation {count}/5",
@@ -141,6 +160,8 @@ export const fr: Messages = {
     select: "Sélectionner",
     aiRecommendedDescription: "ASTER recommande le style le mieux adapté selon l'analyse de votre marque.",
     selectTopPick: "Sélectionner la recommandation n°1",
+    reasonWithKeywords: "Recommandé selon des mots-clés ({keywords}) correspondant au ton/positionnement de votre marque.",
+    reasonGeneric: "Une direction polyvalente qui convient à de nombreuses marques.",
   },
   conceptBoard: {
     generateFailed: "Échec de la génération du tableau de concept.",
@@ -212,6 +233,42 @@ export const fr: Messages = {
     recommendedTypography: "Typographie recommandée",
     recommendedSymbols: "Symboles recommandés",
     confirmThisStrategy: "Confirmer cette stratégie",
+    userSelectedColorReason: "La couleur de marque que vous avez choisie directement à l'étape Style.",
+    tone_warm: "Chaleureux et amical",
+    tone_professional: "Professionnel et digne de confiance",
+    tone_premium: "Raffiné et haut de gamme",
+    tone_trendy: "Dynamique et tendance",
+    tone_balanced: "Équilibré et authentique",
+    defaultPreferredColor: "Une palette de couleurs neutres adaptée au ton de votre marque",
+    defaultTypography: "Une police sans-serif très lisible",
+    defaultStyle: "Minimaliste",
+    defaultSymbol: "Un symbole géométrique simple",
+    visionTemplate: "{brand} devient une marque durablement digne de confiance pour {audience} dans le secteur {industry}.",
+    positioningTemplate: "Une marque qui touche {audience} dans le secteur {industry} avec une image {tone}.",
+    fallbackBrand: "La marque",
+    fallbackIndustry: "ce domaine",
+    fallbackAudience: "les clients",
+    fallbackIndustryGeneric: "le secteur",
+    fallbackTargetAudience: "le public cible",
+    fallbackBrandOwn: "Notre marque",
+    fallbackTagline: "Le choix fait pour vous",
+    archetype_sage: "Le Sage",
+    archetype_everyman: "L'Homme du peuple",
+    archetype_ruler: "Le Souverain",
+    positioningTemplate_sage: "Une marque qui met en avant l'expertise et la confiance pour toucher {audience} dans le secteur {industry}.",
+    positioningTemplate_everyman: "Une marque qui met en avant la chaleur et la proximité pour toucher {audience} dans le secteur {industry}.",
+    positioningTemplate_ruler: "Une marque qui met en avant le raffinement et une image haut de gamme pour toucher {audience} dans le secteur {industry}.",
+    styleReasonTemplate: "Un style qui correspond à la direction {archetype}.",
+    colorReasonTemplate: "Une direction de couleur qui soutient l'image {archetype}.",
+    typographyReasonTemplate: "Une direction typographique lisible pour {audience}.",
+    symbolReasonTemplate: "Résume visuellement la personnalité de la marque ({tone}).",
+    fallbackReasoningTemplate: "{brand} a une personnalité {archetype} dans le secteur {industry}, touchant {audience} avec un ton {tone}. Positionnement : {positioning}",
+    fallbackBrandThis: "Cette marque",
+    fallbackIndustryThis: "ce secteur",
+    fallbackUniqueTone: "distinctif",
+    fallbackPositioning: "En cours de définition d'une direction différenciée.",
+    confidenceNotesLow: "Répondre à d'autres questions augmentera la fiabilité de l'analyse.",
+    confidenceNotesHigh: "Analyse basée sur des informations suffisantes.",
   },
   workspaceView: {
     editing: "Modification...",
@@ -752,6 +809,9 @@ export const fr: Messages = {
     colorLabel: "Couleur : ",
     typographyLabel: "Typographie : ",
     topIndustriesLabel: "Secteurs principaux",
+    styleReason: "Vous avez choisi ce style {count} fois dans vos projets récents.",
+    editPresetReason: "Vous avez appliqué la modification « {label} » {count} fois.",
+    mockupReason: "Vous avez mis en favori des mockups de cette catégorie {count} fois.",
   },
   interviewQuestions: {
     brandName: "Quel est le nom de votre marque ?",
@@ -982,6 +1042,278 @@ export const fr: Messages = {
       mainHeadline: "Titre principal",
       ctaButton: "Bouton CTA",
       footer: "Pied de page",
+    },
+  },
+  verifyEmail: {
+    invalidLink: "Ce lien de vérification n'est pas valide.",
+    failed: "Échec de la vérification.",
+    verifying: "Vérification de votre e-mail en cours...",
+    success: "Votre e-mail a été vérifié.",
+    goToProjects: "Aller à mes projets",
+    goToProjectsResend: "Aller à mes projets pour demander un nouveau lien",
+  },
+  editPresets: {
+    simpler: "Plus simple",
+    moreLuxurious: "Plus luxueux",
+    moreMinimal: "Plus minimaliste",
+    moreDynamic: "Plus dynamique",
+    changeColor: "Changer la couleur",
+    emphasizeTypography: "Accentuer la typographie",
+    iconOnly: "Icône uniquement",
+    symbolOnly: "Symbole uniquement",
+    layoutChange: "Changer la mise en page",
+    regenerate: "Régénérer",
+  },
+  mockupCategories: {
+    businessCard: "Carte de visite",
+    signboard: "Enseigne",
+    mobileApp: "Application mobile",
+    websiteHero: "Site web",
+    brochure: "Brochure",
+    poster: "Affiche",
+    package: "Emballage",
+    leaflet: "Dépliant",
+    banner: "Bannière",
+    uniform: "Uniforme",
+  },
+  privacyPolicy: {
+    backToHome: "Accueil",
+    title: "Politique de confidentialité",
+    effectiveDate: "Date d'entrée en vigueur : 20 juillet 2026",
+    summary: {
+      heading: "En résumé",
+      item1:
+        "Lors de votre inscription, nous collectons votre adresse e-mail, votre mot de passe (stocké chiffré) et votre nom (facultatif).",
+      item2:
+        "Vos réponses à l'entretien de marque ainsi que les images que vous téléversez ou générez sont transmises à des fournisseurs tels qu'OpenAI et Google afin de créer des images.",
+      item3:
+        "Nous ne stockons jamais votre mot de passe en clair ; il est conservé sous une forme chiffrée irréversible.",
+      item4:
+        "Nous ne vendons ni ne transmettons les informations collectées à d'autres entreprises à des fins publicitaires.",
+      item5:
+        "Si vous demandez la suppression de votre compte, nous supprimons vos informations, sauf lorsque la loi applicable l'exige.",
+    },
+    section1: {
+      title: "1. Données personnelles que nous collectons",
+      signupHeading: "Lors de l'inscription",
+      signupItem1:
+        "Adresse e-mail, mot de passe (stocké chiffré), nom (saisie facultative)",
+      signupItem2:
+        "Si vous vous inscrivez avec Google ou Kakao : l'adresse e-mail, le nom et les informations de profil de ce compte",
+      usageHeading: "Pendant l'utilisation du service",
+      usageItem1:
+        "Réponses à l'entretien de marque (nom de la marque, secteur d'activité, ton et style, et autres informations que vous saisissez)",
+      usageItem2:
+        "Images de référence que vous téléversez, ainsi que les images et supports de marque générés par l'IA",
+      usageItem3:
+        "Journaux d'utilisation : heures de connexion, nombre de générations d'images, adresse IP de connexion, journaux d'erreurs",
+    },
+    section2: {
+      title: "2. Finalités de la collecte des données personnelles",
+      item1: "Gestion du compte, telle que l'inscription et la connexion",
+      item2:
+        "Fourniture de services de génération par IA tels que la stratégie de marque, les logos et les maquettes",
+      item3:
+        "Gestion des limites d'utilisation gratuite et prévention des utilisations abusives telles que les comptes multiples",
+      item4: "Traitement des erreurs du service et amélioration de la qualité",
+      item5: "Vérification par e-mail, annonces et réponse aux demandes",
+    },
+    section3: {
+      title:
+        "3. Communication à des tiers et transfert à l'étranger des données personnelles",
+      intro:
+        "Pour générer des images et du texte, le service transmet les informations de marque, les invites (prompts) et les images téléversées que vous saisissez aux fournisseurs d'IA étrangers énumérés ci-dessous. Il s'agit d'une étape de traitement indispensable pour produire les résultats générés.",
+      item1: "OpenAI (États-Unis) — génération de texte et d'images",
+      item2: "Google Gemini (États-Unis) — génération de texte et d'images",
+      item3: "Anthropic Claude (États-Unis) — génération de texte",
+      item4:
+        "Resend (fournisseur d'envoi d'e-mails, lorsque la fonction d'envoi réel d'e-mails est utilisée) — adresse e-mail du destinataire pour l'envoi des e-mails de vérification",
+      outro:
+        "Ces fournisseurs traitent les informations conformément à leurs propres politiques de confidentialité, et la société ne transmet que le minimum d'informations nécessaire à la fourniture du service. Nous ne vendons ni ne communiquons de données personnelles à des tiers à toute autre fin.",
+    },
+    section4: {
+      title:
+        "4. Durée de conservation et d'utilisation des données personnelles",
+      intro:
+        "Lors de la suppression de votre compte, nous supprimons vos données personnelles sans délai. Toutefois, dans les cas suivants, nous pouvons les conserver à titre exceptionnel pendant une certaine période.",
+      item1:
+        "Journaux de connexion dans la mesure nécessaire à la prévention des abus et au traitement des litiges : jusqu'à 3 mois",
+      item2:
+        "Lorsqu'une loi applicable fixe séparément une durée de conservation : la durée fixée par cette loi",
+    },
+    section5: {
+      title: "5. Droits de l'utilisateur",
+      bodyBefore:
+        "Vous pouvez à tout moment demander à consulter, corriger ou supprimer vos données personnelles. Vous pouvez modifier vous-même votre nom et votre mot de passe dans « Mes informations » de Ma page, et pour la suppression de votre compte ou toute autre demande, veuillez nous contacter via ",
+      contactLink: "Contact",
+      bodyAfter: ".",
+    },
+    section6: {
+      title: "6. Mesures de sécurité des données personnelles",
+      item1:
+        "Les mots de passe sont stockés à l'aide d'un algorithme de chiffrement irréversible (Argon2).",
+      item2:
+        "Les sessions de connexion sont gérées au moyen de jetons chiffrés assortis d'une durée de validité.",
+      item3:
+        "Les fonctions d'administration sont restreintes de sorte que seul le personnel autorisé disposant d'autorisations distinctes puisse y accéder.",
+    },
+    section7: {
+      title: "7. Cookies (informations collectées automatiquement)",
+      body:
+        "Le service stocke un jeton d'authentification dans un cookie du navigateur afin de vous maintenir connecté. Il s'agit d'une fonction essentielle au maintien de votre session de connexion, et non à des fins publicitaires ou de suivi. Si vous supprimez le cookie, vous devrez vous reconnecter.",
+    },
+    section8: {
+      title: "8. Contact",
+      bodyBefore:
+        "Pour toute question relative au traitement des données personnelles, ou toute demande de consultation ou de suppression, veuillez nous contacter via ",
+      contactLink: "le formulaire de contact du service",
+      bodyAfter: ".",
+    },
+    disclaimer:
+      "Remarque : la présente politique est un projet rédigé par l'exploitant du service sans conseil juridique formel. Les obligations d'information formelles prévues par la loi sud-coréenne sur la protection des renseignements personnels (PIPA), telles que la désignation d'un responsable de la protection des données personnelles, devront être complétées une fois que la forme réelle d'exploitation du service sera arrêtée, et nous recommandons de la faire examiner par un expert juridique avant sa publication officielle.",
+  },
+  termsOfService: {
+    backToHome: "← Accueil",
+    title: "Conditions d'utilisation",
+    effectiveDate: "Date d'entrée en vigueur : 20 juillet 2026",
+    summary: {
+      title: "En résumé",
+      item1: "ASTER est un service qui crée des logos et des designs de marque à l'aide de l'IA.",
+      item2: "Les informations de marque et les images que vous saisissez sont transmises à des fournisseurs d'IA tels qu'OpenAI et Google afin de générer des images.",
+      item3: "Le forfait gratuit comporte une limite du nombre de générations possibles chaque mois.",
+      item4: "La génération de contenu portant atteinte aux marques ou aux droits d'auteur d'autrui, ainsi que le contournement de la limite gratuite au moyen de plusieurs comptes, sont interdits.",
+      item5: "En cas de violation des présentes conditions, votre compte peut être suspendu ou supprimé.",
+    },
+    article1: {
+      title: "Article 1 (Objet)",
+      body: "Les présentes conditions ont pour objet de définir les droits, obligations et responsabilités entre la Société et les utilisateurs relativement à l'utilisation du service de génération de design de marque basé sur l'IA (le « Service ») fourni par ASTER (la « Société »).",
+    },
+    article2: {
+      title: "Article 2 (Contenu du Service)",
+      intro: "Le Service offre les fonctionnalités suivantes.",
+      item1: "Recommandations de stratégie de marque et de style fondées sur un entretien de marque",
+      item2: "Génération et modification de logos et d'images de marque à l'aide de l'IA",
+      item3: "Création de maquettes (images de maquette de produit) à partir des images générées",
+      item4: "Enregistrement, gestion et exportation (Export) des résultats générés",
+      outro:
+        "Le Service se compose d'un forfait gratuit et de forfaits payants (Pro, Studio). La fonctionnalité de paiement payant est encore en préparation avant son lancement officiel. Si une fonctionnalité de paiement est introduite, nous en communiquerons les détails à l'avance et recueillerons un consentement distinct.",
+    },
+    article3: {
+      title: "Article 3 (Comptes et inscription)",
+      item1: "Vous pouvez créer un compte avec une adresse e-mail et un mot de passe, ou via la connexion sociale Google ou Kakao.",
+      item2: "Afin de prévenir l'abus de la limite d'utilisation gratuite, une procédure de vérification de l'adresse e-mail peut être requise.",
+      item3: "L'usurpation de l'adresse e-mail d'autrui, ou le contournement répété de la limite d'utilisation gratuite par la création de plusieurs comptes, sont interdits.",
+      item4: "Vous devez saisir vos informations de membre avec exactitude, et vous supportez tout préjudice résultant d'informations erronées.",
+    },
+    article4: {
+      title: "Article 4 (Traitement par l'IA et utilisation de services externes)",
+      body1Before:
+        "Pour générer des images et du texte, le Service utilise les API de fournisseurs d'IA externes tels qu'OpenAI, Google (Gemini) et Anthropic (Claude). Les informations de marque, les réponses à l'entretien et les images téléversées que vous saisissez peuvent être transmises à ces fournisseurs afin de générer les résultats. Pour plus de détails, veuillez consulter notre ",
+      body1Link: "politique de confidentialité",
+      body1After: ".",
+      body2:
+        "En raison de la nature des résultats générés par l'IA, les images obtenues peuvent ne pas correspondre exactement à ce qui était prévu et, dans de rares cas, inclure des résultats inappropriés ou inexacts. La Société s'efforce de réduire ce risque au minimum mais ne garantit pas une exactitude totale.",
+    },
+    article5: {
+      title: "Article 5 (Utilisation et droits sur le contenu généré)",
+      item1: "Les images que vous générez avec le Service peuvent être utilisées librement par vous, y compris à des fins commerciales.",
+      item2:
+        "Toutefois, il vous incombe de vérifier par vous-même que les invites (prompts) ou images de référence que vous saisissez lors de la génération ne portent pas atteinte aux marques, aux droits d'auteur ou à d'autres droits de propriété intellectuelle de tiers.",
+      item3:
+        "La reconnaissance du droit d'auteur sur le contenu généré par l'IA peut varier selon les pays et les législations, et la Société ne garantit pas un droit d'auteur complet sur le contenu généré.",
+    },
+    article6: {
+      title: "Article 6 (Comportements interdits)",
+      intro: "L'utilisateur ne doit pas se livrer aux comportements suivants.",
+      item1: "Générer du contenu portant atteinte aux informations personnelles, aux marques, aux droits d'auteur ou à d'autres droits d'autrui",
+      item2: "Contourner de façon répétée la limite d'utilisation gratuite en créant plusieurs comptes",
+      item3: "Entraver le fonctionnement normal du Service ou accéder de manière frauduleuse au système",
+      item4: "Générer ou diffuser du contenu illégal ou contraire aux bonnes mœurs",
+    },
+    article7: {
+      title: "Article 7 (Restrictions d'utilisation)",
+      bodyBefore:
+        "Si vous enfreignez l'article 6 ou causez une perturbation grave du fonctionnement du Service, la Société peut suspendre ou supprimer l'utilisation du compte concerné sans préavis. Pour un compte suspendu ou supprimé, vous pouvez présenter des explications via ",
+      bodyLink: "la page de contact",
+      bodyAfter: ".",
+    },
+    article8: {
+      title: "Article 8 (Modification et interruption du Service)",
+      body: "La Société peut modifier ou interrompre tout ou partie du Service selon les nécessités opérationnelles ou techniques. En cas de modification affectant sensiblement les utilisateurs, nous en informerons à l'avance.",
+    },
+    article9: {
+      title: "Article 9 (Limitation de responsabilité)",
+      body: "La Société n'est pas responsable des interruptions de service résultant de causes indépendantes de sa volonté, telles que la force majeure ou les défaillances de service des fournisseurs d'IA. La Société n'est pas non plus responsable des litiges juridiques découlant de votre utilisation effective des résultats générés (tels que le dépôt de marques ou la production de documents imprimés).",
+    },
+    article10: {
+      title: "Article 10 (Modification des conditions)",
+      body: "La Société peut modifier les présentes conditions si nécessaire et, en cas de modification, en informera à l'avance par un avis au sein du Service ou par e-mail. Si vous n'acceptez pas les conditions modifiées, vous pouvez demander la résiliation de votre adhésion.",
+    },
+    article11: {
+      title: "Article 11 (Contact)",
+      bodyBefore: "Pour toute question relative à l'utilisation du Service, veuillez la soumettre via ",
+      bodyLink: "la page de contact du Service",
+      bodyAfter: ".",
+    },
+    disclaimer:
+      "Remarque : les présentes conditions constituent un projet rédigé par l'exploitant du service sans conseil juridique formel. Les informations d'enregistrement de l'entreprise (raison sociale, représentant, numéro d'enregistrement de l'entreprise, adresse) et les dispositions relatives aux paiements payants devront impérativement être complétées lorsque la forme réelle d'exploitation du service sera déterminée et qu'une fonctionnalité de paiement sera introduite ; nous recommandons de les faire examiner par un expert juridique avant la publication officielle.",
+  },
+  guidePage: {
+    eyebrow: "How it works",
+    title: "Comment utiliser Mes projets, Mes styles et Équipe",
+    intro:
+      "Voici le déroulé complet pour créer des visuels de marque, la façon d'enregistrer des styles pour les réutiliser, et comment travailler sur des projets à plusieurs avec vos coéquipiers.",
+    myProjects: {
+      title: "Mes projets",
+      descLink: "Mes projets",
+      descAfter:
+        " et créez un nouveau projet : vous parcourez les étapes ci-dessous dans l'ordre pour aboutir à votre résultat. Vous pouvez revenir au tableau de bord et reprendre n'importe quelle étape à tout moment.",
+      steps: {
+        deliverable_type: "Type de livrable",
+        brand_interview: "Entretien de marque",
+        style: "Style",
+        brand_strategy: "Stratégie de marque",
+        logo_style: "Style de logo",
+        generation: "Génération",
+        concept_board: "Planche de concept",
+        mockup: "Maquettes",
+      },
+      note: "Pour les livrables autres que logo/branding, comme les affiches ou les dépliants, les étapes « Stratégie de marque » et « Style de logo » sont ignorées.",
+    },
+    myStyles: {
+      title: "Mes styles",
+      tier: "Pro et plus",
+      introBefore: "Mes styles est disponible à partir du ",
+      introStrong: "forfait Pro",
+      introAfter:
+        ". Réutilisez les images de référence que vous importez dans l'ensemble de votre compte : vous appliquez ainsi un style immédiatement, sans avoir à redécrire la même ambiance à chaque projet.",
+      step1Title: "1. Créer une catégorie",
+      step1Link: "Mes styles",
+      step1After: " , créez une catégorie avec le nom de votre choix (par ex. « Style de logo de notre marque »).",
+      step2Title: "2. Ajouter des images de référence",
+      step2Body:
+        "Importez jusqu'à 5 images de référence par catégorie, et l'IA analyse et résume automatiquement le style pour vous.",
+      step3Title: "3. L'utiliser à l'étape de style",
+      step3Body:
+        "Choisissez l'un de vos styles enregistrés à l'étape de sélection du style d'un projet, et cette ambiance se répercute directement dans la génération d'images.",
+    },
+    team: {
+      title: "Équipe",
+      tier: "Studio uniquement",
+      introBefore: "La fonctionnalité Équipe est disponible avec le ",
+      introStrong: "forfait Studio",
+      introAfter:
+        ". Avec les forfaits Free et Pro, vous pouvez rejoindre l'équipe de quelqu'un d'autre à l'aide d'un code, mais vous ne pouvez pas créer votre propre équipe.",
+      step1Title: "1. Créer une équipe",
+      step1Before: "Lorsqu'un utilisateur Studio crée une équipe sur la page ",
+      step1Link: "Équipe",
+      step1After: " , un code unique à 6 chiffres est généré.",
+      step2Title: "2. Partager le code et rejoindre",
+      step2Body:
+        "Transmettez ce code à vos coéquipiers : ils rejoignent l'équipe en le saisissant sur la même page Équipe.",
+      step3Title: "3. Partager des projets",
+      step3Body:
+        "Dans le tableau de bord, utilisez le menu « ⋯ » d'un projet pour activer « Partager avec l'équipe » uniquement pour les projets souhaités, et vos coéquipiers peuvent consulter et modifier ces projets depuis leur tableau de bord.",
     },
   },
 };

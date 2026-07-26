@@ -4,6 +4,9 @@ export const en: Messages = {
   common: {
     perMonth: "/mo",
   },
+  meta: {
+    description: "Design starts with your brand's direction.",
+  },
   generationFeedback: {
     rateThisResult: "Rate this result (optional)",
     likedColor: "Nice colors",
@@ -119,6 +122,22 @@ export const en: Messages = {
     selectUserStyleFailed: "Failed to select from My Styles.",
     selectColorFailed: "Failed to select color palette.",
     forbiddenColorsSaveFailed: "Failed to save excluded colors.",
+    reasonPrimaryCategory: "Matches your top style direction ({category}) inferred from your interview answers.",
+    reasonKeywords: "Has keywords ({keywords}) matching your brand tone/personality.",
+    reasonAlternative: "A style worth considering as an alternative in the {category} family.",
+    colorRoleBackground: "Background",
+    colorRoleText: "Text",
+    colorRoleAccent: "Accent",
+    colorPalettes: {
+      warmTerracotta: "Warm Terracotta",
+      deepOcean: "Deep Ocean",
+      onyxGold: "Onyx & Gold",
+      forestGreen: "Forest Green",
+      softPastel: "Soft Pastel",
+      monochrome: "Monochrome",
+      vividPop: "Vivid Pop",
+      earthTone: "Earth Tone",
+    },
   },
   logoStyle: {
     starsLabel: "Recommendation {count}/5",
@@ -141,6 +160,8 @@ export const en: Messages = {
     select: "Select",
     aiRecommendedDescription: "ASTER recommends the best-fit style based on your brand analysis.",
     selectTopPick: "Select the top recommendation",
+    reasonWithKeywords: "Recommended based on keywords ({keywords}) matching your brand tone/positioning.",
+    reasonGeneric: "A versatile direction that suits a wide range of brands.",
   },
   conceptBoard: {
     generateFailed: "Failed to generate the concept board.",
@@ -212,6 +233,42 @@ export const en: Messages = {
     recommendedTypography: "Recommended Typography",
     recommendedSymbols: "Recommended Symbols",
     confirmThisStrategy: "Confirm this strategy",
+    userSelectedColorReason: "The brand color you chose directly in the Style step.",
+    tone_warm: "Warm and Friendly",
+    tone_professional: "Professional and Trustworthy",
+    tone_premium: "Refined and Premium",
+    tone_trendy: "Energetic and Trendy",
+    tone_balanced: "Balanced and Authentic",
+    defaultPreferredColor: "A neutral color palette that fits your brand tone",
+    defaultTypography: "A highly readable sans-serif",
+    defaultStyle: "Minimal",
+    defaultSymbol: "A simple geometric symbol",
+    visionTemplate: "{brand} grows into a brand consistently trusted by {audience} in {industry}.",
+    positioningTemplate: "A brand that reaches {audience} in {industry} with a {tone} image.",
+    fallbackBrand: "The brand",
+    fallbackIndustry: "this field",
+    fallbackAudience: "customers",
+    fallbackIndustryGeneric: "the industry",
+    fallbackTargetAudience: "the target audience",
+    fallbackBrandOwn: "Our brand",
+    fallbackTagline: "The choice made for you",
+    archetype_sage: "The Sage",
+    archetype_everyman: "The Everyman",
+    archetype_ruler: "The Ruler",
+    positioningTemplate_sage: "A brand that leads with expertise and trust to reach {audience} in {industry}.",
+    positioningTemplate_everyman: "A brand that leads with warmth and approachability to reach {audience} in {industry}.",
+    positioningTemplate_ruler: "A brand that leads with refinement and a premium image to reach {audience} in {industry}.",
+    styleReasonTemplate: "A style that fits the {archetype} direction.",
+    colorReasonTemplate: "A color direction that supports the {archetype} image.",
+    typographyReasonTemplate: "A typeface direction that reads clearly to {audience}.",
+    symbolReasonTemplate: "Visually summarizes the brand personality ({tone}).",
+    fallbackReasoningTemplate: "{brand} has a {archetype} personality in {industry}, reaching {audience} through a {tone} tone. Positioning: {positioning}",
+    fallbackBrandThis: "This brand",
+    fallbackIndustryThis: "this industry",
+    fallbackUniqueTone: "a distinctive",
+    fallbackPositioning: "Still defining a differentiated direction.",
+    confidenceNotesLow: "Answering more questions will increase analysis confidence.",
+    confidenceNotesHigh: "Analyzed based on sufficient information.",
   },
   workspaceView: {
     editing: "Editing...",
@@ -751,6 +808,9 @@ export const en: Messages = {
     colorLabel: "Color: ",
     typographyLabel: "Typography: ",
     topIndustriesLabel: "Top industries",
+    styleReason: "You've selected this style {count} time(s) in recent projects.",
+    editPresetReason: "You've applied the \"{label}\" edit {count} time(s).",
+    mockupReason: "You've favorited mockups in this category {count} time(s).",
   },
   interviewQuestions: {
     brandName: "What is your brand's name?",
@@ -981,6 +1041,275 @@ export const en: Messages = {
       mainHeadline: "Main headline",
       ctaButton: "CTA button",
       footer: "Footer",
+    },
+  },
+  verifyEmail: {
+    invalidLink: "This verification link isn't valid.",
+    failed: "Verification failed.",
+    verifying: "Verifying your email...",
+    success: "Your email has been verified.",
+    goToProjects: "Go to my projects",
+    goToProjectsResend: "Go to my projects to request a new link",
+  },
+  editPresets: {
+    simpler: "Simpler",
+    moreLuxurious: "More luxurious",
+    moreMinimal: "More minimal",
+    moreDynamic: "More dynamic",
+    changeColor: "Change color",
+    emphasizeTypography: "Emphasize typography",
+    iconOnly: "Icon only",
+    symbolOnly: "Symbol only",
+    layoutChange: "Change layout",
+    regenerate: "Regenerate",
+  },
+  mockupCategories: {
+    businessCard: "Business Card",
+    signboard: "Signboard",
+    mobileApp: "Mobile App",
+    websiteHero: "Website",
+    brochure: "Brochure",
+    poster: "Poster",
+    package: "Packaging",
+    leaflet: "Leaflet",
+    banner: "Banner",
+    uniform: "Uniform",
+  },
+  privacyPolicy: {
+    backToHome: "Home",
+    title: "Privacy Policy",
+    effectiveDate: "Effective date: July 20, 2026",
+    summary: {
+      heading: "In short",
+      item1:
+        "When you sign up, we collect your email, password (stored encrypted), and name (optional).",
+      item2:
+        "Your brand interview answers and the images you upload or generate are sent to providers such as OpenAI and Google in order to create images.",
+      item3:
+        "We never store your password as plain text; it is kept using irreversible encryption.",
+      item4:
+        "We do not sell or hand over the information we collect to other companies for advertising purposes.",
+      item5:
+        "If you request account deletion, we delete your information except where required by applicable law.",
+    },
+    section1: {
+      title: "1. Personal Information We Collect",
+      signupHeading: "At sign-up",
+      signupItem1: "Email, password (stored encrypted), name (optional)",
+      signupItem2:
+        "If you sign up with Google or Kakao: the email, name, and profile information of that account",
+      usageHeading: "While using the service",
+      usageItem1:
+        "Brand interview responses (brand name, industry, tone and manner, and other details you enter)",
+      usageItem2:
+        "Reference images you upload, and images and brand materials generated by the AI",
+      usageItem3:
+        "Usage records: login times, number of image generations, access IP address, error logs",
+    },
+    section2: {
+      title: "2. Purposes for Collecting Personal Information",
+      item1: "Account management, such as sign-up and login",
+      item2:
+        "Providing AI generation services such as brand strategy, logos, and mockups",
+      item3:
+        "Managing free usage limits and preventing abuse such as multiple accounts",
+      item4: "Responding to service errors and improving quality",
+      item5: "Email verification, announcements, and responding to inquiries",
+    },
+    section3: {
+      title: "3. Provision to Third Parties and Overseas Transfer of Personal Information",
+      intro:
+        "To generate images and text, the service transmits the brand information, prompts, and uploaded images you enter to the overseas AI providers listed below. This is an essential processing step required to produce the generated results.",
+      item1: "OpenAI (United States) — text and image generation",
+      item2: "Google Gemini (United States) — text and image generation",
+      item3: "Anthropic Claude (United States) — text generation",
+      item4:
+        "Resend (email delivery provider, when the actual email-sending feature is used) — recipient email address for sending verification emails",
+      outro:
+        "These providers process information in accordance with their own privacy policies, and the company transmits only the minimum information necessary to provide the service. We do not sell or provide personal information to third parties for any other purpose.",
+    },
+    section4: {
+      title: "4. Retention and Use Period of Personal Information",
+      intro:
+        "When you delete your account, we delete your personal information without delay. However, in the following cases we may retain it for a certain period as an exception.",
+      item1:
+        "Access records within the scope needed to prevent abuse and handle disputes: up to 3 months",
+      item2:
+        "Where a relevant law separately sets a retention period: the period set by that law",
+    },
+    section5: {
+      title: "5. Your Rights",
+      bodyBefore:
+        "You may request to view, correct, or delete your personal information at any time. You can edit your name and password yourself under “My Info” on My Page, and for account deletion or other requests, please submit them through ",
+      contactLink: "Contact",
+      bodyAfter: ".",
+    },
+    section6: {
+      title: "6. Measures to Ensure the Security of Personal Information",
+      item1:
+        "Passwords are stored using an irreversible encryption algorithm (Argon2).",
+      item2:
+        "Login sessions are managed with encrypted tokens that have an expiration period.",
+      item3:
+        "Administrator features are restricted so that only authorized personnel with separate permissions can access them.",
+    },
+    section7: {
+      title: "7. Cookies (Automatically Collected Information)",
+      body:
+        "The service stores an authentication token in a browser cookie to keep you logged in. This is an essential feature for maintaining your login session, not for advertising or tracking. If you delete the cookie, you will need to log in again.",
+    },
+    section8: {
+      title: "8. Contact",
+      bodyBefore:
+        "For inquiries related to the processing of personal information, or requests to view or delete it, please submit them through ",
+      contactLink: "the in-service contact form",
+      bodyAfter: ".",
+    },
+    disclaimer:
+      "Note: This policy is a draft prepared by the service operator without formal legal advice. Formal notification obligations under South Korea's Personal Information Protection Act (PIPA), such as designating a personal information protection officer, will need to be supplemented once the actual form of service operation is finalized, and we recommend having it reviewed by a legal expert before official publication.",
+  },
+  termsOfService: {
+    backToHome: "← Home",
+    title: "Terms of Service",
+    effectiveDate: "Effective date: July 20, 2026",
+    summary: {
+      title: "In short",
+      item1: "ASTER is a service that creates logo and brand designs with AI.",
+      item2: "The brand information and images you enter are sent to AI providers such as OpenAI and Google in order to generate images.",
+      item3: "The free plan has a limit on how many generations you can make each month.",
+      item4: "Generating content that infringes others' trademarks or copyrights, and circumventing the free limit with multiple accounts, are prohibited.",
+      item5: "Violating these terms may result in your account being suspended or deleted.",
+    },
+    article1: {
+      title: "Article 1 (Purpose)",
+      body: "The purpose of these Terms is to set out the rights, obligations, and responsibilities between the Company and users in connection with the use of the AI-based brand design generation service (the “Service”) provided by ASTER (the “Company”).",
+    },
+    article2: {
+      title: "Article 2 (Contents of the Service)",
+      intro: "The Service provides the following features.",
+      item1: "Brand strategy and style recommendations based on a brand interview",
+      item2: "Generation and editing of logos and brand images using AI",
+      item3: "Creation of mockups (product mockup images) using generated images",
+      item4: "Saving, managing, and exporting generated results",
+      outro:
+        "The Service consists of a Free plan and paid plans (Pro, Studio). The paid payment feature is still in preparation before its official launch. If a payment feature is introduced, we will provide advance notice of the relevant details and obtain separate consent.",
+    },
+    article3: {
+      title: "Article 3 (Accounts and Registration)",
+      item1: "You can create an account with an email and password, or via Google or Kakao social login.",
+      item2: "To prevent abuse of the free usage limit, an email verification procedure may be required.",
+      item3: "Misappropriating another person's email, or repeatedly circumventing the free usage limit by creating multiple accounts, is prohibited.",
+      item4: "You must enter your member information accurately, and you bear any disadvantages resulting from false information.",
+    },
+    article4: {
+      title: "Article 4 (AI Processing and Use of External Services)",
+      body1Before:
+        "To generate images and text, the Service uses the APIs of external AI providers such as OpenAI, Google (Gemini), and Anthropic (Claude). The brand information, interview responses, and uploaded images you enter may be transmitted to these providers in order to generate results. For details, please refer to our ",
+      body1Link: "Privacy Policy",
+      body1After: ".",
+      body2:
+        "Due to the nature of AI-generated results, the resulting images may not turn out exactly as intended, and in rare cases may include inappropriate or inaccurate results. The Company strives to minimize this but does not guarantee complete accuracy.",
+    },
+    article5: {
+      title: "Article 5 (Use of and Rights to Generated Content)",
+      item1: "Images you generate with the Service may be used freely by you, including for commercial purposes.",
+      item2:
+        "However, you are responsible for verifying on your own that the prompts or reference images you enter during generation do not infringe the trademark, copyright, or other intellectual property rights of any third party.",
+      item3:
+        "Whether copyright is recognized in AI-generated content may vary by country and law, and the Company does not guarantee full copyright in the generated content.",
+    },
+    article6: {
+      title: "Article 6 (Prohibited Conduct)",
+      intro: "You must not engage in the following conduct.",
+      item1: "Generating content that infringes the personal information, trademarks, copyrights, or other rights of others",
+      item2: "Repeatedly circumventing the free usage limit by creating multiple accounts",
+      item3: "Interfering with the normal operation of the Service or improperly accessing the system",
+      item4: "Generating or distributing content that is illegal or contrary to public morals",
+    },
+    article7: {
+      title: "Article 7 (Restrictions on Use)",
+      bodyBefore:
+        "If you violate Article 6 or cause serious disruption to the operation of the Service, the Company may suspend or delete the use of the relevant account without prior notice. For a suspended or deleted account, you may submit an explanation through ",
+      bodyLink: "Contact",
+      bodyAfter: ".",
+    },
+    article8: {
+      title: "Article 8 (Changes to and Suspension of the Service)",
+      body: "The Company may change or suspend all or part of the Service as required for operational or technical reasons. In the case of changes that materially affect users, we will provide advance notice.",
+    },
+    article9: {
+      title: "Article 9 (Limitation of Liability)",
+      body: "The Company is not liable for service interruptions arising from causes beyond its control, such as force majeure or service failures of AI providers. The Company is also not liable for legal disputes arising from your actual use of generated results (such as trademark applications or the production of printed materials).",
+    },
+    article10: {
+      title: "Article 10 (Changes to the Terms)",
+      body: "The Company may change these Terms when necessary, and will provide advance notice of any changes via a notice within the Service or by email. If you do not agree to the changed Terms, you may request to withdraw your membership.",
+    },
+    article11: {
+      title: "Article 11 (Inquiries)",
+      bodyBefore: "For inquiries related to the use of the Service, please submit them through ",
+      bodyLink: "the in-service Contact page",
+      bodyAfter: ".",
+    },
+    disclaimer:
+      "Note: These Terms are a draft prepared by the service operator without formal legal advice. Business registration information (trade name, representative, business registration number, address) and provisions related to paid payments must be supplemented once the actual form of service operation is finalized and a payment feature is introduced, and we recommend having them reviewed by a legal expert before official publication.",
+  },
+  guidePage: {
+    eyebrow: "How it works",
+    title: "How to use My Projects, My Styles, and Team",
+    intro:
+      "Here's the full flow for creating brand visuals, how to save styles to reuse them, and how to work on projects together with teammates.",
+    myProjects: {
+      title: "My Projects",
+      descLink: "My Projects",
+      descAfter:
+        " dashboard, create a new project and you'll move through the steps below in order to reach your result. You can return to the dashboard and pick up any step at any time.",
+      steps: {
+        deliverable_type: "Deliverable Type",
+        brand_interview: "Brand Interview",
+        style: "Style",
+        brand_strategy: "Brand Strategy",
+        logo_style: "Logo Style",
+        generation: "Generation",
+        concept_board: "Concept Board",
+        mockup: "Mockups",
+      },
+      note: 'For non-logo/branding deliverables such as posters or leaflets, the "Brand Strategy" and "Logo Style" steps are skipped.',
+    },
+    myStyles: {
+      title: "My Styles",
+      tier: "Pro and above",
+      introBefore: "My Styles is available from the ",
+      introStrong: "Pro plan",
+      introAfter:
+        ". Reuse the reference images you upload across your entire account, so you can apply a style right away without describing the same mood again in every project.",
+      step1Title: "1. Create a category",
+      step1Link: "My Styles",
+      step1After: ' page, create a category with a name you like (e.g. "Our brand logo style").',
+      step2Title: "2. Add reference images",
+      step2Body:
+        "Upload up to 5 reference images per category, and the AI automatically analyzes and summarizes the style for you.",
+      step3Title: "3. Use it at the style step",
+      step3Body:
+        "Pick one of your saved styles at a project's style selection step, and that mood carries straight through into image generation.",
+    },
+    team: {
+      title: "Team",
+      tier: "Studio only",
+      introBefore: "The Team feature is available on the ",
+      introStrong: "Studio plan",
+      introAfter:
+        ". On the Free and Pro plans you can join someone else's team with a code, but you can't create a team of your own.",
+      step1Title: "1. Create a team",
+      step1Before: "When a Studio user creates a team on the ",
+      step1Link: "Team",
+      step1After: " page, a unique 6-digit code is issued.",
+      step2Title: "2. Share the code and join",
+      step2Body:
+        "Pass this code to your teammates, and they join the team by entering it on the same Team page.",
+      step3Title: "3. Share projects",
+      step3Body:
+        'In the dashboard, use a project\'s "⋯" menu to turn on "Share with team" for just the projects you want, and your teammates can view and edit those projects from their dashboard.',
     },
   },
 };

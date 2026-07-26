@@ -4,6 +4,9 @@ export const ja: Messages = {
   common: {
     perMonth: "/月",
   },
+  meta: {
+    description: "デザインはブランドの方向性から始まります。",
+  },
   generationFeedback: {
     rateThisResult: "この結果を評価する(任意)",
     likedColor: "色合いが良い",
@@ -119,6 +122,22 @@ export const ja: Messages = {
     selectUserStyleFailed: "マイスタイルの選択に失敗しました。",
     selectColorFailed: "カラーパレットの選択に失敗しました。",
     forbiddenColorsSaveFailed: "除外する色の保存に失敗しました。",
+    reasonPrimaryCategory: "インタビューの回答から推測した第1位のスタイル方向({category})と一致しています。",
+    reasonKeywords: "ブランドのトーン/個性に合うキーワード({keywords})があります。",
+    reasonAlternative: "{category}系統の代替候補として参考になるスタイルです。",
+    colorRoleBackground: "背景",
+    colorRoleText: "文字",
+    colorRoleAccent: "ポイント",
+    colorPalettes: {
+      warmTerracotta: "ウォームテラコッタ",
+      deepOcean: "ディープオーシャン",
+      onyxGold: "オニキス&ゴールド",
+      forestGreen: "フォレストグリーン",
+      softPastel: "ソフトパステル",
+      monochrome: "モノクローム(白黒)",
+      vividPop: "ビビッドカラー",
+      earthTone: "アーストーンブラウン",
+    },
   },
   logoStyle: {
     starsLabel: "おすすめ度 {count}/5",
@@ -141,6 +160,8 @@ export const ja: Messages = {
     select: "選択",
     aiRecommendedDescription: "ASTERがブランド分析をもとに最も適したスタイルをおすすめします。",
     selectTopPick: "第1位のおすすめを選択",
+    reasonWithKeywords: "ブランドのトーン/ポジショニングに合うキーワード({keywords})をもとにおすすめしています。",
+    reasonGeneric: "さまざまなブランドに幅広く合う方向性です。",
   },
   conceptBoard: {
     generateFailed: "コンセプトボードの生成に失敗しました。",
@@ -212,6 +233,42 @@ export const ja: Messages = {
     recommendedTypography: "おすすめタイポグラフィ",
     recommendedSymbols: "おすすめシンボル",
     confirmThisStrategy: "この戦略で選択を確定",
+    userSelectedColorReason: "スタイルの段階で直接選択したブランドカラーです。",
+    tone_warm: "親しみやすく温かい",
+    tone_professional: "専門的で信頼感のある",
+    tone_premium: "洗練された高級感のある",
+    tone_trendy: "活気があってトレンディな",
+    tone_balanced: "バランスが取れた誠実な",
+    defaultPreferredColor: "ブランドトーンに合うニュートラル系のカラー",
+    defaultTypography: "可読性の高いサンセリフ体",
+    defaultStyle: "ミニマル",
+    defaultSymbol: "シンプルな幾何学的シンボル",
+    visionTemplate: "{brand}は{industry}で{audience}から着実に信頼されるブランドへと成長する。",
+    positioningTemplate: "{industry}において{tone}イメージで{audience}に届くブランド。",
+    fallbackBrand: "ブランド",
+    fallbackIndustry: "この分野",
+    fallbackAudience: "顧客",
+    fallbackIndustryGeneric: "業種",
+    fallbackTargetAudience: "ターゲット顧客",
+    fallbackBrandOwn: "私たちのブランド",
+    fallbackTagline: "あなたのための選択",
+    archetype_sage: "賢者 (The Sage)",
+    archetype_everyman: "隣人 (The Everyman)",
+    archetype_ruler: "支配者 (The Ruler)",
+    positioningTemplate_sage: "{industry}において専門性と信頼を前面に{audience}に届くブランド。",
+    positioningTemplate_everyman: "{industry}において親しみやすさと温かさを前面に{audience}に届くブランド。",
+    positioningTemplate_ruler: "{industry}において洗練とプレミアム感を前面に{audience}に届くブランド。",
+    styleReasonTemplate: "{archetype}の方向性に合うスタイルです。",
+    colorReasonTemplate: "{archetype}のイメージを支えるカラーの方向性です。",
+    typographyReasonTemplate: "{audience}に読みやすく届くフォントの方向性です。",
+    symbolReasonTemplate: "ブランドの個性({tone})を視覚的に表現します。",
+    fallbackReasoningTemplate: "{brand}は{industry}で{archetype}という個性を持ち、{tone}なトーンで{audience}に届きます。ポジショニング: {positioning}",
+    fallbackBrandThis: "このブランド",
+    fallbackIndustryThis: "該当業種",
+    fallbackUniqueTone: "独自の",
+    fallbackPositioning: "差別化された方向性を定義しているところです。",
+    confidenceNotesLow: "追加の質問に答えるほど分析の信頼度が高まります。",
+    confidenceNotesHigh: "十分な情報をもとに分析しました。",
   },
   workspaceView: {
     editing: "編集中...",
@@ -751,6 +808,9 @@ export const ja: Messages = {
     colorLabel: "カラー: ",
     typographyLabel: "タイポグラフィ: ",
     topIndustriesLabel: "主な業種",
+    styleReason: "最近のプロジェクトで{count}回選択したスタイルです。",
+    editPresetReason: "「{label}」修正を{count}回適用しました。",
+    mockupReason: "このカテゴリのモックアップを{count}回お気に入り登録しました。",
   },
   interviewQuestions: {
     brandName: "ブランド名は何ですか?",
@@ -981,6 +1041,263 @@ export const ja: Messages = {
       mainHeadline: "メインヘッドライン",
       ctaButton: "CTAボタン",
       footer: "フッター",
+    },
+  },
+  verifyEmail: {
+    invalidLink: "認証リンクが正しくありません。",
+    failed: "認証に失敗しました。",
+    verifying: "メールアドレスを認証しています...",
+    success: "メールアドレスが認証されました。",
+    goToProjects: "マイプロジェクトへ移動",
+    goToProjectsResend: "マイプロジェクトへ移動して再送をリクエスト",
+  },
+  editPresets: {
+    simpler: "シンプルに",
+    moreLuxurious: "もっと高級感を",
+    moreMinimal: "もっとミニマルに",
+    moreDynamic: "もっとダイナミックに",
+    changeColor: "カラー変更",
+    emphasizeTypography: "タイポグラフィ強調",
+    iconOnly: "アイコンのみ修正",
+    symbolOnly: "シンボルのみ修正",
+    layoutChange: "レイアウト変更",
+    regenerate: "再生成",
+  },
+  mockupCategories: {
+    businessCard: "名刺",
+    signboard: "看板",
+    mobileApp: "モバイルアプリ",
+    websiteHero: "ウェブサイト",
+    brochure: "ブローシャー",
+    poster: "ポスター",
+    package: "パッケージ",
+    leaflet: "リーフレット",
+    banner: "バナー",
+    uniform: "ユニフォーム",
+  },
+  privacyPolicy: {
+    backToHome: "ホームへ",
+    title: "プライバシーポリシー",
+    effectiveDate: "施行日: 2026年7月20日",
+    summary: {
+      heading: "かんたんに言うと",
+      item1:
+        "ご登録時にメールアドレス、パスワード（暗号化して保存）、お名前（任意）をお預かりします。",
+      item2:
+        "ブランドインタビューのご回答やアップロード・生成した画像は、画像を作成するためにOpenAIやGoogleなどに送信されます。",
+      item3: "パスワードは原文のまま保存せず、復号できない方式で暗号化して保管します。",
+      item4: "収集した情報を広告目的で他社に販売したり譲渡したりすることはありません。",
+      item5: "退会をご請求いただいた場合、関係法令が求める場合を除き情報を削除します。",
+    },
+    section1: {
+      title: "1. 収集する個人情報の項目",
+      signupHeading: "会員登録時",
+      signupItem1: "メールアドレス、パスワード（暗号化して保存）、お名前（任意入力）",
+      signupItem2:
+        "Google・Kakaoで登録する場合: 当該アカウントのメールアドレス、お名前、プロフィール情報",
+      usageHeading: "サービス利用中",
+      usageItem1:
+        "ブランドインタビューの回答（ブランド名、業種、トーン&マナーなどご入力いただいた内容）",
+      usageItem2: "アップロードした参考画像、AIが生成した画像およびブランド資料",
+      usageItem3: "利用記録: ログイン時刻、画像生成回数、接続IPアドレス、エラーログ",
+    },
+    section2: {
+      title: "2. 個人情報を収集する目的",
+      item1: "会員登録・ログインなどのアカウント管理",
+      item2: "ブランド戦略・ロゴ・モックアップなどのAI生成サービスの提供",
+      item3: "無料利用枠の管理および複数アカウントなどの不正利用の防止",
+      item4: "サービスの不具合対応および品質改善",
+      item5: "メール認証、お知らせおよびお問い合わせ対応",
+    },
+    section3: {
+      title: "3. 個人情報の第三者提供および国外移転",
+      intro:
+        "本サービスは画像・テキストを生成するために、以下の海外AI事業者へ、利用者が入力したブランド情報、プロンプト、アップロード画像を送信します。これは生成結果物を作成するために必要不可欠な処理過程です。",
+      item1: "OpenAI（米国）— テキストおよび画像の生成",
+      item2: "Google Gemini（米国）— テキストおよび画像の生成",
+      item3: "Anthropic Claude（米国）— テキストの生成",
+      item4:
+        "Resend（メール送信事業者、実際のメール送信機能を使用する場合）— 認証メール送信のための受信者メールアドレス",
+      outro:
+        "上記の事業者は各自の個人情報処理方針に従って情報を処理し、当社はサービス提供に必要な最小限の情報のみを送信します。これ以外の目的で個人情報を販売したり第三者に提供したりすることはありません。",
+    },
+    section4: {
+      title: "4. 個人情報の保有および利用期間",
+      intro:
+        "退会時には遅滞なく個人情報を削除します。ただし、次の場合には例外的に一定期間保管することがあります。",
+      item1: "不正利用の防止および紛争対応のために必要な範囲の接続記録: 最大3か月",
+      item2: "関係法令で別途保管期間を定める場合: 当該法令が定める期間",
+    },
+    section5: {
+      title: "5. 利用者の権利",
+      bodyBefore:
+        "利用者はいつでもご自身の個人情報の閲覧、修正、削除を請求することができます。マイページの「マイ情報」でお名前・パスワードを直接修正でき、退会やその他のご請求は",
+      contactLink: "お問い合わせ",
+      bodyAfter: "からお受けいたします。",
+    },
+    section6: {
+      title: "6. 個人情報の安全性確保措置",
+      item1: "パスワードは復号できない暗号化アルゴリズム（Argon2）で保存します。",
+      item2: "ログインセッションは有効期限のある暗号化されたトークンで管理します。",
+      item3:
+        "管理者機能は、別途権限を持つ担当者のみがアクセスできるようアクセス権限を制限します。",
+    },
+    section7: {
+      title: "7. クッキー（自動収集情報）",
+      body:
+        "本サービスはログイン状態を維持するために、ブラウザのクッキーに認証トークンを保存します。これは広告・追跡目的ではなく、ログインセッションを維持するための必須機能です。クッキーを削除すると再ログインが必要になります。",
+    },
+    section8: {
+      title: "8. お問い合わせ先",
+      bodyBefore: "個人情報の取り扱いに関するお問い合わせ、閲覧・削除のご請求は",
+      contactLink: "サービス内のお問い合わせ",
+      bodyAfter: "からお受けいたします。",
+    },
+    disclaimer:
+      "ご注意: 本方針は正式な法律アドバイスを受けずにサービス運営者が草案として作成した文書です。個人情報保護責任者の指定など、韓国「個人情報保護法」（PIPA）上の正式な告知義務事項は、実際のサービス運営形態が確定する時点で補完が必要であり、正式公開前に法律専門家の検討を受けることをお勧めします。",
+  },
+  termsOfService: {
+    backToHome: "← ホームへ",
+    title: "利用規約",
+    effectiveDate: "施行日: 2026年7月20日",
+    summary: {
+      title: "かんたんに言うと",
+      item1: "ASTERはAIでロゴ・ブランドデザインを作成するサービスです。",
+      item2: "入力いただいたブランド情報や画像は、画像を生成するためにOpenAI・GoogleなどのAI事業者に送信されます。",
+      item3: "無料プランには、毎月生成できる回数に制限があります。",
+      item4: "他者の商標・著作権を侵害するコンテンツの生成や、複数アカウントで無料上限を回避する行為は禁止されています。",
+      item5: "規約に違反した場合、アカウントが停止または削除されることがあります。",
+    },
+    article1: {
+      title: "第1条（目的）",
+      body: "本規約は、ASTER（以下「当社」）が提供するAIベースのブランドデザイン生成サービス（以下「本サービス」）の利用に関して、当社と利用者との間の権利、義務および責任事項を定めることを目的とします。",
+    },
+    article2: {
+      title: "第2条（サービスの内容）",
+      intro: "本サービスは、次の機能を提供します。",
+      item1: "ブランドインタビューに基づくブランド戦略およびスタイルの推薦",
+      item2: "AIを利用したロゴおよびブランド画像の生成・修正",
+      item3: "生成された画像を活用したモックアップ（製品モックアップ画像）の作成",
+      item4: "生成結果の保存、管理およびエクスポート（Export）",
+      outro:
+        "本サービスは無料プランと有料プラン（Pro、Studio）で構成されており、有料決済機能はまだ正式リリース前の準備段階にあります。決済機能が導入される場合は、関連する内容を事前に案内し、別途同意を得ます。",
+    },
+    article3: {
+      title: "第3条（アカウントおよび会員登録）",
+      item1: "メールアドレスとパスワード、またはGoogle・Kakaoのソーシャルログインでアカウントを作成できます。",
+      item2: "無料利用上限の乱用を防ぐため、メール認証の手続きを行う場合があります。",
+      item3: "他者のメールアドレスを不正に使用したり、複数のアカウントを作成して無料利用上限を繰り返し回避する行為は禁止されます。",
+      item4: "会員情報は正確に入力する必要があり、虚偽の情報による不利益は利用者本人が負担します。",
+    },
+    article4: {
+      title: "第4条（AI処理および外部サービスの利用）",
+      body1Before:
+        "本サービスは、画像・テキストの生成のために、OpenAI、Google（Gemini）、Anthropic（Claude）などの外部AI事業者のAPIを利用します。利用者が入力したブランド情報、インタビューの回答、アップロードした画像は、結果物の生成のためにこれらの事業者へ送信されることがあります。詳しくは",
+      body1Link: "プライバシーポリシー",
+      body1After: "をご参照ください。",
+      body2:
+        "AIが生成する結果物の特性上、結果画像が完全に意図したとおりにならなかったり、まれに不適切または不正確な結果が含まれる場合があります。当社はこれを最小限に抑えるよう努めますが、完全な正確性を保証するものではありません。",
+    },
+    article5: {
+      title: "第5条（生成物の利用および権利）",
+      item1: "利用者が本サービスで生成した画像は、商業的用途を含めて利用者が自由に使用できます。",
+      item2:
+        "ただし利用者は、生成時に入力したプロンプトや参考画像が第三者の商標権、著作権などの知的財産権を侵害しないよう、自ら確認する責任があります。",
+      item3:
+        "AI生成物の著作権が認められるか否かは国・法令によって異なる場合があり、当社は生成物に対する完全な著作権を保証しません。",
+    },
+    article6: {
+      title: "第6条（禁止行為）",
+      intro: "利用者は、次の行為を行ってはなりません。",
+      item1: "他者の個人情報、商標、著作権などを侵害するコンテンツを生成する行為",
+      item2: "複数のアカウントを作成して無料利用上限を繰り返し回避する行為",
+      item3: "本サービスの正常な運営を妨げ、またはシステムに不正にアクセスする行為",
+      item4: "違法または公序良俗に反するコンテンツを生成・流布する行為",
+    },
+    article7: {
+      title: "第7条（利用制限）",
+      bodyBefore:
+        "利用者が第6条に違反し、または本サービスの運営に重大な支障を生じさせた場合、当社は事前の通知なく当該アカウントの利用を停止または削除することができます。停止・削除されたアカウントは、",
+      bodyLink: "お問い合わせ",
+      bodyAfter: "を通じて疎明することができます。",
+    },
+    article8: {
+      title: "第8条（サービスの変更および中断）",
+      body: "当社は、運営上・技術上の必要に応じて、本サービスの全部または一部を変更または中断することができます。利用者に重大な影響を及ぼす変更の場合は、事前に告知します。",
+    },
+    article9: {
+      title: "第9条（責任の制限）",
+      body: "当社は、天災地変、AI事業者のサービス障害など、当社が制御できない事由により発生したサービス中断について責任を負いません。また、利用者が生成した結果物を実際に使用（商標出願、印刷物の制作など）することにより発生する法的紛争について、当社は責任を負いません。",
+    },
+    article10: {
+      title: "第10条（規約の変更）",
+      body: "当社は必要な場合、本規約を変更することができ、変更の際はサービス内の告知またはメールを通じて事前に案内します。変更後の規約に同意しない場合は、退会を請求することができます。",
+    },
+    article11: {
+      title: "第11条（お問い合わせ）",
+      bodyBefore: "本サービスの利用に関するお問い合わせは、",
+      bodyLink: "サービス内のお問い合わせ",
+      bodyAfter: "を通じてお寄せください。",
+    },
+    disclaimer:
+      "ご注意: 本規約は正式な法律アドバイスを受けずにサービス運営者が草案として作成した文書です。事業者登録情報（商号、代表者、事業者登録番号、住所）および有料決済に関する条項は、実際のサービス運営形態が確定し、決済機能が導入される時点で必ず補完する必要があり、正式公開前に法律専門家の検討を受けることをお勧めします。",
+  },
+  guidePage: {
+    eyebrow: "How it works",
+    title: "マイプロジェクト / マイスタイル / チームの使い方",
+    intro:
+      "ブランドビジュアルを作る全体の流れ、スタイルを保存して再利用する方法、チームメンバーとプロジェクトを一緒に進める方法をまとめました。",
+    myProjects: {
+      title: "マイプロジェクト",
+      descLink: "マイプロジェクト",
+      descAfter:
+        " のダッシュボードで新しいプロジェクトを作成すると、以下のステップを順番に進んで成果物を作ります。各ステップはいつでもダッシュボードに戻って続きから進められます。",
+      steps: {
+        deliverable_type: "作業物タイプ",
+        brand_interview: "ブランドインタビュー",
+        style: "スタイル",
+        brand_strategy: "ブランド戦略",
+        logo_style: "ロゴスタイル",
+        generation: "画像生成",
+        concept_board: "コンセプトボード",
+        mockup: "モックアップ",
+      },
+      note: "ロゴ・ブランディング以外のポスターやリーフレットなどの作業物タイプでは、「ブランド戦略」と「ロゴスタイル」の2つのステップが省略されます。",
+    },
+    myStyles: {
+      title: "マイスタイル",
+      tier: "Pro以上",
+      introBefore: "マイスタイルは ",
+      introStrong: "Proプラン",
+      introAfter:
+        " から利用できます。自分で登録した参考画像をアカウント全体で再利用でき、プロジェクトごとに同じムードを説明し直す必要なく、スタイルをすぐに適用できます。",
+      step1Title: "1. カテゴリを作成",
+      step1Link: "マイスタイル",
+      step1After: " ページで、好きな名前（例:「自社ブランドのロゴスタイル」）でカテゴリを作成します。",
+      step2Title: "2. 参考画像を登録",
+      step2Body:
+        "カテゴリごとに参考画像を最大5枚までアップロードすると、AIが自動でスタイルを分析して要約しておきます。",
+      step3Title: "3. スタイルステップで活用",
+      step3Body:
+        "プロジェクトのスタイル選択ステップで登録したマイスタイルを選ぶと、そのムードがそのまま画像生成に反映されます。",
+    },
+    team: {
+      title: "チーム",
+      tier: "Studio専用",
+      introBefore: "チーム機能は ",
+      introStrong: "Studioプラン",
+      introAfter:
+        " で利用できます。無料・Proプランでは他の人のチームにコードで参加できますが、自分でチームを登録することはできません。",
+      step1Title: "1. チームを登録",
+      step1Before: "Studioユーザーが ",
+      step1Link: "チーム",
+      step1After: " ページでチームを登録すると、固有の6桁のコードが発行されます。",
+      step2Title: "2. コードの共有と参加",
+      step2Body:
+        "このコードをチームメンバーに渡すと、メンバーは同じチームページでコードを入力してチームに参加します。",
+      step3Title: "3. プロジェクトを共有",
+      step3Body:
+        "ダッシュボードでプロジェクトの「⋯」メニューから、共有したいプロジェクトだけ「チームに共有」をオンにすると、チームメンバーがダッシュボードでそのプロジェクトを一緒に見て編集できます。",
     },
   },
 };
