@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import type { Locale } from "@/shared/i18n/locale";
 import { setLocaleCookie } from "@/shared/i18n/cookie";
 import { MESSAGES } from "@/shared/i18n/messages";
@@ -40,6 +41,7 @@ export function LocaleProvider({
   children: ReactNode;
 }) {
   const [locale, setLocaleState] = useState<Locale>(initialLocale);
+  const router = useRouter();
 
   const t = useCallback<TranslateFn>(
     (key, params) => {
@@ -49,10 +51,19 @@ export function LocaleProvider({
     [locale],
   );
 
-  const setLocale = useCallback((next: Locale) => {
-    setLocaleState(next);
-    setLocaleCookie(next);
-  }, []);
+  const setLocale = useCallback(
+    (next: Locale) => {
+      setLocaleState(next);
+      setLocaleCookie(next);
+      // 클라이언트 컴포넌트는 locale state가 바뀌면 즉시 다시 렌더링되지만,
+      // getServerLocale()로 쿠키를 직접 읽어 렌더링하는 서버 컴포넌트
+      // 페이지(가이드/개인정보처리방침/이용약관 등)는 실제 네비게이션이
+      // 일어나기 전까지 그대로 남는다 -- router.refresh()로 현재 라우트의
+      // 서버 컴포넌트를 새 쿠키 기준으로 다시 렌더링하게 강제한다.
+      router.refresh();
+    },
+    [router],
+  );
 
   return <LocaleContext.Provider value={{ locale, setLocale, t }}>{children}</LocaleContext.Provider>;
 }
