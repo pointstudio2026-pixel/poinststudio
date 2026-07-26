@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { MESSAGES } from "@/shared/i18n/messages";
+import type { Locale } from "@/shared/i18n/locale";
 
 // 06_PRD_Authentication.md Validation Rules: min 8 chars, at least one
 // letter and one number.
@@ -27,6 +29,19 @@ export const oauthConsentSchema = z.object({
     .regex(/^\d{4}-\d{2}-\d{2}$/, "생년월일을 올바르게 입력해주세요.")
     .refine((v) => !Number.isNaN(Date.parse(v)), { message: "생년월일을 올바르게 입력해주세요." }),
 });
+
+/** oauthConsentSchema와 동일한 검증이지만, 실패 시 노출되는 메시지를 요청 locale에 맞춘다. */
+export function buildOauthConsentSchema(locale: Locale) {
+  const m = MESSAGES[locale].oauthConsent;
+  return z.object({
+    agreedToTerms: z.boolean().refine((v) => v === true, { message: m.mustAgree }),
+    name: z.string().min(1, m.nameRequired).max(120),
+    birthDate: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, m.birthDateInvalid)
+      .refine((v) => !Number.isNaN(Date.parse(v)), { message: m.birthDateInvalid }),
+  });
+}
 
 export const loginSchema = z.object({
   email: z.string().email("올바른 이메일 형식이 아닙니다."),

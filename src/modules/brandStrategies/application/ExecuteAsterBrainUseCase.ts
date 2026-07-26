@@ -10,6 +10,7 @@ import type { ColorSwatch } from "@/modules/colorPalettes/domain/ColorPalette";
 import { classifyInterviewInput } from "@/modules/promptPriority/domain/classifyInterviewInput";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { ConflictError, NotFoundError } from "@/shared/errors/AppError";
+import type { Locale } from "@/shared/i18n/locale";
 
 export type ExecuteAsterBrainMode = "execute" | "rebuild";
 
@@ -55,6 +56,7 @@ export class ExecuteAsterBrainUseCase {
     userId: string;
     mode: ExecuteAsterBrainMode;
     provider?: string;
+    locale?: Locale;
   }): Promise<BrandStrategy> {
     const project = await this.projectRepository.findByIdForUser(input.projectId, input.userId);
     if (!project) {
@@ -119,6 +121,7 @@ export class ExecuteAsterBrainUseCase {
 
     const { candidates: rawCandidates, reasoningSummary, confidenceLevel } = await this.composer.compose(
       answers,
+      input.locale ?? "ko",
       input.provider,
     );
 

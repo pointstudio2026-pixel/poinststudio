@@ -2,6 +2,8 @@ import jwt from "jsonwebtoken";
 import { AuthenticationError } from "@/shared/errors/AppError";
 import { ACCESS_TOKEN_TTL_SECONDS } from "@/shared/auth/constants";
 import type { OAuthProviderCode } from "@/modules/auth/domain/OAuthAccountRepository";
+import { MESSAGES } from "@/shared/i18n/messages";
+import type { Locale } from "@/shared/i18n/locale";
 
 export type UserRole = "designer" | "admin";
 export type AdminTier = "super_admin" | "manager" | "support";
@@ -63,14 +65,17 @@ export function signOAuthPendingSignupToken(
   return jwt.sign(body, requireAccessSecret(), { expiresIn: OAUTH_PENDING_SIGNUP_TTL_SECONDS });
 }
 
-export function verifyOAuthPendingSignupToken(token: string): OAuthPendingSignupPayload {
+export function verifyOAuthPendingSignupToken(
+  token: string,
+  locale: Locale = "ko",
+): OAuthPendingSignupPayload {
   try {
     const decoded = jwt.verify(token, requireAccessSecret());
     if (typeof decoded === "string" || decoded.type !== "oauth_pending_signup") {
-      throw new AuthenticationError("Invalid pending signup token", "AUTH-012");
+      throw new AuthenticationError(MESSAGES[locale].oauthConsent.sessionExpired, "AUTH-012");
     }
     return decoded as OAuthPendingSignupPayload;
   } catch {
-    throw new AuthenticationError("가입 절차가 만료되었습니다. 다시 로그인해주세요.", "AUTH-012");
+    throw new AuthenticationError(MESSAGES[locale].oauthConsent.sessionExpired, "AUTH-012");
   }
 }

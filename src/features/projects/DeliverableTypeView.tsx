@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { DELIVERABLE_TYPE_OPTIONS } from "@/modules/projects/domain/deliverableTypes";
+import { DELIVERABLE_TYPE_LABEL_KEYS } from "@/features/projects/deliverableTypeLabels";
 import { selectDeliverableType } from "@/services/project-service";
 import { STEP_ROUTES } from "@/features/workspace/stepRoutes";
 import { Spinner } from "@/components/Spinner";
@@ -61,7 +62,7 @@ export function DeliverableTypeView({ projectId }: { projectId: string }) {
                   : "border-line text-ink hover:border-ink"
               }`}
             >
-              {type}
+              {t(DELIVERABLE_TYPE_LABEL_KEYS[type] ?? "deliverableType.title")}
               {isSelected && isSaving && <Spinner />}
             </button>
           );

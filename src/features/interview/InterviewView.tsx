@@ -14,6 +14,7 @@ import {
 import { Spinner } from "@/components/Spinner";
 import { NextStepButton } from "@/features/workspace/NextStepButton";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
+import { GROUP_LABEL_KEYS, OPTION_LABEL_KEYS, QUESTION_TEXT_KEYS } from "@/features/interview/interviewLabels";
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 
@@ -30,6 +31,36 @@ function matchGroupForAnswer(question: InterviewQuestionDto, answer: string): st
 export function InterviewView({ projectId }: { projectId: string }) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+
+  // 질문/옵션 텍스트는 answers[key]에 그대로 저장되는 카탈로그 원문(한국어)이라
+  // 값 자체는 절대 바꾸지 않고, 화면 표시만 interviewLabels.ts 표로 번역한다.
+  // AI가 그때그때 만드는 후속 질문(followUp_*)이나 "기타" 직접 입력값은 표에
+  // 없으므로 원문을 그대로 보여준다.
+  function questionLabel(question: { key: string; text: string }): string {
+    const key = QUESTION_TEXT_KEYS[question.key];
+    return key ? t(key) : question.text;
+  }
+  function optionLabel(option: string): string {
+    const key = OPTION_LABEL_KEYS[option];
+    return key ? t(key) : option;
+  }
+  function groupLabel(group: string): string {
+    const key = GROUP_LABEL_KEYS[group];
+    return key ? t(key) : group;
+  }
+  // 다중 선택 답변은 콤마로 이어붙인 문자열로 저장되므로(예: "20대, 30대,
+  // 40대") 토큰별로 나눠 번역한 뒤 다시 합친다 -- "기타: ..." 자유 입력
+  // 토큰은 표에 없어 원문 그대로 남는다.
+  function answerLabel(answer: string): string {
+    return answer
+      .split(",")
+      .map((token) => {
+        const trimmed = token.trim();
+        const key = OPTION_LABEL_KEYS[trimmed];
+        return key ? t(key) : trimmed;
+      })
+      .join(", ");
+  }
   const { data, isLoading, isError } = useQuery({
     queryKey: ["interview", projectId],
     queryFn: () => fetchInterview(projectId),
@@ -265,9 +296,9 @@ export function InterviewView({ projectId }: { projectId: string }) {
             const record = data.interview.answers.find((a) => a.questionKey === q.key);
             return (
               <li key={q.key} className="rounded-xl border border-line bg-surface p-3 text-sm">
-                <span className="font-medium">{q.text}</span>
+                <span className="font-medium">{questionLabel(q)}</span>
                 <p className="mt-1 text-muted">
-                  {record?.answer?.trim() ? record.answer : t("interview.noAnswer")}
+                  {record?.answer?.trim() ? answerLabel(record.answer) : t("interview.noAnswer")}
                 </p>
               </li>
             );
@@ -316,7 +347,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
             )}
           </p>
           <h1 className="text-lg font-medium">
-            {currentQuestion.text}
+            {questionLabel(currentQuestion)}
             {currentQuestion.required && <span className="ml-1 text-red-500">*</span>}
           </h1>
 
@@ -332,7 +363,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                           onClick={() => setSelectedGroupName(g.group)}
                           className="flex w-full items-center justify-between rounded-xl border border-line px-3 py-2 text-left text-sm hover:bg-surface"
                         >
-                          {g.group}
+                          {groupLabel(g.group)}
                           <span aria-hidden className="text-muted">
                             ›
                           </span>
@@ -370,7 +401,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                                 isSelected ? "bg-ink text-paper" : "hover:bg-surface"
                               }`}
                             >
-                              {option}
+                              {optionLabel(option)}
                               {isSelected && <span aria-hidden>✓</span>}
                             </button>
                           </li>
@@ -410,7 +441,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                                 isSelected ? "bg-ink text-paper" : "hover:bg-surface"
                               }`}
                             >
-                              {option}
+                              {optionLabel(option)}
                               {isSelected && <span aria-hidden>✓</span>}
                             </button>
                           </li>
@@ -503,7 +534,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
             {questions.map((q, i) => (
               <li key={q.key} className="rounded-md border border-neutral-200 p-3 text-sm">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{q.text}</span>
+                  <span className="font-medium">{questionLabel(q)}</span>
                   <button
                     type="button"
                     onClick={() => {
@@ -518,7 +549,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                   </button>
                 </div>
                 <p className="mt-1 text-neutral-500">
-                  {answers[q.key]?.trim() ? answers[q.key] : t("interview.noAnswer")}
+                  {answers[q.key]?.trim() ? answerLabel(answers[q.key]!) : t("interview.noAnswer")}
                 </p>
               </li>
             ))}
@@ -526,7 +557,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
 
           {missingRequired.length > 0 && (
             <p className="text-sm text-red-600">
-              {t("interview.missingRequired", { list: missingRequired.map((q) => q.text).join(", ") })}
+              {t("interview.missingRequired", { list: missingRequired.map((q) => questionLabel(q)).join(", ") })}
             </p>
           )}
           {completeError && <p className="text-sm text-red-600">{completeError}</p>}

@@ -4,6 +4,7 @@ import { apiSuccess, toApiError } from "@/shared/http/response";
 import { requireUser } from "@/shared/auth/session";
 import { ValidationError } from "@/shared/errors/AppError";
 import { brandStrategiesContainer } from "@/modules/brandStrategies/container";
+import { LOCALE_COOKIE, parseLocaleCookie } from "@/shared/i18n/cookie";
 
 const bodySchema = z.object({
   projectId: z.string().min(1),
@@ -24,6 +25,7 @@ export async function POST(request: NextRequest) {
       userId: session.sub,
       mode: "rebuild",
       provider: parsed.data.provider,
+      locale: parseLocaleCookie(request.cookies.get(LOCALE_COOKIE)?.value),
     });
 
     return apiSuccess({ strategy }, { status: 201 });
