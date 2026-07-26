@@ -23,6 +23,7 @@ export const generateGiftCodesSchema = z.object({
   count: z.coerce.number().int().min(1).max(500),
   batchLabel: z.string().trim().max(100).optional(),
   expiresAt: z.string().datetime().optional().or(z.literal("").transform(() => undefined)),
+  maxRedemptions: z.coerce.number().int().min(1).max(100000).optional(),
 });
 
 export type GenerateGiftCodesInput = z.infer<typeof generateGiftCodesSchema>;

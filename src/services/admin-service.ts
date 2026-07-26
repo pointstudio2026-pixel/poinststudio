@@ -241,6 +241,8 @@ export interface GiftCodeDto {
   grantDays: number;
   batchLabel: string | null;
   expiresAt: string | null;
+  maxRedemptions: number;
+  redemptionCount: number;
   redeemedByUserId: string | null;
   redeemedAt: string | null;
   createdByUserId: string;
@@ -258,6 +260,7 @@ export function generateGiftCodes(input: {
   count: number;
   batchLabel?: string;
   expiresAt?: string;
+  maxRedemptions?: number;
 }) {
   return apiFetch<{ codes: GiftCodeDto[] }>("/api/admin/gift-codes", {
     method: "POST",

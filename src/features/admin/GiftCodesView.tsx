@@ -18,6 +18,7 @@ export function GiftCodesView() {
   const [planCode, setPlanCode] = useState<"pro" | "studio">("pro");
   const [grantDays, setGrantDays] = useState(31);
   const [count, setCount] = useState(10);
+  const [maxRedemptions, setMaxRedemptions] = useState(1);
   const [batchLabel, setBatchLabel] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,7 +32,7 @@ export function GiftCodesView() {
   });
 
   const codes = data?.codes ?? [];
-  const redeemedCount = codes.filter((c) => c.redeemedByUserId).length;
+  const totalRedemptions = codes.reduce((sum, c) => sum + c.redemptionCount, 0);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -44,6 +45,7 @@ export function GiftCodesView() {
         count,
         batchLabel: batchLabel.trim() || undefined,
         expiresAt: expiresAt ? new Date(expiresAt).toISOString() : undefined,
+        maxRedemptions: maxRedemptions > 1 ? maxRedemptions : undefined,
       });
       setLastGenerated(result.codes);
       await queryClient.invalidateQueries({ queryKey: ["admin-gift-codes"] });
@@ -135,18 +137,36 @@ export function GiftCodesView() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="batchLabel" className="text-sm text-muted">
-            배치 이름 (선택, 예: 2026-08-런칭이벤트)
-          </label>
-          <input
-            id="batchLabel"
-            type="text"
-            value={batchLabel}
-            onChange={(e) => setBatchLabel(e.target.value)}
-            placeholder="배치를 구분할 이름"
-            className="rounded-full border border-line px-3 py-2 text-sm"
-          />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="batchLabel" className="text-sm text-muted">
+              배치 이름 (선택, 예: 2026-08-런칭이벤트)
+            </label>
+            <input
+              id="batchLabel"
+              type="text"
+              value={batchLabel}
+              onChange={(e) => setBatchLabel(e.target.value)}
+              placeholder="배치를 구분할 이름"
+              className="rounded-full border border-line px-3 py-2 text-sm"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="maxRedemptions" className="text-sm text-muted">
+              코드 1개당 사용 가능 인원
+            </label>
+            <input
+              id="maxRedemptions"
+              type="number"
+              min={1}
+              max={100000}
+              value={maxRedemptions}
+              onChange={(e) => setMaxRedemptions(Number(e.target.value))}
+              className="rounded-full border border-line px-3 py-2 text-sm"
+            />
+            <p className="text-xs text-muted">1(기본값)이면 코드당 1명만 사용 가능. 공개 프로모 코드는 여러 명으로 설정.</p>
+          </div>
         </div>
 
         {formError && <p className="text-sm text-red-600">{formError}</p>}
@@ -184,7 +204,7 @@ export function GiftCodesView() {
       <div className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-soft">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium">
-            발급 목록 ({codes.length}개 중 {redeemedCount}개 사용됨)
+            발급 목록 (코드 {codes.length}개, 총 {totalRedemptions}회 사용됨)
           </p>
           <input
             type="text"
@@ -213,8 +233,8 @@ export function GiftCodesView() {
                   <th className="py-2 pr-3 font-medium">기간</th>
                   <th className="py-2 pr-3 font-medium">배치</th>
                   <th className="py-2 pr-3 font-medium">등록 마감</th>
-                  <th className="py-2 pr-3 font-medium">상태</th>
-                  <th className="py-2 pr-3 font-medium">사용일</th>
+                  <th className="py-2 pr-3 font-medium">사용 현황</th>
+                  <th className="py-2 pr-3 font-medium">최근 사용일</th>
                 </tr>
               </thead>
               <tbody>
@@ -226,10 +246,18 @@ export function GiftCodesView() {
                     <td className="py-2 pr-3">{c.batchLabel ?? "-"}</td>
                     <td className="py-2 pr-3">{formatDate(c.expiresAt)}</td>
                     <td className="py-2 pr-3">
-                      {c.redeemedByUserId ? (
-                        <span className="rounded-full bg-green-100 px-2 py-0.5 text-green-700">사용됨</span>
+                      {c.redemptionCount >= c.maxRedemptions ? (
+                        <span className="rounded-full bg-green-100 px-2 py-0.5 text-green-700">
+                          {c.redemptionCount}/{c.maxRedemptions} 소진
+                        </span>
+                      ) : c.redemptionCount > 0 ? (
+                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-amber-700">
+                          {c.redemptionCount}/{c.maxRedemptions}
+                        </span>
                       ) : (
-                        <span className="rounded-full bg-line px-2 py-0.5 text-muted">미사용</span>
+                        <span className="rounded-full bg-line px-2 py-0.5 text-muted">
+                          0/{c.maxRedemptions} 미사용
+                        </span>
                       )}
                     </td>
                     <td className="py-2 pr-3">{formatDate(c.redeemedAt)}</td>

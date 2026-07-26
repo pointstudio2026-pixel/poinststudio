@@ -4,8 +4,15 @@ import type {
   GiftCodeRepository,
 } from "@/modules/giftCodes/domain/GiftCodeRepository";
 
+interface FakeRedemption {
+  giftCodeId: string;
+  userId: string;
+  redeemedAt: Date;
+}
+
 export class FakeGiftCodeRepository implements GiftCodeRepository {
   codes: GiftCode[] = [];
+  redemptions: FakeRedemption[] = [];
   private nextId = 1;
 
   async createMany(inputs: CreateGiftCodeInput[]): Promise<GiftCode[]> {
@@ -16,6 +23,8 @@ export class FakeGiftCodeRepository implements GiftCodeRepository {
       grantDays: input.grantDays,
       batchLabel: input.batchLabel,
       expiresAt: input.expiresAt,
+      maxRedemptions: input.maxRedemptions ?? 1,
+      redemptionCount: 0,
       redeemedByUserId: null,
       redeemedAt: null,
       createdByUserId: input.createdByUserId,
@@ -29,10 +38,21 @@ export class FakeGiftCodeRepository implements GiftCodeRepository {
     return this.codes.find((c) => c.code === code) ?? null;
   }
 
-  async markRedeemed(id: string, userId: string, redeemedAt: Date): Promise<GiftCode> {
-    const index = this.codes.findIndex((c) => c.id === id);
-    if (index === -1) throw new Error(`FakeGiftCodeRepository: code ${id} not found`);
-    const updated = { ...this.codes[index]!, redeemedByUserId: userId, redeemedAt };
+  async hasUserRedeemed(giftCodeId: string, userId: string): Promise<boolean> {
+    return this.redemptions.some((r) => r.giftCodeId === giftCodeId && r.userId === userId);
+  }
+
+  async recordRedemption(giftCodeId: string, userId: string, redeemedAt: Date): Promise<GiftCode> {
+    this.redemptions.push({ giftCodeId, userId, redeemedAt });
+    const index = this.codes.findIndex((c) => c.id === giftCodeId);
+    if (index === -1) throw new Error(`FakeGiftCodeRepository: code ${giftCodeId} not found`);
+    const existing = this.codes[index]!;
+    const updated: GiftCode = {
+      ...existing,
+      redemptionCount: existing.redemptionCount + 1,
+      redeemedByUserId: existing.redeemedByUserId ?? userId,
+      redeemedAt: existing.redeemedAt ?? redeemedAt,
+    };
     this.codes[index] = updated;
     return updated;
   }

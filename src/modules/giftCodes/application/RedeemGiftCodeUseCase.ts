@@ -30,8 +30,11 @@ export class RedeemGiftCodeUseCase {
     if (!giftCode) {
       throw new NotFoundError("유효하지 않은 선물 코드입니다.", "GIFT-001");
     }
-    if (giftCode.redeemedByUserId) {
-      throw new ConflictError("이미 사용된 선물 코드입니다.", "GIFT-002");
+    if (giftCode.redemptionCount >= giftCode.maxRedemptions) {
+      throw new ConflictError("이미 사용 인원이 모두 찬 선물 코드입니다.", "GIFT-002");
+    }
+    if (await this.giftCodeRepository.hasUserRedeemed(giftCode.id, input.userId)) {
+      throw new ConflictError("이미 이 코드를 사용하셨습니다.", "GIFT-004");
     }
     if (giftCode.expiresAt && giftCode.expiresAt < new Date()) {
       throw new ValidationError("등록 기간이 지난 선물 코드입니다.");
@@ -52,7 +55,7 @@ export class RedeemGiftCodeUseCase {
       now,
       periodEnd,
     );
-    await this.giftCodeRepository.markRedeemed(giftCode.id, input.userId, now);
+    await this.giftCodeRepository.recordRedemption(giftCode.id, input.userId, now);
 
     await recordActivity({
       userId: input.userId,

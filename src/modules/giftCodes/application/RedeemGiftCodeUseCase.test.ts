@@ -17,6 +17,8 @@ function seedCode(repo: FakeGiftCodeRepository, overrides: Partial<GiftCode> = {
     grantDays: 31,
     batchLabel: null,
     expiresAt: null,
+    maxRedemptions: 1,
+    redemptionCount: 0,
     redeemedByUserId: null,
     redeemedAt: null,
     createdByUserId: "admin-1",
@@ -43,6 +45,7 @@ describe("RedeemGiftCodeUseCase", () => {
     );
     expect(daysGranted).toBe(31);
     expect(giftCodes.codes[0]?.redeemedByUserId).toBe("user-1");
+    expect(giftCodes.codes[0]?.redemptionCount).toBe(1);
   });
 
   it("normalizes case and whitespace before lookup", async () => {
@@ -64,10 +67,10 @@ describe("RedeemGiftCodeUseCase", () => {
     await expect(useCase.execute({ userId: "user-1", code: "NOPE" })).rejects.toBeInstanceOf(NotFoundError);
   });
 
-  it("rejects an already-redeemed code", async () => {
+  it("rejects a single-use code that's already been redeemed by someone else", async () => {
     const giftCodes = new FakeGiftCodeRepository();
     const subs = new FakeSubscriptionRepository();
-    seedCode(giftCodes, { redeemedByUserId: "someone-else", redeemedAt: new Date() });
+    seedCode(giftCodes, { redeemedByUserId: "someone-else", redeemedAt: new Date(), redemptionCount: 1 });
     const useCase = new RedeemGiftCodeUseCase(giftCodes, subs);
 
     await expect(useCase.execute({ userId: "user-1", code: "ASTER-TEST-CODE" })).rejects.toBeInstanceOf(
@@ -96,5 +99,52 @@ describe("RedeemGiftCodeUseCase", () => {
     await expect(useCase.execute({ userId: "user-1", code: "ASTER-TEST-CODE" })).rejects.toBeInstanceOf(
       ConflictError,
     );
+  });
+
+  describe("multi-use codes (maxRedemptions > 1)", () => {
+    it("lets several different users redeem the same code up to the limit", async () => {
+      const giftCodes = new FakeGiftCodeRepository();
+      const subs = new FakeSubscriptionRepository();
+      seedCode(giftCodes, { maxRedemptions: 3 });
+      const useCase = new RedeemGiftCodeUseCase(giftCodes, subs);
+
+      await useCase.execute({ userId: "user-1", code: "ASTER-TEST-CODE" });
+      await useCase.execute({ userId: "user-2", code: "ASTER-TEST-CODE" });
+      const third = await useCase.execute({ userId: "user-3", code: "ASTER-TEST-CODE" });
+
+      expect(third.planCode).toBe("pro");
+      expect(giftCodes.codes[0]?.redemptionCount).toBe(3);
+    });
+
+    it("rejects once the redemption cap is reached", async () => {
+      const giftCodes = new FakeGiftCodeRepository();
+      const subs = new FakeSubscriptionRepository();
+      seedCode(giftCodes, { maxRedemptions: 2 });
+      const useCase = new RedeemGiftCodeUseCase(giftCodes, subs);
+
+      await useCase.execute({ userId: "user-1", code: "ASTER-TEST-CODE" });
+      await useCase.execute({ userId: "user-2", code: "ASTER-TEST-CODE" });
+
+      await expect(useCase.execute({ userId: "user-3", code: "ASTER-TEST-CODE" })).rejects.toBeInstanceOf(
+        ConflictError,
+      );
+    });
+
+    it("rejects the same user redeeming the same multi-use code twice", async () => {
+      const giftCodes = new FakeGiftCodeRepository();
+      const subs = new FakeSubscriptionRepository();
+      seedCode(giftCodes, { maxRedemptions: 5 });
+      const useCase = new RedeemGiftCodeUseCase(giftCodes, subs);
+
+      await useCase.execute({ userId: "user-1", code: "ASTER-TEST-CODE" });
+      // user-1's subscription is now "pro", so the second attempt should be rejected
+      // for already-has-a-paid-plan before it even gets to the double-redeem check --
+      // simulate a downgrade back to free to isolate the double-redeem guard itself.
+      subs.setPlan("user-1", "free");
+
+      await expect(useCase.execute({ userId: "user-1", code: "ASTER-TEST-CODE" })).rejects.toBeInstanceOf(
+        ConflictError,
+      );
+    });
   });
 });

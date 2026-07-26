@@ -76,4 +76,55 @@ describe("GenerateGiftCodesUseCase", () => {
       }),
     ).rejects.toBeInstanceOf(ValidationError);
   });
+
+  it("defaults maxRedemptions to 1 when not specified", async () => {
+    const repo = new FakeGiftCodeRepository();
+    const useCase = new GenerateGiftCodesUseCase(repo);
+
+    const [code] = await useCase.execute({
+      adminUserId: "admin-1",
+      planCode: "pro",
+      grantDays: 31,
+      count: 1,
+      batchLabel: null,
+      expiresAt: null,
+    });
+
+    expect(code?.maxRedemptions).toBe(1);
+  });
+
+  it("generates a multi-use code when maxRedemptions is set", async () => {
+    const repo = new FakeGiftCodeRepository();
+    const useCase = new GenerateGiftCodesUseCase(repo);
+
+    const [code] = await useCase.execute({
+      adminUserId: "admin-1",
+      planCode: "pro",
+      grantDays: 31,
+      count: 1,
+      batchLabel: null,
+      expiresAt: null,
+      maxRedemptions: 10,
+    });
+
+    expect(code?.maxRedemptions).toBe(10);
+    expect(code?.redemptionCount).toBe(0);
+  });
+
+  it("rejects maxRedemptions below 1", async () => {
+    const repo = new FakeGiftCodeRepository();
+    const useCase = new GenerateGiftCodesUseCase(repo);
+
+    await expect(
+      useCase.execute({
+        adminUserId: "admin-1",
+        planCode: "pro",
+        grantDays: 31,
+        count: 1,
+        batchLabel: null,
+        expiresAt: null,
+        maxRedemptions: 0,
+      }),
+    ).rejects.toBeInstanceOf(ValidationError);
+  });
 });

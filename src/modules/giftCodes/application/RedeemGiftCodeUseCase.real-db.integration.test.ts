@@ -66,4 +66,58 @@ describe("RedeemGiftCodeUseCase (real Prisma repositories, real Postgres)", () =
     const storedSubscription = await prisma.subscription.findUnique({ where: { userId: redeemer.id } });
     expect(storedSubscription?.planCode).toBe("pro");
   });
+
+  /**
+   * gift_code_redemptions has its own real FK constraints (giftCodeId,
+   * userId) that FakeGiftCodeRepository doesn't enforce -- this exercises
+   * the multi-redemption path (maxRedemptions > 1) against real Postgres.
+   */
+  it("lets multiple real users redeem the same multi-use code", async () => {
+    const userRepository = new PrismaUserRepository();
+    const admin = await userRepository.create({
+      email: `${TEST_EMAIL_PREFIX}-admin2-${Date.now()}@aster.dev`,
+      passwordHash: await new Argon2PasswordHasher().hash("password123"),
+      emailVerifiedAt: new Date(),
+    });
+    const redeemerA = await userRepository.create({
+      email: `${TEST_EMAIL_PREFIX}-a-${Date.now()}@aster.dev`,
+      passwordHash: await new Argon2PasswordHasher().hash("password123"),
+      emailVerifiedAt: new Date(),
+    });
+    const redeemerB = await userRepository.create({
+      email: `${TEST_EMAIL_PREFIX}-b-${Date.now()}@aster.dev`,
+      passwordHash: await new Argon2PasswordHasher().hash("password123"),
+      emailVerifiedAt: new Date(),
+    });
+
+    const giftCodeRepository = new PrismaGiftCodeRepository();
+    const shortSuffix = Date.now().toString(36).slice(-4).toUpperCase();
+    const [giftCode] = await giftCodeRepository.createMany([
+      {
+        code: `ASTM-${shortSuffix}`,
+        planCode: "pro",
+        grantDays: 31,
+        batchLabel: null,
+        expiresAt: null,
+        createdByUserId: admin.id,
+        maxRedemptions: 2,
+      },
+    ]);
+
+    const subscriptionRepository = new PrismaSubscriptionRepository();
+    const useCase = new RedeemGiftCodeUseCase(giftCodeRepository, subscriptionRepository);
+
+    await useCase.execute({ userId: redeemerA.id, code: giftCode!.code });
+    await useCase.execute({ userId: redeemerB.id, code: giftCode!.code });
+
+    const refetched = await giftCodeRepository.findByCode(giftCode!.code);
+    expect(refetched?.redemptionCount).toBe(2);
+
+    const redeemerC = await userRepository.create({
+      email: `${TEST_EMAIL_PREFIX}-c-${Date.now()}@aster.dev`,
+      passwordHash: await new Argon2PasswordHasher().hash("password123"),
+      emailVerifiedAt: new Date(),
+    });
+    await expect(useCase.execute({ userId: redeemerC.id, code: giftCode!.code })).rejects.toThrow();
+  });
 });

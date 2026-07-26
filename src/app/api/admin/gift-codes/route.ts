@@ -21,6 +21,7 @@ export async function POST(request: NextRequest) {
       count: parsed.data.count,
       batchLabel: parsed.data.batchLabel ?? null,
       expiresAt: parsed.data.expiresAt ? new Date(parsed.data.expiresAt) : null,
+      maxRedemptions: parsed.data.maxRedemptions,
     });
 
     return apiSuccess({ codes });

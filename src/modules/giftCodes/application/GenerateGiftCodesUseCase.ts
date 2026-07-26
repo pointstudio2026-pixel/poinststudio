@@ -14,6 +14,8 @@ export interface GenerateGiftCodesInput {
   count: number;
   batchLabel: string | null;
   expiresAt: Date | null;
+  /** 코드 1개당 사용 가능 인원(예: PH 공개 프로모 코드는 10~) -- 생략 시 1(1인 전용). */
+  maxRedemptions?: number;
 }
 
 /** 관리자가 이벤트/프로모션용 선물 코드를 한 번에 여러 개 발급한다(비용 없음, AI 호출 없음). */
@@ -29,6 +31,9 @@ export class GenerateGiftCodesUseCase {
     }
     if (input.grantDays < 1) {
       throw new ValidationError("부여 기간은 1일 이상이어야 합니다.");
+    }
+    if (input.maxRedemptions !== undefined && input.maxRedemptions < 1) {
+      throw new ValidationError("사용 가능 인원은 1명 이상이어야 합니다.");
     }
 
     const codes = new Set<string>();
@@ -51,6 +56,7 @@ export class GenerateGiftCodesUseCase {
           batchLabel: input.batchLabel,
           expiresAt: input.expiresAt,
           createdByUserId: input.adminUserId,
+          maxRedemptions: input.maxRedemptions,
         })),
     );
 

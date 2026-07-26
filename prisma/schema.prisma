@@ -57,6 +57,7 @@ model User {
   teamMemberships    TeamMembership[]
   redeemedGiftCodes  GiftCode[] @relation("GiftCodeRedeemedBy")
   createdGiftCodes   GiftCode[] @relation("GiftCodeCreatedBy")
+  giftCodeRedemptions GiftCodeRedemption[]
 
   @@map("users")
 }
@@ -119,15 +120,32 @@ model GiftCode {
   grantDays        Int       @default(31) @map("grant_days")
   batchLabel       String?   @map("batch_label") @db.VarChar(100)
   expiresAt        DateTime? @map("expires_at") @db.Timestamptz()
+  /** 1이면 기존처럼 1인 전용, 2 이상이면 여러 명이 같은 코드를 나눠 쓸 수 있다(예: Product Hunt 공개 프로모 코드). */
+  maxRedemptions   Int       @default(1) @map("max_redemptions")
+  /** 하위 호환/빠른 조회용 -- 실제 사용 인원 판정과 중복 사용 방지는 redemptions 테이블이 기준이다. */
   redeemedByUserId String?   @map("redeemed_by_user_id") @db.Uuid
   redeemedBy       User?     @relation("GiftCodeRedeemedBy", fields: [redeemedByUserId], references: [id])
   redeemedAt       DateTime? @map("redeemed_at") @db.Timestamptz()
+  redemptions      GiftCodeRedemption[]
   createdByUserId  String    @map("created_by_user_id") @db.Uuid
   createdBy        User      @relation("GiftCodeCreatedBy", fields: [createdByUserId], references: [id])
   createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz()
 
   @@index([batchLabel])
   @@map("gift_codes")
+}
+
+/** GiftCode 하나를 여러 사용자가 나눠 쓸 수 있게(maxRedemptions > 1) 사용 기록을 사람별로 추적한다. */
+model GiftCodeRedemption {
+  id         String   @id @default(uuid()) @db.Uuid
+  giftCodeId String   @map("gift_code_id") @db.Uuid
+  giftCode   GiftCode @relation(fields: [giftCodeId], references: [id], onDelete: Cascade)
+  userId     String   @map("user_id") @db.Uuid
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  redeemedAt DateTime @default(now()) @map("redeemed_at") @db.Timestamptz()
+
+  @@unique([giftCodeId, userId])
+  @@map("gift_code_redemptions")
 }
 
 model UsageLog {
