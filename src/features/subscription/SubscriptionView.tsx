@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppHeader } from "@/features/navigation/AppHeader";
 import { PaymentMethodModal } from "@/features/subscription/PaymentMethodModal";
+import { CancelSubscriptionButton } from "@/features/subscription/CancelSubscriptionButton";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { MessageKey } from "@/shared/i18n/messages/types";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
@@ -150,6 +151,8 @@ export function SubscriptionView({
       {paymentModalPlan && (
         <PaymentMethodModal planLabel={PLAN_LABELS[paymentModalPlan]} onClose={() => setPaymentModalPlan(null)} />
       )}
+
+      {currentPlanCode !== "free" && <CancelSubscriptionButton />}
 
       {currentPlanCode === "free" && (
         <div className="shadow-soft flex flex-col gap-3 rounded-2xl border border-line bg-surface p-6">

@@ -14,6 +14,7 @@ import { Spinner } from "@/components/Spinner";
 import { AppHeader } from "@/features/navigation/AppHeader";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
+import { CancelSubscriptionButton } from "@/features/subscription/CancelSubscriptionButton";
 
 type ChangePasswordFormInput = z.infer<typeof changePasswordSchema> & {
   confirmPassword: string;
@@ -55,10 +56,22 @@ export function MyInfoView({
           </p>
         </section>
       )}
+
+      {planCode !== "free" && (
+        <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
+          <h2 className="font-medium">{t("myInfo.subscriptionTitle")}</h2>
+          <p className="mt-2 mb-3 text-sm text-muted">
+            {t("myInfo.currentPlanLabel", { plan: PLAN_LABELS[planCode] })}
+          </p>
+          <CancelSubscriptionButton />
+        </section>
+      )}
       </main>
     </div>
   );
 }
+
+const PLAN_LABELS: Record<PlanCode, string> = { free: "Free", pro: "Pro", studio: "Studio" };
 
 function ProfileNameForm({ initialName }: { initialName: string | null }) {
   const { t } = useTranslation();

@@ -391,6 +391,8 @@ export const ko = {
       success: "선물 코드가 적용되었습니다! {plan} 플랜을 {date}까지 이용하실 수 있어요.",
       genericError: "선물 코드 적용에 실패했습니다.",
     },
+    cancelButton: "구독 취소",
+    cancelNotReady: "정식 유료화 서비스 출시 이후에 이용 가능합니다.",
   },
   support: {
     title: "문의사항",
@@ -769,6 +771,8 @@ export const ko = {
     passwordUpdateFailed: "비밀번호 변경에 실패했습니다.",
     changingPassword: "변경 중...",
     changePasswordButton: "비밀번호 변경",
+    subscriptionTitle: "구독",
+    currentPlanLabel: "현재 플랜: {plan}",
   },
   team: {
     title: "팀",

@@ -393,6 +393,8 @@ export const fr: Messages = {
       success: "Code cadeau appliqué ! Vous pouvez utiliser l'offre {plan} jusqu'au {date}.",
       genericError: "Échec de l'application du code cadeau.",
     },
+    cancelButton: "Annuler l'abonnement",
+    cancelNotReady: "Cette fonctionnalité sera disponible après le lancement officiel des offres payantes.",
   },
   support: {
     title: "Assistance",
@@ -771,6 +773,8 @@ export const fr: Messages = {
     passwordUpdateFailed: "Échec de la mise à jour du mot de passe.",
     changingPassword: "Mise à jour...",
     changePasswordButton: "Changer le mot de passe",
+    subscriptionTitle: "Abonnement",
+    currentPlanLabel: "Offre actuelle : {plan}",
   },
   team: {
     title: "Équipe",

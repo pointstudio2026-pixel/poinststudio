@@ -393,6 +393,8 @@ export const de: Messages = {
       success: "Geschenkcode angewendet! Du kannst den {plan}-Plan bis {date} nutzen.",
       genericError: "Der Geschenkcode konnte nicht angewendet werden.",
     },
+    cancelButton: "Abo kündigen",
+    cancelNotReady: "Dies ist erst nach dem offiziellen Start der kostenpflichtigen Pläne verfügbar.",
   },
   support: {
     title: "Support",
@@ -771,6 +773,8 @@ export const de: Messages = {
     passwordUpdateFailed: "Passwort konnte nicht geändert werden.",
     changingPassword: "Wird geändert...",
     changePasswordButton: "Passwort ändern",
+    subscriptionTitle: "Abo",
+    currentPlanLabel: "Aktueller Plan: {plan}",
   },
   team: {
     title: "Team",

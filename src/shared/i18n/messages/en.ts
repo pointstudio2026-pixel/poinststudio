@@ -393,6 +393,8 @@ export const en: Messages = {
       success: "Gift code applied! You can use the {plan} plan until {date}.",
       genericError: "Failed to apply the gift code.",
     },
+    cancelButton: "Cancel subscription",
+    cancelNotReady: "This will be available once paid plans officially launch.",
   },
   support: {
     title: "Support",
@@ -771,6 +773,8 @@ export const en: Messages = {
     passwordUpdateFailed: "Failed to update password.",
     changingPassword: "Updating...",
     changePasswordButton: "Change Password",
+    subscriptionTitle: "Subscription",
+    currentPlanLabel: "Current plan: {plan}",
   },
   team: {
     title: "Team",

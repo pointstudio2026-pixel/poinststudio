@@ -393,6 +393,8 @@ export const ja: Messages = {
       success: "ギフトコードが適用されました！{plan}プランを{date}までご利用いただけます。",
       genericError: "ギフトコードの適用に失敗しました。",
     },
+    cancelButton: "サブスクリプションを解約",
+    cancelNotReady: "有料サービスの正式リリース後にご利用いただけます。",
   },
   support: {
     title: "お問い合わせ",
@@ -771,6 +773,8 @@ export const ja: Messages = {
     passwordUpdateFailed: "パスワードの変更に失敗しました。",
     changingPassword: "変更中...",
     changePasswordButton: "パスワード変更",
+    subscriptionTitle: "サブスクリプション",
+    currentPlanLabel: "現在のプラン: {plan}",
   },
   team: {
     title: "チーム",
