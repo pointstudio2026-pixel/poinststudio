@@ -9,6 +9,7 @@ import { MESSAGES } from "@/shared/i18n/messages";
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getServerLocale();
   return {
+    metadataBase: new URL("https://www.designaster.com"),
     title: "ASTER",
     description: MESSAGES[locale].meta.description,
   };
