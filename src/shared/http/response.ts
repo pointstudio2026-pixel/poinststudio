@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { AppError, InternalError } from "@/shared/errors/AppError";
+import { sendN8nAlert } from "@/shared/monitoring/n8nAlert";
 
 export interface ApiMeta {
   requestId: string;
@@ -52,11 +53,22 @@ export function apiError(
 }
 
 export function toApiError(err: unknown, requestId?: string): NextResponse<ApiErrorBody> {
-  if (err instanceof AppError) {
-    return apiError(err, { requestId });
+  const resolved =
+    err instanceof AppError
+      ? err
+      : new InternalError(err instanceof Error ? err.message : "Unexpected error");
+
+  // 500번대(예상 못한 버그, AI 프로바이더 장애 등)만 실시간 알림 -- 400번대
+  // 검증/권한/충돌 에러는 정상적인 사용자 흐름이라 알림 대상이 아니다.
+  if (resolved.httpStatus >= 500) {
+    sendN8nAlert(process.env.N8N_ERROR_WEBHOOK_URL, {
+      code: resolved.code,
+      message: resolved.message,
+      httpStatus: resolved.httpStatus,
+      requestId,
+      timestamp: new Date().toISOString(),
+    });
   }
-  const wrapped = new InternalError(
-    err instanceof Error ? err.message : "Unexpected error",
-  );
-  return apiError(wrapped, { requestId });
+
+  return apiError(resolved, { requestId });
 }
