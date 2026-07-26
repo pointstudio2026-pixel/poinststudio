@@ -2,6 +2,15 @@ import type { BrandStrategyData } from "@/modules/brandStrategies/domain/BrandSt
 import type { GeneratedImage } from "@/modules/generations/domain/Generation";
 import type { Style } from "@/modules/styles/domain/Style";
 import { CONCEPT_BOARD_SECTIONS, type ColorSwatch, type ConceptBoardData } from "@/modules/conceptBoards/domain/ConceptBoard";
+import {
+  INDUSTRY_LABEL_KEYS,
+  TARGET_AUDIENCE_LABEL_KEYS,
+  translateAnswerValue,
+} from "@/modules/interviews/domain/interviewOptionLabels";
+import type { Locale } from "@/shared/i18n/locale";
+import { MESSAGES } from "@/shared/i18n/messages";
+import type { MessageKey } from "@/shared/i18n/messages/types";
+import { translateStyleName } from "@/features/styles/styleCatalogLabels";
 
 const COLOR_KEYWORD_RULES: { pattern: RegExp; swatches: ColorSwatch[] }[] = [
   {
@@ -70,21 +79,50 @@ export function composeConceptBoardData(input: {
   selectedColorPalette: ColorSwatch[] | null;
   /** 선택이 없을 때, 실제 생성된 히어로 이미지에서 뽑아낸 지배색. */
   extractedColorPalette: ColorSwatch[] | null;
+  /** brandSummary/styleKeywords 등 화면 표시용 문구를 조립할 언어 -- 기본값 "ko". */
+  locale?: Locale;
 }): ConceptBoardData {
   const { strategy, answers } = input;
+  const locale = input.locale ?? "ko";
   const knowledge = strategy.brandKnowledge;
+  const m = MESSAGES[locale].asterBrain;
   const brandName = answers.brandName ?? "";
-  const industry = answers.industry ?? "";
+  // answers.industry는 인터뷰 원문(한국어) 그대로 저장된 값이라 브랜드 요약
+  // 문장에 꽂기 전에 항상 번역한다 -- knowledge.industry는 Brand Strategy 생성
+  // 시점의 locale로 이미 굳어진 값이라(다국어 전환 이후 재사용 시 stale할 수
+  // 있음) 여기서는 매번 현재 locale로 다시 번역한다.
+  const industry = translateAnswerValue(answers.industry, INDUSTRY_LABEL_KEYS, locale);
+  const audience =
+    translateAnswerValue(answers.targetAudience, TARGET_AUDIENCE_LABEL_KEYS, locale) ||
+    knowledge.audience ||
+    m.fallbackTargetAudience;
 
-  const brandSummary =
-    `${brandName}는 ${industry} 분야에서 ${strategy.brandStrategy.brandArchetype} 정체성을 바탕으로, ` +
-    `${strategy.brandStrategy.toneAndManner} 톤으로 ${knowledge.audience || "타깃 고객"}에게 다가가는 브랜드입니다. ` +
-    `${knowledge.tagline}`;
+  const brandSummary = MESSAGES[locale].conceptBoard.brandSummaryTemplate
+    .replace("{brand}", brandName)
+    .replace("{industry}", industry)
+    .replace("{archetype}", strategy.brandStrategy.brandArchetype)
+    .replace("{tone}", strategy.brandStrategy.toneAndManner)
+    .replace("{audience}", audience)
+    .replace("{tagline}", knowledge.tagline);
+
+  // 서버 도메인 계층에는 LocaleProvider의 useTranslation()이 없어서, 같은
+  // 시그니처((key, params?) => string)의 즉석 t를 만들어 translateStyleName에
+  // 그대로 넘긴다(styleCatalogLabels.ts는 React 의존성 없는 순수 함수라
+  // 도메인 계층에서 가져다 써도 안전 -- "use client" 없음, 확인함).
+  const t = (key: MessageKey): string => {
+    const value = key.split(".").reduce<unknown>((node, segment) => {
+      if (node && typeof node === "object" && segment in node) {
+        return (node as Record<string, unknown>)[segment];
+      }
+      return undefined;
+    }, MESSAGES[locale] as unknown);
+    return typeof value === "string" ? value : key;
+  };
 
   const styleKeywords = dedupe([
     ...knowledge.keywords,
-    ...(input.primaryStyle ? [input.primaryStyle.name] : []),
-    ...input.secondaryStyles.map((s) => s.name),
+    ...(input.primaryStyle ? [translateStyleName(input.primaryStyle, t)] : []),
+    ...input.secondaryStyles.map((s) => translateStyleName(s, t)),
   ]);
 
   const images = input.latestGenerationImages ?? [];

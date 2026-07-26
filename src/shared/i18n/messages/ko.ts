@@ -258,6 +258,9 @@ export const ko = {
     noImagesYet: "아직 생성된 이미지가 없습니다.",
     save: "저장",
     addNotePrompt: "클릭하여 메모를 추가하세요.",
+    brandSummaryTemplate:
+      "{brand}는 {industry} 분야에서 {archetype} 정체성을 바탕으로, {tone} 톤으로 {audience}에게 다가가는 브랜드입니다. {tagline}",
+    dominantColorLabel: "주요 색상 {n}",
   },
   exportCenter: {
     sourceConceptBoard: "Concept Board (PDF)",

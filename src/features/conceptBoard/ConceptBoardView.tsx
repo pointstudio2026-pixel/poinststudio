@@ -14,6 +14,23 @@ import { Spinner } from "@/components/Spinner";
 import { ImageLightbox } from "@/components/ImageLightbox";
 import { NextStepButton } from "@/features/workspace/NextStepButton";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
+import type { MessageKey } from "@/shared/i18n/messages/types";
+
+// dominantColorExtractor.ts는 지배색 스와치 라벨을 "주요 색상 {n}"(한국어
+// 고정 문자열)로 저장한다 -- 이 값 저장 시점엔 요청자의 locale을 알 수 없는
+// 인프라 계층(sharp 픽셀 연산)이라, "translate at render, not at storage"
+// 컨벤션을 따라 저장은 그대로 두고 화면에 보여줄 때만 여기서 파싱해 번역한다.
+// COLOR_KEYWORD_RULES/DEFAULT_SWATCHES가 만드는 라벨("Warm Terracotta" 등)은
+// 이미 영어 고정 라벨이라 이 패턴에 안 걸리므로 그대로 노출된다(범위 밖).
+const DOMINANT_COLOR_LABEL_PATTERN = /^주요 색상 (\d+)$/;
+
+function colorSwatchLabel(
+  label: string,
+  t: (key: MessageKey, params?: Record<string, string | number>) => string,
+): string {
+  const match = DOMINANT_COLOR_LABEL_PATTERN.exec(label);
+  return match ? t("conceptBoard.dominantColorLabel", { n: match[1]! }) : label;
+}
 
 const SECTION_LABELS: Record<ConceptBoardSectionKeyDto, string> = {
   hero_image: "Hero Image",
@@ -251,7 +268,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
                       className="h-12 w-12 rounded-xl border border-line"
                       style={{ backgroundColor: swatch.hex }}
                     />
-                    <span className="text-[10px] text-muted">{swatch.label}</span>
+                    <span className="text-[10px] text-muted">{colorSwatchLabel(swatch.label, t)}</span>
                   </div>
                 ))}
               </div>

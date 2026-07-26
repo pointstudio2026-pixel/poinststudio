@@ -260,6 +260,8 @@ export const de: Messages = {
     noImagesYet: "Noch keine Bilder generiert.",
     save: "Speichern",
     addNotePrompt: "Klicken, um eine Notiz hinzuzufügen.",
+    brandSummaryTemplate: "{brand} erreicht {audience} im Bereich {industry} mit einer {archetype}-Identität und einem {tone} Ton. {tagline}",
+    dominantColorLabel: "Hauptfarbe {n}",
   },
   exportCenter: {
     sourceConceptBoard: "Concept Board (PDF)",

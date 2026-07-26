@@ -9,6 +9,13 @@
 
 import type { Locale } from "@/shared/i18n/locale";
 import { MESSAGES } from "@/shared/i18n/messages";
+import {
+  DESIRED_IMPRESSION_LABEL_KEYS,
+  INDUSTRY_LABEL_KEYS,
+  PURPOSE_LABEL_KEYS,
+  TARGET_AUDIENCE_LABEL_KEYS,
+  translateAnswerValue,
+} from "@/modules/interviews/domain/interviewOptionLabels";
 
 export interface BrandKnowledgeFields {
   industry: string;
@@ -59,10 +66,13 @@ function inferTone(desiredImpression: string, locale: Locale): string {
 export function buildBrandKnowledgeFields(answers: Record<string, string>, locale: Locale = "ko"): BrandKnowledgeFields {
   const m = MESSAGES[locale].asterBrain;
   const brandName = answers.brandName ?? "";
-  const industry = answers.industry ?? "";
-  const mission = answers.purpose ?? "";
-  const primaryAudience = answers.targetAudience ?? "";
+  const industry = translateAnswerValue(answers.industry, INDUSTRY_LABEL_KEYS, locale);
+  const mission = translateAnswerValue(answers.purpose, PURPOSE_LABEL_KEYS, locale);
+  const primaryAudience = translateAnswerValue(answers.targetAudience, TARGET_AUDIENCE_LABEL_KEYS, locale);
   const coreValues = splitList(answers.coreValues);
+  // inferTone()은 화면 표시용 번역과 무관하게 항상 원문 한국어 답변을 대상으로
+  // 키워드 매칭해야 하므로(파일 상단 주석 참고) answers.desiredImpression을
+  // 그대로 넘긴다 -- translateAnswerValue는 tagline(표시용) 조립에만 쓴다.
   const tone = inferTone(answers.desiredImpression ?? "", locale);
 
   const preferredColor = m.defaultPreferredColor;
@@ -86,7 +96,7 @@ export function buildBrandKnowledgeFields(answers: Record<string, string>, local
     tone,
     personality: tone,
     visualDirection: [preferredStyle, preferredColor, preferredSymbol, typographyDirection].join(", "),
-    tagline: `${brandName || m.fallbackBrandOwn} — ${(answers.desiredImpression ?? "") || m.fallbackTagline}`,
+    tagline: `${brandName || m.fallbackBrandOwn} — ${translateAnswerValue(answers.desiredImpression, DESIRED_IMPRESSION_LABEL_KEYS, locale) || m.fallbackTagline}`,
     keywords: [industry, ...coreValues].filter(Boolean).slice(0, 5),
     preferredColor,
     typographyDirection,

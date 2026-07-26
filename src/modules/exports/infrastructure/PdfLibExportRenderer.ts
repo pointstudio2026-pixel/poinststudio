@@ -140,7 +140,15 @@ export class PdfLibExportRenderer implements ExportRenderer {
     // StandardFonts only support WinAnsi/Latin-1 and silently throw on
     // Hangul. Reused for both headings and body text (see koreanFont.ts
     // for why there's no separate bold variant yet).
-    const font = await doc.embedFont(loadKoreanFontBytes(), { subset: true });
+    //
+    // subset: false is deliberate -- pdf-lib's font subsetter corrupts this
+    // (large, ~19-table) Noto Sans KR TTF: with subset:true, most glyphs
+    // (Hangul AND Latin alike) silently drop out of drawText() output,
+    // producing PDFs with huge gaps where text should be (confirmed by
+    // rendering both variants to PNG and comparing). subset:false embeds
+    // the full font (a few MB heavier per PDF) but renders every glyph
+    // correctly -- correctness over file size for an occasional export.
+    const font = await doc.embedFont(loadKoreanFontBytes(), { subset: false });
     const cursor = new PageCursor(doc, font, font);
 
     cursor.heading(`${input.brandName} -- Concept Board`);

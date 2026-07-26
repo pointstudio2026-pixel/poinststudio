@@ -8,6 +8,11 @@ import type {
 } from "@/modules/brandStrategies/domain/BrandStrategy";
 import type { Locale } from "@/shared/i18n/locale";
 import { MESSAGES } from "@/shared/i18n/messages";
+import {
+  INDUSTRY_LABEL_KEYS,
+  TARGET_AUDIENCE_LABEL_KEYS,
+  translateAnswerValue,
+} from "@/modules/interviews/domain/interviewOptionLabels";
 
 /**
  * Interview answers -> Brand Knowledge mapping (13_PRD_AsterBrain.md
@@ -50,7 +55,7 @@ export function buildStrategyProfile(
   const archetype = m[`archetype_${template.archetypeKey}`];
   const toneAndManner = m[`tone_${template.toneKey}`];
   const positioning = m[`positioningTemplate_${template.archetypeKey}`]
-    .replace("{industry}", answers.industry || m.fallbackIndustryGeneric)
+    .replace("{industry}", translateAnswerValue(answers.industry, INDUSTRY_LABEL_KEYS, locale) || m.fallbackIndustryGeneric)
     .replace("{audience}", knowledge.audience || m.fallbackTargetAudience);
 
   return {
@@ -94,10 +99,10 @@ export function buildFallbackReasoningSummary(
   const m = MESSAGES[locale].asterBrain;
   return m.fallbackReasoningTemplate
     .replace("{brand}", answers.brandName || m.fallbackBrandThis)
-    .replace("{industry}", answers.industry || m.fallbackIndustryThis)
+    .replace("{industry}", translateAnswerValue(answers.industry, INDUSTRY_LABEL_KEYS, locale) || m.fallbackIndustryThis)
     .replace("{archetype}", profile.brandArchetype)
     .replace("{tone}", profile.toneAndManner || m.fallbackUniqueTone)
-    .replace("{audience}", answers.targetAudience || m.fallbackTargetAudience)
+    .replace("{audience}", translateAnswerValue(answers.targetAudience, TARGET_AUDIENCE_LABEL_KEYS, locale) || m.fallbackTargetAudience)
     .replace("{positioning}", profile.positioning || m.fallbackPositioning);
 }
 
@@ -108,11 +113,14 @@ export function buildFallbackReasoningSummary(
  * 비즈니스 로직도 추가하지 않는다). BuildPromptUseCase/BuildConceptBoardUseCase가
  * Brand Strategy 자체가 존재하지 않는 프로젝트에서 이 함수로 대체한다.
  */
-export function buildFallbackBrandStrategyData(answers: Record<string, string>): BrandStrategyData {
-  const knowledgeFields = buildBrandKnowledge(answers);
-  const [profile] = buildFallbackStrategyProfiles(answers, knowledgeFields);
-  const reasoningSummary = buildFallbackReasoningSummary(answers, profile!);
-  const { score } = calculateConfidence(answers);
+export function buildFallbackBrandStrategyData(
+  answers: Record<string, string>,
+  locale: Locale = "ko",
+): BrandStrategyData {
+  const knowledgeFields = buildBrandKnowledge(answers, locale);
+  const [profile] = buildFallbackStrategyProfiles(answers, knowledgeFields, locale);
+  const reasoningSummary = buildFallbackReasoningSummary(answers, profile!, locale);
+  const { score } = calculateConfidence(answers, locale);
 
   return {
     brandKnowledge: { ...knowledgeFields, confidenceNotes: "", reasoningSummary },

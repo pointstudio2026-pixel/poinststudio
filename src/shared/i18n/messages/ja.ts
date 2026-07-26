@@ -260,6 +260,8 @@ export const ja: Messages = {
     noImagesYet: "まだ生成された画像がありません。",
     save: "保存",
     addNotePrompt: "クリックしてメモを追加してください。",
+    brandSummaryTemplate: "{brand}は{industry}分野で{archetype}のアイデンティティを軸に、{tone}なトーンで{audience}に届くブランドです。{tagline}",
+    dominantColorLabel: "メインカラー{n}",
   },
   exportCenter: {
     sourceConceptBoard: "Concept Board (PDF)",
