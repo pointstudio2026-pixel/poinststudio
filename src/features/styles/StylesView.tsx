@@ -20,6 +20,7 @@ import { Spinner } from "@/components/Spinner";
 import { NextStepButton } from "@/features/workspace/NextStepButton";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import { COLOR_PALETTE_LABEL_KEYS } from "@/features/styles/colorPaletteLabels";
+import { translateStyleCategory, translateStyleDescription, translateStyleName } from "@/features/styles/styleCatalogLabels";
 
 const HEX_PATTERN = /^#[0-9a-fA-F]{6}$/;
 
@@ -419,7 +420,7 @@ export function StylesView({
         {primaryId && (
           <div className="sticky top-20 z-10 flex flex-shrink-0 items-center gap-3 rounded-full border border-line bg-surface px-4 py-2 shadow-soft">
             <span className="text-sm">
-              {compareStyles[0]?.name}
+              {compareStyles[0] && translateStyleName(compareStyles[0], t)}
               {compareStyles.length > 1
                 ? t("styles.selectedSuffixWithCount", { count: compareStyles.length - 1 })
                 : t("styles.selectedSuffix")}
@@ -699,7 +700,7 @@ export function StylesView({
                       : "border-line hover:border-ink"
                   }`}
                 >
-                  {l1.name}
+                  {translateStyleName(l1, t)}
                 </button>
               ))}
             </div>
@@ -718,7 +719,7 @@ export function StylesView({
                         : "border-line text-muted hover:border-ink"
                     }`}
                   >
-                    {l2.name}
+                    {translateStyleName(l2, t)}
                   </button>
                 ))}
               </div>
@@ -727,8 +728,8 @@ export function StylesView({
             {/* 현재 위치(breadcrumb) */}
             {(browseL1 || browseL2) && (
               <p className="mt-2 text-xs text-muted">
-                {browseL1?.name}
-                {browseL2 && ` > ${browseL2.name}`}
+                {browseL1 && translateStyleName(browseL1, t)}
+                {browseL2 && ` > ${translateStyleName(browseL2, t)}`}
               </p>
             )}
           </>
@@ -765,9 +766,9 @@ export function StylesView({
             {compareStyles.map((style) => (
               <div key={style.id} className="rounded-xl border border-line bg-paper p-3 text-sm">
                 <p className="font-medium">
-                  {style.name} {style.id === primaryId ? "(Primary)" : "(Secondary)"}
+                  {translateStyleName(style, t)} {style.id === primaryId ? "(Primary)" : "(Secondary)"}
                 </p>
-                <p className="mt-1 text-xs text-muted">{style.description}</p>
+                <p className="mt-1 text-xs text-muted">{translateStyleDescription(style, t)}</p>
               </div>
             ))}
           </div>
@@ -780,7 +781,7 @@ export function StylesView({
       {primaryId && (
         <div className="flex flex-col items-start gap-3 rounded-2xl border border-line bg-surface p-4 shadow-soft sm:flex-row sm:items-center sm:justify-between">
           <span className="text-sm">
-            {compareStyles[0]?.name}
+            {compareStyles[0] && translateStyleName(compareStyles[0], t)}
             {compareStyles.length > 1
               ? t("styles.selectedSuffixWithCount", { count: compareStyles.length - 1 })
               : t("styles.selectedSuffix")}
@@ -819,13 +820,16 @@ export function StylesView({
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={detailStyle.sampleImageUrl}
-                alt={detailStyle.name}
+                alt={translateStyleName(detailStyle, t)}
                 className="mt-4 aspect-square w-full rounded-2xl object-cover"
               />
             )}
-            <h3 className="mt-4 text-lg font-semibold">{detailStyle.name}</h3>
-            <p className="mt-1 text-xs text-muted">{detailStyle.category}</p>
-            <p className="mt-3 text-sm">{detailStyle.description}</p>
+            <h3 className="mt-4 text-lg font-semibold">{translateStyleName(detailStyle, t)}</h3>
+            <p className="mt-1 text-xs text-muted">{translateStyleCategory(detailStyle.category, t)}</p>
+            <p className="mt-3 text-sm">{translateStyleDescription(detailStyle, t)}</p>
+            {/* keywords는 152개 소분류 전체의 더 크고 지저분한 어휘 집합이라
+                별도 번역 인프라가 없음 -- 사용자가 지적하지 않은 범위이므로
+                지금은 원문(한국어) 그대로 둔다(향후 후속 작업 필요). */}
             <p className="mt-3 text-xs text-muted">{detailStyle.keywords.join(", ")}</p>
           </div>
         </div>
@@ -862,11 +866,11 @@ function StyleCard({
   const { t } = useTranslation();
   const reason =
     reasonKind === "primaryCategory"
-      ? t("styles.reasonPrimaryCategory", { category: style.category })
+      ? t("styles.reasonPrimaryCategory", { category: translateStyleCategory(style.category, t) })
       : reasonKind === "keywords"
         ? t("styles.reasonKeywords", { keywords: (matchedKeywords ?? []).join(", ") })
         : reasonKind === "alternative"
-          ? t("styles.reasonAlternative", { category: style.category })
+          ? t("styles.reasonAlternative", { category: translateStyleCategory(style.category, t) })
           : undefined;
   return (
     <div
@@ -882,7 +886,7 @@ function StyleCard({
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={style.sampleImageUrl}
-          alt={style.name}
+          alt={translateStyleName(style, t)}
           className="aspect-square w-full object-cover"
           loading="lazy"
         />
@@ -892,13 +896,13 @@ function StyleCard({
       <div className="p-3">
         <div className="flex items-start justify-between">
           <button type="button" onClick={onDetail} className="text-left font-medium underline-offset-2 hover:underline">
-            {style.name}
+            {translateStyleName(style, t)}
           </button>
           <button type="button" onClick={onFavorite} aria-label={t("styles.favoriteLabel")}>
             {isFavorite ? "★" : "☆"}
           </button>
         </div>
-        <p className="mt-1 text-xs text-muted">{style.category}</p>
+        <p className="mt-1 text-xs text-muted">{translateStyleCategory(style.category, t)}</p>
         {!compact && score !== undefined && (
           <p className="mt-1 text-xs text-muted">{t("styles.scorePercent", { percent: Math.round(score * 100) })}</p>
         )}

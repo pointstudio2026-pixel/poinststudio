@@ -43,11 +43,28 @@ export class PrismaAdminRepository implements AdminRepository {
   }
 
   async planDistribution(): Promise<PlanDistributionEntry[]> {
-    const rows = await prisma.subscription.groupBy({
-      by: ["planCode"],
-      _count: { planCode: true },
-    });
-    return rows.map((r) => ({ planCode: r.planCode as PlanCode, userCount: r._count.planCode }));
+    // 두 가지를 놓치면 안 된다: (1) 탈퇴(소프트 삭제)한 유저는 제외해야 하고
+    // (deletedAt이 있어도 subscriptions 행 자체는 그대로 남아있어서 그동안
+    // 관리자 삭제가 이 통계에 반영되지 않았다), (2) 가입 시 subscriptions
+    // 행이 자동 생성되지 않으므로(한 번도 업그레이드 안 한 순수 free 유저는
+    // 이 테이블에 아예 없음) subscription이 없는 유저도 free로 집계해야
+    // 실제 free 유저 수가 나온다.
+    const [grouped, usersWithoutSubscription] = await Promise.all([
+      prisma.subscription.groupBy({
+        by: ["planCode"],
+        where: { user: { deletedAt: null } },
+        _count: { planCode: true },
+      }),
+      prisma.user.count({ where: { deletedAt: null, subscription: null } }),
+    ]);
+
+    const counts = new Map<PlanCode, number>();
+    for (const row of grouped) {
+      counts.set(row.planCode as PlanCode, row._count.planCode);
+    }
+    counts.set("free", (counts.get("free") ?? 0) + usersWithoutSubscription);
+
+    return Array.from(counts.entries()).map(([planCode, userCount]) => ({ planCode, userCount }));
   }
 
   async errorRates(since: Date): Promise<ErrorRateEntry[]> {

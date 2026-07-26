@@ -12,6 +12,11 @@ import {
 import { Spinner } from "@/components/Spinner";
 import { NextStepButton } from "@/features/workspace/NextStepButton";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
+import {
+  translateLogoStyleCategoryDescription,
+  translateLogoStyleCategoryName,
+  translateLogoStyleTag,
+} from "@/features/logoStyles/logoStyleCategoryLabels";
 
 const MAX_ADVANCED_SELECTIONS = 3;
 
@@ -121,7 +126,9 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
         <div>
           <h1 className="text-xl font-semibold">{t("logoStyle.selectedTitle")}</h1>
           <p className="mt-1 text-sm text-muted">
-            {t("logoStyle.selectedBody", { names: chosen.map((c) => c.name).join(", ") })}
+            {t("logoStyle.selectedBody", {
+              names: chosen.map((c) => translateLogoStyleCategoryName(c.slug, c.name, t)).join(", "),
+            })}
           </p>
         </div>
         <div>
@@ -147,7 +154,9 @@ export function LogoStyleView({ projectId }: { projectId: string }) {
             <span>{t("logoStyle.aiRecommendBadge")}</span>
           </div>
           <p className="mt-2 text-sm text-ink">
-            {t("logoStyle.topPickReasonPrefix")} <strong>&ldquo;{topPick.category.name}&rdquo;</strong>{t("logoStyle.topPickReasonSuffix")}
+            {t("logoStyle.topPickReasonPrefix")}{" "}
+            <strong>&ldquo;{translateLogoStyleCategoryName(topPick.category.slug, topPick.category.name, t)}&rdquo;</strong>
+            {t("logoStyle.topPickReasonSuffix")}
           </p>
           <p className="mt-1 text-sm text-muted">
             {topPick.matchedKeywords.length > 0
@@ -227,6 +236,7 @@ function LogoStyleCard({
   onSelect: () => void;
 }) {
   const { t } = useTranslation();
+  const name = translateLogoStyleCategoryName(category.slug, category.name, t);
   return (
     <div
       className={`group flex flex-col overflow-hidden rounded-2xl border bg-surface shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${
@@ -237,7 +247,7 @@ function LogoStyleCard({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={category.sampleImageUrl}
-          alt={category.name}
+          alt={name}
           className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
         />
         {isSelected && (
@@ -248,13 +258,13 @@ function LogoStyleCard({
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
-          <h3 className="text-base font-semibold">{category.name}</h3>
-          <p className="mt-1 text-sm text-muted">{category.description}</p>
+          <h3 className="text-base font-semibold">{name}</h3>
+          <p className="mt-1 text-sm text-muted">{translateLogoStyleCategoryDescription(category.slug, category.description, t)}</p>
         </div>
         <div className="flex flex-wrap gap-1.5">
           {category.subStyles.map((s) => (
             <span key={s} className="rounded-full bg-line px-2.5 py-1 text-xs text-ink">
-              {s}
+              {translateLogoStyleTag(s, t)}
             </span>
           ))}
         </div>
@@ -311,7 +321,7 @@ function AiRecommendedCard({
         <ul className="flex flex-col gap-1 text-sm">
           {topThree.map((r, i) => (
             <li key={r.category.id} className="flex items-center justify-between">
-              <span>{r.representativeSubStyle}</span>
+              <span>{translateLogoStyleTag(r.representativeSubStyle, t)}</span>
               <Stars count={i === 0 ? 5 : 4} />
             </li>
           ))}

@@ -246,24 +246,31 @@ export function MockupStudioView({
                 아래 카테고리 단위 버튼으로만 트리거된다(이미지를 눌렀는데 바로
                 비용이 발생하는 걸 막기 위해 2026-07-25 분리). */}
             <div className="grid grid-cols-3 gap-3">
-              {(templatesData?.templates ?? []).map((template) => (
-                <button
-                  key={template.id}
-                  type="button"
-                  onClick={() => setPreviewTemplateUrl(template.backgroundUrl)}
-                  className="group relative overflow-hidden rounded-xl border border-line text-left transition hover:border-ink"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={template.backgroundUrl}
-                    alt={template.name}
-                    className="aspect-square w-full object-cover"
-                  />
-                  <div className="absolute inset-x-0 bottom-0 bg-black/50 px-2 py-1 text-xs text-paper">
-                    {template.name}
-                  </div>
-                </button>
-              ))}
+              {(templatesData?.templates ?? []).map((template, index) => {
+                // DB의 template.name(예: "명함 예시 3")은 관리용 한글 원문이라 그대로
+                // 노출하면 안 된다 -- 이미 번역된 카테고리 라벨 + 목록 내 순번으로
+                // 대체한다. 카테고리당 템플릿 개수가 늘어나도(현재도 시드 파일보다
+                // 실제 DB가 더 많음) 매번 번역을 추가할 필요가 없는 방식.
+                const label = `${t(MOCKUP_CATEGORY_LABEL_KEYS[template.category])} ${index + 1}`;
+                return (
+                  <button
+                    key={template.id}
+                    type="button"
+                    onClick={() => setPreviewTemplateUrl(template.backgroundUrl)}
+                    className="group relative overflow-hidden rounded-xl border border-line text-left transition hover:border-ink"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={template.backgroundUrl}
+                      alt={label}
+                      className="aspect-square w-full object-cover"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-black/50 px-2 py-1 text-xs text-paper">
+                      {label}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
             {activeCategory && (
