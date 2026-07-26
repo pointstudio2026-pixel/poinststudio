@@ -3,7 +3,8 @@ export const ko = {
     perMonth: "/월",
   },
   meta: {
-    description: "브랜드의 방향성에서 디자인이 시작됩니다.",
+    title: "ASTER — AI 로고 제작 · 브랜드 디자인",
+    description: "AI로 로고 제작부터 브랜드 디자인까지. 인터뷰 몇 번으로 브랜드 방향과 로고, 목업까지 빠르게 만들어보세요.",
   },
   generationFeedback: {
     rateThisResult: "이 결과 평가하기 (선택)",
@@ -439,10 +440,10 @@ export const ko = {
       menuOpen: "메뉴 열기",
     },
     hero: {
-      eyebrow: "디자이너의 사고 과정을 빠르게 만드는 도구",
-      titleLine1: "브랜드의 방향성과",
+      eyebrow: "AI 로고 제작 · 브랜드 디자인 도구",
+      titleLine1: "AI로 브랜드 로고와",
       titleLine2: "디자인 아이디어를 빠르게.",
-      body: "좋은 디자인은 방향에서 시작됩니다. Aster가 만든 이미지는 완성본이 아니라, 다음 디자인으로 나아갈 방향을 보여주는 참고 레퍼런스입니다.",
+      body: "AI 로고 제작부터 브랜드 디자인까지 — 좋은 디자인은 방향에서 시작됩니다. Aster가 만든 이미지는 완성본이 아니라, 다음 디자인으로 나아갈 방향을 보여주는 참고 레퍼런스입니다.",
       cta: "무료로 시작하기",
       seeExample: "결과 예시 보기",
       badgeFree: "무료 플랜 제공",

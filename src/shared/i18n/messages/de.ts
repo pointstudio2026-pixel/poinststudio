@@ -5,7 +5,8 @@ export const de: Messages = {
     perMonth: "/Monat",
   },
   meta: {
-    description: "Design beginnt mit der Richtung Ihrer Marke.",
+    title: "ASTER — KI-Logo-Generator & Markendesign",
+    description: "KI-Logo-Generator und Markendesign-Tool. Beantworten Sie ein paar Fragen und erhalten Sie Markenrichtung, Logo-Konzepte und Mockups in Minuten.",
   },
   generationFeedback: {
     rateThisResult: "Dieses Ergebnis bewerten (optional)",
@@ -441,10 +442,10 @@ export const de: Messages = {
       menuOpen: "Menü öffnen",
     },
     hero: {
-      eyebrow: "Ein Tool, das den Denkprozess von Designer:innen beschleunigt",
-      titleLine1: "Markenrichtung und",
+      eyebrow: "KI-Logo-Generator & Markendesign-Tool",
+      titleLine1: "KI-generierte Markenlogos und",
       titleLine2: "Designideen, blitzschnell.",
-      body: "Gutes Design beginnt mit einer Richtung. Die von Aster erstellten Bilder sind kein fertiges Werk, sondern eine Referenz, die den Weg zum nächsten Design weist.",
+      body: "Von KI-Logo-Design bis zur kompletten Markenidentität — gutes Design beginnt mit einer Richtung. Die von Aster erstellten Bilder sind kein fertiges Werk, sondern eine Referenz, die den Weg zum nächsten Design weist.",
       cta: "Kostenlos starten",
       seeExample: "Ergebnisse ansehen",
       badgeFree: "Kostenloser Plan verfügbar",

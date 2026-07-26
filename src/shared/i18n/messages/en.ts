@@ -5,7 +5,8 @@ export const en: Messages = {
     perMonth: "/mo",
   },
   meta: {
-    description: "Design starts with your brand's direction.",
+    title: "ASTER — AI Logo Maker & Brand Design",
+    description: "AI-powered logo maker and brand design tool. Answer a few questions and get brand direction, logo concepts, and mockups in minutes.",
   },
   generationFeedback: {
     rateThisResult: "Rate this result (optional)",
@@ -441,10 +442,10 @@ export const en: Messages = {
       menuOpen: "Open menu",
     },
     hero: {
-      eyebrow: "A tool that speeds up a designer's thinking process",
-      titleLine1: "Brand direction and",
+      eyebrow: "AI Logo Maker & Brand Design Tool",
+      titleLine1: "AI-generated brand logos and",
       titleLine2: "design ideas, fast.",
-      body: "Good design starts with direction. What Aster creates isn't a finished piece -- it's a reference that points you toward your next design.",
+      body: "From AI logo design to full brand identity -- good design starts with direction. What Aster creates isn't a finished piece, it's a reference that points you toward your next design.",
       cta: "Start for free",
       seeExample: "See results",
       badgeFree: "Free plan available",

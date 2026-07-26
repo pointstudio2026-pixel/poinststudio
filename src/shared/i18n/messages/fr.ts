@@ -5,7 +5,8 @@ export const fr: Messages = {
     perMonth: "/mois",
   },
   meta: {
-    description: "Le design commence par la direction de votre marque.",
+    title: "ASTER — Créateur de logo IA et design de marque",
+    description: "Créateur de logo IA et outil de design de marque. Répondez à quelques questions pour obtenir une direction de marque, des logos et des maquettes en quelques minutes.",
   },
   generationFeedback: {
     rateThisResult: "Évaluer ce résultat (facultatif)",
@@ -441,10 +442,10 @@ export const fr: Messages = {
       menuOpen: "Ouvrir le menu",
     },
     hero: {
-      eyebrow: "Un outil qui accélère le processus de réflexion des designers",
-      titleLine1: "La direction de marque et",
-      titleLine2: "les idées de design, en un rien de temps.",
-      body: "Un bon design commence par une direction. Les images créées par Aster ne sont pas des pièces finales, mais des références qui indiquent la voie à suivre pour votre prochain design.",
+      eyebrow: "Créateur de logo IA et outil de design de marque",
+      titleLine1: "Des logos de marque générés par IA et",
+      titleLine2: "des idées de design, en un rien de temps.",
+      body: "De la création de logo IA à l'identité de marque complète — un bon design commence par une direction. Les images créées par Aster ne sont pas des pièces finales, mais des références qui indiquent la voie à suivre pour votre prochain design.",
       cta: "Commencer gratuitement",
       seeExample: "Voir des exemples",
       badgeFree: "Offre gratuite disponible",

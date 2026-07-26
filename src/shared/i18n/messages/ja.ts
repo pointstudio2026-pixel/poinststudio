@@ -5,7 +5,8 @@ export const ja: Messages = {
     perMonth: "/月",
   },
   meta: {
-    description: "デザインはブランドの方向性から始まります。",
+    title: "ASTER — AIロゴ制作・ブランドデザイン",
+    description: "AIロゴ制作からブランドデザインまで。いくつかの質問に答えるだけで、ブランドの方向性・ロゴ・モックアップをすぐに作成できます。",
   },
   generationFeedback: {
     rateThisResult: "この結果を評価する(任意)",
@@ -441,10 +442,10 @@ export const ja: Messages = {
       menuOpen: "メニューを開く",
     },
     hero: {
-      eyebrow: "デザイナーの思考プロセスを加速するツール",
-      titleLine1: "ブランドの方向性と",
+      eyebrow: "AIロゴ制作・ブランドデザインツール",
+      titleLine1: "AIでブランドロゴと",
       titleLine2: "デザインアイデアを、素早く。",
-      body: "良いデザインは方向性から始まります。Asterが作る画像は完成品ではなく、次のデザインへ進むための参考レファレンスです。",
+      body: "AIロゴ制作からブランドデザインまで — 良いデザインは方向性から始まります。Asterが作る画像は完成品ではなく、次のデザインへ進むための参考レファレンスです。",
       cta: "無料で始める",
       seeExample: "制作例を見る",
       badgeFree: "無料プランあり",

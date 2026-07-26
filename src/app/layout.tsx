@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getServerLocale();
   return {
     metadataBase: new URL("https://www.designaster.com"),
-    title: "ASTER",
+    title: MESSAGES[locale].meta.title,
     description: MESSAGES[locale].meta.description,
   };
 }
