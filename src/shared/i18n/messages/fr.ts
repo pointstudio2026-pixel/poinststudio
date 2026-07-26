@@ -288,6 +288,7 @@ export const fr: Messages = {
   },
   deliverableType: {
     selectFailed: "Échec de la sélection du type de travail.",
+    changeWarning: "Changer le type de travail peut rendre vos réponses d'entretien, vos choix de style et vos images générées incompatibles avec le nouveau type. Les résultats existants ne seront pas supprimés automatiquement — veuillez les vérifier et les régénérer vous-même si nécessaire. Continuer ?",
     title: "Quel type de travail souhaitez-vous créer ?",
     subtitle: "Les questions d'entretien et les étapes suivantes dépendent du type choisi.",
     options: {

@@ -9,14 +9,31 @@ import { STEP_ROUTES } from "@/features/workspace/stepRoutes";
 import { Spinner } from "@/components/Spinner";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
-export function DeliverableTypeView({ projectId }: { projectId: string }) {
+export function DeliverableTypeView({
+  projectId,
+  currentDeliverableType,
+}: {
+  projectId: string;
+  currentDeliverableType: string | null;
+}) {
   const { t } = useTranslation();
   const router = useRouter();
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(currentDeliverableType);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSelect(deliverableType: string) {
+    // 유형을 다시 선택(변경)하는 경우 -- 이미 이 유형으로 인터뷰/스타일/이미지
+    // 생성까지 진행했을 수 있는데, 유형을 바꿔도 그 결과물들은 전혀
+    // 무효화/재생성되지 않고 그대로 남는다(실제 버그 리포트로 확인됨: 앱
+    // 디자인으로 생성한 목업 이미지가 이후 브랜딩 & 로고로 유형을 바꾼 뒤에도
+    // 그대로 보여 혼란을 준 사례). 자동으로 지우지는 않고, 사용자에게 명확히
+    // 경고한 뒤 계속할지 직접 선택하게 한다.
+    if (currentDeliverableType && currentDeliverableType !== deliverableType) {
+      const confirmed = window.confirm(t("deliverableType.changeWarning"));
+      if (!confirmed) return;
+    }
+
     setSelected(deliverableType);
     setIsSaving(true);
     setError(null);

@@ -288,6 +288,7 @@ export const de: Messages = {
   },
   deliverableType: {
     selectFailed: "Auswahl des Arbeitstyps fehlgeschlagen.",
+    changeWarning: "Wenn Sie den Arbeitstyp ändern, passen Ihre bisherigen Interviewantworten, Stilauswahl und generierten Bilder möglicherweise nicht mehr zum neuen Typ. Vorhandene Ergebnisse werden nicht automatisch gelöscht — bitte prüfen Sie sie bei Bedarf selbst und generieren Sie sie neu. Fortfahren?",
     title: "Welche Art von Arbeit möchten Sie erstellen?",
     subtitle: "Die folgenden Interviewfragen und Schritte hängen vom gewählten Typ ab.",
     options: {

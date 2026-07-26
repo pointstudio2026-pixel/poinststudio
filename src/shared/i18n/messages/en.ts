@@ -288,6 +288,7 @@ export const en: Messages = {
   },
   deliverableType: {
     selectFailed: "Failed to select the work type.",
+    changeWarning: "Changing the work type may make your interview answers, style choices, and generated images no longer match the new type. Existing results won't be deleted automatically — please review and regenerate them yourself if needed. Continue?",
     title: "What kind of work do you want to create?",
     subtitle: "The interview questions and steps that follow depend on the type you choose.",
     options: {
