@@ -6,8 +6,11 @@ import { getCurrentSession } from "@/shared/auth/session";
 import { authContainer } from "@/modules/auth/container";
 import { subscriptionsContainer } from "@/modules/subscriptions/container";
 import type { LandingArticle } from "@/modules/landingArticles/domain/LandingArticle";
+import { landingArticlesContainer } from "@/modules/landingArticles/container";
 import { guideDetailHref, guidesHubHref } from "@/features/landingArticles/routing";
 import { getLandingArticleLabels } from "@/features/landingArticles/labels";
+import { LOCALE_LABELS } from "@/features/navigation/LanguageSwitcher";
+import type { Locale } from "@/shared/i18n/locale";
 
 export async function ArticleDetailView({ locale, article }: { locale: string; article: LandingArticle }) {
   const session = await getCurrentSession();
@@ -19,6 +22,11 @@ export async function ArticleDetailView({ locale, article }: { locale: string; a
   const labels = getLandingArticleLabels(locale);
   const { content } = article;
 
+  // 이 주제(slug)가 실제로 발행된 언어만 링크로 보여준다 -- 아직 번역 안 된
+  // 언어까지 링크로 걸면 404로 이어진다. hreflang(<head> 메타)은 검색엔진용,
+  // 이건 사람이 직접 누를 수 있는 화면상의 언어 전환 링크.
+  const availableLocales = await landingArticlesContainer.listAvailableLocalesUseCase.execute({ slug: article.slug });
+
   return (
     <div className="flex min-h-screen flex-col bg-paper">
       {user ? (
@@ -29,9 +37,26 @@ export async function ArticleDetailView({ locale, article }: { locale: string; a
 
       <main className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-5 py-16 sm:px-8 sm:py-24">
         <div className="flex flex-col gap-4">
-          <Link href={guidesHubHref(locale)} className="text-sm text-muted underline underline-offset-4">
-            {labels.backToHub}
-          </Link>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <Link href={guidesHubHref(locale)} className="text-sm text-muted underline underline-offset-4">
+              {labels.backToHub}
+            </Link>
+            {availableLocales.length > 1 && (
+              <div className="flex flex-wrap gap-2">
+                {availableLocales.map((loc) => (
+                  <Link
+                    key={loc}
+                    href={guideDetailHref(loc, article.slug)}
+                    className={`rounded-full border px-3 py-1 text-xs transition ${
+                      loc === locale ? "border-ink bg-ink text-paper" : "border-line text-muted hover:border-ink hover:text-ink"
+                    }`}
+                  >
+                    {LOCALE_LABELS[loc as Locale] ?? loc}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
           <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{article.title}</h1>
           <p className="text-lg text-muted">{content.definition}</p>
         </div>

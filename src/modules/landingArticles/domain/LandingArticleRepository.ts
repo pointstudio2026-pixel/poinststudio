@@ -30,4 +30,11 @@ export interface LandingArticleRepository {
 
   /** publishedAt 내림차순. */
   listPublished(params: ListLandingArticlesParams): Promise<LandingArticle[]>;
+
+  /**
+   * 이 slug(주제)가 실제로 발행된 언어 목록 -- 글 상세 화면에 "이 글의 다른
+   * 언어 버전" 링크를 만들 때, 아직 번역 안 된 언어로 링크를 걸어서 404를
+   * 내지 않도록 미리 확인한다. slug 자체가 없으면 빈 배열.
+   */
+  findPublishedLocales(slug: string): Promise<string[]>;
 }

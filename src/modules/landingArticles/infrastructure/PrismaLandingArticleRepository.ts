@@ -99,6 +99,14 @@ export class PrismaLandingArticleRepository implements LandingArticleRepository 
     return toDomain(group, translation);
   }
 
+  async findPublishedLocales(slug: string): Promise<string[]> {
+    const group = await prisma.landingArticleGroup.findUnique({
+      where: { slug },
+      include: { translations: { where: { status: "published" }, select: { locale: true } } },
+    });
+    return group?.translations.map((t) => t.locale) ?? [];
+  }
+
   async listPublished(params: ListLandingArticlesParams): Promise<LandingArticle[]> {
     const translations = await prisma.landingArticleTranslation.findMany({
       where: {

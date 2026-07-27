@@ -93,6 +93,14 @@ export class FakeLandingArticleRepository implements LandingArticleRepository {
     };
   }
 
+  async findPublishedLocales(slug: string): Promise<string[]> {
+    const group = this.groups.find((g) => g.slug === slug);
+    if (!group) return [];
+    return this.translations
+      .filter((t) => t.groupId === group.id && t.status === "published")
+      .map((t) => t.locale);
+  }
+
   async listPublished(params: ListLandingArticlesParams): Promise<LandingArticle[]> {
     return this.translations
       .filter((t) => t.locale === params.locale && t.status === "published")

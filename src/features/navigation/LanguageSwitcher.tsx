@@ -8,7 +8,7 @@ import { useTranslation } from "@/shared/i18n/LocaleProvider";
  * 각 언어는 자기 자신의 문자로 표기한다 -- 지금 어떤 언어를 보고 있든 5개
  * 언어 이름은 항상 원어 그대로 보여야 하므로 t()가 아니라 고정 상수로 둔다.
  */
-const LOCALE_LABELS: Record<Locale, string> = {
+export const LOCALE_LABELS: Record<Locale, string> = {
   ko: "한국어",
   en: "English",
   ja: "日本語",

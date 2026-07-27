@@ -502,6 +502,7 @@ export const ja: Messages = {
     myStyles: "マイスタイル",
     team: "チーム",
     guide: "使い方",
+    useCases: "ガイド",
     support: "お問い合わせ",
     myInfo: "アカウント情報",
     subscription: "お支払い情報(サブスクリプション)",

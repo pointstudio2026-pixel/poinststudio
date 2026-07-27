@@ -7,6 +7,7 @@ import { LogoutButton } from "@/features/auth/LogoutButton";
 import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
+import { guidesHubHref } from "@/features/landingArticles/routing";
 
 export interface PrimaryNavUser {
   email: string;
@@ -22,9 +23,10 @@ export interface PrimaryNavUser {
  * 피어 링크 + 프로필 클릭 드롭다운(내 정보/결제정보/로그아웃) 구조.
  */
 export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode: PlanCode }) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [projectsOpen, setProjectsOpen] = useState(false);
   const [newProjectModalOpen, setNewProjectModalOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -87,9 +89,27 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode:
         )}
       </div>
 
-      <Link href="/guide" className={PILL}>
-        {t("nav.guide")}
-      </Link>
+      <div
+        className="relative"
+        onMouseEnter={() => setGuideOpen(true)}
+        onMouseLeave={() => setGuideOpen(false)}
+      >
+        <Link href="/guide" className={PILL}>
+          {t("nav.guide")}
+        </Link>
+        {guideOpen && (
+          <div className="absolute left-0 top-full w-44 pt-2">
+            <div className="rounded-xl border border-line bg-surface p-1.5 shadow-soft">
+              <Link href="/guide" className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper">
+                {t("nav.guide")}
+              </Link>
+              <Link href={guidesHubHref(locale)} className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper">
+                {t("nav.useCases")}
+              </Link>
+            </div>
+          </div>
+        )}
+      </div>
 
       <Link href="/support" className={PILL}>
         {t("nav.support")}

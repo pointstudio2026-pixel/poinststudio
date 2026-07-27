@@ -10,6 +10,7 @@ import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { MessageKey } from "@/shared/i18n/messages/types";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
+import { guidesHubHref } from "@/features/landingArticles/routing";
 
 const NAV_LINKS: { href: string; labelKey: MessageKey }[] = [
   { href: "#top", labelKey: "home.header.navService" },
@@ -26,7 +27,8 @@ export interface HeaderUser {
 
 export function Header({ user, planCode }: { user: HeaderUser | null; planCode: PlanCode | null }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { t } = useTranslation();
+  const [guideOpen, setGuideOpen] = useState(false);
+  const { t, locale } = useTranslation();
 
   return (
     <header className="sticky top-0 z-40 border-b border-line/80 bg-paper/80 backdrop-blur-md">
@@ -60,6 +62,33 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
             <PrimaryNav user={user} planCode={planCode ?? "free"} />
           ) : (
             <>
+              <div
+                className="relative"
+                onMouseEnter={() => setGuideOpen(true)}
+                onMouseLeave={() => setGuideOpen(false)}
+              >
+                <Link
+                  href="/guide"
+                  className="whitespace-nowrap rounded-full border border-line px-3 py-1.5 text-xs transition hover:border-ink"
+                >
+                  {t("nav.guide")}
+                </Link>
+                {guideOpen && (
+                  <div className="absolute left-0 top-full w-44 pt-2">
+                    <div className="rounded-xl border border-line bg-surface p-1.5 shadow-soft">
+                      <Link href="/guide" className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper">
+                        {t("nav.guide")}
+                      </Link>
+                      <Link
+                        href={guidesHubHref(locale)}
+                        className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper"
+                      >
+                        {t("nav.useCases")}
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
               <Link href="/login" className="whitespace-nowrap px-2.5 py-1.5 text-xs text-muted transition hover:text-ink">
                 {t("home.header.login")}
               </Link>
@@ -148,6 +177,12 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
                 >
                   {t("nav.guide")}
                 </Link>
+                <Link
+                  href={guidesHubHref(locale)}
+                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
+                >
+                  {t("nav.useCases")}
+                </Link>
                 <div className="[&>button]:w-full [&>button]:justify-center [&>button]:py-3">
                   <NewProjectButton />
                 </div>
@@ -173,6 +208,15 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
               </>
             ) : (
               <>
+                <Link href="/guide" className="rounded-full border border-line px-4 py-3 text-center text-sm">
+                  {t("nav.guide")}
+                </Link>
+                <Link
+                  href={guidesHubHref(locale)}
+                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
+                >
+                  {t("nav.useCases")}
+                </Link>
                 <Link href="/login" className="rounded-full border border-line px-4 py-3 text-center text-sm">
                   {t("home.header.login")}
                 </Link>
