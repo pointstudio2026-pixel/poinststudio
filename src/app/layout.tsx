@@ -6,12 +6,33 @@ import { SessionBootstrap } from "@/features/auth/SessionBootstrap";
 import { getServerLocale } from "@/shared/i18n/serverLocale";
 import { MESSAGES } from "@/shared/i18n/messages";
 
+// Open Graph의 locale 값(og:locale)은 Next.js Metadata API가 요구하는
+// BCP47 코드(ko/en/ja/fr/de)가 아니라 "ko_KR" 같은 언더스코어 표기라 별도 매핑이 필요하다.
+const OG_LOCALE: Record<string, string> = { ko: "ko_KR", en: "en_US", ja: "ja_JP", fr: "fr_FR", de: "de_DE" };
+
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getServerLocale();
+  const title = MESSAGES[locale].meta.title;
+  const description = MESSAGES[locale].meta.description;
   return {
     metadataBase: new URL("https://www.designaster.com"),
-    title: MESSAGES[locale].meta.title,
-    description: MESSAGES[locale].meta.description,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: "https://www.designaster.com",
+      siteName: "ASTER",
+      locale: OG_LOCALE[locale] ?? "ko_KR",
+      type: "website",
+      images: [{ url: "/brand/aster-og.png", width: 1200, height: 630, alt: "ASTER" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/brand/aster-og.png"],
+    },
     other: {
       "naver-site-verification": "1e705549ff65b5ca17687ce1f6cf2d2891b00262",
     },
