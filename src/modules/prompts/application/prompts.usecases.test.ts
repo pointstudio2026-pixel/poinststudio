@@ -260,14 +260,26 @@ describe("BuildPromptUseCase", () => {
     expect(prompt.currentVersion.userPrompt).not.toContain("fresh bread bakery poster");
   });
 
-  it("(회귀 방지) leaves the prompt untouched when no hard constraints are set -- no priority-system markers leak into existing projects", async () => {
+  // 2026-07-27: exactBrandName(인터뷰 필수 항목이라 모든 프로젝트에 항상 존재)이
+  // hasAnyConstraint()에서 빠져있어서 어떤 프로젝트든 브랜드명이 하드제약
+  // 절에 전혀 안 나오던 실제 버그를 고치면서, 이 테스트의 전제("하드제약이
+  // 하나도 없다")가 더 이상 성립하지 않게 됐다 -- 브랜드명은 이제 항상
+  // 하드제약이라(의도한 동작), "절대 준수"/"최종 확인" 마커 자체는 항상
+  // 나온다. 이 테스트가 실제로 지키려는 건 "사용자가 설정 안 한 다른
+  // 종류의 제약(금지 색상/스타일/로고구조/요소, 자유 텍스트)이 새어나오지
+  // 않는다"이므로, 그것만 검증하도록 바꾼다.
+  it("(회귀 방지) only the always-on brand-name constraint appears when no other hard constraints are set -- no other priority-system markers leak into existing projects", async () => {
     const ctx = await setup();
     await fullySetUp(ctx);
 
     const prompt = await ctx.build.execute({ projectId: ctx.projectId, userId: "user-1" });
 
-    expect(prompt.currentVersion.userPrompt).not.toContain("절대 준수");
-    expect(prompt.currentVersion.userPrompt).not.toContain("최종 확인");
+    expect(prompt.currentVersion.userPrompt).toContain("Aster Bakery");
+    expect(prompt.currentVersion.userPrompt).not.toContain("금지 색상");
+    expect(prompt.currentVersion.userPrompt).not.toContain("금지 스타일");
+    expect(prompt.currentVersion.userPrompt).not.toContain("금지 로고 구조");
+    expect(prompt.currentVersion.userPrompt).not.toContain("금지 요소");
+    expect(prompt.currentVersion.userPrompt).not.toContain("사용자 지정 필수 조건");
     const record = await ctx.promptDecisionRecords.findByPromptVersionId(prompt.currentVersion.id);
     expect(record?.conflicts).toEqual([]);
     expect(record?.complianceCheck.passed).toBe(true);

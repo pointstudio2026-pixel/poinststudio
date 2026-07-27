@@ -2,6 +2,7 @@ import type { HardConstraintSet } from "@/modules/promptPriority/domain/HardCons
 
 function hasAnyConstraint(hc: HardConstraintSet): boolean {
   return (
+    hc.exactBrandName.length > 0 ||
     hc.forbiddenColors.length > 0 ||
     hc.forbiddenStyleNames.length > 0 ||
     hc.forbiddenLogoCategoryNames.length > 0 ||
@@ -24,6 +25,11 @@ export function buildHardConstraintOpeningClause(hc: HardConstraintSet): string 
       "일반적인 디자인 추천보다도 우선한다.",
   ];
 
+  if (hc.exactBrandName) {
+    lines.push(
+      `정확한 브랜드명(철자와 띄어쓰기를 절대 바꾸거나 다른 이름으로 대체하지 말고, 정확히 이 그대로 한 번만 표기한다): "${hc.exactBrandName}"`,
+    );
+  }
   if (hc.forbiddenColors.length > 0) {
     lines.push(`금지 색상(절대 사용 금지): ${hc.forbiddenColors.join(", ")}`);
   }
@@ -55,6 +61,9 @@ export function buildHardConstraintClosingClause(hc: HardConstraintSet): string 
   const banned = [...hc.forbiddenColors, ...hc.forbiddenStyleNames, ...hc.forbiddenLogoCategoryNames, ...hc.forbiddenElements];
 
   const lines: string[] = ["최종 확인: 아래 조건을 다시 한번 반드시 지킨다."];
+  if (hc.exactBrandName) {
+    lines.push(`브랜드명은 정확히 "${hc.exactBrandName}"여야 하며, 다른 이름으로 바꾸거나 의역하지 않는다.`);
+  }
   if (banned.length > 0) {
     lines.push(`다음은 이미지 어디에도 포함하지 않는다: ${banned.join(", ")}`);
   }

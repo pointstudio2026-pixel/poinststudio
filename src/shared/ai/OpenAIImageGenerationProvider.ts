@@ -57,9 +57,16 @@ export class OpenAIImageGenerationProvider implements ImageGenerationProvider {
 
   async generate(request: ImageGenerationRequest): Promise<ImageGenerationResult> {
     // gpt-image-1 only supports n=1 per request, so batch sequentially.
+    // /v1/images/generations has no separate system/user role split (unlike
+    // chat completions), so systemPrompt has to be folded into the single
+    // prompt string -- same fix as GeminiImageGenerationProvider already
+    // does. Without this, systemPrompt was silently dropped entirely,
+    // including TEXT_ACCURACY_DIRECTIVE (the one instruction telling the
+    // model to render brand names/text exactly as given, not paraphrase
+    // them) -- a real bug, not just a missed optimization.
     const images: GeneratedImageResult[] = [];
     for (let i = 0; i < request.count; i++) {
-      const url = await this.generateOne(request.userPrompt, request.sizePreset);
+      const url = await this.generateOne(`${request.systemPrompt}\n\n${request.userPrompt}`, request.sizePreset);
       images.push({ url, thumbnailUrl: url });
     }
 
@@ -86,7 +93,7 @@ export class OpenAIImageGenerationProvider implements ImageGenerationProvider {
     // base64 데이터 URI(수십만~수백만자)가 돌아오므로 그대로 이어붙이면
     // OpenAI의 32,000자 프롬프트 길이 제한을 넘겨 매번 400으로 실패한다.
     const prompt = `${request.editInstruction}\n\n(기존 컨셉의 변형입니다.)`;
-    const url = await this.generateOne(prompt);
+    const url = await this.generateOne(`${request.systemPrompt}\n\n${prompt}`);
     return {
       images: [{ url, thumbnailUrl: url }],
       provider: this.name,

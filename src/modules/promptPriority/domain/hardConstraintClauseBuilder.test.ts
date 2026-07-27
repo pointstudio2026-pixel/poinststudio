@@ -45,4 +45,18 @@ describe("hardConstraintClauseBuilder", () => {
     const hc: HardConstraintSet = { ...EMPTY, freeTextConstraints: "반드시 이 문구를 포함해주세요" };
     expect(buildHardConstraintOpeningClause(hc)).toContain("반드시 이 문구를 포함해주세요");
   });
+
+  // 회귀 방지: exactBrandName이 hasAnyConstraint()에서 빠져있어서 opening/
+  // closing 절 어디에도 안 나오던 실제 버그(2026-07-27, AI가 사용자가 입력한
+  // 브랜드명 대신 임의의 이름을 생성) -- 브랜드명만 있어도 절이 비지 않고,
+  // 두 절 모두에 정확한 문자열 그대로 나와야 한다.
+  it("includes exactBrandName verbatim in both the opening and closing clause", () => {
+    const hc: HardConstraintSet = { ...EMPTY, exactBrandName: "WILLOW & OAT" };
+    const opening = buildHardConstraintOpeningClause(hc);
+    const closing = buildHardConstraintClosingClause(hc);
+    expect(opening).not.toBe("");
+    expect(opening).toContain("WILLOW & OAT");
+    expect(closing).not.toBe("");
+    expect(closing).toContain("WILLOW & OAT");
+  });
 });
