@@ -3,6 +3,7 @@ import { PublishLandingArticleUseCase } from "@/modules/landingArticles/applicat
 import { GetLandingArticleUseCase } from "@/modules/landingArticles/application/GetLandingArticleUseCase";
 import { ListLandingArticlesUseCase } from "@/modules/landingArticles/application/ListLandingArticlesUseCase";
 import { ListAvailableLocalesUseCase } from "@/modules/landingArticles/application/ListAvailableLocalesUseCase";
+import { SearchLandingArticlesUseCase } from "@/modules/landingArticles/application/SearchLandingArticlesUseCase";
 
 const landingArticleRepository = new PrismaLandingArticleRepository();
 
@@ -11,4 +12,5 @@ export const landingArticlesContainer = {
   getLandingArticleUseCase: new GetLandingArticleUseCase(landingArticleRepository),
   listLandingArticlesUseCase: new ListLandingArticlesUseCase(landingArticleRepository),
   listAvailableLocalesUseCase: new ListAvailableLocalesUseCase(landingArticleRepository),
+  searchLandingArticlesUseCase: new SearchLandingArticlesUseCase(landingArticleRepository),
 };

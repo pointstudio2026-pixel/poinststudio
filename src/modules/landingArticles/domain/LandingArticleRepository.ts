@@ -37,4 +37,11 @@ export interface LandingArticleRepository {
    * 내지 않도록 미리 확인한다. slug 자체가 없으면 빈 배열.
    */
   findPublishedLocales(slug: string): Promise<string[]>;
+
+  /**
+   * title/displayTitle/metaDescription에 대한 대소문자 무시 부분 일치
+   * 검색 -- 카테고리 무관하게(FAQ 포함) 전체 글을 대상으로 한다. publishedAt
+   * 내림차순.
+   */
+  searchPublished(locale: string, query: string): Promise<LandingArticle[]>;
 }

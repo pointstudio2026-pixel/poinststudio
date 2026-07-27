@@ -19,13 +19,19 @@ export interface LandingArticleLabels {
   keyPointsHeading: string;
   relatedQuestionsHeading: string;
   backToHub: string;
+  searchPlaceholder: string;
+  searchButton: string;
+  searchResultsFor: string;
+  searchEmpty: string;
+  backToCategories: string;
+  guidesCountSuffix: string;
 }
 
 const LABELS: Record<Locale, LandingArticleLabels> = {
   ko: {
     hubEyebrow: "가이드",
     hubTitle: "활용사례 & 스타일 가이드",
-    hubIntro: "스타일별 정의, 어울리는 업종, 디테일 스펙까지 -- ASTER 브랜딩 가이드를 둘러보세요.",
+    hubIntro: "원하는 카테고리를 선택해 ASTER 브랜딩 가이드를 둘러보세요.",
     hubEmpty: "아직 등록된 가이드가 없습니다.",
     faqHubEyebrow: "FAQ",
     faqHubTitle: "자주 묻는 질문",
@@ -37,11 +43,17 @@ const LABELS: Record<Locale, LandingArticleLabels> = {
     keyPointsHeading: "핵심 요약",
     relatedQuestionsHeading: "관련 질문",
     backToHub: "가이드 목록으로",
+    searchPlaceholder: "가이드 검색",
+    searchButton: "검색",
+    searchResultsFor: "검색 결과: ",
+    searchEmpty: "검색 결과가 없습니다.",
+    backToCategories: "카테고리 전체 보기",
+    guidesCountSuffix: "개 가이드",
   },
   en: {
     hubEyebrow: "Guides",
     hubTitle: "Use Cases & Style Guides",
-    hubIntro: "Definitions, industry fit, and detail specs for every style -- explore the ASTER branding guides.",
+    hubIntro: "Choose a category to explore the ASTER branding guides.",
     hubEmpty: "No guides published yet.",
     faqHubEyebrow: "FAQ",
     faqHubTitle: "Frequently Asked Questions",
@@ -53,11 +65,17 @@ const LABELS: Record<Locale, LandingArticleLabels> = {
     keyPointsHeading: "Key Points",
     relatedQuestionsHeading: "Related Questions",
     backToHub: "Back to guides",
+    searchPlaceholder: "Search guides",
+    searchButton: "Search",
+    searchResultsFor: "Search results for ",
+    searchEmpty: "No results found.",
+    backToCategories: "All categories",
+    guidesCountSuffix: " guides",
   },
   ja: {
     hubEyebrow: "ガイド",
     hubTitle: "活用事例 & スタイルガイド",
-    hubIntro: "スタイルごとの定義、相性の良い業種、詳細仕様まで -- ASTERのブランディングガイドをご覧ください。",
+    hubIntro: "カテゴリを選んでASTERのブランディングガイドをご覧ください。",
     hubEmpty: "まだ公開されたガイドがありません。",
     faqHubEyebrow: "FAQ",
     faqHubTitle: "よくある質問",
@@ -69,11 +87,17 @@ const LABELS: Record<Locale, LandingArticleLabels> = {
     keyPointsHeading: "ポイント要約",
     relatedQuestionsHeading: "関連する質問",
     backToHub: "ガイド一覧へ",
+    searchPlaceholder: "ガイドを検索",
+    searchButton: "検索",
+    searchResultsFor: "検索結果: ",
+    searchEmpty: "検索結果がありません。",
+    backToCategories: "カテゴリ一覧に戻る",
+    guidesCountSuffix: "件のガイド",
   },
   fr: {
     hubEyebrow: "Guides",
     hubTitle: "Cas d'usage & guides de style",
-    hubIntro: "Définitions, secteurs adaptés et spécifications détaillées pour chaque style -- explorez les guides ASTER.",
+    hubIntro: "Choisissez une catégorie pour explorer les guides de branding ASTER.",
     hubEmpty: "Aucun guide publié pour le moment.",
     faqHubEyebrow: "FAQ",
     faqHubTitle: "Foire aux questions",
@@ -85,11 +109,17 @@ const LABELS: Record<Locale, LandingArticleLabels> = {
     keyPointsHeading: "Points clés",
     relatedQuestionsHeading: "Questions connexes",
     backToHub: "Retour aux guides",
+    searchPlaceholder: "Rechercher un guide",
+    searchButton: "Rechercher",
+    searchResultsFor: "Résultats pour ",
+    searchEmpty: "Aucun résultat trouvé.",
+    backToCategories: "Toutes les catégories",
+    guidesCountSuffix: " guides",
   },
   de: {
     hubEyebrow: "Guides",
     hubTitle: "Anwendungsfälle & Styleguides",
-    hubIntro: "Definitionen, passende Branchen und Detailspezifikationen für jeden Stil -- entdecken Sie die ASTER Branding-Guides.",
+    hubIntro: "Wählen Sie eine Kategorie, um die ASTER Branding-Guides zu entdecken.",
     hubEmpty: "Noch keine Guides veröffentlicht.",
     faqHubEyebrow: "FAQ",
     faqHubTitle: "Häufig gestellte Fragen",
@@ -101,6 +131,12 @@ const LABELS: Record<Locale, LandingArticleLabels> = {
     keyPointsHeading: "Wichtige Punkte",
     relatedQuestionsHeading: "Verwandte Fragen",
     backToHub: "Zurück zu den Guides",
+    searchPlaceholder: "Guides durchsuchen",
+    searchButton: "Suchen",
+    searchResultsFor: "Suchergebnisse für ",
+    searchEmpty: "Keine Ergebnisse gefunden.",
+    backToCategories: "Alle Kategorien",
+    guidesCountSuffix: " Guides",
   },
 };
 

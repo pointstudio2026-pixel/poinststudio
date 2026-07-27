@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { BASE_URL } from "@/shared/seo/baseUrl";
 import { LOCALES } from "@/shared/i18n/locale";
 import { landingArticlesContainer } from "@/modules/landingArticles/container";
-import { guideDetailHref } from "@/features/landingArticles/routing";
+import { guideDetailHref, guidesHubHref } from "@/features/landingArticles/routing";
 
 // 로그인 뒤에만 볼 수 있는 화면(프로젝트/관리자 등)은 검색엔진이 크롤링해도
 // 의미가 없으므로 제외하고, 실제 마케팅/정보성 공개 페이지 + 발행된
@@ -24,6 +24,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.2 },
   ];
 
+  const hubEntries: MetadataRoute.Sitemap = LOCALES.map((locale) => ({
+    url: `${BASE_URL}${guidesHubHref(locale)}`,
+    lastModified: now,
+    changeFrequency: "weekly",
+    priority: 0.7,
+  }));
+
   const articleEntries: MetadataRoute.Sitemap = [];
   for (const locale of LOCALES) {
     const articles = await landingArticlesContainer.listLandingArticlesUseCase.execute({ locale });
@@ -37,5 +44,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  return [...staticEntries, ...articleEntries];
+  return [...staticEntries, ...hubEntries, ...articleEntries];
 }

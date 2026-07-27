@@ -122,4 +122,33 @@ export class FakeLandingArticleRepository implements LandingArticleRepository {
         publishedAt: t.publishedAt,
       }));
   }
+
+  async searchPublished(locale: string, query: string): Promise<LandingArticle[]> {
+    const needle = query.toLowerCase();
+    return this.translations
+      .filter(
+        (t) =>
+          t.locale === locale &&
+          t.status === "published" &&
+          (t.title.toLowerCase().includes(needle) ||
+            t.displayTitle.toLowerCase().includes(needle) ||
+            t.metaDescription.toLowerCase().includes(needle)),
+      )
+      .map((t) => {
+        const group = this.groups.find((g) => g.id === t.groupId)!;
+        return { group, t };
+      })
+      .sort((a, b) => (b.t.publishedAt?.getTime() ?? 0) - (a.t.publishedAt?.getTime() ?? 0))
+      .map(({ group, t }) => ({
+        slug: group.slug,
+        category: group.category,
+        locale: t.locale,
+        title: t.title,
+        displayTitle: t.displayTitle,
+        metaDescription: t.metaDescription,
+        content: t.content,
+        status: t.status,
+        publishedAt: t.publishedAt,
+      }));
+  }
 }

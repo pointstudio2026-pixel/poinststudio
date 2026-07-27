@@ -120,4 +120,22 @@ export class PrismaLandingArticleRepository implements LandingArticleRepository 
 
     return translations.map((translation) => toDomain(translation.group, translation));
   }
+
+  async searchPublished(locale: string, query: string): Promise<LandingArticle[]> {
+    const translations = await prisma.landingArticleTranslation.findMany({
+      where: {
+        locale,
+        status: "published",
+        OR: [
+          { title: { contains: query, mode: "insensitive" } },
+          { displayTitle: { contains: query, mode: "insensitive" } },
+          { metaDescription: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      include: { group: true },
+      orderBy: { publishedAt: "desc" },
+    });
+
+    return translations.map((translation) => toDomain(translation.group, translation));
+  }
 }
