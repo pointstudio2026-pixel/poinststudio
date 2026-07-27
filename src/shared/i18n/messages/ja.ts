@@ -537,25 +537,6 @@ export const ja: Messages = {
       badgeNoCard: "クレジットカード登録不要",
       badgeAutosave: "プロジェクト自動保存",
     },
-    mockup: {
-      workspaceTitle: "ASTER Workspace — ヴィーガンコスメブランディング",
-      analysisResult: "戦略分析結果",
-      highConfidence: "信頼度 高",
-      positioning:
-        "「信頼できるミニマル」をコアポジショニングに、彩度を抑えたニュートラルパレットと余白を強調する方向性を提案します。",
-      fontPairing: "フォントペアリング",
-      colorPalette: "カラーパレット",
-      generationResult: "生成結果",
-      progress: "{current}/{total} 進行中",
-      steps: {
-        brandInterview: "ブランドインタビュー",
-        style: "スタイル",
-        brandStrategy: "ブランド戦略",
-        generation: "画像生成",
-        conceptBoard: "コンセプトボード",
-        mockup: "モックアップ",
-      },
-    },
     howItWorks: {
       eyebrow: "How it works",
       title: "使い方",

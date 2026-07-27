@@ -537,25 +537,6 @@ export const de: Messages = {
       badgeNoCard: "Keine Kreditkarte nötig",
       badgeAutosave: "Projekte werden automatisch gespeichert",
     },
-    mockup: {
-      workspaceTitle: "ASTER Workspace — Vegane Kosmetikmarke",
-      analysisResult: "Ergebnis der Strategieanalyse",
-      highConfidence: "Hohe Zuverlässigkeit",
-      positioning:
-        'Wir empfehlen „vertrauenswürdigen Minimalismus" als Kernpositionierung, mit einer gering gesättigten neutralen Palette und großzügigem Weißraum.',
-      fontPairing: "Schriftkombination",
-      colorPalette: "Farbpalette",
-      generationResult: "Generierte Ergebnisse",
-      progress: "{current}/{total} Schritte",
-      steps: {
-        brandInterview: "Marken-Interview",
-        style: "Stil",
-        brandStrategy: "Markenstrategie",
-        generation: "Generierung",
-        conceptBoard: "Concept Board",
-        mockup: "Mockups",
-      },
-    },
     howItWorks: {
       eyebrow: "How it works",
       title: "So funktioniert's",

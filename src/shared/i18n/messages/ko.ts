@@ -536,25 +536,6 @@ export const ko = {
       badgeNoCard: "카드 등록 없이 시작",
       badgeAutosave: "프로젝트 자동 저장",
     },
-    mockup: {
-      workspaceTitle: "ASTER Workspace — 비건 코스메틱 브랜딩",
-      analysisResult: "전략 분석 결과",
-      highConfidence: "신뢰도 높음",
-      positioning:
-        '"믿을 수 있는 미니멀"을 핵심 포지셔닝으로, 낮은 채도의 뉴트럴 팔레트와 여백을 강조하는 방향을 제안합니다.',
-      fontPairing: "Font Pairing",
-      colorPalette: "Color Palette",
-      generationResult: "생성 결과",
-      progress: "{current}/{total} 진행",
-      steps: {
-        brandInterview: "브랜드 인터뷰",
-        style: "스타일",
-        brandStrategy: "브랜드 전략",
-        generation: "이미지 생성",
-        conceptBoard: "컨셉 보드",
-        mockup: "목업",
-      },
-    },
     howItWorks: {
       eyebrow: "How it works",
       title: "사용 방법",

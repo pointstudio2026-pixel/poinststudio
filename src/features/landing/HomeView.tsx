@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Header } from "@/features/landing/Header";
-import { ProductMockup } from "@/features/landing/ProductMockup";
+import { HeroDemoVideo } from "@/features/landing/HeroDemoVideo";
 import { ResultShowcase } from "@/features/landing/ResultShowcase";
 import { FaqAccordion } from "@/features/landing/FaqAccordion";
 import { Footer } from "@/features/landing/Footer";
@@ -157,7 +157,7 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
           </div>
 
           <div className="flex justify-center lg:justify-end">
-            <ProductMockup />
+            <HeroDemoVideo />
           </div>
         </section>
 
