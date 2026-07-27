@@ -503,6 +503,8 @@ export const ja: Messages = {
     team: "チーム",
     guide: "使い方",
     useCases: "デザインガイド",
+    faqPage: "FAQ",
+    whyAster: "ASTERを選ぶ理由",
     support: "お問い合わせ",
     myInfo: "アカウント情報",
     subscription: "お支払い情報(サブスクリプション)",

@@ -8,6 +8,14 @@ import { subscriptionsContainer } from "@/modules/subscriptions/container";
 import { landingArticlesContainer } from "@/modules/landingArticles/container";
 import { guideDetailHref } from "@/features/landingArticles/routing";
 import { getLandingArticleLabels } from "@/features/landingArticles/labels";
+import type { StyleGuideContent } from "@/modules/landingArticles/domain/LandingArticle";
+
+// 이 허브는 "스타일 가이드 둘러보기" 전용이다 -- FAQ/Why ASTER 페이지는
+// content 모양이 완전히 다르고(정의/이미지 없음), 애초에 둘러보는 카탈로그가
+// 아니라 네비게이션에서 바로 링크로 들어가는 단독 페이지라 여기 목록에
+// 섞이면 안 된다. category를 항상 "style"로 고정한다(하위 카테고리가
+// 늘어나면 그때 "style"로 시작하는 카테고리들을 모으는 식으로 넓힌다).
+const BROWSABLE_CATEGORY = "style";
 
 export async function ArticleHubView({ locale, category }: { locale: string; category?: string }) {
   const session = await getCurrentSession();
@@ -17,7 +25,10 @@ export async function ArticleHubView({ locale, category }: { locale: string; cat
     : null;
 
   const labels = getLandingArticleLabels(locale);
-  const articles = await landingArticlesContainer.listLandingArticlesUseCase.execute({ locale, category });
+  const articles = await landingArticlesContainer.listLandingArticlesUseCase.execute({
+    locale,
+    category: category ?? BROWSABLE_CATEGORY,
+  });
   const categories = Array.from(new Set(articles.map((a) => a.category)));
 
   return (
@@ -66,7 +77,8 @@ export async function ArticleHubView({ locale, category }: { locale: string; cat
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {articles.map((article) => {
-              const thumbnail = article.content.images[0];
+              const content = article.content as StyleGuideContent;
+              const thumbnail = content.images?.[0];
               return (
                 <Link
                   key={article.slug}
@@ -84,7 +96,7 @@ export async function ArticleHubView({ locale, category }: { locale: string; cat
                   )}
                   <div className="flex flex-1 flex-col gap-2 p-5">
                     <h2 className="text-lg font-semibold">{article.displayTitle}</h2>
-                    <p className="line-clamp-2 text-sm text-muted">{article.content.definition}</p>
+                    <p className="line-clamp-2 text-sm text-muted">{content.definition}</p>
                   </div>
                 </Link>
               );

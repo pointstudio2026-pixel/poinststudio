@@ -502,6 +502,8 @@ export const ko = {
     team: "팀",
     guide: "사용방법",
     useCases: "디자인 가이드",
+    faqPage: "FAQ",
+    whyAster: "왜 ASTER인가요",
     support: "문의사항",
     myInfo: "내 정보",
     subscription: "결제정보 (구독)",

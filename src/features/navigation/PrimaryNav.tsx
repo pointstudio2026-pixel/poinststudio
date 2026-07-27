@@ -7,7 +7,7 @@ import { LogoutButton } from "@/features/auth/LogoutButton";
 import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
-import { guidesHubHref } from "@/features/landingArticles/routing";
+import { guideDetailHref, guidesHubHref } from "@/features/landingArticles/routing";
 
 export interface PrimaryNavUser {
   email: string;
@@ -105,6 +105,12 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser; planCode:
               </Link>
               <Link href={guidesHubHref(locale)} className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper">
                 {t("nav.useCases")}
+              </Link>
+              <Link href={guideDetailHref(locale, "why-aster")} className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper">
+                {t("nav.whyAster")}
+              </Link>
+              <Link href={guideDetailHref(locale, "faq")} className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper">
+                {t("nav.faqPage")}
               </Link>
             </div>
           </div>

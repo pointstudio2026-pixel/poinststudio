@@ -2,8 +2,9 @@
 // 자동화 파이프라인이 이 형태로 채워서 POST /api/content/articles로
 // 보낸다 -- 8단계 페이지 구조(정의/실제이미지/어울리는 업종/디테일 스펙/
 // 어울리는 조합/FAQ/CTA)와 1:1로 대응한다 (title/displayTitle은 이 타입
-// 밖의 LandingArticleTranslation 필드).
-export interface LandingArticleContent {
+// 밖의 LandingArticleTranslation 필드). category === "style"(과 앞으로 늘어날
+// 스타일×업종/작업물유형 등)에서만 쓰인다.
+export interface StyleGuideContent {
   definition: string;
   images: { url: string; alt: string }[];
   industryFit: { industry: string; reason: string }[];
@@ -13,6 +14,29 @@ export interface LandingArticleContent {
   ctaLabel: string;
   ctaHref: string;
 }
+
+/** category === "faq" 전용 콘텐츠 구조 -- 순수 Q&A 나열. */
+export interface FaqPageContent {
+  intro?: string;
+  items: { question: string; answer: string }[];
+}
+
+/** category === "why-aster" 전용 콘텐츠 구조 -- 강점/혜택 나열 + CTA. */
+export interface WhyAsterPageContent {
+  intro: string;
+  benefits: { title: string; description: string }[];
+  ctaLabel: string;
+  ctaHref: string;
+}
+
+/**
+ * 카테고리마다 콘텐츠 모양이 다르다 -- 스타일 가이드(정의/업종/스펙/조합/
+ * FAQ/CTA), FAQ 페이지(질문 목록), Why ASTER 페이지(강점 목록)는 서로 겹치는
+ * 필드가 거의 없어 하나의 고정 인터페이스로 억지로 합치지 않는다. 렌더링
+ * 쪽(ArticleDetailView)은 항상 article.category로 분기해서 알맞은 타입으로
+ * 다룬다 -- category가 신뢰할 수 있는 판별 필드.
+ */
+export type LandingArticleContent = StyleGuideContent | FaqPageContent | WhyAsterPageContent;
 
 export type LandingArticleStatus = "draft" | "published";
 

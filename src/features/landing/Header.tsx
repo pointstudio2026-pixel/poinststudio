@@ -10,7 +10,7 @@ import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { MessageKey } from "@/shared/i18n/messages/types";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
-import { guidesHubHref } from "@/features/landingArticles/routing";
+import { guideDetailHref, guidesHubHref } from "@/features/landingArticles/routing";
 
 const NAV_LINKS: { href: string; labelKey: MessageKey }[] = [
   { href: "#top", labelKey: "home.header.navService" },
@@ -84,6 +84,18 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
                         className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper"
                       >
                         {t("nav.useCases")}
+                      </Link>
+                      <Link
+                        href={guideDetailHref(locale, "why-aster")}
+                        className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper"
+                      >
+                        {t("nav.whyAster")}
+                      </Link>
+                      <Link
+                        href={guideDetailHref(locale, "faq")}
+                        className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper"
+                      >
+                        {t("nav.faqPage")}
                       </Link>
                     </div>
                   </div>
@@ -183,6 +195,18 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
                 >
                   {t("nav.useCases")}
                 </Link>
+                <Link
+                  href={guideDetailHref(locale, "why-aster")}
+                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
+                >
+                  {t("nav.whyAster")}
+                </Link>
+                <Link
+                  href={guideDetailHref(locale, "faq")}
+                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
+                >
+                  {t("nav.faqPage")}
+                </Link>
                 <div className="[&>button]:w-full [&>button]:justify-center [&>button]:py-3">
                   <NewProjectButton />
                 </div>
@@ -216,6 +240,18 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
                   className="rounded-full border border-line px-4 py-3 text-center text-sm"
                 >
                   {t("nav.useCases")}
+                </Link>
+                <Link
+                  href={guideDetailHref(locale, "why-aster")}
+                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
+                >
+                  {t("nav.whyAster")}
+                </Link>
+                <Link
+                  href={guideDetailHref(locale, "faq")}
+                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
+                >
+                  {t("nav.faqPage")}
                 </Link>
                 <Link href="/login" className="rounded-full border border-line px-4 py-3 text-center text-sm">
                   {t("home.header.login")}

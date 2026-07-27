@@ -25,7 +25,7 @@ const landingArticleFaqSchema = z.object({
   answer: z.string().min(1),
 });
 
-export const landingArticleContentSchema = z.object({
+const styleGuideContentSchema = z.object({
   definition: z.string().min(1),
   images: z.array(landingArticleImageSchema),
   industryFit: z.array(landingArticleIndustryFitSchema),
@@ -35,6 +35,26 @@ export const landingArticleContentSchema = z.object({
   ctaLabel: z.string().min(1),
   ctaHref: z.string().min(1),
 });
+
+const faqPageContentSchema = z.object({
+  intro: z.string().optional(),
+  items: z.array(landingArticleFaqSchema).min(1),
+});
+
+const whyAsterPageContentSchema = z.object({
+  intro: z.string().min(1),
+  benefits: z.array(z.object({ title: z.string().min(1), description: z.string().min(1) })).min(1),
+  ctaLabel: z.string().min(1),
+  ctaHref: z.string().min(1),
+});
+
+// category마다 콘텐츠 모양이 다르므로(스타일 가이드/FAQ/Why ASTER) 하나로
+// 합치지 않고 union으로 검증한다 -- zod가 순서대로 시도해서 맞는 걸 고른다.
+export const landingArticleContentSchema = z.union([
+  styleGuideContentSchema,
+  faqPageContentSchema,
+  whyAsterPageContentSchema,
+]);
 
 export const publishLandingArticleSchema = z.object({
   slug: z.string().min(1).max(160),

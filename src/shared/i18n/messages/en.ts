@@ -503,6 +503,8 @@ export const en: Messages = {
     team: "Team",
     guide: "How it works",
     useCases: "Design Guides",
+    faqPage: "FAQ",
+    whyAster: "Why ASTER",
     support: "Support",
     myInfo: "My Info",
     subscription: "Billing (Subscription)",
