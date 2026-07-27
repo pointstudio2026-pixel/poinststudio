@@ -48,6 +48,15 @@ export function InterviewView({ projectId }: { projectId: string }) {
     const key = GROUP_LABEL_KEYS[group];
     return key ? t(key) : group;
   }
+  // 검색창은 사용자에게 "보이는" 번역된 라벨을 기준으로 입력되므로, 필터도
+  // optionLabel(번역본)로 매칭해야 한다 -- 원본 한국어 값(option)만으로
+  // 매칭하면 영어 등 다른 로케일에서는 검색이 항상 빈 결과로 나온다. 한국어로
+  // 직접 입력하는 경우도 계속 동작하도록 원본 값도 함께 매칭한다.
+  function matchesOptionSearch(option: string, search: string): boolean {
+    const term = search.trim().toLowerCase();
+    if (!term) return true;
+    return optionLabel(option).toLowerCase().includes(term) || option.toLowerCase().includes(term);
+  }
   // 다중 선택 답변은 콤마로 이어붙인 문자열로 저장되므로(예: "20대, 30대,
   // 40대") 토큰별로 나눠 번역한 뒤 다시 합친다 -- "기타: ..." 자유 입력
   // 토큰은 표에 없어 원문 그대로 남는다.
@@ -422,7 +431,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                   />
                   <ul className="flex max-h-64 flex-col gap-1 overflow-y-auto rounded-xl border border-line p-1">
                     {(currentQuestion.options ?? [])
-                      .filter((option) => option.toLowerCase().includes(optionSearch.trim().toLowerCase()))
+                      .filter((option) => matchesOptionSearch(option, optionSearch))
                       .map((option) => {
                         const isSelected = currentQuestion.multiple
                           ? (answers[currentQuestion.key] ?? "")
@@ -448,7 +457,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                         );
                       })}
                     {(currentQuestion.options ?? []).filter((option) =>
-                      option.toLowerCase().includes(optionSearch.trim().toLowerCase()),
+                      matchesOptionSearch(option, optionSearch),
                     ).length === 0 && (
                       <li className="px-3 py-2 text-sm text-muted">{t("interview.noSearchResults")}</li>
                     )}
