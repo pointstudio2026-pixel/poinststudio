@@ -11,6 +11,9 @@ import { buildOrganizationJsonLd } from "@/shared/seo/organizationJsonLd";
 // GA4 측정 ID -- 다른 검색엔진 인증 값들(naver-site-verification 등)과
 // 마찬가지로 공개돼도 되는 값이라 env var 없이 상수로 둔다.
 const GA_MEASUREMENT_ID = "G-MFE1WW437V";
+// Ahrefs 웹 분석(Site Audit용과 별개, 트래픽 분석 스크립트) -- 마찬가지로
+// 공개 키라 env var 불필요.
+const AHREFS_ANALYTICS_KEY = "fnv/Xrtdz+bdvTZZA3XYLw";
 
 // Open Graph의 locale 값(og:locale)은 Next.js Metadata API가 요구하는
 // BCP47 코드(ko/en/ja/fr/de)가 아니라 "ko_KR" 같은 언더스코어 표기라 별도 매핑이 필요하다.
@@ -82,6 +85,7 @@ export default async function RootLayout({
             gtag('config', '${GA_MEASUREMENT_ID}');
           `}
         </Script>
+        <Script src="https://analytics.ahrefs.com/analytics.js" data-key={AHREFS_ANALYTICS_KEY} strategy="afterInteractive" />
         <Providers initialLocale={locale}>
           <SessionBootstrap />
           {children}
