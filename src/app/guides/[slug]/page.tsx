@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ArticleDetailView } from "@/features/landingArticles/ArticleDetailView";
 import { landingArticlesContainer } from "@/modules/landingArticles/container";
 import { NotFoundError } from "@/shared/errors/AppError";
-import { BASE_URL } from "@/shared/seo/baseUrl";
+import { buildGuidesAlternates } from "@/shared/seo/guidesAlternates";
 
 // force-dynamic 필수 -- src/app/guides/page.tsx의 주석 참고. 빌드 시점
 // 프리렌더 시도가 DB/큐 연결을 트리거해서 빌드 자체가 죽는 걸 막는다.
@@ -32,16 +32,7 @@ export async function generateMetadata({
   return {
     title: article.title,
     description: article.metaDescription,
-    alternates: {
-      languages: {
-        ko: `${BASE_URL}/guides/${slug}`,
-        en: `${BASE_URL}/en/guides/${slug}`,
-        ja: `${BASE_URL}/ja/guides/${slug}`,
-        fr: `${BASE_URL}/fr/guides/${slug}`,
-        de: `${BASE_URL}/de/guides/${slug}`,
-        "x-default": `${BASE_URL}/guides/${slug}`,
-      },
-    },
+    alternates: { languages: buildGuidesAlternates(`/${slug}`) },
   };
 }
 

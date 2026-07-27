@@ -39,7 +39,7 @@ describe("buildFaqPageJsonLd", () => {
     expect(result).not.toBeNull();
     expect(result?.["@type"]).toBe("FAQPage");
     expect(result?.mainEntity).toHaveLength(1);
-    expect(result?.mainEntity[0].name).toBe("어떤 업종에 어울리나요?");
+    expect(result?.mainEntity[0]?.name).toBe("어떤 업종에 어울리나요?");
   });
 
   it("returns null for non-style categories (no embedded faq array to source from)", () => {
@@ -60,7 +60,7 @@ describe("buildBreadcrumbJsonLd", () => {
   it("includes a hub crumb for style/faq categories", () => {
     const result = buildBreadcrumbJsonLd("ko", STYLE_ARTICLE);
     expect(result.itemListElement).toHaveLength(3);
-    expect(result.itemListElement[1].name).toBe("Guides");
+    expect(result.itemListElement[1]?.name).toBe("Guides");
   });
 
   it("skips the hub crumb for why-aster (no hub link exists in the UI either)", () => {

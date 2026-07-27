@@ -3,6 +3,7 @@ import { BASE_URL } from "@/shared/seo/baseUrl";
 import { getLandingArticleLabels } from "@/features/landingArticles/labels";
 import { getCategoryMeta } from "@/features/landingArticles/categoryMeta";
 import { guidesHubHref, guidesHubHrefForCategory } from "@/features/landingArticles/routing";
+import { buildGuidesAlternates } from "@/shared/seo/guidesAlternates";
 
 /**
  * /guides 허브(카테고리 디렉터리/카테고리별 목록/검색)의 <title>/description을
@@ -34,7 +35,10 @@ export function buildGuidesHubMetadata({
     return {
       title: `${labels.faqHubTitle} - ASTER`,
       description: labels.faqHubIntro,
-      alternates: { canonical: `${BASE_URL}${guidesHubHrefForCategory(locale, "faq")}` },
+      alternates: {
+        canonical: `${BASE_URL}${guidesHubHrefForCategory(locale, "faq")}`,
+        languages: buildGuidesAlternates("?category=faq"),
+      },
     };
   }
 
@@ -43,13 +47,19 @@ export function buildGuidesHubMetadata({
     return {
       title: `${meta.label} - ASTER`,
       description: meta.description || labels.hubIntro,
-      alternates: { canonical: `${BASE_URL}${guidesHubHrefForCategory(locale, category)}` },
+      alternates: {
+        canonical: `${BASE_URL}${guidesHubHrefForCategory(locale, category)}`,
+        languages: buildGuidesAlternates(`?category=${category}`),
+      },
     };
   }
 
   return {
     title: `${labels.hubTitle} - ASTER`,
     description: labels.hubIntro,
-    alternates: { canonical: `${BASE_URL}${guidesHubHref(locale)}` },
+    alternates: {
+      canonical: `${BASE_URL}${guidesHubHref(locale)}`,
+      languages: buildGuidesAlternates(""),
+    },
   };
 }
