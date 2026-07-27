@@ -32,6 +32,9 @@ import { startReferencePromotionWorker } from "@/workers/referencePromotionWorke
 import { scheduleGiftCodeExpiry } from "@/shared/queue/giftCodeExpiryQueue";
 import { startGiftCodeExpiryWorker } from "@/workers/giftCodeExpiryWorker";
 import { RevertExpiredGiftPlansUseCase } from "@/modules/subscriptions/application/RevertExpiredGiftPlansUseCase";
+import { DowngradeCanceledSubscriptionsUseCase } from "@/modules/subscriptions/application/DowngradeCanceledSubscriptionsUseCase";
+import { scheduleSubscriptionCancellation } from "@/shared/queue/subscriptionCancellationQueue";
+import { startSubscriptionCancellationWorker } from "@/workers/subscriptionCancellationWorker";
 import { giftCodesContainer } from "@/modules/giftCodes/container";
 import { resolveTextCompletionProvider } from "@/shared/ai/textCompletionRouter";
 import { resolveImageGenerationProvider } from "@/shared/ai/imageGenerationRouter";
@@ -99,6 +102,7 @@ export const adminContainer = {
   generateGiftCodesUseCase: giftCodesContainer.generateGiftCodesUseCase,
   listGiftCodesUseCase: giftCodesContainer.listGiftCodesUseCase,
   revertExpiredGiftPlansUseCase: new RevertExpiredGiftPlansUseCase(subscriptionRepository),
+  downgradeCanceledSubscriptionsUseCase: new DowngradeCanceledSubscriptionsUseCase(subscriptionRepository),
 };
 
 // 매일 자동으로 미평가 생성물을 평가+승격한다(관리자 "지금 실행" 버튼과
@@ -119,4 +123,20 @@ if (!isBuildPhaseForReferencePromotion && !globalForGiftCodeExpiryWorker.giftCod
   startGiftCodeExpiryWorker(adminContainer.revertExpiredGiftPlansUseCase);
   void scheduleGiftCodeExpiry();
   globalForGiftCodeExpiryWorker.giftCodeExpiryWorkerStarted = true;
+}
+
+// 매일 자동으로, 취소 예약된(cancelAtPeriodEnd) 구독 중 결제 기간이 끝난
+// 것을 free로 되돌린다(2026-07-27). 실제 PG 연동 전까지는 cancelAtPeriodEnd를
+// 세우는 진입점이 없어 항상 downgraded: 0 -- 실제 결제 붙을 때 바로 쓸 수
+// 있도록 미리 준비해둔 워커다. 위 워커들과 동일한 자동 시작 패턴.
+const globalForSubscriptionCancellationWorker = globalThis as unknown as {
+  subscriptionCancellationWorkerStarted?: boolean;
+};
+if (
+  !isBuildPhaseForReferencePromotion &&
+  !globalForSubscriptionCancellationWorker.subscriptionCancellationWorkerStarted
+) {
+  startSubscriptionCancellationWorker(adminContainer.downgradeCanceledSubscriptionsUseCase);
+  void scheduleSubscriptionCancellation();
+  globalForSubscriptionCancellationWorker.subscriptionCancellationWorkerStarted = true;
 }

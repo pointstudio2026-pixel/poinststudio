@@ -18,4 +18,15 @@ export interface SubscriptionRepository {
    * 되돌리고 period 필드를 비운다. 되돌린 행 수를 반환한다.
    */
   revertExpiredTemporaryPlans(now: Date): Promise<number>;
+  /** 본인 구독을 "이번 결제 기간이 끝나면 취소"로 예약한다(즉시 다운그레이드 아님). */
+  scheduleCancelAtPeriodEnd(userId: string): Promise<Subscription>;
+  /** 예약된 취소를 취소 시점 전에 되돌린다(계속 이용). */
+  resumeSubscription(userId: string): Promise<Subscription>;
+  /**
+   * cancelAtPeriodEnd가 true이면서 currentPeriodEnd가 now를 지난 구독을
+   * free로 전환하고 관련 필드를 비운다(gift 만료 워커와 같은 모양이지만,
+   * 트리거 조건이 "무조건"이 아니라 "취소 예약된 경우만"이라는 점이 다르다).
+   * 되돌린 행 수를 반환한다.
+   */
+  downgradeCanceledSubscriptions(now: Date): Promise<number>;
 }

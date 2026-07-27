@@ -6,6 +6,8 @@ import { RecordUsageUseCase } from "@/modules/subscriptions/application/RecordUs
 import { GetUsageSummaryUseCase } from "@/modules/subscriptions/application/GetUsageSummaryUseCase";
 import { GetPlansUseCase } from "@/modules/subscriptions/application/GetPlansUseCase";
 import { UpgradePlanUseCase } from "@/modules/subscriptions/application/UpgradePlanUseCase";
+import { CancelSubscriptionUseCase } from "@/modules/subscriptions/application/CancelSubscriptionUseCase";
+import { ResumeSubscriptionUseCase } from "@/modules/subscriptions/application/ResumeSubscriptionUseCase";
 import { PrismaAdminRepository } from "@/modules/admin/infrastructure/PrismaAdminRepository";
 
 export const subscriptionRepository = new PrismaSubscriptionRepository();
@@ -23,4 +25,6 @@ export const subscriptionsContainer = {
   getUsageSummaryUseCase: new GetUsageSummaryUseCase(subscriptionRepository, usageRepository),
   getPlansUseCase: new GetPlansUseCase(),
   upgradePlanUseCase: new UpgradePlanUseCase(subscriptionRepository, adminRepository),
+  cancelSubscriptionUseCase: new CancelSubscriptionUseCase(subscriptionRepository),
+  resumeSubscriptionUseCase: new ResumeSubscriptionUseCase(subscriptionRepository),
 };

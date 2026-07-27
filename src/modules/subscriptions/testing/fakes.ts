@@ -23,6 +23,7 @@ export class FakeSubscriptionRepository implements SubscriptionRepository {
       status: "active",
       currentPeriodStart: null,
       currentPeriodEnd: null,
+      cancelAtPeriodEnd: false,
     };
     this.subscriptions.set(userId, subscription);
     return subscription;
@@ -40,6 +41,7 @@ export class FakeSubscriptionRepository implements SubscriptionRepository {
         status: "active",
         currentPeriodStart: null,
         currentPeriodEnd: null,
+        cancelAtPeriodEnd: false,
       });
     }
   }
@@ -63,6 +65,7 @@ export class FakeSubscriptionRepository implements SubscriptionRepository {
       status: "active",
       currentPeriodStart: periodStart,
       currentPeriodEnd: periodEnd,
+      cancelAtPeriodEnd: false,
     };
     this.subscriptions.set(userId, subscription);
     return subscription;
@@ -77,6 +80,39 @@ export class FakeSubscriptionRepository implements SubscriptionRepository {
           planCode: "free",
           currentPeriodStart: null,
           currentPeriodEnd: null,
+        });
+        count += 1;
+      }
+    }
+    return count;
+  }
+
+  async scheduleCancelAtPeriodEnd(userId: string): Promise<Subscription> {
+    const existing = this.subscriptions.get(userId);
+    if (!existing) throw new Error(`No subscription for ${userId}`);
+    const updated = { ...existing, cancelAtPeriodEnd: true };
+    this.subscriptions.set(userId, updated);
+    return updated;
+  }
+
+  async resumeSubscription(userId: string): Promise<Subscription> {
+    const existing = this.subscriptions.get(userId);
+    if (!existing) throw new Error(`No subscription for ${userId}`);
+    const updated = { ...existing, cancelAtPeriodEnd: false };
+    this.subscriptions.set(userId, updated);
+    return updated;
+  }
+
+  async downgradeCanceledSubscriptions(now: Date): Promise<number> {
+    let count = 0;
+    for (const [userId, sub] of this.subscriptions.entries()) {
+      if (sub.cancelAtPeriodEnd && sub.currentPeriodEnd && sub.currentPeriodEnd < now) {
+        this.subscriptions.set(userId, {
+          ...sub,
+          planCode: "free",
+          currentPeriodStart: null,
+          currentPeriodEnd: null,
+          cancelAtPeriodEnd: false,
         });
         count += 1;
       }

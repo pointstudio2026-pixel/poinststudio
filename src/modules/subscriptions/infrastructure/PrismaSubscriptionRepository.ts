@@ -51,4 +51,20 @@ export class PrismaSubscriptionRepository implements SubscriptionRepository {
     });
     return result.count;
   }
+
+  async scheduleCancelAtPeriodEnd(userId: string): Promise<Subscription> {
+    return prisma.subscription.update({ where: { userId }, data: { cancelAtPeriodEnd: true } });
+  }
+
+  async resumeSubscription(userId: string): Promise<Subscription> {
+    return prisma.subscription.update({ where: { userId }, data: { cancelAtPeriodEnd: false } });
+  }
+
+  async downgradeCanceledSubscriptions(now: Date): Promise<number> {
+    const result = await prisma.subscription.updateMany({
+      where: { cancelAtPeriodEnd: true, currentPeriodEnd: { lt: now } },
+      data: { planCode: "free", currentPeriodStart: null, currentPeriodEnd: null, cancelAtPeriodEnd: false },
+    });
+    return result.count;
+  }
 }
