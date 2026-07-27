@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Fraunces, Gowun_Batang } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
@@ -6,6 +7,10 @@ import { SessionBootstrap } from "@/features/auth/SessionBootstrap";
 import { getServerLocale } from "@/shared/i18n/serverLocale";
 import { MESSAGES } from "@/shared/i18n/messages";
 import { buildOrganizationJsonLd } from "@/shared/seo/organizationJsonLd";
+
+// GA4 측정 ID -- 다른 검색엔진 인증 값들(naver-site-verification 등)과
+// 마찬가지로 공개돼도 되는 값이라 env var 없이 상수로 둔다.
+const GA_MEASUREMENT_ID = "G-MFE1WW437V";
 
 // Open Graph의 locale 값(og:locale)은 Next.js Metadata API가 요구하는
 // BCP47 코드(ko/en/ja/fr/de)가 아니라 "ko_KR" 같은 언더스코어 표기라 별도 매핑이 필요하다.
@@ -68,6 +73,15 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(buildOrganizationJsonLd(locale)) }}
         />
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive" />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
         <Providers initialLocale={locale}>
           <SessionBootstrap />
           {children}
