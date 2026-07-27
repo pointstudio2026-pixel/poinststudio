@@ -1354,6 +1354,7 @@ export const fr: Messages = {
       "Voici le déroulé complet pour créer des visuels de marque, la façon d'enregistrer des styles pour les réutiliser, et comment travailler sur des projets à plusieurs avec vos coéquipiers.",
     myProjects: {
       title: "Mes projets",
+      loginNote: "Vous devez être connecté pour accéder au tableau de bord Mes projets.",
       descLink: "Mes projets",
       descAfter:
         " et créez un nouveau projet : vous parcourez les étapes ci-dessous dans l'ordre pour aboutir à votre résultat. Vous pouvez revenir au tableau de bord et reprendre n'importe quelle étape à tout moment.",

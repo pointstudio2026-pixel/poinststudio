@@ -1354,6 +1354,7 @@ export const de: Messages = {
       "Hier finden Sie den gesamten Ablauf zum Erstellen von Markenvisuals, wie Sie Stile speichern und wiederverwenden und wie Sie gemeinsam mit Teammitgliedern an Projekten arbeiten.",
     myProjects: {
       title: "Meine Projekte",
+      loginNote: "Um auf das Dashboard Meine Projekte zuzugreifen, müssen Sie angemeldet sein.",
       descLink: "Meine Projekte",
       descAfter:
         " ein neues Projekt erstellen, durchlaufen Sie die folgenden Schritte der Reihe nach bis zu Ihrem Ergebnis. Sie können jederzeit zum Dashboard zurückkehren und jeden Schritt fortsetzen.",

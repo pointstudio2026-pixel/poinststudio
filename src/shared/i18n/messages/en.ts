@@ -1350,6 +1350,7 @@ export const en: Messages = {
       "Here's the full flow for creating brand visuals, how to save styles to reuse them, and how to work on projects together with teammates.",
     myProjects: {
       title: "My Projects",
+      loginNote: "You need to be logged in to access the My Projects dashboard.",
       descLink: "My Projects",
       descAfter:
         " dashboard, create a new project and you'll move through the steps below in order to reach your result. You can return to the dashboard and pick up any step at any time.",

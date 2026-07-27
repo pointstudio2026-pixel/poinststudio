@@ -43,6 +43,7 @@ export default async function GuidePage() {
             </div>
             <h2 className="text-xl font-semibold">{t.myProjects.title}</h2>
           </div>
+          <p className="text-sm text-muted">{t.myProjects.loginNote}</p>
           <p className="text-muted">
             <Link href="/projects" className="underline underline-offset-4">
               {t.myProjects.descLink}
