@@ -4,7 +4,7 @@ export const ko = {
   },
   meta: {
     title: "ASTER — AI 로고 제작 · 브랜드 디자인",
-    description: "AI 로고 제작, 브랜드 디자인, 무료 목업까지 한 번에. 인터뷰 몇 번이면 브랜드 방향과 로고, 목업을 빠르게 완성합니다.",
+    description: "AI 로고 제작부터 브랜드 디자인, 무료 목업까지 한 번에. 몇 가지 질문에 답하면 AI가 브랜드 전략과 로고, 컨셉 보드, 매장 목업까지 빠르게 만들어드립니다. 신용카드 등록 없이 무료로 시작하세요.",
   },
   generationFeedback: {
     rateThisResult: "이 결과 평가하기 (선택)",
