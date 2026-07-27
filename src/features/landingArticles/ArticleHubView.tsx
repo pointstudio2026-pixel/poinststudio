@@ -12,10 +12,11 @@ import { getCategoryMeta } from "@/features/landingArticles/categoryMeta";
 import { GuideCategoryRegistrar } from "@/features/landingArticles/GuideCategoryRegistrar";
 import type { LandingArticle, StyleGuideContent } from "@/modules/landingArticles/domain/LandingArticle";
 
-// "faq"는 이 허브(카테고리 디렉터리 + 카테고리별 목록)에 의도적으로 안
-// 나온다 -- 성격이 다른 단독 진입점(네비게이션의 FAQ 메뉴)으로만 접근하며,
+// "faq"/"why-aster"는 이 허브(카테고리 디렉터리 + 카테고리별 목록)에
+// 의도적으로 안 나온다 -- 여러 글이 모이는 "카테고리"가 아니라 성격이 다른
+// 단독 진입점(네비게이션의 FAQ/왜 ASTER인가요 메뉴)으로만 접근한다. FAQ는
 // ?category=faq로 들어왔을 때만 예외적으로 같은 화면 구조를 재사용한다.
-const HIDDEN_FROM_DIRECTORY = new Set(["faq"]);
+const HIDDEN_FROM_DIRECTORY = new Set(["faq", "why-aster"]);
 
 export async function ArticleHubView({
   locale,
