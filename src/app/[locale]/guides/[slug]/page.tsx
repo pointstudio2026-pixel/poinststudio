@@ -5,6 +5,10 @@ import { landingArticlesContainer } from "@/modules/landingArticles/container";
 import { NotFoundError } from "@/shared/errors/AppError";
 import { BASE_URL } from "@/shared/seo/baseUrl";
 
+// force-dynamic 필수 -- src/app/guides/page.tsx의 주석 참고. 빌드 시점
+// 프리렌더 시도가 DB/큐 연결을 트리거해서 빌드 자체가 죽는 걸 막는다.
+export const dynamic = "force-dynamic";
+
 const NON_KO_LOCALES = ["en", "ja", "fr", "de"] as const;
 type NonKoLocale = (typeof NON_KO_LOCALES)[number];
 
