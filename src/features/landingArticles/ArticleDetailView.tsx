@@ -93,9 +93,9 @@ export async function ArticleDetailView({ locale, article }: { locale: string; a
             <h2 className="text-xl font-semibold">{labels.detailSpecHeading}</h2>
             <dl className="flex flex-col divide-y divide-line rounded-2xl border border-line bg-surface shadow-soft">
               {content.detailSpec.map((item, index) => (
-                <div key={`${item.label}-${index}`} className="flex items-baseline justify-between gap-4 px-5 py-3">
-                  <dt className="text-sm text-muted">{item.label}</dt>
-                  <dd className="text-right font-medium">{item.value}</dd>
+                <div key={`${item.label}-${index}`} className="flex flex-col gap-1 px-5 py-4">
+                  <dt className="text-sm font-medium text-ink">{item.label}</dt>
+                  <dd className="text-sm text-muted">{item.value}</dd>
                 </div>
               ))}
             </dl>
