@@ -17,6 +17,7 @@ import { getLandingArticleLabels } from "@/features/landingArticles/labels";
 import { GuideCategoryRegistrar } from "@/features/landingArticles/GuideCategoryRegistrar";
 import { LOCALE_LABELS } from "@/features/navigation/LanguageSwitcher";
 import type { Locale } from "@/shared/i18n/locale";
+import { buildArticleJsonLd, buildBreadcrumbJsonLd, buildFaqPageJsonLd } from "@/shared/seo/articleJsonLd";
 
 export async function ArticleDetailView({ locale, article }: { locale: string; article: LandingArticle }) {
   const session = await getCurrentSession();
@@ -32,8 +33,21 @@ export async function ArticleDetailView({ locale, article }: { locale: string; a
   // 이건 사람이 직접 누를 수 있는 화면상의 언어 전환 링크.
   const availableLocales = await landingArticlesContainer.listAvailableLocalesUseCase.execute({ slug: article.slug });
 
+  const faqJsonLd = buildFaqPageJsonLd(article);
+
   return (
     <div className="flex min-h-screen flex-col bg-paper">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildArticleJsonLd(locale, article)) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildBreadcrumbJsonLd(locale, article)) }}
+      />
+      {faqJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      )}
       <GuideCategoryRegistrar category={article.category} />
       {user ? (
         <AppHeader user={{ email: user.email, name: user.name }} planCode={subscription?.planCode ?? "free"} />
