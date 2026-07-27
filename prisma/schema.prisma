@@ -836,3 +836,53 @@ model GenerationFeedback {
 
   @@map("generation_feedback")
 }
+
+// SEO 롱테일 랜딩페이지("활용사례" 허브). n8n 콘텐츠 자동화 파이프라인이
+// 만들어서 채운다 -- slug는 언어와 무관하게 주제 하나를 가리키는 안정된
+// 식별자이고(예: "style-premium-bold"), 실제 언어별 텍스트는
+// LandingArticleTranslation에 1:N으로 나뉜다. category는 enum이 아니라
+// 자유 문자열이다 -- "style" -> "style-industry" -> "deliverable-type" ->
+// "style-sub" 순으로 카테고리 자체가 계속 늘어날 예정이라 배포 없이
+// 새 카테고리를 추가할 수 있어야 한다.
+model LandingArticleGroup {
+  id        String   @id @default(uuid()) @db.Uuid
+  slug      String   @unique @db.VarChar(160)
+  category  String   @db.VarChar(60)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  translations LandingArticleTranslation[]
+
+  @@index([category])
+  @@map("landing_article_groups")
+}
+
+enum LandingArticleStatus {
+  draft
+  published
+
+  @@map("landing_article_status")
+}
+
+// content는 LandingArticleContent 형태(정의/실제이미지/어울리는 업종/
+// 디테일 스펙/어울리는 조합/FAQ/CTA)의 JSON -- 8단계 페이지 구조 규칙을
+// 그대로 담는다. title(SEO용 <title>)과 displayTitle(허브 페이지에 보이는
+// 제목)을 분리한 이유는 검색엔진용 제목과 블로그처럼 둘러볼 때 보이는
+// 제목의 규칙이 다르기 때문이다(각각 팀 컨벤션 문서 참고).
+model LandingArticleTranslation {
+  id              String                @id @default(uuid()) @db.Uuid
+  groupId         String                @map("group_id") @db.Uuid
+  group           LandingArticleGroup   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  locale          String                @db.VarChar(10)
+  title           String                @db.VarChar(200)
+  displayTitle    String                @map("display_title") @db.VarChar(200)
+  metaDescription String                @map("meta_description") @db.VarChar(300)
+  content         Json
+  status          LandingArticleStatus  @default(draft)
+  publishedAt     DateTime?             @map("published_at") @db.Timestamptz()
+  createdAt       DateTime              @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt       DateTime              @updatedAt @map("updated_at") @db.Timestamptz()
+
+  @@unique([groupId, locale])
+  @@index([locale, status])
+  @@map("landing_article_translations")
+}
