@@ -501,7 +501,7 @@ export const ko = {
     myStyles: "내 스타일",
     team: "팀",
     guide: "사용방법",
-    useCases: "가이드",
+    useCases: "디자인 가이드",
     support: "문의사항",
     myInfo: "내 정보",
     subscription: "결제정보 (구독)",

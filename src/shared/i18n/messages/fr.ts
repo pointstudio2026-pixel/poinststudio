@@ -502,7 +502,7 @@ export const fr: Messages = {
     myStyles: "Mes styles",
     team: "Équipe",
     guide: "Comment ça marche",
-    useCases: "Guides",
+    useCases: "Guides de design",
     support: "Contact",
     myInfo: "Mon compte",
     subscription: "Facturation (abonnement)",
