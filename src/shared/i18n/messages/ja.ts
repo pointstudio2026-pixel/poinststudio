@@ -6,7 +6,7 @@ export const ja: Messages = {
   },
   meta: {
     title: "ASTER — AIロゴ制作・ブランドデザイン",
-    description: "AIロゴ制作からブランドデザインまで。いくつかの質問に答えるだけで、ブランドの方向性・ロゴ・モックアップをすぐに作成できます。",
+    description: "AIロゴ制作、ブランドデザイン、無料モックアップまで一度に。いくつかの質問に答えるだけで、ブランドの方向性・ロゴ・モックアップをすぐに作成できます。",
   },
   generationFeedback: {
     rateThisResult: "この結果を評価する(任意)",

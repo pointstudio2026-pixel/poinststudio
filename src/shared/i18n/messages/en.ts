@@ -6,7 +6,7 @@ export const en: Messages = {
   },
   meta: {
     title: "ASTER — AI Logo Maker & Brand Design",
-    description: "AI-powered logo maker and brand design tool. Answer a few questions and get brand direction, logo concepts, and mockups in minutes.",
+    description: "Free AI logo maker with brand design and mockups. Answer a few questions and get brand direction, logo concepts, and mockups in minutes — no credit card required.",
   },
   generationFeedback: {
     rateThisResult: "Rate this result (optional)",

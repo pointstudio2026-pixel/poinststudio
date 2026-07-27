@@ -6,7 +6,7 @@ export const de: Messages = {
   },
   meta: {
     title: "ASTER — KI-Logo-Generator & Markendesign",
-    description: "KI-Logo-Generator und Markendesign-Tool. Beantworten Sie ein paar Fragen und erhalten Sie Markenrichtung, Logo-Konzepte und Mockups in Minuten.",
+    description: "Kostenloser KI-Logo-Generator mit Markendesign und Mockups. Beantworten Sie ein paar Fragen und erhalten Sie Markenrichtung, Logo-Konzepte und Mockups in Minuten.",
   },
   generationFeedback: {
     rateThisResult: "Dieses Ergebnis bewerten (optional)",

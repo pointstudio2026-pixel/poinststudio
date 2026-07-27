@@ -6,7 +6,7 @@ export const fr: Messages = {
   },
   meta: {
     title: "ASTER — Créateur de logo IA et design de marque",
-    description: "Créateur de logo IA et outil de design de marque. Répondez à quelques questions pour obtenir une direction de marque, des logos et des maquettes en quelques minutes.",
+    description: "Créateur de logo IA gratuit avec design de marque et maquettes. Répondez à quelques questions pour obtenir une direction de marque, des logos et des maquettes en quelques minutes.",
   },
   generationFeedback: {
     rateThisResult: "Évaluer ce résultat (facultatif)",
