@@ -12,6 +12,9 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL("https://www.designaster.com"),
     title: MESSAGES[locale].meta.title,
     description: MESSAGES[locale].meta.description,
+    other: {
+      "naver-site-verification": "1e705549ff65b5ca17687ce1f6cf2d2891b00262",
+    },
   };
 }
 
