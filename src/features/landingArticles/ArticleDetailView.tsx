@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Header } from "@/features/landing/Header";
 import { AppHeader } from "@/features/navigation/AppHeader";
 import { Footer } from "@/features/landing/Footer";
@@ -207,12 +208,15 @@ function StyleGuideBody({
       {content.images.length > 0 && (
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {content.images.map((image, index) => (
-            <img
-              key={`${image.url}-${index}`}
-              src={image.url}
-              alt={image.alt}
-              className="w-full rounded-2xl border border-line object-cover shadow-soft"
-            />
+            <div key={`${image.url}-${index}`} className="relative aspect-[4/3] w-full">
+              <Image
+                src={image.url}
+                alt={image.alt}
+                fill
+                sizes="(max-width: 640px) 100vw, 50vw"
+                className="rounded-2xl border border-line object-cover shadow-soft"
+              />
+            </div>
           ))}
         </section>
       )}

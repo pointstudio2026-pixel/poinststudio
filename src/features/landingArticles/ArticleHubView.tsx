@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Header } from "@/features/landing/Header";
 import { AppHeader } from "@/features/navigation/AppHeader";
 import { Footer } from "@/features/landing/Footer";
@@ -211,7 +212,15 @@ function renderArticleCard(article: LandingArticle, locale: string) {
       className="shadow-soft flex flex-col overflow-hidden rounded-2xl border border-line bg-surface transition hover:-translate-y-0.5 hover:shadow-md"
     >
       {thumbnail ? (
-        <img src={thumbnail.url} alt={thumbnail.alt} className="aspect-video w-full object-cover" />
+        <div className="relative aspect-video w-full">
+          <Image
+            src={thumbnail.url}
+            alt={thumbnail.alt}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover"
+          />
+        </div>
       ) : (
         <div className="aspect-video w-full bg-tint-blue" />
       )}

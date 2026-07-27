@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { MessageKey } from "@/shared/i18n/messages/types";
 
@@ -65,8 +66,9 @@ export function ResultShowcase() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {STYLE_TILES.map((s) => (
           <div key={s.nameKey} className="overflow-hidden rounded-xl border border-line bg-paper">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={s.image} alt={t(s.nameKey)} className="aspect-square w-full object-cover" />
+            <div className="relative aspect-square w-full">
+              <Image src={s.image} alt={t(s.nameKey)} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover" />
+            </div>
             <p className="px-3 py-2 text-sm font-medium">{t(s.nameKey)}</p>
           </div>
         ))}
@@ -79,9 +81,8 @@ export function ResultShowcase() {
             key={l.nameKey}
             className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5"
           >
-            <div className="h-16 w-16 overflow-hidden rounded-full border border-line bg-surface">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={l.image} alt={t(l.nameKey)} className="h-full w-full object-cover" />
+            <div className="relative h-16 w-16 overflow-hidden rounded-full border border-line bg-surface">
+              <Image src={l.image} alt={t(l.nameKey)} fill sizes="64px" className="object-cover" />
             </div>
             <p className="text-sm text-muted">{t(l.nameKey)}</p>
           </div>
@@ -103,12 +104,9 @@ export function ResultShowcase() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {MOCKUP_KINDS.map((m) => (
           <div key={m.nameKey} className="overflow-hidden rounded-xl border border-line bg-paper">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={m.image}
-              alt={t(m.nameKey)}
-              className="aspect-[4/3] w-full object-cover"
-            />
+            <div className="relative aspect-[4/3] w-full">
+              <Image src={m.image} alt={t(m.nameKey)} fill sizes="(max-width: 640px) 50vw, 33vw" className="object-cover" />
+            </div>
             <p className="px-3 py-2 text-sm font-medium">{t("home.showcase.mockup.applied", { name: t(m.nameKey) })}</p>
           </div>
         ))}
