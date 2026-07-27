@@ -8,7 +8,8 @@ import { subscriptionsContainer } from "@/modules/subscriptions/container";
 import { landingArticlesContainer } from "@/modules/landingArticles/container";
 import { guideDetailHref } from "@/features/landingArticles/routing";
 import { getLandingArticleLabels } from "@/features/landingArticles/labels";
-import type { FaqArticleContent, StyleGuideContent } from "@/modules/landingArticles/domain/LandingArticle";
+import { GuideCategoryRegistrar } from "@/features/landingArticles/GuideCategoryRegistrar";
+import type { StyleGuideContent } from "@/modules/landingArticles/domain/LandingArticle";
 
 // 이 허브는 카테고리별 둘러보기 화면을 겸한다 -- 기본값은 "스타일 가이드
 // 둘러보기"(style)이고, ?category=faq로 들어오면 FAQ 게시글 목록을 같은
@@ -34,6 +35,7 @@ export async function ArticleHubView({ locale, category }: { locale: string; cat
 
   return (
     <div className="flex min-h-screen flex-col bg-paper">
+      <GuideCategoryRegistrar category={isFaqHub ? "faq" : null} />
       {user ? (
         <AppHeader user={{ email: user.email, name: user.name }} planCode={subscription?.planCode ?? "free"} />
       ) : (
@@ -81,15 +83,13 @@ export async function ArticleHubView({ locale, category }: { locale: string; cat
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {articles.map((article) => {
               if (article.category === "faq") {
-                const content = article.content as FaqArticleContent;
                 return (
                   <Link
                     key={article.slug}
                     href={guideDetailHref(locale, article.slug)}
-                    className="shadow-soft flex flex-col gap-2 rounded-2xl border border-line bg-surface p-5 transition hover:-translate-y-0.5 hover:shadow-md"
+                    className="shadow-soft flex flex-col rounded-2xl border border-line bg-surface p-5 transition hover:-translate-y-0.5 hover:shadow-md"
                   >
                     <h2 className="text-lg font-semibold">{article.displayTitle}</h2>
-                    <p className="line-clamp-3 text-sm text-muted">{content.summary}</p>
                   </Link>
                 );
               }

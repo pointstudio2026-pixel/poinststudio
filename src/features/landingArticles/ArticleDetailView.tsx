@@ -14,6 +14,7 @@ import type {
 import { landingArticlesContainer } from "@/modules/landingArticles/container";
 import { guideDetailHref, guidesHubHref, guidesHubHrefForCategory } from "@/features/landingArticles/routing";
 import { getLandingArticleLabels } from "@/features/landingArticles/labels";
+import { GuideCategoryRegistrar } from "@/features/landingArticles/GuideCategoryRegistrar";
 import { LOCALE_LABELS } from "@/features/navigation/LanguageSwitcher";
 import type { Locale } from "@/shared/i18n/locale";
 
@@ -33,6 +34,7 @@ export async function ArticleDetailView({ locale, article }: { locale: string; a
 
   return (
     <div className="flex min-h-screen flex-col bg-paper">
+      <GuideCategoryRegistrar category={article.category} />
       {user ? (
         <AppHeader user={{ email: user.email, name: user.name }} planCode={subscription?.planCode ?? "free"} />
       ) : (

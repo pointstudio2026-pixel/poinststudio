@@ -1,12 +1,12 @@
 "use client";
 
-import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import type { Locale } from "@/shared/i18n/locale";
 import { setLocaleCookie } from "@/shared/i18n/cookie";
 import { MESSAGES } from "@/shared/i18n/messages";
 import type { MessageKey } from "@/shared/i18n/messages/types";
-import { guidesHubHref } from "@/features/landingArticles/routing";
+import { guidesHubHref, guidesHubHrefForCategory } from "@/features/landingArticles/routing";
 
 type TranslateFn = (key: MessageKey, params?: Record<string, string | number>) => string;
 
@@ -14,6 +14,12 @@ interface LocaleContextValue {
   locale: Locale;
   setLocale: (locale: Locale) => void;
   t: TranslateFn;
+  // 가이드 허브/글 화면이 마운트되는 동안 자신의 category("faq" 등)를
+  // 등록해두는 용도 -- 언어 전환 시 어느 카테고리 허브로 돌아가야 하는지
+  // (일반 디자인 가이드 허브 vs FAQ 허브) URL만으로는 알 수 없어서
+  // (글 슬러그에 카테고리가 안 들어있음) 실제 렌더링된 글의 category를
+  // 신뢰할 수 있는 값으로 그대로 전달받는다.
+  setGuideCategory: (category: string | null) => void;
 }
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
@@ -54,8 +60,19 @@ export function LocaleProvider({
   children: ReactNode;
 }) {
   const [locale, setLocaleState] = useState<Locale>(initialLocale);
+  const [guideCategory, setGuideCategory] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
+
+  // 가이드 화면을 벗어나면 이전 화면에서 등록해둔 category가 남아있으면
+  // 안 되므로 경로가 바뀔 때마다 초기화한다 -- 새 가이드 화면이 마운트되면
+  // 자기 category를 다시 등록하므로(아래 setGuideCategory 호출) 실제로는
+  // 그 사이의 찰나에만 null이었다가 바로 맞는 값으로 채워진다.
+  useEffect(() => {
+    if (!isGuidesPath(pathname)) {
+      setGuideCategory(null);
+    }
+  }, [pathname]);
 
   const t = useCallback<TranslateFn>(
     (key, params) => {
@@ -73,8 +90,11 @@ export function LocaleProvider({
       if (isGuidesPath(pathname)) {
         // /guides 존은 쿠키가 아니라 URL로 언어가 결정되므로, 쿠키만
         // 바꾸고 refresh해봤자 본문은 그대로다 -- 실제로 새 언어 zone의
-        // 허브로 이동시킨다.
-        router.push(guidesHubHref(next));
+        // 허브로 이동시킨다. FAQ 글을 보고 있었다면 일반 디자인 가이드
+        // 허브가 아니라 FAQ 허브로 보내야 한다(등록된 guideCategory 기준).
+        router.push(
+          guideCategory === "faq" ? guidesHubHrefForCategory(next, "faq") : guidesHubHref(next),
+        );
         return;
       }
 
@@ -85,10 +105,12 @@ export function LocaleProvider({
       // 서버 컴포넌트를 새 쿠키 기준으로 다시 렌더링하게 강제한다.
       router.refresh();
     },
-    [router, pathname],
+    [router, pathname, guideCategory],
   );
 
-  return <LocaleContext.Provider value={{ locale, setLocale, t }}>{children}</LocaleContext.Provider>;
+  return (
+    <LocaleContext.Provider value={{ locale, setLocale, t, setGuideCategory }}>{children}</LocaleContext.Provider>
+  );
 }
 
 export function useTranslation(): LocaleContextValue {
