@@ -36,9 +36,13 @@ const styleGuideContentSchema = z.object({
   ctaHref: z.string().min(1),
 });
 
-const faqPageContentSchema = z.object({
-  intro: z.string().optional(),
-  items: z.array(landingArticleFaqSchema).min(1),
+const faqArticleContentSchema = z.object({
+  summary: z.string().min(1),
+  body: z.array(z.string().min(1)).min(1),
+  keyPoints: z.array(landingArticleDetailSpecSchema),
+  relatedQuestions: z.array(landingArticleComboSchema),
+  ctaLabel: z.string().min(1),
+  ctaHref: z.string().min(1),
 });
 
 const whyAsterPageContentSchema = z.object({
@@ -52,7 +56,7 @@ const whyAsterPageContentSchema = z.object({
 // 합치지 않고 union으로 검증한다 -- zod가 순서대로 시도해서 맞는 걸 고른다.
 export const landingArticleContentSchema = z.union([
   styleGuideContentSchema,
-  faqPageContentSchema,
+  faqArticleContentSchema,
   whyAsterPageContentSchema,
 ]);
 

@@ -9,3 +9,12 @@ export function guidesHubHref(locale: string): string {
 export function guideDetailHref(locale: string, slug: string): string {
   return locale === "ko" ? `/guides/${slug}` : `/${locale}/guides/${slug}`;
 }
+
+/**
+ * 카테고리별로 필터링된 허브 링크 -- FAQ처럼 "허브 하나 + 개별 게시글 여러
+ * 개"로 다루는 카테고리를 스타일 가이드 허브와 같은 화면(다른 URL 없이
+ * ?category= 쿼리로만 구분)에서 보여줄 때 쓴다.
+ */
+export function guidesHubHrefForCategory(locale: string, category: string): string {
+  return `${guidesHubHref(locale)}?category=${encodeURIComponent(category)}`;
+}

@@ -6,13 +6,13 @@ import { getCurrentSession } from "@/shared/auth/session";
 import { authContainer } from "@/modules/auth/container";
 import { subscriptionsContainer } from "@/modules/subscriptions/container";
 import type {
-  FaqPageContent,
+  FaqArticleContent,
   LandingArticle,
   StyleGuideContent,
   WhyAsterPageContent,
 } from "@/modules/landingArticles/domain/LandingArticle";
 import { landingArticlesContainer } from "@/modules/landingArticles/container";
-import { guideDetailHref, guidesHubHref } from "@/features/landingArticles/routing";
+import { guideDetailHref, guidesHubHref, guidesHubHrefForCategory } from "@/features/landingArticles/routing";
 import { getLandingArticleLabels } from "@/features/landingArticles/labels";
 import { LOCALE_LABELS } from "@/features/navigation/LanguageSwitcher";
 import type { Locale } from "@/shared/i18n/locale";
@@ -42,8 +42,15 @@ export async function ArticleDetailView({ locale, article }: { locale: string; a
       <main className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-5 py-16 sm:px-8 sm:py-24">
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            {article.category === "style" ? (
-              <Link href={guidesHubHref(locale)} className="text-sm text-muted underline underline-offset-4">
+            {article.category === "style" || article.category === "faq" ? (
+              <Link
+                href={
+                  article.category === "faq"
+                    ? guidesHubHrefForCategory(locale, "faq")
+                    : guidesHubHref(locale)
+                }
+                className="text-sm text-muted underline underline-offset-4"
+              >
                 {labels.backToHub}
               </Link>
             ) : (
@@ -69,7 +76,7 @@ export async function ArticleDetailView({ locale, article }: { locale: string; a
         </div>
 
         {article.category === "faq" ? (
-          <FaqBody content={article.content as FaqPageContent} />
+          <FaqBody content={article.content as FaqArticleContent} locale={locale} labels={labels} />
         ) : article.category === "why-aster" ? (
           <WhyAsterBody content={article.content as WhyAsterPageContent} />
         ) : (
@@ -82,22 +89,65 @@ export async function ArticleDetailView({ locale, article }: { locale: string; a
   );
 }
 
-function FaqBody({ content }: { content: FaqPageContent }) {
+function FaqBody({
+  content,
+  locale,
+  labels,
+}: {
+  content: FaqArticleContent;
+  locale: string;
+  labels: ReturnType<typeof getLandingArticleLabels>;
+}) {
   return (
-    <section className="flex flex-col gap-4">
-      {content.intro && <p className="text-lg text-muted">{content.intro}</p>}
-      <div className="flex flex-col gap-3">
-        {content.items.map((item, index) => (
-          <details
-            key={`${item.question}-${index}`}
-            className="rounded-2xl border border-line bg-surface p-4 shadow-soft"
-          >
-            <summary className="cursor-pointer font-medium">{item.question}</summary>
-            <p className="mt-2 text-sm text-muted">{item.answer}</p>
-          </details>
+    <>
+      <p className="-mt-8 text-lg text-muted">{content.summary}</p>
+
+      <section className="flex flex-col gap-4 text-sm text-muted">
+        {content.body.map((paragraph, index) => (
+          <p key={index}>{paragraph}</p>
         ))}
-      </div>
-    </section>
+      </section>
+
+      {content.keyPoints.length > 0 && (
+        <section className="flex flex-col gap-4">
+          <h2 className="text-xl font-semibold">{labels.keyPointsHeading}</h2>
+          <dl className="flex flex-col divide-y divide-line rounded-2xl border border-line bg-surface shadow-soft">
+            {content.keyPoints.map((item, index) => (
+              <div key={`${item.label}-${index}`} className="flex flex-col gap-1 px-5 py-4">
+                <dt className="text-sm font-medium text-ink">{item.label}</dt>
+                <dd className="text-sm text-muted">{item.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
+
+      {content.relatedQuestions.length > 0 && (
+        <section className="flex flex-col gap-4">
+          <h2 className="text-xl font-semibold">{labels.relatedQuestionsHeading}</h2>
+          <div className="flex flex-wrap gap-2">
+            {content.relatedQuestions.map((q) => (
+              <Link
+                key={q.slug}
+                href={guideDetailHref(locale, q.slug)}
+                className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-[var(--color-gold)] hover:text-ink"
+              >
+                {q.label}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="flex justify-center">
+        <Link
+          href={content.ctaHref}
+          className="rounded-full bg-ink px-8 py-3 text-center text-sm text-paper transition hover:opacity-90"
+        >
+          {content.ctaLabel}
+        </Link>
+      </section>
+    </>
   );
 }
 

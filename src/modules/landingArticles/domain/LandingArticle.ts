@@ -15,10 +15,19 @@ export interface StyleGuideContent {
   ctaHref: string;
 }
 
-/** category === "faq" 전용 콘텐츠 구조 -- 순수 Q&A 나열. */
-export interface FaqPageContent {
-  intro?: string;
-  items: { question: string; answer: string }[];
+/**
+ * category === "faq" 전용 콘텐츠 구조 -- 질문 하나당 독립된 게시글 하나
+ * (허브 + 개별 글 구조, 스타일 가이드와 동일한 패턴을 그대로 따른다). 처음엔
+ * 한 페이지에 Q&A를 다 나열하는 방식이었으나, 각 질문을 더 짜임새 있게
+ * 다루기 위해(요약+본문+핵심 포인트+관련 질문) 개별 글로 분리했다.
+ */
+export interface FaqArticleContent {
+  summary: string;
+  body: string[];
+  keyPoints: { label: string; value: string }[];
+  relatedQuestions: { slug: string; label: string }[];
+  ctaLabel: string;
+  ctaHref: string;
 }
 
 /** category === "why-aster" 전용 콘텐츠 구조 -- 강점/혜택 나열 + CTA. */
@@ -36,7 +45,7 @@ export interface WhyAsterPageContent {
  * 쪽(ArticleDetailView)은 항상 article.category로 분기해서 알맞은 타입으로
  * 다룬다 -- category가 신뢰할 수 있는 판별 필드.
  */
-export type LandingArticleContent = StyleGuideContent | FaqPageContent | WhyAsterPageContent;
+export type LandingArticleContent = StyleGuideContent | FaqArticleContent | WhyAsterPageContent;
 
 export type LandingArticleStatus = "draft" | "published";
 

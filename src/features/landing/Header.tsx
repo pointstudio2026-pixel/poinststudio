@@ -10,7 +10,7 @@ import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { MessageKey } from "@/shared/i18n/messages/types";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
-import { guideDetailHref, guidesHubHref } from "@/features/landingArticles/routing";
+import { guideDetailHref, guidesHubHref, guidesHubHrefForCategory } from "@/features/landingArticles/routing";
 
 const NAV_LINKS: { href: string; labelKey: MessageKey }[] = [
   { href: "#top", labelKey: "home.header.navService" },
@@ -92,7 +92,7 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
                         {t("nav.whyAster")}
                       </Link>
                       <Link
-                        href={guideDetailHref(locale, "faq")}
+                        href={guidesHubHrefForCategory(locale, "faq")}
                         className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper"
                       >
                         {t("nav.faqPage")}
@@ -202,7 +202,7 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
                   {t("nav.whyAster")}
                 </Link>
                 <Link
-                  href={guideDetailHref(locale, "faq")}
+                  href={guidesHubHrefForCategory(locale, "faq")}
                   className="rounded-full border border-line px-4 py-3 text-center text-sm"
                 >
                   {t("nav.faqPage")}
@@ -248,7 +248,7 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
                   {t("nav.whyAster")}
                 </Link>
                 <Link
-                  href={guideDetailHref(locale, "faq")}
+                  href={guidesHubHrefForCategory(locale, "faq")}
                   className="rounded-full border border-line px-4 py-3 text-center text-sm"
                 >
                   {t("nav.faqPage")}
