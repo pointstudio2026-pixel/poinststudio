@@ -30,6 +30,8 @@ interface TemplateDef {
   placement: PlacementRect;
   /** 완성된 결과물 전체(포스터/브로슈어 등)를 크게 합성할 영역 -- DELIVERABLE_TYPE_TO_MOCKUP_CATEGORY에 매핑된 카테고리만 채운다. */
   fullDesignPlacement?: PlacementRect;
+  /** 목업 단독 프로세스의 배경 검색용 키워드(동의어/업종 시소러스). */
+  keywords: string[];
 }
 
 const TEMPLATES: TemplateDef[] = [
@@ -41,6 +43,7 @@ const TEMPLATES: TemplateDef[] = [
     imagePath: "/mockup-templates/business-card.jpg",
     placement: { xPct: 32, yPct: 22, widthPct: 20, heightPct: 20 },
     fullDesignPlacement: { xPct: 14, yPct: 12, widthPct: 56, heightPct: 60 },
+    keywords: ["명함", "비즈니스카드", "카드", "네임카드"],
   },
   {
     category: "signboard",
@@ -49,6 +52,7 @@ const TEMPLATES: TemplateDef[] = [
     description: "간판 목업 템플릿 -- 매장 사인에 로고를 자동 배치합니다.",
     imagePath: "/mockup-templates/signboard.jpg",
     placement: { xPct: 41, yPct: 20, widthPct: 30, heightPct: 38 },
+    keywords: ["간판", "매장", "상점", "숍", "외관", "매장 외관"],
   },
   {
     category: "mobile_app",
@@ -58,6 +62,7 @@ const TEMPLATES: TemplateDef[] = [
     imagePath: "/mockup-templates/mobile-app.jpg",
     placement: { xPct: 40, yPct: 18, widthPct: 8, heightPct: 8 },
     fullDesignPlacement: { xPct: 20, yPct: 17, widthPct: 22, heightPct: 56 },
+    keywords: ["모바일 앱", "앱", "어플", "스마트폰", "휴대폰"],
   },
   {
     category: "website_hero",
@@ -67,6 +72,7 @@ const TEMPLATES: TemplateDef[] = [
     imagePath: "/mockup-templates/website-hero.jpg",
     placement: { xPct: 9, yPct: 12, widthPct: 12, heightPct: 5 },
     fullDesignPlacement: { xPct: 8, yPct: 19, widthPct: 55, heightPct: 56 },
+    keywords: ["웹사이트", "홈페이지", "웹", "사이트", "노트북", "온라인"],
   },
   {
     category: "brochure",
@@ -76,6 +82,7 @@ const TEMPLATES: TemplateDef[] = [
     imagePath: "/mockup-templates/brochure.jpg",
     placement: { xPct: 66, yPct: 16, widthPct: 26, heightPct: 12 },
     fullDesignPlacement: { xPct: 58, yPct: 8, widthPct: 38, heightPct: 82 },
+    keywords: ["브로슈어", "카탈로그", "팜플렛", "소개서"],
   },
   {
     category: "poster",
@@ -85,6 +92,7 @@ const TEMPLATES: TemplateDef[] = [
     imagePath: "/mockup-templates/poster-medical.jpg",
     placement: { xPct: 28, yPct: 10, widthPct: 44, heightPct: 6 },
     fullDesignPlacement: { xPct: 23, yPct: 8, widthPct: 60, heightPct: 82 },
+    keywords: ["포스터", "벽보", "홍보물", "안내문", "병원", "의원", "클리닉", "의료"],
   },
   {
     category: "poster",
@@ -94,6 +102,7 @@ const TEMPLATES: TemplateDef[] = [
     imagePath: "/mockup-templates/poster-cafe.jpg",
     placement: { xPct: 43, yPct: 11, widthPct: 35, heightPct: 18 },
     fullDesignPlacement: { xPct: 36, yPct: 2, widthPct: 46, heightPct: 82 },
+    keywords: ["포스터", "벽보", "홍보물", "안내문", "카페", "커피"],
   },
 ];
 
@@ -111,6 +120,7 @@ async function main() {
       name: t.name,
       description: t.description,
       backgroundUrl: t.imagePath,
+      keywords: t.keywords,
       placementXPct: t.placement.xPct,
       placementYPct: t.placement.yPct,
       placementWidthPct: t.placement.widthPct,

@@ -497,6 +497,7 @@ export const de: Messages = {
   },
   nav: {
     myProjects: "Meine Projekte",
+    mockup: "Mockup",
     myStyles: "Meine Stile",
     team: "Team",
     guide: "So funktioniert's",

@@ -15,6 +15,7 @@ import { AppHeader } from "@/features/navigation/AppHeader";
 import { Spinner } from "@/components/Spinner";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
+import { MOCKUP_CATEGORY_LABEL_KEYS } from "@/features/mockups/mockupCategoryLabels";
 
 type Step = "background" | "logo" | "result";
 type LogoSourceTab = "past" | "upload";
@@ -128,8 +129,11 @@ export function StandaloneMockupView({
                     className="overflow-hidden rounded-2xl border border-line bg-surface text-left transition hover:border-ink"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={template.backgroundUrl} alt={template.name} className="aspect-square w-full object-cover" />
-                    <p className="px-3 py-2 text-sm font-medium">{template.name}</p>
+                    <img
+                      src={template.backgroundUrl}
+                      alt={t(MOCKUP_CATEGORY_LABEL_KEYS[template.category])}
+                      className="aspect-square w-full object-cover"
+                    />
                   </button>
                 ))}
               </div>
@@ -141,10 +145,14 @@ export function StandaloneMockupView({
           <section className="flex flex-col gap-4">
             <div className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={selectedTemplate.backgroundUrl} alt={selectedTemplate.name} className="h-16 w-16 rounded-xl object-cover" />
+              <img
+                src={selectedTemplate.backgroundUrl}
+                alt={t(MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category])}
+                className="h-16 w-16 rounded-xl object-cover"
+              />
               <div className="flex-1">
                 <p className="text-xs text-muted">{t("dashboard.standaloneMockup.selectedBackgroundLabel")}</p>
-                <p className="text-sm font-medium">{selectedTemplate.name}</p>
+                <p className="text-sm font-medium">{t(MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category])}</p>
               </div>
               <button
                 type="button"
@@ -260,7 +268,7 @@ export function StandaloneMockupView({
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={result.resultImageUrl}
-                alt={selectedTemplate?.name ?? ""}
+                alt={selectedTemplate ? t(MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category]) : ""}
                 className="w-full max-w-md rounded-2xl border border-line object-contain shadow-soft"
               />
             )}

@@ -497,6 +497,7 @@ export const ja: Messages = {
   },
   nav: {
     myProjects: "マイプロジェクト",
+    mockup: "モックアップ",
     myStyles: "マイスタイル",
     team: "チーム",
     guide: "使い方",

@@ -30,6 +30,7 @@ interface ManifestRow {
   visionScore: number;
   visionSummary: string;
   visionEvaluation: unknown;
+  keywords?: string[];
 }
 
 const ADMIN_EMAIL = "pointstudio2026@gmail.com";
@@ -59,6 +60,7 @@ async function main() {
         name: row.name,
         description: row.description,
         backgroundUrl: row.imagePath,
+        keywords: row.keywords ?? [],
         placementXPct: row.placement.xPct,
         placementYPct: row.placement.yPct,
         placementWidthPct: row.placement.widthPct,
@@ -73,6 +75,7 @@ async function main() {
         name: row.name,
         description: row.description,
         backgroundUrl: row.imagePath,
+        keywords: row.keywords ?? [],
       },
     });
     templatesUpserted++;

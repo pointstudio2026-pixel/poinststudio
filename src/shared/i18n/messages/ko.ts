@@ -496,6 +496,7 @@ export const ko = {
   },
   nav: {
     myProjects: "내 프로젝트",
+    mockup: "목업",
     myStyles: "내 스타일",
     team: "팀",
     guide: "사용방법",

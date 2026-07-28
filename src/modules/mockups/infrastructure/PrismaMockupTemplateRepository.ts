@@ -76,12 +76,19 @@ export class PrismaMockupTemplateRepository implements MockupTemplateRepository 
   async search(query: string): Promise<MockupTemplate[]> {
     const trimmed = query.trim();
     if (!trimmed) return this.list();
+    // "병원 유니폼"처럼 여러 단어로 검색해도 각 단어가 keywords 배열의
+    // 원소 하나와 정확히 일치하면 매칭되도록 단어 단위로도 함께 본다
+    // (keywords는 짧은 단일/복합 명사 시소러스라 "has"는 정확히 일치해야
+    // 하므로, contains 기반인 name/description과 달리 부분 문자열 매칭이
+    // 안 된다 -- 이걸 보완).
+    const words = trimmed.split(/\s+/).filter(Boolean);
     const rows = await prisma.mockupTemplate.findMany({
       where: {
         OR: [
           { name: { contains: trimmed, mode: "insensitive" } },
           { description: { contains: trimmed, mode: "insensitive" } },
           { keywords: { has: trimmed } },
+          { keywords: { hasSome: words } },
         ],
       },
       orderBy: { name: "asc" },

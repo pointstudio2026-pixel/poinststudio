@@ -497,6 +497,7 @@ export const fr: Messages = {
   },
   nav: {
     myProjects: "Mes projets",
+    mockup: "Maquette",
     myStyles: "Mes styles",
     team: "Équipe",
     guide: "Comment ça marche",

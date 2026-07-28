@@ -37,7 +37,13 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 고급스러운 명함 목업을 잘 표현하고 있다."
-    }
+    },
+    "keywords": [
+      "명함",
+      "비즈니스카드",
+      "카드",
+      "네임카드"
+    ]
   },
   {
     "category": "business_card",
@@ -77,7 +83,13 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 고급스러운 느낌을 잘 전달하고 있다."
-    }
+    },
+    "keywords": [
+      "명함",
+      "비즈니스카드",
+      "카드",
+      "네임카드"
+    ]
   },
   {
     "category": "business_card",
@@ -117,7 +129,13 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 고급스러운 명함 디자인이다."
-    }
+    },
+    "keywords": [
+      "명함",
+      "비즈니스카드",
+      "카드",
+      "네임카드"
+    ]
   },
   {
     "category": "business_card",
@@ -157,7 +175,13 @@
       },
       "singleConceptRespected": true,
       "summary": "통일된 디자인으로 고급스러운 명함 목업이 잘 표현되었다."
-    }
+    },
+    "keywords": [
+      "명함",
+      "비즈니스카드",
+      "카드",
+      "네임카드"
+    ]
   },
   {
     "slug": "signboard-ex1",
@@ -197,7 +221,18 @@
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로, 현대적인 감각이 잘 드러난다."
     },
-    "description": "간판 목업 예시 이미지 1."
+    "description": "간판 목업 예시 이미지 1.",
+    "keywords": [
+      "간판",
+      "매장",
+      "상점",
+      "숍",
+      "외관",
+      "매장 외관",
+      "채널레터",
+      "입체 글자",
+      "건물 전면 간판"
+    ]
   },
   {
     "category": "business_card",
@@ -237,7 +272,13 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드의 고급스러움을 잘 나타내고 있다."
-    }
+    },
+    "keywords": [
+      "명함",
+      "비즈니스카드",
+      "카드",
+      "네임카드"
+    ]
   },
   {
     "slug": "signboard-ex2",
@@ -277,7 +318,17 @@
       "singleConceptRespected": true,
       "summary": "전반적으로 통일된 디자인으로 브랜드 이미지에 잘 맞지만, 약간의 현대적 요소가 추가되면 더욱 좋을 것이다."
     },
-    "description": "간판 목업 예시 이미지 2."
+    "description": "간판 목업 예시 이미지 2.",
+    "keywords": [
+      "간판",
+      "매장",
+      "상점",
+      "숍",
+      "외관",
+      "매장 외관",
+      "돌출간판",
+      "사이드 간판"
+    ]
   },
   {
     "slug": "signboard-ex3",
@@ -317,7 +368,18 @@
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인이지만, 브랜드와 트렌드 측면에서 개선이 필요하다."
     },
-    "description": "간판 목업 예시 이미지 3."
+    "description": "간판 목업 예시 이미지 3.",
+    "keywords": [
+      "간판",
+      "매장",
+      "상점",
+      "숍",
+      "외관",
+      "매장 외관",
+      "라이트박스",
+      "조명 간판",
+      "아크릴 간판"
+    ]
   },
   {
     "slug": "signboard-ex4",
@@ -357,7 +419,18 @@
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로, 고급스러운 브랜드 이미지에 적합하다."
     },
-    "description": "간판 목업 예시 이미지 4."
+    "description": "간판 목업 예시 이미지 4.",
+    "keywords": [
+      "간판",
+      "매장",
+      "상점",
+      "숍",
+      "외관",
+      "매장 외관",
+      "입간판",
+      "A자형 간판",
+      "스탠드 간판"
+    ]
   },
   {
     "slug": "signboard-ex5",
@@ -397,7 +470,17 @@
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인이지만, 브랜드의 독창성이 더 필요하다."
     },
-    "description": "간판 목업 예시 이미지 5."
+    "description": "간판 목업 예시 이미지 5.",
+    "keywords": [
+      "간판",
+      "매장",
+      "상점",
+      "숍",
+      "외관",
+      "매장 외관",
+      "캐노피",
+      "차양 간판"
+    ]
   },
   {
     "category": "mobile_app",
@@ -437,7 +520,14 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로, 현대적인 감각을 잘 살리고 있다."
-    }
+    },
+    "keywords": [
+      "모바일 앱",
+      "앱",
+      "어플",
+      "스마트폰",
+      "휴대폰"
+    ]
   },
   {
     "category": "mobile_app",
@@ -477,7 +567,14 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
-    }
+    },
+    "keywords": [
+      "모바일 앱",
+      "앱",
+      "어플",
+      "스마트폰",
+      "휴대폰"
+    ]
   },
   {
     "category": "mobile_app",
@@ -517,7 +614,14 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
-    }
+    },
+    "keywords": [
+      "모바일 앱",
+      "앱",
+      "어플",
+      "스마트폰",
+      "휴대폰"
+    ]
   },
   {
     "category": "mobile_app",
@@ -557,7 +661,14 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
-    }
+    },
+    "keywords": [
+      "모바일 앱",
+      "앱",
+      "어플",
+      "스마트폰",
+      "휴대폰"
+    ]
   },
   {
     "category": "mobile_app",
@@ -597,7 +708,14 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 부합한다."
-    }
+    },
+    "keywords": [
+      "모바일 앱",
+      "앱",
+      "어플",
+      "스마트폰",
+      "휴대폰"
+    ]
   },
   {
     "category": "website_hero",
@@ -637,7 +755,15 @@
       },
       "singleConceptRespected": true,
       "summary": "통일된 디자인으로 브랜드 이미지에 적합한 목업 사진이다."
-    }
+    },
+    "keywords": [
+      "웹사이트",
+      "홈페이지",
+      "웹",
+      "사이트",
+      "노트북",
+      "온라인"
+    ]
   },
   {
     "category": "website_hero",
@@ -677,7 +803,15 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
-    }
+    },
+    "keywords": [
+      "웹사이트",
+      "홈페이지",
+      "웹",
+      "사이트",
+      "노트북",
+      "온라인"
+    ]
   },
   {
     "category": "website_hero",
@@ -717,7 +851,15 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
-    }
+    },
+    "keywords": [
+      "웹사이트",
+      "홈페이지",
+      "웹",
+      "사이트",
+      "노트북",
+      "온라인"
+    ]
   },
   {
     "category": "website_hero",
@@ -757,7 +899,15 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 부합한다."
-    }
+    },
+    "keywords": [
+      "웹사이트",
+      "홈페이지",
+      "웹",
+      "사이트",
+      "노트북",
+      "온라인"
+    ]
   },
   {
     "category": "brochure",
@@ -797,7 +947,13 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
-    }
+    },
+    "keywords": [
+      "브로슈어",
+      "카탈로그",
+      "팜플렛",
+      "소개서"
+    ]
   },
   {
     "slug": "brochure-ex2",
@@ -837,7 +993,16 @@
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로, 현대적이고 세련된 느낌을 잘 전달하고 있음."
     },
-    "description": "브로슈어 목업 예시 이미지 2."
+    "description": "브로슈어 목업 예시 이미지 2.",
+    "keywords": [
+      "브로슈어",
+      "카탈로그",
+      "팜플렛",
+      "소개서",
+      "내지",
+      "스프레드",
+      "펼친 브로슈어"
+    ]
   },
   {
     "category": "brochure",
@@ -877,7 +1042,13 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 높은 품질을 보여준다."
-    }
+    },
+    "keywords": [
+      "브로슈어",
+      "카탈로그",
+      "팜플렛",
+      "소개서"
+    ]
   },
   {
     "slug": "brochure-ex4",
@@ -917,7 +1088,16 @@
       "singleConceptRespected": true,
       "summary": "전반적으로 잘 구성된 디자인이나, 브랜드 정체성을 더욱 강화할 필요가 있다."
     },
-    "description": "브로슈어 목업 예시 이미지 4."
+    "description": "브로슈어 목업 예시 이미지 4.",
+    "keywords": [
+      "브로슈어",
+      "카탈로그",
+      "팜플렛",
+      "소개서",
+      "내지",
+      "스프레드",
+      "펼친 브로슈어"
+    ]
   },
   {
     "category": "brochure",
@@ -957,7 +1137,13 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 높은 품질을 보여준다."
-    }
+    },
+    "keywords": [
+      "브로슈어",
+      "카탈로그",
+      "팜플렛",
+      "소개서"
+    ]
   },
   {
     "category": "poster",
@@ -997,7 +1183,13 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드의 미니멀한 이미지를 잘 전달하고 있다."
-    }
+    },
+    "keywords": [
+      "포스터",
+      "벽보",
+      "홍보물",
+      "안내문"
+    ]
   },
   {
     "category": "poster",
@@ -1037,7 +1229,13 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
-    }
+    },
+    "keywords": [
+      "포스터",
+      "벽보",
+      "홍보물",
+      "안내문"
+    ]
   },
   {
     "category": "poster",
@@ -1077,7 +1275,13 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 메시지를 효과적으로 전달하고 있다."
-    }
+    },
+    "keywords": [
+      "포스터",
+      "벽보",
+      "홍보물",
+      "안내문"
+    ]
   },
   {
     "category": "poster",
@@ -1117,7 +1321,13 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드의 고급스러움을 잘 전달하고 있다."
-    }
+    },
+    "keywords": [
+      "포스터",
+      "벽보",
+      "홍보물",
+      "안내문"
+    ]
   },
   {
     "category": "package",
@@ -1157,7 +1367,15 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지와 잘 어울린다."
-    }
+    },
+    "keywords": [
+      "패키지",
+      "포장",
+      "박스",
+      "파우치",
+      "제품 포장",
+      "제품"
+    ]
   },
   {
     "category": "package",
@@ -1197,7 +1415,15 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
-    }
+    },
+    "keywords": [
+      "패키지",
+      "포장",
+      "박스",
+      "파우치",
+      "제품 포장",
+      "제품"
+    ]
   },
   {
     "category": "package",
@@ -1237,7 +1463,15 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
-    }
+    },
+    "keywords": [
+      "패키지",
+      "포장",
+      "박스",
+      "파우치",
+      "제품 포장",
+      "제품"
+    ]
   },
   {
     "category": "package",
@@ -1277,7 +1511,15 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 고급스러운 느낌을 잘 전달하고 있다."
-    }
+    },
+    "keywords": [
+      "패키지",
+      "포장",
+      "박스",
+      "파우치",
+      "제품 포장",
+      "제품"
+    ]
   },
   {
     "category": "package",
@@ -1317,7 +1559,15 @@
       },
       "singleConceptRespected": true,
       "summary": "통일된 디자인으로 하나의 목업 이미지로 잘 표현되었다."
-    }
+    },
+    "keywords": [
+      "패키지",
+      "포장",
+      "박스",
+      "파우치",
+      "제품 포장",
+      "제품"
+    ]
   },
   {
     "category": "package",
@@ -1357,7 +1607,15 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 적합하다."
-    }
+    },
+    "keywords": [
+      "패키지",
+      "포장",
+      "박스",
+      "파우치",
+      "제품 포장",
+      "제품"
+    ]
   },
   {
     "category": "leaflet",
@@ -1397,7 +1655,15 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
-    }
+    },
+    "keywords": [
+      "리플렛",
+      "전단",
+      "전단지",
+      "홍보물",
+      "접힌 리플렛",
+      "표지"
+    ]
   },
   {
     "slug": "leaflet-ex2",
@@ -1437,7 +1703,16 @@
       "singleConceptRespected": true,
       "summary": "전반적으로 잘 디자인된 목업 사진이지만, 브랜드 정보와의 일치성이 부족함."
     },
-    "description": "리플렛 목업 예시 이미지 2."
+    "description": "리플렛 목업 예시 이미지 2.",
+    "keywords": [
+      "리플렛",
+      "전단",
+      "전단지",
+      "홍보물",
+      "삼단접지",
+      "펼친 리플렛",
+      "내지"
+    ]
   },
   {
     "category": "leaflet",
@@ -1477,7 +1752,15 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로, 현대적인 감각을 잘 살리고 있다."
-    }
+    },
+    "keywords": [
+      "리플렛",
+      "전단",
+      "전단지",
+      "홍보물",
+      "접힌 리플렛",
+      "표지"
+    ]
   },
   {
     "slug": "leaflet-ex4",
@@ -1517,7 +1800,16 @@
       "singleConceptRespected": true,
       "summary": "전체적으로 브랜드 이미지와 잘 맞지만, 좀 더 독창적인 디자인 요소가 필요하다."
     },
-    "description": "리플렛 목업 예시 이미지 4."
+    "description": "리플렛 목업 예시 이미지 4.",
+    "keywords": [
+      "리플렛",
+      "전단",
+      "전단지",
+      "홍보물",
+      "삼단접지",
+      "펼친 리플렛",
+      "내지"
+    ]
   },
   {
     "category": "leaflet",
@@ -1557,7 +1849,15 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞는다."
-    }
+    },
+    "keywords": [
+      "리플렛",
+      "전단",
+      "전단지",
+      "홍보물",
+      "접힌 리플렛",
+      "표지"
+    ]
   },
   {
     "category": "leaflet",
@@ -1597,7 +1897,15 @@
       },
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 부합한다."
-    }
+    },
+    "keywords": [
+      "리플렛",
+      "전단",
+      "전단지",
+      "홍보물",
+      "접힌 리플렛",
+      "표지"
+    ]
   },
   {
     "slug": "banner-ex1",
@@ -1637,7 +1945,14 @@
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드 이미지에 잘 맞지만, 약간의 차별성이 부족하다."
     },
-    "description": "배너 목업 예시 이미지 1."
+    "description": "배너 목업 예시 이미지 1.",
+    "keywords": [
+      "배너",
+      "현수막",
+      "광고물",
+      "X배너",
+      "스탠드 배너"
+    ]
   },
   {
     "slug": "banner-ex2",
@@ -1677,7 +1992,13 @@
       "singleConceptRespected": true,
       "summary": "전반적으로 품질이 좋지만, 브랜드 정체성과 창의성에서 개선의 여지가 있다."
     },
-    "description": "배너 목업 예시 이미지 2."
+    "description": "배너 목업 예시 이미지 2.",
+    "keywords": [
+      "배너",
+      "현수막",
+      "광고물",
+      "플래카드"
+    ]
   },
   {
     "slug": "banner-ex3",
@@ -1717,7 +2038,14 @@
       "singleConceptRespected": true,
       "summary": "전반적으로 괜찮은 디자인이나, 브랜드 특성이 더 강조될 필요가 있다."
     },
-    "description": "배너 목업 예시 이미지 3."
+    "description": "배너 목업 예시 이미지 3.",
+    "keywords": [
+      "배너",
+      "현수막",
+      "광고물",
+      "롤업배너",
+      "롤업 배너"
+    ]
   },
   {
     "slug": "banner-ex4",
@@ -1757,7 +2085,14 @@
       "singleConceptRespected": true,
       "summary": "전반적으로 높은 품질의 디자인이나, 약간의 현대적 요소 부족이 아쉽다."
     },
-    "description": "배너 목업 예시 이미지 4."
+    "description": "배너 목업 예시 이미지 4.",
+    "keywords": [
+      "배너",
+      "현수막",
+      "광고물",
+      "윈도우 배너",
+      "창문 배너"
+    ]
   },
   {
     "slug": "banner-ex5",
@@ -1797,7 +2132,14 @@
       "singleConceptRespected": true,
       "summary": "전반적으로 통일된 디자인이지만, 트렌드 측면에서 약간의 개선이 필요하다."
     },
-    "description": "배너 목업 예시 이미지 5."
+    "description": "배너 목업 예시 이미지 5.",
+    "keywords": [
+      "배너",
+      "현수막",
+      "광고물",
+      "입간판 배너",
+      "A자형"
+    ]
   },
   {
     "slug": "banner-ex6",
@@ -1837,7 +2179,14 @@
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 브랜드의 목적을 잘 전달하고 있다."
     },
-    "description": "배너 목업 예시 이미지 6."
+    "description": "배너 목업 예시 이미지 6.",
+    "keywords": [
+      "배너",
+      "현수막",
+      "광고물",
+      "페넌트",
+      "깃발 배너"
+    ]
   },
   {
     "slug": "uniform-ex1",
@@ -1877,7 +2226,17 @@
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인이지만, 브랜드 정보의 부족으로 인해 완벽한 일치는 아니다."
     },
-    "description": "유니폼 목업 예시 이미지 1."
+    "description": "유니폼 목업 예시 이미지 1.",
+    "keywords": [
+      "유니폼",
+      "복장",
+      "작업복",
+      "앞치마",
+      "카페",
+      "커피",
+      "바리스타",
+      "카페 유니폼"
+    ]
   },
   {
     "slug": "uniform-ex2",
@@ -1917,7 +2276,20 @@
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로, 현대적인 의료 브랜드 이미지에 적합하다."
     },
-    "description": "유니폼 목업 예시 이미지 2."
+    "description": "유니폼 목업 예시 이미지 2.",
+    "keywords": [
+      "유니폼",
+      "복장",
+      "작업복",
+      "의료 가운",
+      "의사 가운",
+      "병원",
+      "의원",
+      "클리닉",
+      "스크럽",
+      "간호사",
+      "의료진"
+    ]
   },
   {
     "slug": "uniform-ex3",
@@ -1957,7 +2329,17 @@
       "singleConceptRespected": true,
       "summary": "전반적으로 무난한 디자인이지만, 브랜드 정체성과 트렌드 반영이 부족하다."
     },
-    "description": "유니폼 목업 예시 이미지 3."
+    "description": "유니폼 목업 예시 이미지 3.",
+    "keywords": [
+      "유니폼",
+      "복장",
+      "작업복",
+      "안전조끼",
+      "제조업",
+      "공사",
+      "건설",
+      "현장"
+    ]
   },
   {
     "slug": "uniform-ex4",
@@ -1997,7 +2379,18 @@
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로 고급스러운 느낌을 잘 전달하고 있다."
     },
-    "description": "유니폼 목업 예시 이미지 4."
+    "description": "유니폼 목업 예시 이미지 4.",
+    "keywords": [
+      "유니폼",
+      "복장",
+      "작업복",
+      "셰프 재킷",
+      "레스토랑",
+      "외식",
+      "주방",
+      "요리사",
+      "셰프"
+    ]
   },
   {
     "slug": "uniform-ex5",
@@ -2037,7 +2430,17 @@
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인이지만, 브랜드 개성이 더 필요하다."
     },
-    "description": "유니폼 목업 예시 이미지 5."
+    "description": "유니폼 목업 예시 이미지 5.",
+    "keywords": [
+      "유니폼",
+      "복장",
+      "작업복",
+      "폴로셔츠",
+      "리테일",
+      "매장 직원",
+      "쇼핑몰",
+      "판매"
+    ]
   },
   {
     "slug": "uniform-ex6",
@@ -2077,7 +2480,17 @@
       "singleConceptRespected": true,
       "summary": "전체적으로 통일된 디자인으로, 브랜드 이미지에 적합한 목업 사진이다."
     },
-    "description": "유니폼 목업 예시 이미지 6."
+    "description": "유니폼 목업 예시 이미지 6.",
+    "keywords": [
+      "유니폼",
+      "복장",
+      "작업복",
+      "호텔",
+      "숙박",
+      "여행",
+      "컨시어지",
+      "재킷"
+    ]
   },
   {
     "category": "website_hero",
@@ -2117,7 +2530,15 @@
       },
       "singleConceptRespected": true,
       "summary": "전반적으로 균형 잡힌 디자인이나 브랜드 정체성이 더 필요하다."
-    }
+    },
+    "keywords": [
+      "웹사이트",
+      "홈페이지",
+      "웹",
+      "사이트",
+      "노트북",
+      "온라인"
+    ]
   },
   {
     "slug": "brochure-ex6",
@@ -2158,6 +2579,15 @@
       "singleConceptRespected": true,
       "summary": "전반적으로 통일된 디자인이나, 브랜드 정보의 명확성이 부족함."
     },
-    "description": "브로슈어 목업 예시 이미지 6."
+    "description": "브로슈어 목업 예시 이미지 6.",
+    "keywords": [
+      "브로슈어",
+      "카탈로그",
+      "팜플렛",
+      "소개서",
+      "내지",
+      "스프레드",
+      "펼친 브로슈어"
+    ]
   }
 ]
