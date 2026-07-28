@@ -509,6 +509,13 @@ export const de: Messages = {
     subscription: "Abrechnung (Abo)",
     loggingOut: "Wird abgemeldet...",
     logout: "Abmelden",
+    gate: {
+      loginMessage: "Registrieren oder anmelden, um diese Funktion zu nutzen.",
+      loginCta: "Anmelden",
+      proMessage: "Meine Stile ist ab Pro verfügbar.",
+      teamMessage: "Team ist nur für Studio-Abonnenten verfügbar.",
+      subscriptionCta: "Abo ansehen",
+    },
   },
   home: {
     betaBanner: {

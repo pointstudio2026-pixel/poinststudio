@@ -509,6 +509,13 @@ export const ja: Messages = {
     subscription: "お支払い情報(サブスクリプション)",
     loggingOut: "ログアウト中...",
     logout: "ログアウト",
+    gate: {
+      loginMessage: "会員登録・ログインすると機能をご利用いただけます。",
+      loginCta: "ログイン",
+      proMessage: "マイスタイルはPro以上でご利用いただけます。",
+      teamMessage: "チームはStudio契約者のみご利用いただけます。",
+      subscriptionCta: "プランを見る",
+    },
   },
   home: {
     betaBanner: {

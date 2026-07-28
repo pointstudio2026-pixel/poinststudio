@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { NewProjectButton } from "@/features/projects/NewProjectButton";
 import { LogoutButton } from "@/features/auth/LogoutButton";
-import { PrimaryNav } from "@/features/navigation/PrimaryNav";
+import { PrimaryNav, resolveNavGate } from "@/features/navigation/PrimaryNav";
 import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { MessageKey } from "@/shared/i18n/messages/types";
@@ -27,8 +27,47 @@ export interface HeaderUser {
 
 export function Header({ user, planCode }: { user: HeaderUser | null; planCode: PlanCode | null }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [guideOpen, setGuideOpen] = useState(false);
+  const [mobileGateOpen, setMobileGateOpen] = useState<string | null>(null);
   const { t, locale } = useTranslation();
+
+  function mobileGateLink(key: "myProjects" | "newProject" | "mockup" | "myStyles" | "team", label: string, href: string) {
+    const gate = resolveNavGate(key, user, planCode, t);
+    if (!gate) {
+      return (
+        <Link
+          key={key}
+          href={href}
+          onClick={() => setMobileOpen(false)}
+          className="rounded-full border border-line px-4 py-3 text-center text-sm"
+        >
+          {label}
+        </Link>
+      );
+    }
+    return (
+      <div key={key} className="flex flex-col gap-2">
+        <button
+          type="button"
+          onClick={() => setMobileGateOpen(mobileGateOpen === key ? null : key)}
+          className="rounded-full border border-line px-4 py-3 text-center text-sm"
+        >
+          {label}
+        </button>
+        {mobileGateOpen === key && (
+          <div className="rounded-xl bg-surface px-4 py-3 text-center">
+            <p className="text-xs text-muted">{gate.message}</p>
+            <Link
+              href={gate.ctaHref}
+              onClick={() => setMobileOpen(false)}
+              className="mt-2 inline-block rounded-full bg-ink px-4 py-1.5 text-xs text-paper transition hover:opacity-90"
+            >
+              {gate.ctaLabel}
+            </Link>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-line/80 bg-paper/80 backdrop-blur-md">
@@ -58,61 +97,7 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
         </nav>
 
         <div className="hidden items-center gap-2 lg:flex">
-          {user ? (
-            <PrimaryNav user={user} planCode={planCode ?? "free"} />
-          ) : (
-            <>
-              <div
-                className="relative"
-                onMouseEnter={() => setGuideOpen(true)}
-                onMouseLeave={() => setGuideOpen(false)}
-              >
-                <Link
-                  href="/guide"
-                  className="whitespace-nowrap rounded-full border border-line px-3 py-1.5 text-xs transition hover:border-ink"
-                >
-                  {t("nav.guide")}
-                </Link>
-                {guideOpen && (
-                  <div className="absolute left-0 top-full w-44 pt-2">
-                    <div className="rounded-xl border border-line bg-surface p-1.5 shadow-soft">
-                      <Link href="/guide" className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper">
-                        {t("nav.guide")}
-                      </Link>
-                      <Link
-                        href={guidesHubHref(locale)}
-                        className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper"
-                      >
-                        {t("nav.useCases")}
-                      </Link>
-                      <Link
-                        href={guideDetailHref(locale, "why-aster")}
-                        className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper"
-                      >
-                        {t("nav.whyAster")}
-                      </Link>
-                      <Link
-                        href={guidesHubHrefForCategory(locale, "faq")}
-                        className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper"
-                      >
-                        {t("nav.faqPage")}
-                      </Link>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <Link href="/login" className="whitespace-nowrap px-2.5 py-1.5 text-xs text-muted transition hover:text-ink">
-                {t("home.header.login")}
-              </Link>
-              <Link
-                href="/register"
-                className="whitespace-nowrap rounded-full bg-ink px-4 py-1.5 text-xs text-paper transition hover:opacity-90"
-              >
-                {t("home.header.getStarted")}
-              </Link>
-              <LanguageSwitcher />
-            </>
-          )}
+          <PrimaryNav user={user} planCode={planCode} />
         </div>
 
         {!user && (
@@ -156,110 +141,63 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
           </nav>
 
           <div className="mt-4 flex flex-col gap-2 border-t border-line pt-4">
+            <div className="flex justify-center pb-1">
+              <LanguageSwitcher />
+            </div>
+
+            {mobileGateLink("myProjects", t("nav.myProjects"), "/projects")}
+            {resolveNavGate("newProject", user, planCode, t) ? (
+              mobileGateLink("newProject", t("dashboard.newProject.button"), "/login")
+            ) : (
+              <div className="[&>button]:w-full [&>button]:justify-center [&>button]:py-3">
+                <NewProjectButton />
+              </div>
+            )}
+            {mobileGateLink("mockup", t("nav.mockup"), "/mockups/new")}
+            {mobileGateLink("myStyles", t("nav.myStyles"), "/my-styles")}
+            {mobileGateLink("team", t("nav.team"), "/team")}
+
+            <Link href="/guide" className="rounded-full border border-line px-4 py-3 text-center text-sm">
+              {t("nav.guide")}
+            </Link>
+            <Link
+              href={guidesHubHref(locale)}
+              className="rounded-full border border-line px-4 py-3 text-center text-sm"
+            >
+              {t("nav.useCases")}
+            </Link>
+            <Link
+              href={guideDetailHref(locale, "why-aster")}
+              className="rounded-full border border-line px-4 py-3 text-center text-sm"
+            >
+              {t("nav.whyAster")}
+            </Link>
+            <Link
+              href={guidesHubHrefForCategory(locale, "faq")}
+              className="rounded-full border border-line px-4 py-3 text-center text-sm"
+            >
+              {t("nav.faqPage")}
+            </Link>
+            <Link href="/support" className="rounded-full border border-line px-4 py-3 text-center text-sm">
+              {t("nav.support")}
+            </Link>
+
             {user ? (
               <>
-                <div className="flex justify-center pb-1">
-                  <LanguageSwitcher />
-                </div>
-                <Link
-                  href="/projects"
-                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
-                >
-                  {t("nav.myProjects")}
-                </Link>
-                {planCode !== "free" && (
-                  <Link
-                    href="/my-styles"
-                    className="rounded-full border border-line px-4 py-3 text-center text-sm"
-                  >
-                    {t("nav.myStyles")}
-                  </Link>
-                )}
-                {planCode === "studio" && (
-                  <Link
-                    href="/team"
-                    className="rounded-full border border-line px-4 py-3 text-center text-sm"
-                  >
-                    {t("nav.team")}
-                  </Link>
-                )}
-                <Link
-                  href="/guide"
-                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
-                >
-                  {t("nav.guide")}
-                </Link>
-                <Link
-                  href={guidesHubHref(locale)}
-                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
-                >
-                  {t("nav.useCases")}
-                </Link>
-                <Link
-                  href={guideDetailHref(locale, "why-aster")}
-                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
-                >
-                  {t("nav.whyAster")}
-                </Link>
-                <Link
-                  href={guidesHubHrefForCategory(locale, "faq")}
-                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
-                >
-                  {t("nav.faqPage")}
-                </Link>
-                <div className="[&>button]:w-full [&>button]:justify-center [&>button]:py-3">
-                  <NewProjectButton />
-                </div>
-                <Link
-                  href="/my-info"
-                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
-                >
+                <Link href="/my-info" className="rounded-full border border-line px-4 py-3 text-center text-sm">
                   {t("nav.myInfo")}
                 </Link>
-                <Link
-                  href="/subscription"
-                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
-                >
+                <Link href="/subscription" className="rounded-full border border-line px-4 py-3 text-center text-sm">
                   {t("nav.subscription")}
-                </Link>
-                <Link
-                  href="/support"
-                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
-                >
-                  {t("nav.support")}
                 </Link>
                 <LogoutButton className="rounded-full border border-line px-4 py-3 text-center text-sm" />
               </>
             ) : (
               <>
-                <Link href="/guide" className="rounded-full border border-line px-4 py-3 text-center text-sm">
-                  {t("nav.guide")}
-                </Link>
-                <Link
-                  href={guidesHubHref(locale)}
-                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
-                >
-                  {t("nav.useCases")}
-                </Link>
-                <Link
-                  href={guideDetailHref(locale, "why-aster")}
-                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
-                >
-                  {t("nav.whyAster")}
-                </Link>
-                <Link
-                  href={guidesHubHrefForCategory(locale, "faq")}
-                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
-                >
-                  {t("nav.faqPage")}
-                </Link>
                 <Link href="/login" className="rounded-full border border-line px-4 py-3 text-center text-sm">
                   {t("home.header.login")}
                 </Link>
-                <Link
-                  href="/register"
-                  className="rounded-full bg-ink px-4 py-3 text-center text-sm text-paper"
-                >
+                <Link href="/register" className="rounded-full bg-ink px-4 py-3 text-center text-sm text-paper">
                   {t("home.header.getStarted")}
                 </Link>
               </>

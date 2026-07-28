@@ -509,6 +509,13 @@ export const fr: Messages = {
     subscription: "Facturation (abonnement)",
     loggingOut: "Déconnexion...",
     logout: "Se déconnecter",
+    gate: {
+      loginMessage: "Inscrivez-vous ou connectez-vous pour utiliser cette fonctionnalité.",
+      loginCta: "Se connecter",
+      proMessage: "Mes styles est disponible à partir du forfait Pro.",
+      teamMessage: "Équipe est réservé aux abonnés Studio.",
+      subscriptionCta: "Voir l'abonnement",
+    },
   },
   home: {
     betaBanner: {

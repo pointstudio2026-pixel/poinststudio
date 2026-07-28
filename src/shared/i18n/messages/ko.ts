@@ -508,6 +508,13 @@ export const ko = {
     subscription: "결제정보 (구독)",
     loggingOut: "로그아웃 중...",
     logout: "로그아웃",
+    gate: {
+      loginMessage: "회원가입 및 로그인을 진행하면 기능을 사용할 수 있습니다.",
+      loginCta: "로그인",
+      proMessage: "내 스타일은 Pro 이상부터 이용 가능합니다.",
+      teamMessage: "팀은 Studio 구독자만 이용 가능합니다.",
+      subscriptionCta: "구독정보 보기",
+    },
   },
   home: {
     betaBanner: {

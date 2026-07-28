@@ -509,6 +509,13 @@ export const en: Messages = {
     subscription: "Billing (Subscription)",
     loggingOut: "Signing out...",
     logout: "Log out",
+    gate: {
+      loginMessage: "Sign up or log in to use this feature.",
+      loginCta: "Log in",
+      proMessage: "My Styles is available on Pro and above.",
+      teamMessage: "Team is available on Studio only.",
+      subscriptionCta: "View plan",
+    },
   },
   home: {
     betaBanner: {
