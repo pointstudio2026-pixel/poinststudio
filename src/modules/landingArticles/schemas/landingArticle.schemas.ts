@@ -36,6 +36,12 @@ const styleGuideContentSchema = z.object({
   ctaHref: z.string().min(1),
 });
 
+const landingArticleTableSchema = z.object({
+  caption: z.string().min(1),
+  headers: z.array(z.string().min(1)).min(1),
+  rows: z.array(z.array(z.string())).min(1),
+});
+
 const faqArticleContentSchema = z.object({
   summary: z.string().min(1),
   body: z.array(z.string().min(1)).min(1),
@@ -43,6 +49,7 @@ const faqArticleContentSchema = z.object({
   relatedQuestions: z.array(landingArticleComboSchema),
   ctaLabel: z.string().min(1),
   ctaHref: z.string().min(1),
+  table: landingArticleTableSchema.optional(),
 });
 
 const whyAsterPageContentSchema = z.object({

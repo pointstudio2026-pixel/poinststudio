@@ -28,6 +28,11 @@ export interface FaqArticleContent {
   relatedQuestions: { slug: string; label: string }[];
   ctaLabel: string;
   ctaHref: string;
+  /**
+   * 선택적 비교/참고 표 -- "Aster는?"(구 자유 주제) 카테고리처럼 비교형
+   * 콘텐츠에서 쓰인다. 일반 FAQ 질문 글은 비워도 된다.
+   */
+  table?: { caption: string; headers: string[]; rows: string[][] };
 }
 
 /** category === "why-aster" 전용 콘텐츠 구조 -- 강점/혜택 나열 + CTA. */

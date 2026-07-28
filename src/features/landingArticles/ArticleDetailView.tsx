@@ -125,6 +125,36 @@ function FaqBody({
         ))}
       </section>
 
+      {content.table && (
+        <section className="flex flex-col gap-4">
+          <h2 className="text-xl font-semibold">{content.table.caption}</h2>
+          <div className="overflow-x-auto rounded-2xl border border-line shadow-soft">
+            <table className="w-full min-w-[480px] border-collapse text-left text-sm">
+              <thead>
+                <tr className="bg-surface">
+                  {content.table.headers.map((header, index) => (
+                    <th key={index} className="border-b border-line px-4 py-3 font-medium text-ink">
+                      {header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {content.table.rows.map((row, rowIndex) => (
+                  <tr key={rowIndex} className={rowIndex % 2 === 1 ? "bg-surface/50" : undefined}>
+                    {row.map((cell, cellIndex) => (
+                      <td key={cellIndex} className="border-b border-line px-4 py-3 text-muted">
+                        {cell}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
       {content.keyPoints.length > 0 && (
         <section className="flex flex-col gap-4">
           <h2 className="text-xl font-semibold">{labels.keyPointsHeading}</h2>
