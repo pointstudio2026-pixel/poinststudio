@@ -30,7 +30,7 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
   const [mobileGateOpen, setMobileGateOpen] = useState<string | null>(null);
   const { t, locale } = useTranslation();
 
-  function mobileGateLink(key: "myProjects" | "newProject" | "mockup" | "myStyles" | "team", label: string, href: string) {
+  function mobileGateLink(key: "myProjects" | "newProject" | "mockup" | "myWork" | "myStyles" | "team", label: string, href: string) {
     const gate = resolveNavGate(key, user, planCode, t);
     if (!gate) {
       return (
@@ -154,6 +154,7 @@ export function Header({ user, planCode }: { user: HeaderUser | null; planCode: 
               </div>
             )}
             {mobileGateLink("mockup", t("nav.mockup"), "/mockups/new")}
+            {mobileGateLink("myWork", t("nav.myWork"), "/my-work")}
             {mobileGateLink("myStyles", t("nav.myStyles"), "/my-styles")}
             {mobileGateLink("team", t("nav.team"), "/team")}
 

@@ -11,6 +11,7 @@ import { DeleteMockupUseCase } from "@/modules/mockups/application/DeleteMockupU
 import { ProcessMockupJobUseCase } from "@/modules/mockups/application/ProcessMockupJobUseCase";
 import { RecommendMockupCategoriesUseCase } from "@/modules/mockups/application/RecommendMockupCategoriesUseCase";
 import { ListPastGenerationImagesUseCase } from "@/modules/mockups/application/ListPastGenerationImagesUseCase";
+import { ListMyWorkUseCase } from "@/modules/mockups/application/ListMyWorkUseCase";
 import { projectRepositoryInstance } from "@/modules/projects/container";
 import { interviewRepositoryInstance } from "@/modules/interviews/container";
 import { generationRepositoryInstance } from "@/modules/generations/container";
@@ -49,6 +50,7 @@ export const mockupsContainer = {
   deleteMockupUseCase: new DeleteMockupUseCase(projectRepositoryInstance, mockupRepository),
   searchMockupTemplatesUseCase: new SearchMockupTemplatesUseCase(templateRepository),
   listPastGenerationImagesUseCase: new ListPastGenerationImagesUseCase(generationRepositoryInstance),
+  listMyWorkUseCase: new ListMyWorkUseCase(generationRepositoryInstance, standaloneMockupRepositoryInstance),
   createStandaloneMockupUseCase: new CreateStandaloneMockupUseCase(
     projectRepositoryInstance,
     templateRepository,

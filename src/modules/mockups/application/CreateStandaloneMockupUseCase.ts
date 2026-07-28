@@ -105,6 +105,7 @@ export class CreateStandaloneMockupUseCase {
         templateName: template.name,
         category: template.category,
         compositingMode: "logo",
+        isStandalone: true,
       });
 
       await this.recordUsageUseCase.execute({

@@ -40,6 +40,15 @@ export interface MockupRenderRequest {
    * 카테고리/업종만 반영하고 사용자가 고른 무드는 반영하지 못한다.
    */
   styleCategory?: string;
+  /**
+   * "목업" 단독 프로세스(project 없이 배경+로고만으로 바로 합성)에서 온
+   * 요청인지 표시한다. 2026-07-28: 단독 프로세스는 미리 정해둔 배경 이미지를
+   * "고르는" 경험이라, 같은 배경을 고를 때마다 결과가 크게 달라지면 안 된다
+   * -- "새 프로젝트" 흐름(ProcessMockupJobUseCase)은 반대로 매번 그럴듯한
+   * 장면을 새로 지어내야 하므로(진짜 프로젝트 맥락이 있는 콘텐츠가 없는 빈
+   * 배경) 이 값이 없을 때(undefined/false)의 기존 동작을 그대로 유지한다.
+   */
+  isStandalone?: boolean;
 }
 
 export interface MockupRenderResult {

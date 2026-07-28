@@ -497,6 +497,7 @@ export const ko = {
   nav: {
     myProjects: "내 프로젝트",
     mockup: "목업",
+    myWork: "내 작업물",
     myStyles: "내 스타일",
     team: "팀",
     guide: "사용방법",
@@ -795,6 +796,14 @@ export const ko = {
       makeAnother: "다른 목업 만들기",
       errorGeneric: "목업 생성에 실패했습니다.",
       selectedBackgroundLabel: "선택한 배경",
+      download: "다운로드",
+    },
+    myWork: {
+      pageTitle: "내 작업물",
+      pageSubtitle: "새 프로젝트와 목업에서 만든 모든 이미지를 한 곳에서 보고 다운로드하세요.",
+      empty: "아직 만든 작업물이 없습니다.",
+      loadFailed: "작업물을 불러오지 못했습니다.",
+      sourceStandaloneMockup: "목업",
       download: "다운로드",
     },
     card: {

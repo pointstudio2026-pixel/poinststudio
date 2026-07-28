@@ -43,7 +43,7 @@ const TEMPLATES: TemplateDef[] = [
     imagePath: "/mockup-templates/business-card.jpg",
     placement: { xPct: 32, yPct: 22, widthPct: 20, heightPct: 20 },
     fullDesignPlacement: { xPct: 14, yPct: 12, widthPct: 56, heightPct: 60 },
-    keywords: ["명함", "비즈니스카드", "카드", "네임카드"],
+    keywords: ["명함","비즈니스카드","카드","네임카드","business card","name card","calling card","visiting card","contact card","名刺","ビジネスカード","ネームカード","カード","名刺デザイン","carte de visite","carte professionnelle","carte d'affaires","carte","Visitenkarte","Geschäftskarte","Namenskarte","Kontaktkarte","Karte"],
   },
   {
     category: "signboard",
@@ -52,7 +52,7 @@ const TEMPLATES: TemplateDef[] = [
     description: "간판 목업 템플릿 -- 매장 사인에 로고를 자동 배치합니다.",
     imagePath: "/mockup-templates/signboard.jpg",
     placement: { xPct: 41, yPct: 20, widthPct: 30, heightPct: 38 },
-    keywords: ["간판", "매장", "상점", "숍", "외관", "매장 외관"],
+    keywords: ["간판","매장","상점","숍","외관","매장 외관","signboard","shop sign","storefront","store sign","shopfront","看板","店舗","ショップ","店頭","外観","enseigne","devanture","magasin","boutique","façade","Ladenschild","Schild","Ladenfront","Schaufenster","Geschäft"],
   },
   {
     category: "mobile_app",
@@ -62,7 +62,7 @@ const TEMPLATES: TemplateDef[] = [
     imagePath: "/mockup-templates/mobile-app.jpg",
     placement: { xPct: 40, yPct: 18, widthPct: 8, heightPct: 8 },
     fullDesignPlacement: { xPct: 20, yPct: 17, widthPct: 22, heightPct: 56 },
-    keywords: ["모바일 앱", "앱", "어플", "스마트폰", "휴대폰"],
+    keywords: ["모바일 앱","앱","어플","스마트폰","휴대폰","mobile app","app","smartphone","phone screen","mobile","モバイルアプリ","アプリ","スマホ","スマートフォン","携帯","application mobile","appli","téléphone","écran mobile","mobile App","Handy","Anwendung","Smartphone-App"],
   },
   {
     category: "website_hero",
@@ -72,7 +72,7 @@ const TEMPLATES: TemplateDef[] = [
     imagePath: "/mockup-templates/website-hero.jpg",
     placement: { xPct: 9, yPct: 12, widthPct: 12, heightPct: 5 },
     fullDesignPlacement: { xPct: 8, yPct: 19, widthPct: 55, heightPct: 56 },
-    keywords: ["웹사이트", "홈페이지", "웹", "사이트", "노트북", "온라인"],
+    keywords: ["웹사이트","홈페이지","웹","사이트","노트북","온라인","website","homepage","web page","laptop","online","landing page","ウェブサイト","ホームページ","サイト","ノートパソコン","オンライン","site web","site internet","page d'accueil","ordinateur portable","en ligne","Webseite","Homepage","Website","Laptop","Startseite"],
   },
   {
     category: "brochure",
@@ -82,7 +82,7 @@ const TEMPLATES: TemplateDef[] = [
     imagePath: "/mockup-templates/brochure.jpg",
     placement: { xPct: 66, yPct: 16, widthPct: 26, heightPct: 12 },
     fullDesignPlacement: { xPct: 58, yPct: 8, widthPct: 38, heightPct: 82 },
-    keywords: ["브로슈어", "카탈로그", "팜플렛", "소개서"],
+    keywords: ["브로슈어","카탈로그","팜플렛","소개서","brochure","catalog","catalogue","pamphlet","booklet","company profile","パンフレット","ブローシャー","カタログ","会社案内","冊子","dépliant","plaquette","livret","catalogue d'entreprise","Broschüre","Katalog","Prospekt","Firmenbroschüre","Werbeheft"],
   },
   {
     category: "poster",
@@ -92,7 +92,7 @@ const TEMPLATES: TemplateDef[] = [
     imagePath: "/mockup-templates/poster-medical.jpg",
     placement: { xPct: 28, yPct: 10, widthPct: 44, heightPct: 6 },
     fullDesignPlacement: { xPct: 23, yPct: 8, widthPct: 60, heightPct: 82 },
-    keywords: ["포스터", "벽보", "홍보물", "안내문", "병원", "의원", "클리닉", "의료"],
+    keywords: ["포스터","벽보","홍보물","안내문","병원","의원","클리닉","의료","poster","wall poster","promotional poster","notice","hospital","clinic","medical","healthcare","ポスター","掲示","貼り紙","告知","病院","クリニック","医療","診療所","affiche","affichette","avis","hôpital","clinique","médical","santé","cabinet médical","Plakat","Wandplakat","Aushang","Krankenhaus","Klinik","medizinisch","Arztpraxis","Gesundheitswesen"],
   },
   {
     category: "poster",
@@ -102,7 +102,7 @@ const TEMPLATES: TemplateDef[] = [
     imagePath: "/mockup-templates/poster-cafe.jpg",
     placement: { xPct: 43, yPct: 11, widthPct: 35, heightPct: 18 },
     fullDesignPlacement: { xPct: 36, yPct: 2, widthPct: 46, heightPct: 82 },
-    keywords: ["포스터", "벽보", "홍보물", "안내문", "카페", "커피"],
+    keywords: ["포스터","벽보","홍보물","안내문","카페","커피","poster","wall poster","promotional poster","notice","cafe","coffee","coffee shop","ポスター","掲示","貼り紙","告知","カフェ","コーヒー","喫茶店","affiche","affichette","avis","café","cafétéria","salon de thé","Plakat","Wandplakat","Aushang","Kaffee","Café","Kaffeehaus"],
   },
 ];
 

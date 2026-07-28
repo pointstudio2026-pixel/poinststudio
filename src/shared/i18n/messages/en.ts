@@ -498,6 +498,7 @@ export const en: Messages = {
   nav: {
     myProjects: "My Projects",
     mockup: "Mockup",
+    myWork: "My Work",
     myStyles: "My Styles",
     team: "Team",
     guide: "How it works",
@@ -796,6 +797,14 @@ export const en: Messages = {
       makeAnother: "Make another mockup",
       errorGeneric: "Failed to create the mockup.",
       selectedBackgroundLabel: "Selected background",
+      download: "Download",
+    },
+    myWork: {
+      pageTitle: "My Work",
+      pageSubtitle: "See and download every image you've made in New Project and Mockup, all in one place.",
+      empty: "You haven't made anything yet.",
+      loadFailed: "Failed to load your work.",
+      sourceStandaloneMockup: "Mockup",
       download: "Download",
     },
     card: {

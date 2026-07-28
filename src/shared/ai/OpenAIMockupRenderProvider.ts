@@ -40,17 +40,31 @@ function buildPrompt(request: MockupRenderRequest): string {
         `정확히 그대로, ${request.templateName} 목업의 해당 영역에 자연스럽게 합성한 ` +
         `사실적인 사진을 만들어줘. 시안에 있는 모든 텍스트, 레이아웃, 색상, 로고를 ` +
         `완전히 동일하게 유지해줘 -- 문구나 심볼을 새로 만들어내면 안 돼.`
-      : `첨부된 두 이미지 중 첫 번째(브랜드 로고)를 다시 그리거나 새로 해석하지 말고 ` +
-        `정확히 그대로, ${request.templateName} 목업에 자연스럽게 배치한 사실적인 제품 ` +
-        `사진을 만들어줘. 로고의 텍스트, 심볼, 색상을 완전히 동일하게 유지하고, 배경과 ` +
-        `소품은 실제 사용 환경처럼 유지해줘. 로고 하나만 텅 빈 배경 위에 덩그러니 놓인 ` +
-        `초라한 결과물이 되면 안 돼 -- ${request.templateName}이 실제로 완성되어 사용되고 ` +
-        `있는 것처럼, 그 결과물 종류에 맞는 그럴듯한 내용(문구/이미지/UI 요소 등)으로 ` +
-        `화면 또는 지면을 채운 완성도 있는 장면으로 표현해줘.`;
+      : request.isStandalone
+        ? `첨부된 두 이미지 중 첫 번째(브랜드 로고)를 다시 그리거나 새로 해석하지 말고 ` +
+          `정확히 그대로, 두 번째 이미지(배경)에 자연스럽게 배치한 사실적인 제품 사진을 ` +
+          `만들어줘. 로고의 텍스트, 심볼, 색상을 완전히 동일하게 유지해줘. 배경 이미지에 ` +
+          `이미 있는 모든 요소(구도, 소품, 배경에 인쇄/표시된 문구나 이미지, 조명, 톤) ` +
+          `그대로 유지하고 절대 새로 만들거나 바꾸거나 지우지 마 -- 로고를 자연스러운 ` +
+          `위치에 배치하거나(빈 자리가 있다면) 기존에 있던 자리표시자 로고/워드마크를 ` +
+          `이 로고로 교체하는 것 외에는 배경을 그대로 재현해줘. 같은 배경 이미지로 다시 ` +
+          `합성해도 매번 동일한 장면이 나와야 해 -- 배경의 내용을 임의로 새로 지어내면 안 돼.`
+        : `첨부된 두 이미지 중 첫 번째(브랜드 로고)를 다시 그리거나 새로 해석하지 말고 ` +
+          `정확히 그대로, ${request.templateName} 목업에 자연스럽게 배치한 사실적인 제품 ` +
+          `사진을 만들어줘. 로고의 텍스트, 심볼, 색상을 완전히 동일하게 유지하고, 배경과 ` +
+          `소품은 실제 사용 환경처럼 유지해줘. 로고 하나만 텅 빈 배경 위에 덩그러니 놓인 ` +
+          `초라한 결과물이 되면 안 돼 -- ${request.templateName}이 실제로 완성되어 사용되고 ` +
+          `있는 것처럼, 그 결과물 종류에 맞는 그럴듯한 내용(문구/이미지/UI 요소 등)으로 ` +
+          `화면 또는 지면을 채운 완성도 있는 장면으로 표현해줘.`;
+  // 단독 목업 프로세스는 배경 사진 자체가 이미 완성된 장면이라(위에서 "그대로
+  // 보존" 지침을 줬다), 카테고리별 일반 연출 지침을 더 얹으면 실제 사진과
+  // 안 맞는 지시가 섞여 오히려 일관성을 해친다 -- 프로젝트 흐름(빈 배경에
+  // 매번 새로 장면을 지어내야 함)에서만 적용한다.
   const isKnownCategory = (MOCKUP_CATEGORIES as readonly string[]).includes(request.category);
-  const sceneDirective = isKnownCategory
-    ? buildMockupCategorySceneDirective(request.category as (typeof MOCKUP_CATEGORIES)[number], request.industry)
-    : "";
+  const sceneDirective =
+    isKnownCategory && !request.isStandalone
+      ? buildMockupCategorySceneDirective(request.category as (typeof MOCKUP_CATEGORIES)[number], request.industry)
+      : "";
   const sceneClause = sceneDirective ? ` 연출 지침: ${sceneDirective}` : "";
   const styleClause = request.styleCategory ? ` 스타일 표현 방식: ${request.styleCategory}` : "";
   const referenceClause = request.referenceExampleText ? ` 참고 연출 가이드: ${request.referenceExampleText}` : "";

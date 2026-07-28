@@ -498,6 +498,7 @@ export const ja: Messages = {
   nav: {
     myProjects: "マイプロジェクト",
     mockup: "モックアップ",
+    myWork: "マイ作品",
     myStyles: "マイスタイル",
     team: "チーム",
     guide: "使い方",
@@ -796,6 +797,14 @@ export const ja: Messages = {
       makeAnother: "別のモックアップを作成",
       errorGeneric: "モックアップの作成に失敗しました。",
       selectedBackgroundLabel: "選択した背景",
+      download: "ダウンロード",
+    },
+    myWork: {
+      pageTitle: "マイ作品",
+      pageSubtitle: "新規プロジェクトとモックアップで作成したすべての画像を1か所で確認・ダウンロードできます。",
+      empty: "まだ作成した作品がありません。",
+      loadFailed: "作品の読み込みに失敗しました。",
+      sourceStandaloneMockup: "モックアップ",
       download: "ダウンロード",
     },
     card: {

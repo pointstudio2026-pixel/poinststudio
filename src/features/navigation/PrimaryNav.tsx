@@ -15,7 +15,7 @@ export interface PrimaryNavUser {
   name: string | null;
 }
 
-export type NavItemKey = "myProjects" | "newProject" | "mockup" | "myStyles" | "team";
+export type NavItemKey = "myProjects" | "newProject" | "mockup" | "myWork" | "myStyles" | "team";
 
 export interface Gate {
   message: string;
@@ -170,6 +170,7 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser | null; pl
                 />
               )}
               {renderGatedLink("mockup", t("nav.mockup"), "/mockups/new")}
+              {renderGatedLink("myWork", t("nav.myWork"), "/my-work")}
               {renderGatedLink("myStyles", t("nav.myStyles"), "/my-styles")}
               {renderGatedLink("team", t("nav.team"), "/team")}
             </div>

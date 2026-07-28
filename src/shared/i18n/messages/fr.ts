@@ -498,6 +498,7 @@ export const fr: Messages = {
   nav: {
     myProjects: "Mes projets",
     mockup: "Maquette",
+    myWork: "Mes créations",
     myStyles: "Mes styles",
     team: "Équipe",
     guide: "Comment ça marche",
@@ -796,6 +797,14 @@ export const fr: Messages = {
       makeAnother: "Créer une autre maquette",
       errorGeneric: "Échec de la création de la maquette.",
       selectedBackgroundLabel: "Fond sélectionné",
+      download: "Télécharger",
+    },
+    myWork: {
+      pageTitle: "Mes créations",
+      pageSubtitle: "Retrouvez et téléchargez toutes les images créées dans Nouveau projet et Maquette, au même endroit.",
+      empty: "Vous n'avez encore rien créé.",
+      loadFailed: "Échec du chargement de vos créations.",
+      sourceStandaloneMockup: "Maquette",
       download: "Télécharger",
     },
     card: {
