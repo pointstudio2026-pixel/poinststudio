@@ -13,6 +13,7 @@ import type { ColorPaletteSelectionRepository } from "@/modules/colorPalettes/do
 import type { PromptRepository } from "@/modules/prompts/domain/PromptRepository";
 import type { Prompt, PromptProvider } from "@/modules/prompts/domain/Prompt";
 import type { TrainingExampleRepository } from "@/modules/trainingExamples/domain/TrainingExampleRepository";
+import type { IndustryRepository } from "@/modules/industries/domain/IndustryRepository";
 import { TRAINING_EXAMPLE_CATEGORY_IMAGE_GENERATION } from "@/modules/trainingExamples/domain/TrainingExample";
 import { rankTrainingExamples } from "@/modules/trainingExamples/domain/trainingExampleRules";
 import { buildPromptLayers, composePrompt } from "@/modules/prompts/domain/promptBuilder";
@@ -53,6 +54,7 @@ export class BuildPromptUseCase {
     private readonly promptRepository: PromptRepository,
     private readonly trainingExampleRepository: TrainingExampleRepository,
     private readonly promptDecisionRecordRepository: PromptDecisionRecordRepository,
+    private readonly industryRepository: IndustryRepository,
   ) {}
 
   async execute(input: { projectId: string; userId: string; provider?: PromptProvider }): Promise<Prompt> {
@@ -212,6 +214,20 @@ export class BuildPromptUseCase {
     }
     const conflicts = [...dbConflicts, ...detectInternalOverlap(hardConstraints)];
 
+    // 손으로 다듬은 고정 문구가 없는 업종(2026-07-28 이후 카탈로그에 추가된
+    // 신규 업종)에 한해 buildIndustryContext의 폴백 재료로 쓴다 -- 기존 18개
+    // 업종은 promptBuilder.ts 안의 INDUSTRY_STYLE_TEMPLATES를 그대로 우선
+    // 사용하므로 이 조회 결과와 무관하게 동일하게 동작한다.
+    const industryRow = answers.industry ? await this.industryRepository.findByName(answers.industry) : null;
+    const industryMetadata = industryRow
+      ? {
+          recommendedColors: industryRow.recommendedColors,
+          recommendedLogoStyles: industryRow.recommendedLogoStyles,
+          recommendedTypography: industryRow.recommendedTypography,
+          recommendedPersonality: industryRow.recommendedPersonality,
+        }
+      : undefined;
+
     const layers = buildPromptLayers({
       brandName: answers.brandName ?? "",
       industry: answers.industry ?? "",
@@ -228,6 +244,7 @@ export class BuildPromptUseCase {
       colorPaletteSwatches: colorPaletteSelection?.swatches,
       additionalNotes: answers.additionalNotes,
       hardConstraints,
+      industryMetadata,
     });
     const { systemPrompt, userPrompt, flaggedTerms, contentOnlyUserPrompt } = composePrompt(layers);
     const complianceCheck = checkPromptCompliance(contentOnlyUserPrompt, hardConstraints);

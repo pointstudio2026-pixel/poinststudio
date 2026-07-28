@@ -284,9 +284,38 @@ const INDUSTRY_STYLE_TEMPLATES: Record<string, string> = {
     "공동체적인 느낌을 표현한다.",
 };
 
-function buildIndustryContext(industry: string): string {
+export interface IndustryPromptMetadata {
+  recommendedColors: string[];
+  recommendedLogoStyles: string[];
+  recommendedTypography: string[];
+  recommendedPersonality: string[];
+}
+
+/**
+ * 기존 18개 업종은 손으로 다듬은 고정 문구(INDUSTRY_STYLE_TEMPLATES)를 그대로
+ * 쓴다(회귀 위험 없음, 우선순위 1). 2026-07-28 업종 카탈로그를 DB로 확장하면서
+ * 새로 추가되는 업종들은 고정 문구가 없으므로, 있으면 DB 메타데이터(색상/로고
+ * 스타일/타이포그래피/브랜드 성격)로 대신 문장을 구성한다(우선순위 2). 둘 다
+ * 없으면 빈 문자열(업종 불명 상태에서 억지로 관습을 강제하지 않는 기존 원칙
+ * 그대로 유지).
+ */
+function buildIndustryContext(industry: string, metadata?: IndustryPromptMetadata): string {
   const template = INDUSTRY_STYLE_TEMPLATES[industry];
-  return template ? `업종 특성: ${template}` : "";
+  if (template) return `업종 특성: ${template}`;
+  if (!metadata) return "";
+
+  const parts: string[] = [];
+  if (metadata.recommendedPersonality.length > 0) {
+    parts.push(`${metadata.recommendedPersonality.join(", ")} 브랜드 성격`);
+  }
+  if (metadata.recommendedColors.length > 0) {
+    parts.push(`${metadata.recommendedColors.join(", ")} 계열 컬러`);
+  }
+  if (metadata.recommendedTypography.length > 0) {
+    parts.push(metadata.recommendedTypography.join(", "));
+  }
+  if (parts.length === 0) return "";
+  return `업종 특성: ${parts.join(". ")}.`;
 }
 
 /**
@@ -457,6 +486,9 @@ export function buildPromptLayers(input: {
   additionalNotes?: string;
   /** 우선순위 시스템의 하드 제약조건(있을 때만). 없거나 모든 필드가 비어있으면 두 신규 레이어는 빈 문자열. */
   hardConstraints?: HardConstraintSet;
+  /** DB 업종 카탈로그에서 찾은 메타데이터(있을 때만) -- INDUSTRY_STYLE_TEMPLATES에
+   * 고정 문구가 없는 업종(2026-07-28 이후 신규 추가분)의 폴백 컨텍스트로 쓰인다. */
+  industryMetadata?: IndustryPromptMetadata;
 }): PromptLayers {
   const isLogo = !input.deliverableType || input.deliverableType === BRANDING_LOGO_DELIVERABLE_TYPE;
 
@@ -477,7 +509,7 @@ export function buildPromptLayers(input: {
   // 대분류 이름 중 하나를 담고 있다(prisma/seedStyles.ts 시드 규칙).
   const baseTemplateContext = buildBaseTemplateContext(input.primaryStyle.category);
 
-  const industryContext = buildIndustryContext(input.industry);
+  const industryContext = buildIndustryContext(input.industry, input.industryMetadata);
   const typographyContext = buildTypographyContext(input.deliverableType, input.primaryStyle.category);
 
   // "로고 스타일" 단계가 없는(브랜딩 & 로고가 아닌) 작업물 유형은 빈

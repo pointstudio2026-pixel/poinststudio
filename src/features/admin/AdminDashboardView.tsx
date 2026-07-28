@@ -158,6 +158,9 @@ export function AdminDashboardView() {
       <header className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Admin Dashboard</h1>
         <div className="flex items-center gap-4">
+          <Link href="/ops-portal-7x2q/industries" className="text-sm underline">
+            업종 카탈로그
+          </Link>
           <Link href="/ops-portal-7x2q/training-examples" className="text-sm underline">
             작업물 스타일 학습 자료
           </Link>

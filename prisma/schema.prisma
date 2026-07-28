@@ -281,6 +281,31 @@ model BrandStrategyVersion {
   @@map("brand_strategy_versions")
 }
 
+// 2026-07-28: 업종 카탈로그 -- 이전엔 interviewQuestions.ts의 하드코딩된
+// INDUSTRY_OPTIONS(19개) 뿐이었다. Style과 동일한 패턴(관리 가능한 구조,
+// seeded reference data, 하드코딩 아님)으로 DB 이관해 최소 50개로 확장하고
+// admin CRUD로 개발 없이 늘릴 수 있게 한다. `name`은 인터뷰 answers.industry에
+// 그대로 저장되는 원문(기존 19개는 문자열 그대로 보존 -- 브랜드 전략/컨셉보드가
+// 이 원문을 그대로 소비하므로 값이 바뀌면 그 다운스트림 매칭이 깨진다).
+model Industry {
+  id                     String   @id @default(uuid()) @db.Uuid
+  name                   String   @unique @db.VarChar(120)
+  seoSlug                String   @unique @map("seo_slug") @db.VarChar(160)
+  category               String   @db.VarChar(60)
+  description            String
+  recommendedColors      String[] @map("recommended_colors")
+  recommendedLogoStyles  String[] @map("recommended_logo_styles")
+  recommendedTypography  String[] @map("recommended_typography")
+  recommendedPersonality String[] @map("recommended_personality")
+  recommendedKeywords    String[] @map("recommended_keywords")
+  isActive               Boolean  @default(true) @map("is_active")
+  createdAt              DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt              DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  @@index([category])
+  @@map("industries")
+}
+
 // 12_PRD_StyleEngine.md Claude Code Instructions: "스타일 데이터는 하드코딩하지
 // 말고 관리 가능한 구조로 설계한다" -- seeded reference data (see
 // prisma/seedStyles.ts), not an in-code constant. level 1 = 대분류, 2 = 중분류,

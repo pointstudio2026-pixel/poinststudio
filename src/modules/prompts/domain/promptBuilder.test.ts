@@ -188,6 +188,54 @@ describe("buildPromptLayers -- industryContext(업종별 고정 뼈대)", () => 
     });
     expect(layers.industryContext).toBe("");
   });
+
+  it("falls back to DB industryMetadata for industries without a fixed template (2026-07-28 catalog expansion)", () => {
+    const layers = buildPromptLayers({
+      ...BRAND,
+      industry: "베이커리",
+      strategy: STRATEGY,
+      primaryStyle: PRIMARY_STYLE,
+      secondaryStyles: [],
+      industryMetadata: {
+        recommendedColors: ["#8B5E3C", "웜 브라운"],
+        recommendedLogoStyles: ["오가닉"],
+        recommendedTypography: ["손글씨 느낌의 스크립트체"],
+        recommendedPersonality: ["따뜻한", "정겨운"],
+      },
+    });
+    expect(layers.industryContext).toContain("업종 특성");
+    expect(layers.industryContext).toContain("웜 브라운");
+    expect(layers.industryContext).toContain("따뜻한");
+  });
+
+  it("prefers the fixed template over industryMetadata when both exist (기존 18개 업종 회귀 방지)", () => {
+    const layers = buildPromptLayers({
+      ...BRAND,
+      industry: "카페/커피",
+      strategy: STRATEGY,
+      primaryStyle: PRIMARY_STYLE,
+      secondaryStyles: [],
+      industryMetadata: {
+        recommendedColors: ["#000000"],
+        recommendedLogoStyles: ["테크"],
+        recommendedTypography: ["고딕체"],
+        recommendedPersonality: ["차가운"],
+      },
+    });
+    expect(layers.industryContext).toContain("우드톤");
+    expect(layers.industryContext).not.toContain("차가운");
+  });
+
+  it("stays empty when neither a fixed template nor industryMetadata exists", () => {
+    const layers = buildPromptLayers({
+      ...BRAND,
+      industry: "미분류업종",
+      strategy: STRATEGY,
+      primaryStyle: PRIMARY_STYLE,
+      secondaryStyles: [],
+    });
+    expect(layers.industryContext).toBe("");
+  });
 });
 
 describe("buildPromptLayers -- typographyContext(작업물 유형별 폰트 크기 지침)", () => {

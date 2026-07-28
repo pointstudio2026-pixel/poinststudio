@@ -18,6 +18,7 @@ import { FakeUserStyleCategoryRepository, FakeProjectUserStyleSelectionRepositor
 import { FakeColorPaletteSelectionRepository } from "@/modules/colorPalettes/testing/fakes";
 import { FakeTrainingExampleRepository } from "@/modules/trainingExamples/testing/fakes";
 import { FakePromptDecisionRecordRepository } from "@/modules/promptPriority/testing/fakes";
+import { FakeIndustryRepository } from "@/modules/industries/testing/fakes";
 import { CreateProjectUseCase } from "@/modules/projects/application/CreateProjectUseCase";
 import { SelectDeliverableTypeUseCase } from "@/modules/projects/application/SelectDeliverableTypeUseCase";
 import { FakeProjectRepository } from "@/modules/projects/testing/fakes";
@@ -97,6 +98,7 @@ async function setup() {
   const prompts = new FakePromptRepository();
   const trainingExamples = new FakeTrainingExampleRepository();
   const promptDecisionRecords = new FakePromptDecisionRecordRepository();
+  const industries = new FakeIndustryRepository();
 
   const { projectId } = await new CreateProjectUseCase(projects).execute({ userId: "user-1", name: "Bakery" });
   await new SelectDeliverableTypeUseCase(projects).execute({
@@ -134,6 +136,7 @@ async function setup() {
       prompts,
       trainingExamples,
       promptDecisionRecords,
+      industries,
     ),
     get: new GetPromptUseCase(projects, prompts),
     getVersions: new GetPromptVersionsUseCase(projects, prompts),

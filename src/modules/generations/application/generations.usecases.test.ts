@@ -33,6 +33,7 @@ import { FakeUserStyleCategoryRepository, FakeProjectUserStyleSelectionRepositor
 import { FakeColorPaletteSelectionRepository } from "@/modules/colorPalettes/testing/fakes";
 import { FakeTrainingExampleRepository } from "@/modules/trainingExamples/testing/fakes";
 import { FakePromptDecisionRecordRepository } from "@/modules/promptPriority/testing/fakes";
+import { FakeIndustryRepository } from "@/modules/industries/testing/fakes";
 import { EnsureEmailVerifiedUseCase } from "@/modules/auth/application/EnsureEmailVerifiedUseCase";
 import { FakeUserRepository } from "@/modules/auth/testing/fakes";
 import { CreateProjectUseCase } from "@/modules/projects/application/CreateProjectUseCase";
@@ -119,6 +120,7 @@ async function setup() {
   const prompts = new FakePromptRepository();
   const trainingExamples = new FakeTrainingExampleRepository();
   const promptDecisionRecords = new FakePromptDecisionRecordRepository();
+  const industries = new FakeIndustryRepository();
   const generationEvaluations = new FakeGenerationEvaluationRepository();
   const generations = new FakeGenerationRepository();
   const queue = new FakeImageGenerationQueue();
@@ -153,6 +155,7 @@ async function setup() {
     prompts,
     trainingExamples,
     promptDecisionRecords,
+    industries,
   );
 
   return {

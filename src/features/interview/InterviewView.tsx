@@ -11,6 +11,7 @@ import {
   saveInterviewAnswer,
   type InterviewQuestionDto,
 } from "@/services/interview-service";
+import { searchIndustries } from "@/services/industries-service";
 import { Spinner } from "@/components/Spinner";
 import { NextStepButton } from "@/features/workspace/NextStepButton";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
@@ -125,6 +126,24 @@ export function InterviewView({ projectId }: { projectId: string }) {
   }, []);
 
   const currentQuestion = questions[displayIndex];
+
+  // 업종 질문은 더 이상 하드코딩된 19개 목록이 아니라 DB 카탈로그(50개+,
+  // 관리자가 코드 배포 없이 늘릴 수 있다)에서 가져온다. 기존 검색형 select
+  // UI(위 matchesOptionSearch)는 그대로 재사용하고 옵션 소스만 교체한다 --
+  // 로딩 중/실패 시엔 interviewQuestions.ts의 정적 목록으로 자연스럽게
+  // 폴백한다(빈 화면 방지). "기타"는 카탈로그에 없는 별도 고정 항목이라 항상
+  // 끝에 붙인다.
+  const industriesQuery = useQuery({
+    queryKey: ["interview-industries"],
+    queryFn: () => searchIndustries(""),
+    enabled: currentQuestion?.key === "industry",
+    staleTime: 5 * 60 * 1000,
+  });
+  const industryOptions =
+    currentQuestion?.key === "industry" && industriesQuery.data
+      ? [...industriesQuery.data.industries.map((i) => i.name), "기타"]
+      : undefined;
+
   const progress = questions.length > 0 ? Math.round(((displayIndex + 1) / questions.length) * 100) : 0;
   const missingRequired = questions.filter((q) => q.required && !(answers[q.key] ?? "").trim());
   // "기타(직접 입력)" 인라인 입력창 값 -- 별도 state/effect 없이 저장된 답변에서
@@ -430,7 +449,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                     className="rounded-full border border-line px-3 py-2"
                   />
                   <ul className="flex max-h-64 flex-col gap-1 overflow-y-auto rounded-xl border border-line p-1">
-                    {(currentQuestion.options ?? [])
+                    {(industryOptions ?? currentQuestion.options ?? [])
                       .filter((option) => matchesOptionSearch(option, optionSearch))
                       .map((option) => {
                         const isSelected = currentQuestion.multiple
@@ -456,7 +475,7 @@ export function InterviewView({ projectId }: { projectId: string }) {
                           </li>
                         );
                       })}
-                    {(currentQuestion.options ?? []).filter((option) =>
+                    {(industryOptions ?? currentQuestion.options ?? []).filter((option) =>
                       matchesOptionSearch(option, optionSearch),
                     ).length === 0 && (
                       <li className="px-3 py-2 text-sm text-muted">{t("interview.noSearchResults")}</li>

@@ -18,6 +18,7 @@
     "prisma:seed-styles": "tsx prisma/seedStyles.ts",
     "prisma:seed-mockup-templates": "tsx prisma/seedMockupTemplates.ts",
     "prisma:seed-logo-styles": "tsx prisma/seedLogoStyles.ts",
+    "prisma:seed-industries": "tsx prisma/seedIndustries.ts",
     "worker": "tsx src/workers/standalone.ts"
   },
   "keywords": [],
