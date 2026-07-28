@@ -1,4 +1,10 @@
-import type { GeneratedImage, Generation, GenerationStatus, GenerationVersion } from "@/modules/generations/domain/Generation";
+import type {
+  GeneratedImage,
+  Generation,
+  GenerationStatus,
+  GenerationVersion,
+  PastGenerationImage,
+} from "@/modules/generations/domain/Generation";
 
 export interface CreateGenerationVersionInput {
   promptVersionId: string;
@@ -32,4 +38,7 @@ export interface GenerationRepository {
    * 이걸 먼저 채워 넣어 자가 치유한다.
    */
   listCompletedWithoutEvaluation(limit: number): Promise<GenerationVersion[]>;
+  /** "목업" 단독 프로세스의 로고 선택 단계용 -- 이 사용자의 모든(단독 목업용
+   * 껍데기 프로젝트 제외) 프로젝트에서 나온 완료된 생성 이미지 전체. */
+  listCompletedImagesForUser(userId: string): Promise<PastGenerationImage[]>;
 }

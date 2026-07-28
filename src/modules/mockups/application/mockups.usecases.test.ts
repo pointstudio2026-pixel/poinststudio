@@ -33,6 +33,7 @@ const TEMPLATE: MockupTemplate = {
   description: "설명",
   backgroundUrl: "data:image/svg+xml;base64,AAA",
   placementArea: { xPct: 30, yPct: 35, widthPct: 40, heightPct: 30 },
+  keywords: [],
 };
 
 async function setup() {

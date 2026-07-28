@@ -28,6 +28,7 @@ export class FakeProjectRepository implements ProjectRepository {
     const limit = options?.limit ?? (options?.search ? 50 : 10);
     return this.projects
       .filter((p) => this.isAccessible(p, userId))
+      .filter((p) => !p.isStandaloneMockup)
       .filter((p) =>
         options?.search
           ? p.name.toLowerCase().includes(options.search.toLowerCase())

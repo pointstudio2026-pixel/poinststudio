@@ -33,6 +33,32 @@ export interface MockupTemplateDto {
   description: string;
   backgroundUrl: string;
   placementArea: { xPct: number; yPct: number; widthPct: number; heightPct: number };
+  keywords?: string[];
+}
+
+export interface PastGenerationImageDto {
+  projectId: string;
+  projectName: string;
+  generationVersionId: string;
+  imageIndex: number;
+  url: string;
+  thumbnailUrl: string;
+  createdAt: string;
+}
+
+export interface StandaloneMockupDto {
+  id: string;
+  userId: string;
+  projectId: string;
+  templateId: string;
+  sourceType: "upload" | "past_generation";
+  status: "pending" | "processing" | "completed" | "failed";
+  resultImageUrl: string | null;
+  thumbnailUrl: string | null;
+  provider: string | null;
+  errorMessage: string | null;
+  costAmount: number | null;
+  createdAt: string;
 }
 
 export interface MockupCategoryRecommendationDto {
@@ -98,4 +124,29 @@ export function toggleMockupFavorite(mockupId: string, favorite: boolean) {
 
 export function deleteMockup(mockupId: string) {
   return apiFetch<{ deleted: boolean }>(`/api/mockups/${mockupId}`, { method: "DELETE" });
+}
+
+export function searchMockupTemplates(query: string) {
+  return apiFetch<{ templates: MockupTemplateDto[] }>(`/api/mockups/templates/search?q=${encodeURIComponent(query)}`);
+}
+
+export function fetchPastGenerationImages() {
+  return apiFetch<{ images: PastGenerationImageDto[] }>("/api/mockups/past-generations");
+}
+
+export function createStandaloneMockup(
+  templateId: string,
+  source: { type: "upload"; file: File } | { type: "past_generation"; imageUrl: string },
+) {
+  const formData = new FormData();
+  formData.append("templateId", templateId);
+  if (source.type === "upload") {
+    formData.append("file", source.file);
+  } else {
+    formData.append("imageUrl", source.imageUrl);
+  }
+  return apiFetch<{ mockup: StandaloneMockupDto }>("/api/mockups/standalone", {
+    method: "POST",
+    body: formData,
+  });
 }

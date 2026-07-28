@@ -9,6 +9,8 @@ export interface Project {
   currentStep: string;
   isFavorite: boolean;
   sharedWithTeam: boolean;
+  /** "목업" 단독 프로세스가 만드는 껍데기 프로젝트 -- "새 프로젝트" 목록에는 절대 안 보여야 한다. */
+  isStandaloneMockup: boolean;
   archivedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;

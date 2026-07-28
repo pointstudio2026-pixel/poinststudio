@@ -22,6 +22,7 @@ function buildProject(overrides: Partial<Project> = {}): Project {
     currentStep: "logo_choice",
     isFavorite: false,
     sharedWithTeam: false,
+    isStandaloneMockup: false,
     archivedAt: null,
     createdAt: new Date(),
     updatedAt: new Date(),

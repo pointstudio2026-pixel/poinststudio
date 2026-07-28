@@ -20,6 +20,7 @@ function buildProject(overrides: Partial<Project> = {}): Project {
     currentStep: "generation",
     isFavorite: false,
     sharedWithTeam: false,
+    isStandaloneMockup: false,
     archivedAt: null,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -53,6 +54,7 @@ const TEMPLATE_A: MockupTemplate = {
   backgroundUrl: "data:image/svg+xml;base64,AAA",
   placementArea: { xPct: 30, yPct: 35, widthPct: 40, heightPct: 30 },
   fullDesignPlacementArea: { xPct: 10, yPct: 10, widthPct: 80, heightPct: 80 },
+  keywords: [],
 };
 
 const TEMPLATE_B: MockupTemplate = { ...TEMPLATE_A, id: "template-b", name: "Poster B", slug: "poster-b" };

@@ -17,6 +17,7 @@ function toTemplate(row: {
   fullDesignPlacementYPct: number | null;
   fullDesignPlacementWidthPct: number | null;
   fullDesignPlacementHeightPct: number | null;
+  keywords: string[];
 }): MockupTemplate {
   const hasFullDesignArea =
     row.fullDesignPlacementXPct != null &&
@@ -45,6 +46,7 @@ function toTemplate(row: {
           heightPct: row.fullDesignPlacementHeightPct!,
         }
       : null,
+    keywords: row.keywords,
   };
 }
 
@@ -69,5 +71,21 @@ export class PrismaMockupTemplateRepository implements MockupTemplateRepository 
       orderBy: { category: "asc" },
     });
     return rows.map((r) => r.category as MockupCategory);
+  }
+
+  async search(query: string): Promise<MockupTemplate[]> {
+    const trimmed = query.trim();
+    if (!trimmed) return this.list();
+    const rows = await prisma.mockupTemplate.findMany({
+      where: {
+        OR: [
+          { name: { contains: trimmed, mode: "insensitive" } },
+          { description: { contains: trimmed, mode: "insensitive" } },
+          { keywords: { has: trimmed } },
+        ],
+      },
+      orderBy: { name: "asc" },
+    });
+    return rows.map(toTemplate);
   }
 }

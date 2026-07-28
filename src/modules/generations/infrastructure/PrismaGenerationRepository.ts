@@ -5,6 +5,7 @@ import type {
   Generation,
   GenerationStatus,
   GenerationVersion,
+  PastGenerationImage,
 } from "@/modules/generations/domain/Generation";
 import type {
   CreateGenerationVersionInput,
@@ -145,5 +146,35 @@ export class PrismaGenerationRepository implements GenerationRepository {
       orderBy: { completedAt: "asc" },
     });
     return rows.map(toVersion);
+  }
+
+  async listCompletedImagesForUser(userId: string): Promise<PastGenerationImage[]> {
+    const rows = await prisma.generationVersion.findMany({
+      where: {
+        status: "completed",
+        generation: {
+          project: { userId, deletedAt: null, isStandaloneMockup: false },
+        },
+      },
+      include: { generation: { include: { project: { select: { id: true, name: true } } } } },
+      orderBy: { completedAt: "desc" },
+    });
+
+    const out: PastGenerationImage[] = [];
+    for (const row of rows) {
+      const images = row.images as unknown as GeneratedImage[];
+      images.forEach((image, index) => {
+        out.push({
+          projectId: row.generation.project.id,
+          projectName: row.generation.project.name,
+          generationVersionId: row.id,
+          imageIndex: index,
+          url: image.url,
+          thumbnailUrl: image.thumbnailUrl,
+          createdAt: row.createdAt,
+        });
+      });
+    }
+    return out;
   }
 }

@@ -1,12 +1,16 @@
 import { PrismaMockupRepository } from "@/modules/mockups/infrastructure/PrismaMockupRepository";
 import { PrismaMockupTemplateRepository } from "@/modules/mockups/infrastructure/PrismaMockupTemplateRepository";
+import { PrismaStandaloneMockupRepository } from "@/modules/mockups/infrastructure/PrismaStandaloneMockupRepository";
 import { CreateMockupUseCase } from "@/modules/mockups/application/CreateMockupUseCase";
+import { CreateStandaloneMockupUseCase } from "@/modules/mockups/application/CreateStandaloneMockupUseCase";
 import { GetMockupsUseCase } from "@/modules/mockups/application/GetMockupsUseCase";
 import { GetMockupTemplatesUseCase } from "@/modules/mockups/application/GetMockupTemplatesUseCase";
+import { SearchMockupTemplatesUseCase } from "@/modules/mockups/application/SearchMockupTemplatesUseCase";
 import { ToggleMockupFavoriteUseCase } from "@/modules/mockups/application/ToggleMockupFavoriteUseCase";
 import { DeleteMockupUseCase } from "@/modules/mockups/application/DeleteMockupUseCase";
 import { ProcessMockupJobUseCase } from "@/modules/mockups/application/ProcessMockupJobUseCase";
 import { RecommendMockupCategoriesUseCase } from "@/modules/mockups/application/RecommendMockupCategoriesUseCase";
+import { ListPastGenerationImagesUseCase } from "@/modules/mockups/application/ListPastGenerationImagesUseCase";
 import { projectRepositoryInstance } from "@/modules/projects/container";
 import { interviewRepositoryInstance } from "@/modules/interviews/container";
 import { generationRepositoryInstance } from "@/modules/generations/container";
@@ -15,13 +19,16 @@ import { trainingExampleRepositoryInstance } from "@/modules/trainingExamples/co
 import { styleRepositoryInstance, styleSelectionRepositoryInstance } from "@/modules/styles/container";
 import { BullMqMockupRenderQueue } from "@/shared/queue/mockupRenderQueue";
 import { resolveMockupRenderProvider } from "@/shared/ai/mockupRenderRouter";
+import { resolveFileStorage } from "@/shared/storage/fileStorageRouter";
 import { startMockupRenderWorker } from "@/workers/mockupRenderWorker";
 
 export const mockupRepositoryInstance = new PrismaMockupRepository();
 const mockupRepository = mockupRepositoryInstance;
 export const mockupTemplateRepositoryInstance = new PrismaMockupTemplateRepository();
 const templateRepository = mockupTemplateRepositoryInstance;
+export const standaloneMockupRepositoryInstance = new PrismaStandaloneMockupRepository();
 const queue = new BullMqMockupRenderQueue();
+const standaloneMockupFileStorage = resolveFileStorage();
 
 export const mockupsContainer = {
   createMockupUseCase: new CreateMockupUseCase(
@@ -40,6 +47,17 @@ export const mockupsContainer = {
   ),
   toggleMockupFavoriteUseCase: new ToggleMockupFavoriteUseCase(projectRepositoryInstance, mockupRepository),
   deleteMockupUseCase: new DeleteMockupUseCase(projectRepositoryInstance, mockupRepository),
+  searchMockupTemplatesUseCase: new SearchMockupTemplatesUseCase(templateRepository),
+  listPastGenerationImagesUseCase: new ListPastGenerationImagesUseCase(generationRepositoryInstance),
+  createStandaloneMockupUseCase: new CreateStandaloneMockupUseCase(
+    projectRepositoryInstance,
+    templateRepository,
+    standaloneMockupRepositoryInstance,
+    standaloneMockupFileStorage,
+    resolveMockupRenderProvider(),
+    subscriptionsContainer.checkPlanUseCase,
+    subscriptionsContainer.recordUsageUseCase,
+  ),
 };
 
 const processMockupJobUseCase = new ProcessMockupJobUseCase(

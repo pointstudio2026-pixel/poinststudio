@@ -37,6 +37,7 @@ export class PrismaProjectRepository implements ProjectRepository {
     return prisma.project.findMany({
       where: {
         deletedAt: null,
+        isStandaloneMockup: false,
         ...accessibleByUser(userId),
         ...(options?.search
           ? { name: { contains: options.search, mode: "insensitive" } }
@@ -59,6 +60,7 @@ export class PrismaProjectRepository implements ProjectRepository {
         currentStep: project.currentStep,
         isFavorite: project.isFavorite,
         sharedWithTeam: project.sharedWithTeam,
+        isStandaloneMockup: project.isStandaloneMockup,
         archivedAt: project.archivedAt,
       },
       update: {
@@ -68,6 +70,7 @@ export class PrismaProjectRepository implements ProjectRepository {
         currentStep: project.currentStep,
         isFavorite: project.isFavorite,
         sharedWithTeam: project.sharedWithTeam,
+        isStandaloneMockup: project.isStandaloneMockup,
         archivedAt: project.archivedAt,
       },
     });

@@ -174,6 +174,11 @@ model Project {
   status      String    @default("draft") @db.VarChar(30)
   deliverableType String? @map("deliverable_type") @db.VarChar(30)
   currentStep String    @default("deliverable_type") @map("current_step") @db.VarChar(50)
+  // "목업" 단독 프로세스(내 프로젝트의 "새 프로젝트" 마법사와 완전히 별개)가
+  // 만드는 껍데기 프로젝트 -- usageLog는 여전히 projectId를 요구해서 얕은
+  // Project 행 하나가 필요하지만, 실제 "새 프로젝트" 목록에는 보이면 안
+  // 된다(ListProjectsUseCase가 이 값으로 걸러낸다).
+  isStandaloneMockup Boolean @default(false) @map("is_standalone_mockup")
   isFavorite  Boolean   @default(false) @map("is_favorite")
   sharedWithTeam Boolean @default(false) @map("shared_with_team")
   archivedAt  DateTime? @map("archived_at") @db.Timestamptz()
@@ -194,6 +199,7 @@ model Project {
   userStyleSelections ProjectUserStyleSelection[]
   colorPaletteSelections ColorPaletteSelection[]
   logoAsset       ProjectLogoAsset?
+  standaloneMockups StandaloneMockup[]
 
   @@index([userId, updatedAt(sort: Desc)])
   @@map("projects")
@@ -575,12 +581,43 @@ model MockupTemplate {
   fullDesignPlacementYPct      Float?   @map("full_design_placement_y_pct")
   fullDesignPlacementWidthPct  Float?   @map("full_design_placement_width_pct")
   fullDesignPlacementHeightPct Float?   @map("full_design_placement_height_pct")
+  // "목업" 단독 프로세스의 검색 가능한 배경 갤러리용 -- 카테고리 하나로
+  // 뭉뚱그리지 않고 "의사가운"처럼 구체적으로 검색되도록 하는 키워드.
+  // styles 테이블의 keywords 컬럼과 같은 패턴.
+  keywords String[] @default([]) @map("keywords")
   createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
   mockups MockupProject[]
+  standaloneMockups StandaloneMockup[]
 
   @@index([category])
   @@map("mockup_templates")
+}
+
+// "목업" 단독 프로세스의 결과 기록. MockupProject는 "이 프로젝트 자신의
+// GenerationVersion에서 나온 이미지"라는 전제가 코드 레벨에 박혀있어(FK는
+// 없지만 CreateMockupUseCase가 강제) 그대로 재사용하면 다른 프로젝트에서
+// 가져온 로고나 직접 업로드한 파일을 못 담는다 -- 그래서 별도 테이블.
+// GenerateFromLogoAssetUseCase와 동일하게 동기 렌더링이라 큐/pending 상태가
+// 사실상 없고, 성공/실패 결과를 바로 기록한다.
+model StandaloneMockup {
+  id             String    @id @default(uuid()) @db.Uuid
+  userId         String    @map("user_id") @db.Uuid
+  projectId      String    @map("project_id") @db.Uuid
+  project        Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  templateId     String    @map("template_id") @db.Uuid
+  template       MockupTemplate @relation(fields: [templateId], references: [id])
+  sourceType     String    @map("source_type") @db.VarChar(20)
+  status         String    @default("completed") @db.VarChar(20)
+  resultImageUrl String?   @map("result_image_url")
+  thumbnailUrl   String?   @map("thumbnail_url")
+  provider       String?   @db.VarChar(30)
+  errorMessage   String?   @map("error_message")
+  costAmount     Decimal?  @map("cost_amount") @db.Decimal(12, 6)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("standalone_mockups")
 }
 
 // Each render is its own row (not a single versioned document like Brand

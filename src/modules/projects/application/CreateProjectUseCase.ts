@@ -20,6 +20,7 @@ export class CreateProjectUseCase {
       currentStep: "deliverable_type",
       isFavorite: false,
       sharedWithTeam: false,
+      isStandaloneMockup: false,
       archivedAt: null,
       createdAt: new Date(),
       updatedAt: new Date(),

@@ -9,6 +9,11 @@ import type {
   EnqueueMockupRenderInput,
   MockupRenderQueuePort,
 } from "@/modules/mockups/domain/MockupRenderQueuePort";
+import type { StandaloneMockup } from "@/modules/mockups/domain/StandaloneMockup";
+import type {
+  CreateStandaloneMockupInput,
+  StandaloneMockupRepository,
+} from "@/modules/mockups/domain/StandaloneMockupRepository";
 
 export class FakeMockupTemplateRepository implements MockupTemplateRepository {
   templates: MockupTemplate[] = [];
@@ -23,6 +28,17 @@ export class FakeMockupTemplateRepository implements MockupTemplateRepository {
 
   async listCategories(): Promise<MockupCategory[]> {
     return [...new Set(this.templates.map((t) => t.category))];
+  }
+
+  async search(query: string): Promise<MockupTemplate[]> {
+    const trimmed = query.trim().toLowerCase();
+    if (!trimmed) return this.templates;
+    return this.templates.filter(
+      (t) =>
+        t.name.toLowerCase().includes(trimmed) ||
+        t.description.toLowerCase().includes(trimmed) ||
+        t.keywords.some((k) => k.toLowerCase() === trimmed),
+    );
   }
 }
 
@@ -94,6 +110,37 @@ export class FakeMockupRepository implements MockupRepository {
   templateCategoryMap = new Map<string, MockupCategory>();
   private templateCategory(templateId: string): MockupCategory | undefined {
     return this.templateCategoryMap.get(templateId);
+  }
+}
+
+export class FakeStandaloneMockupRepository implements StandaloneMockupRepository {
+  mockups: StandaloneMockup[] = [];
+  private nextId = 1;
+
+  async create(input: CreateStandaloneMockupInput): Promise<StandaloneMockup> {
+    const mockup: StandaloneMockup = {
+      id: `standalone-mockup-${this.nextId++}`,
+      userId: input.userId,
+      projectId: input.projectId,
+      templateId: input.templateId,
+      sourceType: input.sourceType,
+      status: input.status,
+      resultImageUrl: input.resultImageUrl ?? null,
+      thumbnailUrl: input.thumbnailUrl ?? null,
+      provider: input.provider ?? null,
+      errorMessage: input.errorMessage ?? null,
+      costAmount: input.costAmount ?? null,
+      createdAt: new Date(),
+    };
+    this.mockups.push(mockup);
+    return mockup;
+  }
+
+  async listByUserId(userId: string, limit = 50): Promise<StandaloneMockup[]> {
+    return this.mockups
+      .filter((m) => m.userId === userId)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(0, limit);
   }
 }
 

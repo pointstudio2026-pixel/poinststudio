@@ -26,3 +26,18 @@ export interface Generation {
   projectId: string;
   currentVersion: GenerationVersion;
 }
+
+/**
+ * "목업" 단독 프로세스의 로고 선택 단계가 쓰는, 사용자 전체 프로젝트를
+ * 가로지르는 평탄화된 이미지 목록 -- GenerationVersion 하나에 이미지가
+ * 여러 장 있을 수 있어 이미지 1장당 항목 1개로 펼친다.
+ */
+export interface PastGenerationImage {
+  projectId: string;
+  projectName: string;
+  generationVersionId: string;
+  imageIndex: number;
+  url: string;
+  thumbnailUrl: string;
+  createdAt: Date;
+}

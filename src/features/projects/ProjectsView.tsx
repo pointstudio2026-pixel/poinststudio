@@ -69,7 +69,15 @@ export function ProjectsView({
             <h1 className="mt-1 text-2xl font-semibold">{t("dashboard.heading", { name: name?.trim() || email })}</h1>
             <p className="font-script mt-1 text-sm text-muted">{t("dashboard.tagline")}</p>
           </div>
-          <NewProjectButton />
+          <div className="flex items-center gap-2">
+            <Link
+              href="/mockups/new"
+              className="whitespace-nowrap rounded-full border border-line px-4 py-1.5 text-sm transition hover:border-ink"
+            >
+              {t("dashboard.standaloneMockup.navButton")}
+            </Link>
+            <NewProjectButton />
+          </div>
         </div>
 
         {isLoading && <DashboardSkeleton />}

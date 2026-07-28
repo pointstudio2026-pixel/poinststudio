@@ -18,7 +18,6 @@ import { fetchGenerationHistory } from "@/services/generations-service";
 import { Spinner } from "@/components/Spinner";
 import { ImageLightbox } from "@/components/ImageLightbox";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
-import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 import { DELIVERABLE_TYPE_TO_MOCKUP_CATEGORY } from "@/modules/mockups/domain/mockupRules";
 import { isBrandingDeliverableType } from "@/modules/projects/domain/deliverableTypes";
 import { MOCKUP_CATEGORY_LABEL_KEYS } from "@/features/mockups/mockupCategoryLabels";
@@ -27,11 +26,9 @@ const ALL_CATEGORIES = Object.keys(MOCKUP_CATEGORY_LABELS) as MockupCategoryDto[
 
 export function MockupStudioView({
   projectId,
-  planCode,
   deliverableType,
 }: {
   projectId: string;
-  planCode: PlanCode;
   deliverableType: string | null;
 }) {
   const { t } = useTranslation();
@@ -167,19 +164,7 @@ export function MockupStudioView({
       <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
         <h2 className="text-sm font-medium text-ink">{t("mockupStudio.newMockup")}</h2>
 
-        {planCode === "free" ? (
-          <div className="mt-3 rounded-2xl border border-dashed border-line p-6 text-center text-sm text-muted">
-            {t("mockupStudio.proOnlyBody")}
-            <div className="mt-3">
-              <Link
-                href="/subscription"
-                className="rounded-full bg-ink px-4 py-2 text-sm text-paper"
-              >
-                {t("mockupStudio.upgradeLink")}
-              </Link>
-            </div>
-          </div>
-        ) : completedVersions.length === 0 ? (
+        {completedVersions.length === 0 ? (
           <div className="mt-3 rounded-2xl border border-dashed border-line p-6 text-center text-sm text-muted">
             {t("mockupStudio.generateFirst")}
             <div className="mt-3">

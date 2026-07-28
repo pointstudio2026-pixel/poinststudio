@@ -1,4 +1,4 @@
-import type { Generation, GenerationVersion } from "@/modules/generations/domain/Generation";
+import type { Generation, GenerationVersion, PastGenerationImage } from "@/modules/generations/domain/Generation";
 import type {
   CreateGenerationVersionInput,
   GenerationRepository,
@@ -122,6 +122,32 @@ export class FakeGenerationRepository implements GenerationRepository {
     return this.versions
       .filter((v) => v.status === "completed" && !this.evaluatedVersionIds.has(v.id))
       .slice(0, limit);
+  }
+
+  /** 테스트에서 프로젝트의 소유자/이름을 등록해두는 용도(listCompletedImagesForUser에서 씀). */
+  projectOwners = new Map<string, { userId: string; projectName: string }>();
+
+  async listCompletedImagesForUser(userId: string): Promise<PastGenerationImage[]> {
+    const out: PastGenerationImage[] = [];
+    for (const version of this.versions) {
+      if (version.status !== "completed") continue;
+      const generation = this.generations.get(version.generationId);
+      if (!generation) continue;
+      const owner = this.projectOwners.get(generation.projectId);
+      if (!owner || owner.userId !== userId) continue;
+      version.images.forEach((image, index) => {
+        out.push({
+          projectId: generation.projectId,
+          projectName: owner.projectName,
+          generationVersionId: version.id,
+          imageIndex: index,
+          url: image.url,
+          thumbnailUrl: image.thumbnailUrl,
+          createdAt: version.createdAt,
+        });
+      });
+    }
+    return out;
   }
 }
 

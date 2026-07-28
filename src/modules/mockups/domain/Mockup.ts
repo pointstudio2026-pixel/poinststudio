@@ -25,6 +25,8 @@ export interface MockupTemplate {
   placementArea: { xPct: number; yPct: number; widthPct: number; heightPct: number };
   /** 완성된 결과물 전체를 크게 합성할 때 쓰는 배치 영역 -- 값이 없으면 로고 마크 모드로 폴백. */
   fullDesignPlacementArea?: { xPct: number; yPct: number; widthPct: number; heightPct: number } | null;
+  /** "목업" 단독 프로세스의 배경 검색용 키워드(예: "의사가운", "셰프복"). */
+  keywords: string[];
 }
 
 export interface MockupProject {
