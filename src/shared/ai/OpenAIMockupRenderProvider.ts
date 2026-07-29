@@ -45,6 +45,21 @@ function buildContrastClause(contrastCheck: LogoContrastCheckResult | null): str
   );
 }
 
+// 2026-07-29 사용자 지적: (1) 기존 자리표시자 로고가 심볼+타이포로 이루어져
+// 있는데 심볼만 바뀌고 기존 타이포가 남거나 새 로고 텍스트가 기존 텍스트와
+// 겹쳐 보이는 문제, (2) 로고가 자리에 비해 너무 크게 들어가는 경향(여백
+// 부족) -- 둘 다 "로고를 자리표시자 자리에 배치/교체"라는 지시만으로는
+// 모델이 부분 교체나 과대 배치를 할 수 있어 명시적으로 못박는다.
+const LOGO_REPLACEMENT_QUALITY_CLAUSE =
+  ` 기존 자리표시자 로고가 심볼(아이콘)과 타이포그래피(브랜드명 워드마크)가 ` +
+  `함께 있는 형태라면, 심볼만 바꾸고 기존 타이포그래피를 그대로 남겨두거나 ` +
+  `새 로고를 기존 타이포그래피 위에 겹쳐 그리면 절대 안 됩니다 -- 심볼과 ` +
+  `타이포그래피를 포함한 로고 전체를 하나의 통짜 단위로 완전히 들어내고 ` +
+  `첨부된 로고로 통째로 교체해야 합니다. 또한 로고를 자리표시자보다 ` +
+  `과도하게 크게 그리지 말고, 로고 주변에 넉넉한 여백을 두어 절제되고 ` +
+  `미니멀한 느낌으로 배치해주세요 -- 여백을 넉넉히 주는 배치가 최신 ` +
+  `트렌드입니다.`;
+
 function buildPrompt(request: MockupRenderRequest, contrastCheck: LogoContrastCheckResult | null): string {
   const base =
     request.compositingMode === "fullDesign"
@@ -88,10 +103,13 @@ function buildPrompt(request: MockupRenderRequest, contrastCheck: LogoContrastCh
   const styleClause = request.styleCategory ? ` 스타일 표현 방식: ${request.styleCategory}` : "";
   const referenceClause = request.referenceExampleText ? ` 참고 연출 가이드: ${request.referenceExampleText}` : "";
   const avoidClause = request.avoidPatternText ? ` 회피 지침(과거에 반응이 좋지 않았던 연출, 피할 것): ${request.avoidPatternText}` : "";
-  // 완성된 디자인 시안(fullDesign)은 이미 그 자체의 색상 체계를 갖춘 결과물이라
-  // 대비 보정 대상이 아니다 -- 순수 로고 마크 하나만 배치하는 두 모드에서만 적용.
-  const contrastClause = request.compositingMode === "fullDesign" ? "" : buildContrastClause(contrastCheck);
-  return `${base}${sceneClause}${styleClause}${referenceClause}${avoidClause}${contrastClause}`;
+  // 완성된 디자인 시안(fullDesign)은 이미 그 자체의 색상 체계·크기로 완성된
+  // 결과물이라 대비 보정이나 여백 지침 대상이 아니다 -- 순수 로고 마크 하나만
+  // 배치하는 두 모드에서만 적용.
+  const isLogoOnlyMode = request.compositingMode !== "fullDesign";
+  const contrastClause = isLogoOnlyMode ? buildContrastClause(contrastCheck) : "";
+  const replacementQualityClause = isLogoOnlyMode ? LOGO_REPLACEMENT_QUALITY_CLAUSE : "";
+  return `${base}${sceneClause}${styleClause}${referenceClause}${avoidClause}${contrastClause}${replacementQualityClause}`;
 }
 
 export class OpenAIMockupRenderProvider implements MockupRenderProvider {
