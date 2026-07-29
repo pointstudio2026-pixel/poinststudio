@@ -170,7 +170,6 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser | null; pl
                 />
               )}
               {renderGatedLink("mockup", t("nav.mockup"), "/mockups/new")}
-              {renderGatedLink("myWork", t("nav.myWork"), "/my-work")}
               {renderGatedLink("myStyles", t("nav.myStyles"), "/my-styles")}
               {renderGatedLink("team", t("nav.team"), "/team")}
             </div>
@@ -228,6 +227,7 @@ export function PrimaryNav({ user, planCode }: { user: PrimaryNavUser | null; pl
               <Link href="/my-info" className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper">
                 {t("nav.myInfo")}
               </Link>
+              {renderGatedLink("myWork", t("nav.myWork"), "/my-work")}
               <Link href="/subscription" className="block rounded-lg px-3 py-2 text-sm transition hover:bg-paper">
                 {t("nav.subscription")}
               </Link>
