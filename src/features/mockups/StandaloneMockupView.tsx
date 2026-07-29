@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   searchMockupTemplates,
@@ -109,9 +108,13 @@ export function StandaloneMockupView({
 
       <main className="mx-auto flex max-w-3xl flex-col gap-8 px-8 py-10">
         <div>
-          <Link href="/projects" className="text-sm text-muted underline underline-offset-4">
-            {t("dashboard.myProjects")}
-          </Link>
+          <button
+            type="button"
+            onClick={() => setStep("background")}
+            className="text-sm text-muted underline underline-offset-4"
+          >
+            {t("nav.mockup")}
+          </button>
           <h1 className="mt-2 text-2xl font-semibold">{t("dashboard.standaloneMockup.pageTitle")}</h1>
           <p className="mt-1 text-sm text-muted">{t("dashboard.standaloneMockup.pageSubtitle")}</p>
         </div>
