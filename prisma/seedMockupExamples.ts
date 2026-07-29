@@ -15,6 +15,14 @@ import { PrismaClient } from "../generated/prisma/client";
  *    반드시 이 화면에서 보여야 한다.
  * slug/prompt 기준으로 이미 존재하면 건너뛰어(upsert/existence check) 여러
  * 번 실행해도 안전하다. Re-run with `npx tsx prisma/seedMockupExamples.ts`.
+ *
+ * 중요(2026-07-29): 이 매니페스트의 `name`/`keywords`는 반드시 실제 생성된
+ * `imagePath` 이미지를 직접 열어 보고("라떼 포스터"면 진짜 라떼/카페가
+ * 그려져 있어야 함) 붙여야 한다. `prompt` 필드는 미니멀/내추럴/컬러풀 같은
+ * 톤·스타일만 지시할 뿐 구체적인 업종/아이템을 지정하지 않으므로, prompt의
+ * 톤이나 카테고리만 보고 이름을 추측하면 "레몬에이드 포스터"인데 실제로는
+ * 가구 브랜드 광고가 그려진 것처럼 이름과 실제 이미지가 어긋난다(2026-07-29
+ * 실제 발생 사례). 새 템플릿을 추가할 때마다 이 규칙을 반드시 지킬 것.
  */
 
 interface ManifestRow {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import {
@@ -39,6 +39,26 @@ export function StandaloneMockupView({
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [result, setResult] = useState<StandaloneMockupDto | null>(null);
 
+  // 배경 선택/로고 첨부/결과는 실제 URL 이동 없이 같은 페이지 안에서 단계만
+  // 바뀌는 구조라, 브라우저 뒤로가기를 누르면 이 단계들을 건너뛰고 곧장
+  // 이 페이지 진입 전의 실제 이전 페이지(보통 내 프로젝트)로 나가버렸다.
+  // 단계가 앞으로 넘어갈 때마다 history entry를 하나씩 쌓아서, 뒤로가기가
+  // "목업 만들기" 안의 이전 단계(배경 선택 화면)로 먼저 돌아오게 한다.
+  useEffect(() => {
+    window.history.replaceState({ step: "background" }, "", window.location.href);
+    function onPopState(e: PopStateEvent) {
+      const state = e.state as { step?: Step } | null;
+      setStep(state?.step ?? "background");
+    }
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  function pushStep(nextStep: Step) {
+    window.history.pushState({ step: nextStep }, "", window.location.href);
+    setStep(nextStep);
+  }
+
   const templatesQuery = useQuery({
     queryKey: ["standalone-mockup-templates", search],
     queryFn: () => searchMockupTemplates(search),
@@ -65,7 +85,7 @@ export function StandaloneMockupView({
     },
     onSuccess: (data) => {
       setResult(data.mockup);
-      setStep("result");
+      pushStep("result");
     },
   });
 
@@ -73,7 +93,7 @@ export function StandaloneMockupView({
     !!selectedTemplate && ((logoSourceTab === "upload" && !!uploadFile) || (logoSourceTab === "past" && !!selectedPastImage));
 
   function reset() {
-    setStep("background");
+    pushStep("background");
     setSearch("");
     setSelectedTemplate(null);
     setLogoSourceTab("past");
@@ -127,13 +147,12 @@ export function StandaloneMockupView({
                       type="button"
                       onClick={() => {
                         setSelectedTemplate(template);
-                        setStep("logo");
+                        pushStep("logo");
                       }}
                       className="overflow-hidden rounded-2xl border border-line bg-surface text-left transition hover:border-ink"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={template.backgroundUrl} alt={t(titleKey)} className="aspect-square w-full object-cover" />
-                      <p className="truncate px-2 py-1.5 text-xs text-muted">{t(titleKey)}</p>
                     </button>
                   );
                 })}
