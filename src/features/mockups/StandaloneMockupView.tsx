@@ -12,6 +12,7 @@ import {
 } from "@/services/mockups-service";
 import { AppHeader } from "@/features/navigation/AppHeader";
 import { Spinner } from "@/components/Spinner";
+import { ImageLightbox } from "@/components/ImageLightbox";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 import { MOCKUP_CATEGORY_LABEL_KEYS } from "@/features/mockups/mockupCategoryLabels";
@@ -37,6 +38,7 @@ export function StandaloneMockupView({
   const [selectedPastImage, setSelectedPastImage] = useState<PastGenerationImageDto | null>(null);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [result, setResult] = useState<StandaloneMockupDto | null>(null);
+  const [previewBackgroundUrl, setPreviewBackgroundUrl] = useState<string | null>(null);
 
   // 배경 선택/로고 첨부/결과는 실제 URL 이동 없이 같은 페이지 안에서 단계만
   // 바뀌는 구조라, 브라우저 뒤로가기를 누르면 이 단계들을 건너뛰고 곧장
@@ -167,12 +169,18 @@ export function StandaloneMockupView({
         {step === "logo" && selectedTemplate && (
           <section className="flex flex-col gap-4">
             <div className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={selectedTemplate.backgroundUrl}
-                alt={t(mockupTemplateTitleKey(selectedTemplate.slug, MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category]))}
-                className="h-16 w-16 rounded-xl object-cover"
-              />
+              <button
+                type="button"
+                onClick={() => setPreviewBackgroundUrl(selectedTemplate.backgroundUrl)}
+                className="flex-shrink-0 overflow-hidden rounded-xl transition hover:opacity-80"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={selectedTemplate.backgroundUrl}
+                  alt={t(mockupTemplateTitleKey(selectedTemplate.slug, MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category]))}
+                  className="h-16 w-16 object-cover"
+                />
+              </button>
               <div className="flex-1">
                 <p className="text-xs text-muted">{t("dashboard.standaloneMockup.selectedBackgroundLabel")}</p>
                 <p className="text-sm font-medium">
@@ -322,6 +330,14 @@ export function StandaloneMockupView({
           </section>
         )}
       </main>
+
+      {previewBackgroundUrl && selectedTemplate && (
+        <ImageLightbox
+          src={previewBackgroundUrl}
+          alt={t(mockupTemplateTitleKey(selectedTemplate.slug, MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category]))}
+          onClose={() => setPreviewBackgroundUrl(null)}
+        />
+      )}
     </div>
   );
 }
