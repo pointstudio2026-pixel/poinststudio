@@ -4,6 +4,7 @@ import type {
   MockupRenderResult,
 } from "@/shared/ai/MockupRenderProvider";
 import { resolveBackgroundDataUri, resolveImageBuffer } from "@/shared/ai/mockupAssets";
+import { checkLogoBackgroundContrast, type LogoContrastCheckResult } from "@/shared/ai/logoContrastCheck";
 import { ProviderError } from "@/shared/errors/AppError";
 import { logger } from "@/shared/logging/logger";
 import { isHealthEndpointReachable } from "@/shared/ai/providerHealthCheck";
@@ -33,7 +34,18 @@ const ESTIMATED_COST_PER_IMAGE_USD = 0.053;
  * `image[]` order: [design/logo image, template background] (매핑된
  * 순서 -- 첫 번째가 실제 참조해야 할 대상, 두 번째가 합성될 배경).
  */
-function buildPrompt(request: MockupRenderRequest): string {
+function buildContrastClause(contrastCheck: LogoContrastCheckResult | null): string {
+  if (!contrastCheck?.needsAdjustment) return "";
+  const toneKo = contrastCheck.recommendedTone === "white" ? "흰색 단색" : "검정색 단색";
+  return (
+    ` 다만 로고 색상이 배경과 명도 대비가 부족해 로고가 배경 속에 묻혀 잘 안 보일 ` +
+    `수 있습니다 -- 이 경우에 한해 로고의 형태·텍스트·구성 비율은 절대 바꾸지 말고, ` +
+    `가독성을 위해 로고의 색상만 ${toneKo}으로 바꿔서 배경 위에서 또렷하게 보이도록 ` +
+    `해주세요.`
+  );
+}
+
+function buildPrompt(request: MockupRenderRequest, contrastCheck: LogoContrastCheckResult | null): string {
   const base =
     request.compositingMode === "fullDesign"
       ? `첨부된 두 이미지 중 첫 번째(디자인 시안)를 다시 그리거나 새로 해석하지 말고 ` +
@@ -76,7 +88,10 @@ function buildPrompt(request: MockupRenderRequest): string {
   const styleClause = request.styleCategory ? ` 스타일 표현 방식: ${request.styleCategory}` : "";
   const referenceClause = request.referenceExampleText ? ` 참고 연출 가이드: ${request.referenceExampleText}` : "";
   const avoidClause = request.avoidPatternText ? ` 회피 지침(과거에 반응이 좋지 않았던 연출, 피할 것): ${request.avoidPatternText}` : "";
-  return `${base}${sceneClause}${styleClause}${referenceClause}${avoidClause}`;
+  // 완성된 디자인 시안(fullDesign)은 이미 그 자체의 색상 체계를 갖춘 결과물이라
+  // 대비 보정 대상이 아니다 -- 순수 로고 마크 하나만 배치하는 두 모드에서만 적용.
+  const contrastClause = request.compositingMode === "fullDesign" ? "" : buildContrastClause(contrastCheck);
+  return `${base}${sceneClause}${styleClause}${referenceClause}${avoidClause}${contrastClause}`;
 }
 
 export class OpenAIMockupRenderProvider implements MockupRenderProvider {
@@ -90,10 +105,11 @@ export class OpenAIMockupRenderProvider implements MockupRenderProvider {
   async render(request: MockupRenderRequest): Promise<MockupRenderResult> {
     const design = await resolveImageBuffer(request.logoImageUrl);
     const background = await resolveImageBuffer(await resolveBackgroundDataUri(request.backgroundUrl));
+    const contrastCheck = await checkLogoBackgroundContrast(design.buffer, background.buffer, request.placementArea);
 
     const form = new FormData();
     form.append("model", this.model);
-    form.append("prompt", buildPrompt(request));
+    form.append("prompt", buildPrompt(request, contrastCheck));
     form.append("quality", DEFAULT_QUALITY);
     form.append("size", "1024x1024");
     form.append("image[]", new Blob([new Uint8Array(design.buffer)], { type: design.mimeType }), "design.png");
