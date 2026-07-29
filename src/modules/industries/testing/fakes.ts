@@ -47,6 +47,7 @@ export class FakeIndustryRepository implements IndustryRepository {
       isActive: true,
       createdAt: now,
       updatedAt: now,
+      displayName: input.name,
       ...input,
     };
     this.rows.push(row);

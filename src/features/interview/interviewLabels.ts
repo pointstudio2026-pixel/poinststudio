@@ -49,6 +49,32 @@ export const GROUP_LABEL_KEYS: Record<string, MessageKey> = {
   "내부 · 비영리용": "interviewOptionGroups.internal",
 };
 
+// Industry.category(19개, DB의 원본 한국어 문자열)를 IndustryPicker의 대분류
+// 필터 라벨로 번역할 때 쓴다 -- 업종 이름 자체(198개)는 IndustryTranslation
+// 테이블에서 locale별로 이미 번역되어 오므로(searchIndustries의
+// displayName) 여기 등록할 필요가 없다, 이 표는 카테고리 19개만 다룬다.
+export const INDUSTRY_CATEGORY_LABEL_KEYS: Record<string, MessageKey> = {
+  "F&B": "interviewOptions.industryCategory.fnb",
+  "헬스케어/웰니스": "interviewOptions.industryCategory.healthcareWellness",
+  리테일: "interviewOptions.industryCategory.retail",
+  "전문 서비스": "interviewOptions.industryCategory.professionalServices",
+  기술: "interviewOptions.industryCategory.tech",
+  "부동산/건설": "interviewOptions.industryCategory.realEstateConstruction",
+  교육: "interviewOptions.industryCategory.education",
+  "제조/산업": "interviewOptions.industryCategory.manufacturingIndustrial",
+  "스포츠/피트니스": "interviewOptions.industryCategory.sportsFitness",
+  금융: "interviewOptions.industryCategory.finance",
+  "뷰티/그루밍": "interviewOptions.industryCategory.beautyGrooming",
+  "공공/문화": "interviewOptions.industryCategory.publicCulture",
+  "식품 리테일": "interviewOptions.industryCategory.foodRetail",
+  "운송/모빌리티": "interviewOptions.industryCategory.transportMobility",
+  "엔터테인먼트/여가": "interviewOptions.industryCategory.entertainmentLeisure",
+  라이프스타일: "interviewOptions.industryCategory.lifestyle",
+  "숙박/레저": "interviewOptions.industryCategory.hospitalityLeisure",
+  "농업/에너지": "interviewOptions.industryCategory.agricultureEnergy",
+  "돌봄/복지": "interviewOptions.industryCategory.careWelfare",
+};
+
 // 여러 질문에 동일한 한국어 문구가 그대로 반복되는 경우(예: "가격/금액
 // 표시", "브랜드 로고", "연락처") 한 번만 등록하고 다른 질문에서도 그대로
 // 재사용한다 -- 번역 중복을 줄이되, 텍스트가 조금이라도 다르면(예: "제목" vs

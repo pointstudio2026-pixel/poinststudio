@@ -302,8 +302,29 @@ model Industry {
   createdAt              DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt              DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
+  translations IndustryTranslation[]
+
   @@index([category])
   @@map("industries")
+}
+
+// ko는 Industry.name/recommendedKeywords를 그대로 쓰므로 별도 행을 두지
+// 않는다(중복/불일치 방지) -- en/ja/fr/de만 이 테이블에 존재한다.
+// searchKeywords는 번역어뿐 아니라 자주 쓰이는 철자 변형/동의어까지
+// 포함한다(예: "바베큐"/"바비큐"), 검색 견고성을 위해서다.
+model IndustryTranslation {
+  id             String   @id @default(uuid()) @db.Uuid
+  industryId     String   @map("industry_id") @db.Uuid
+  industry       Industry @relation(fields: [industryId], references: [id], onDelete: Cascade)
+  locale         String   @db.VarChar(10)
+  name           String   @db.VarChar(120)
+  searchKeywords String[] @map("search_keywords")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  @@unique([industryId, locale])
+  @@index([locale])
+  @@map("industry_translations")
 }
 
 // 12_PRD_StyleEngine.md Claude Code Instructions: "스타일 데이터는 하드코딩하지

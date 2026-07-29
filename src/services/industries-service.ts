@@ -1,8 +1,11 @@
 import { apiFetch } from "@/services/http-client";
+import type { Locale } from "@/shared/i18n/locale";
 
 export interface IndustryDto {
   id: string;
   name: string;
+  /** 현재 locale로 표시할 이름 -- 답변 저장 시엔 반드시 name(한국어 원문)을 써야 한다. */
+  displayName: string;
   seoSlug: string;
   category: string;
   description: string;
@@ -14,8 +17,10 @@ export interface IndustryDto {
   isActive: boolean;
 }
 
-export function searchIndustries(query: string) {
-  return apiFetch<{ industries: IndustryDto[] }>(`/api/industries/search?q=${encodeURIComponent(query)}`);
+export function searchIndustries(query: string, locale: Locale = "ko") {
+  return apiFetch<{ industries: IndustryDto[] }>(
+    `/api/industries/search?q=${encodeURIComponent(query)}&locale=${locale}`,
+  );
 }
 
 export function fetchAllIndustriesForAdmin() {

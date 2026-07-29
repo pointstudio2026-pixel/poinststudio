@@ -1,12 +1,20 @@
 import { prisma } from "@/shared/database/prisma";
 import type { IndustryRepository } from "@/modules/industries/domain/IndustryRepository";
 import type { CreateIndustryInput, Industry, UpdateIndustryInput } from "@/modules/industries/domain/Industry";
-import type { Industry as PrismaIndustryRow } from "../../../../generated/prisma/client";
+import type {
+  Industry as PrismaIndustryRow,
+  IndustryTranslation as PrismaIndustryTranslationRow,
+} from "../../../../generated/prisma/client";
+import type { Locale } from "@/shared/i18n/locale";
 
-function toIndustry(row: PrismaIndustryRow): Industry {
+type IndustryRowWithTranslations = PrismaIndustryRow & { translations?: PrismaIndustryTranslationRow[] };
+
+function toIndustry(row: IndustryRowWithTranslations, locale: Locale = "ko"): Industry {
+  const translation = locale !== "ko" ? row.translations?.find((t) => t.locale === locale) : undefined;
   return {
     id: row.id,
     name: row.name,
+    displayName: translation?.name ?? row.name,
     seoSlug: row.seoSlug,
     category: row.category,
     description: row.description,
@@ -21,29 +29,72 @@ function toIndustry(row: PrismaIndustryRow): Industry {
   };
 }
 
-export class PrismaIndustryRepository implements IndustryRepository {
-  async listActive(): Promise<Industry[]> {
-    const rows = await prisma.industry.findMany({ where: { isActive: true }, orderBy: { name: "asc" } });
-    return rows.map(toIndustry);
-  }
+/** Levenshtein 거리 임계값 -- 너무 짧은 검색어(1~2자)는 유사매칭을 끄고
+ * (노이즈가 너무 커짐), 3~5자는 1글자, 6자 이상은 2글자까지 오차를 허용한다.
+ * "바베큐" vs "바비큐" 같은 한 글자 표기 변형을 정확히 잡아내기 위한 값이다. */
+function fuzzyThreshold(term: string): number {
+  if (term.length <= 2) return 0;
+  if (term.length <= 5) return 1;
+  return 2;
+}
 
-  async search(query: string): Promise<Industry[]> {
-    const trimmed = query.trim();
-    if (!trimmed) return this.listActive();
-    const words = trimmed.split(/\s+/).filter(Boolean);
+export class PrismaIndustryRepository implements IndustryRepository {
+  async listActive(locale: Locale = "ko"): Promise<Industry[]> {
     const rows = await prisma.industry.findMany({
-      where: {
-        isActive: true,
-        OR: [
-          { name: { contains: trimmed, mode: "insensitive" } },
-          { description: { contains: trimmed, mode: "insensitive" } },
-          { recommendedKeywords: { has: trimmed } },
-          { recommendedKeywords: { hasSome: words } },
-        ],
-      },
+      where: { isActive: true },
+      include: locale === "ko" ? undefined : { translations: { where: { locale } } },
       orderBy: { name: "asc" },
     });
-    return rows.map(toIndustry);
+    return rows.map((row) => toIndustry(row, locale));
+  }
+
+  async search(query: string, locale: Locale = "ko"): Promise<Industry[]> {
+    const trimmed = query.trim();
+    if (!trimmed) return this.listActive(locale);
+
+    const threshold = fuzzyThreshold(trimmed);
+
+    const matched =
+      locale === "ko"
+        ? await prisma.$queryRaw<{ id: string }[]>`
+            SELECT DISTINCT i.id
+            FROM industries i
+            LEFT JOIN LATERAL unnest(i.recommended_keywords || ARRAY[i.name]) AS kw(term) ON true
+            WHERE i.is_active = true
+              AND (
+                i.name ILIKE '%' || ${trimmed} || '%'
+                OR i.description ILIKE '%' || ${trimmed} || '%'
+                OR (
+                  ${threshold}::int > 0
+                  AND levenshtein(lower(kw.term), lower(${trimmed})) <= ${threshold}
+                  AND abs(length(kw.term) - length(${trimmed})) <= 2
+                )
+              )
+          `
+        : await prisma.$queryRaw<{ id: string }[]>`
+            SELECT DISTINCT t.industry_id AS id
+            FROM industry_translations t
+            INNER JOIN industries i ON i.id = t.industry_id AND i.is_active = true
+            LEFT JOIN LATERAL unnest(t.search_keywords || ARRAY[t.name]) AS kw(term) ON true
+            WHERE t.locale = ${locale}
+              AND (
+                t.name ILIKE '%' || ${trimmed} || '%'
+                OR (
+                  ${threshold}::int > 0
+                  AND levenshtein(lower(kw.term), lower(${trimmed})) <= ${threshold}
+                  AND abs(length(kw.term) - length(${trimmed})) <= 2
+                )
+              )
+          `;
+
+    if (matched.length === 0) return [];
+    const ids = matched.map((r) => r.id);
+    const rows = await prisma.industry.findMany({
+      where: { id: { in: ids } },
+      include: locale === "ko" ? undefined : { translations: { where: { locale } } },
+      orderBy: { name: "asc" },
+    });
+    return rows.map((row) => toIndustry(row, locale));
   }
 
   async findByName(name: string): Promise<Industry | null> {
@@ -58,7 +109,7 @@ export class PrismaIndustryRepository implements IndustryRepository {
 
   async listAll(): Promise<Industry[]> {
     const rows = await prisma.industry.findMany({ orderBy: { name: "asc" } });
-    return rows.map(toIndustry);
+    return rows.map((row) => toIndustry(row));
   }
 
   async create(input: CreateIndustryInput): Promise<Industry> {
