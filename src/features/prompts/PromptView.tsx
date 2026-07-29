@@ -61,7 +61,7 @@ export function PromptView({ projectId }: { projectId: string }) {
   const notBuilt = isError && error instanceof Error && error.message.includes("생성되지 않았");
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-8">
+    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-5 sm:p-8">
       <header className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Prompt Engine</h1>
         <Link href={`/projects/${projectId}`} className="text-sm underline">

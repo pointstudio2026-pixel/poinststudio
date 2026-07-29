@@ -108,7 +108,7 @@ export function StandaloneMockupView({
     <div className="min-h-screen bg-paper">
       <AppHeader user={{ email, name }} planCode={planCode} />
 
-      <main className="mx-auto flex max-w-3xl flex-col gap-8 px-8 py-10">
+      <main className="mx-auto flex max-w-3xl flex-col gap-8 px-5 py-8 sm:px-8 sm:py-10">
         <div>
           <button
             type="button"

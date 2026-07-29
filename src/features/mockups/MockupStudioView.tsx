@@ -125,7 +125,7 @@ export function MockupStudioView({
           생성한 결과를 보려고 매번 스크롤을 크게 내려야 했다. */}
       <section>
         <h2 className="mb-2 text-sm font-medium text-ink">{t("mockupStudio.gallery")}</h2>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {(mockupsData?.mockups ?? []).map((mockup) => (
             <div key={mockup.id} className="flex flex-col gap-1 rounded-xl border border-line p-2">
               {mockup.status === "completed" && mockup.resultImageUrl ? (
@@ -156,7 +156,7 @@ export function MockupStudioView({
             </div>
           ))}
           {mockupsData?.mockups.length === 0 && (
-            <p className="col-span-3 text-sm text-muted">{t("mockupStudio.noMockupsYet")}</p>
+            <p className="col-span-2 text-sm text-muted sm:col-span-3">{t("mockupStudio.noMockupsYet")}</p>
           )}
         </div>
       </section>
@@ -181,13 +181,13 @@ export function MockupStudioView({
             {completedVersions.length > 1 && (
               <div>
                 <p className="mb-1.5 text-xs font-medium text-muted">{t("mockupStudio.sourceImage")}</p>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   {completedVersions.map((version, i) => (
                     <button
                       key={version.id}
                       type="button"
                       onClick={() => setSelectedVersionId(version.id)}
-                      className={`overflow-hidden rounded-xl border-2 ${
+                      className={`shrink-0 overflow-hidden rounded-xl border-2 ${
                         sourceVersionId === version.id ? "border-ink" : "border-transparent"
                       }`}
                     >
@@ -230,7 +230,7 @@ export function MockupStudioView({
             {/* 예시 이미지는 둘러보기용일 뿐 -- 클릭하면 확대만 되고, 실제 생성은
                 아래 카테고리 단위 버튼으로만 트리거된다(이미지를 눌렀는데 바로
                 비용이 발생하는 걸 막기 위해 2026-07-25 분리). */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {(templatesData?.templates ?? []).map((template, index) => {
                 // DB의 template.name(예: "명함 예시 3")은 관리용 한글 원문이라 그대로
                 // 노출하면 안 된다 -- 이미 번역된 카테고리 라벨 + 목록 내 순번으로

@@ -32,7 +32,7 @@ export function InquiryDetailView({
   return (
     <div className="min-h-screen bg-paper">
       <AppHeader user={{ email, name }} planCode={planCode} />
-      <main className="mx-auto flex max-w-2xl flex-col gap-6 p-8">
+      <main className="mx-auto flex max-w-2xl flex-col gap-6 p-5 sm:p-8">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{t("support.title")}</h1>
         <Link href="/support" className="text-sm underline">

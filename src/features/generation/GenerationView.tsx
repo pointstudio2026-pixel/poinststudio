@@ -197,9 +197,9 @@ export function GenerationView({ projectId }: { projectId: string }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex items-center justify-between">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-xl font-semibold">{t("generation.title")}</h1>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {generationId && (
             <button
               type="button"
@@ -254,7 +254,7 @@ export function GenerationView({ projectId }: { projectId: string }) {
           <div className="mb-2 text-xs text-muted">
             {t("generation.resultCount", { count: String(completedVersions.length), max: String(MAX_PROJECT_RESULTS) })}
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {completedVersions.map((version, i) => (
               <div key={version.id} className="flex flex-col gap-2">
                 <div className="relative w-full overflow-hidden rounded-2xl border border-line">

@@ -148,8 +148,8 @@ export function TrainingExamplesView() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 p-8">
-      <header className="flex items-center justify-between">
+    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 p-5 sm:p-8">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-semibold">작업물 스타일 학습 자료</h1>
           <p className="mt-1 text-sm text-muted">
@@ -159,7 +159,7 @@ export function TrainingExamplesView() {
             파이프라인에만 영향을 주며 서로 절대 섞이지 않습니다.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <Link href="/ops-portal-7x2q/prompt-decisions" className="text-sm underline">
             프롬프트 우선순위 기록
           </Link>

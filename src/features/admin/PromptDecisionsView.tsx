@@ -82,8 +82,8 @@ export function PromptDecisionsView() {
   });
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 p-8">
-      <header className="flex items-center justify-between">
+    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 p-5 sm:p-8">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-semibold">프롬프트 우선순위 판단 기록</h1>
           <p className="mt-1 text-sm text-muted">
@@ -91,7 +91,7 @@ export function PromptDecisionsView() {
             일반 사용자에게는 노출되지 않습니다.
           </p>
         </div>
-        <Link href="/ops-portal-7x2q/training-examples" className="text-sm underline">
+        <Link href="/ops-portal-7x2q/training-examples" className="shrink-0 text-sm underline">
           작업물 스타일로
         </Link>
       </header>

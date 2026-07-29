@@ -165,7 +165,7 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex items-center justify-between">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-semibold">{t("asterBrain.title")}</h1>
           <p className="mt-1 flex items-center gap-2 text-xs text-muted">
@@ -175,7 +175,7 @@ export function AsterBrainView({ projectId }: { projectId: string }) {
             </span>
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <AiProviderSelect value={provider} onChange={setProvider} providers={TEXT_PROVIDERS} />
           <button
             type="button"

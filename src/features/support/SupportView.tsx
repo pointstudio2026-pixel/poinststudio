@@ -57,12 +57,12 @@ export function SupportView({
   return (
     <div className="min-h-screen bg-paper">
       <AppHeader user={{ email, name }} planCode={planCode} />
-      <main className="mx-auto flex max-w-2xl flex-col gap-6 p-8">
+      <main className="mx-auto flex max-w-2xl flex-col gap-6 p-5 sm:p-8">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{t("support.title")}</h1>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted">{t("support.subtitle")}</p>
         <button
           type="button"

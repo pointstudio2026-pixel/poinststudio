@@ -154,10 +154,10 @@ export function AdminDashboardView() {
   const analytics = analyticsData?.analytics;
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 p-8">
-      <header className="flex items-center justify-between">
+    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 p-5 sm:p-8">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-xl font-semibold">Admin Dashboard</h1>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <Link href="/ops-portal-7x2q/industries" className="text-sm underline">
             업종 카탈로그
           </Link>
@@ -198,7 +198,8 @@ export function AdminDashboardView() {
 
       <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
         <h2 className="text-sm font-medium text-ink">이번 달 AI 원가 세부항목</h2>
-        <table className="mt-2 w-full text-left text-sm">
+        <div className="mt-2 overflow-x-auto">
+        <table className="w-full text-left text-sm">
           <thead>
             <tr className="text-xs text-muted">
               <th className="pr-4">구분</th>
@@ -223,6 +224,7 @@ export function AdminDashboardView() {
             )}
           </tbody>
         </table>
+        </div>
         <p className="mt-3 text-xs text-muted">
           ⚠ 이 표는 이미지 생성/수정/목업 비용만 집계합니다. 브랜드 전략·인터뷰·추천 등 텍스트 생성(GPT) 비용은 아직
           추적되지 않아 실제 OpenAI 청구액이 이 합계보다 클 수 있습니다.
@@ -231,7 +233,7 @@ export function AdminDashboardView() {
 
       <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
         <h2 className="text-sm font-medium text-ink">플랜별 사용자 분포</h2>
-        <div className="mt-2 flex gap-4 text-sm">
+        <div className="mt-2 flex flex-wrap gap-4 text-sm">
           {(summary?.planDistribution ?? []).map((p) => (
             <span key={p.planCode}>
               {p.planCode}: {p.userCount}명
@@ -245,7 +247,7 @@ export function AdminDashboardView() {
 
       <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
         <h2 className="text-sm font-medium text-ink">Provider Health</h2>
-        <div className="mt-2 flex gap-3">
+        <div className="mt-2 flex flex-wrap gap-3">
           {(summary?.providerHealth ?? []).map((p) => (
             <div
               key={p.provider}
@@ -261,7 +263,8 @@ export function AdminDashboardView() {
 
       <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
         <h2 className="text-sm font-medium text-ink">Queue 상태</h2>
-        <table className="mt-2 w-full text-left text-sm">
+        <div className="mt-2 overflow-x-auto">
+        <table className="w-full text-left text-sm">
           <thead>
             <tr className="text-xs text-muted">
               <th className="pr-4">Queue</th>
@@ -283,6 +286,7 @@ export function AdminDashboardView() {
             ))}
           </tbody>
         </table>
+        </div>
       </section>
 
       <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
@@ -309,7 +313,8 @@ export function AdminDashboardView() {
           className="mt-2 w-full rounded-full border border-line px-2 py-1 text-sm"
         />
         {userActionError && <p className="mt-2 text-sm text-red-600">{userActionError}</p>}
-        <table className="mt-3 w-full text-left text-sm">
+        <div className="mt-3 overflow-x-auto">
+        <table className="w-full text-left text-sm">
           <thead>
             <tr className="text-xs text-muted">
               <th className="pr-4">Email</th>
@@ -418,6 +423,7 @@ export function AdminDashboardView() {
             ))}
           </tbody>
         </table>
+        </div>
       </section>
 
       <section className="rounded-2xl border border-line bg-surface p-4 shadow-soft">

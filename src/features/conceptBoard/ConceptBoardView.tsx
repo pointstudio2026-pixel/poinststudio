@@ -137,14 +137,14 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex items-center justify-between">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-semibold">{t("conceptBoard.title")}</h1>
           <p className="text-xs text-muted">
             v{board.currentVersion.versionNumber} · {board.currentVersion.source === "ai" ? t("conceptBoard.sourceAi") : t("conceptBoard.sourceUser")}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => setShowVersions(!showVersions)}
@@ -261,7 +261,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
             )}
 
             {section === "color_palette" && (
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 {d.colorPalette.map((swatch) => (
                   <div key={swatch.hex} className="flex flex-col items-center gap-1">
                     <div
@@ -294,7 +294,7 @@ export function ConceptBoardView({ projectId }: { projectId: string }) {
               ))}
 
             {section === "logo_concepts" && (
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {d.logoConceptImageUrls.length > 0 ? (
                   d.logoConceptImageUrls.map((url, i) => (
                     <div

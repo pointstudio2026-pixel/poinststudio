@@ -62,8 +62,8 @@ export function GiftCodesView() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 p-8">
-      <header className="flex items-center justify-between">
+    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 p-5 sm:p-8">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-semibold">선물 코드</h1>
           <p className="mt-1 text-sm text-muted">
@@ -202,7 +202,7 @@ export function GiftCodesView() {
       )}
 
       <div className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-soft">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-sm font-medium">
             발급 목록 (코드 {codes.length}개, 총 {totalRedemptions}회 사용됨)
           </p>

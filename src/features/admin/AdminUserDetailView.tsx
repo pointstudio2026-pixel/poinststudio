@@ -40,7 +40,7 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
   const { profile, recentActivity, usage } = data.detail;
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-8">
+    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-5 sm:p-8">
       <header className="flex items-center justify-between">
         <Link href="/ops-portal-7x2q" className="text-sm underline">
           ← 관리자 대시보드로

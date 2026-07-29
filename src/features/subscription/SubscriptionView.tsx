@@ -75,7 +75,7 @@ export function SubscriptionView({
   return (
     <div className="min-h-screen bg-paper">
       <AppHeader user={{ email, name }} planCode={currentPlanCode} />
-      <main className="mx-auto flex max-w-4xl flex-col gap-6 p-8">
+      <main className="mx-auto flex max-w-4xl flex-col gap-6 p-5 sm:p-8">
       <h1 className="text-xl font-semibold">{t("subscription.title")}</h1>
       <p className="text-sm text-muted">
         {periodEndLabel

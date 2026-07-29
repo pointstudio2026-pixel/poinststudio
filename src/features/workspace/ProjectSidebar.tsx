@@ -25,7 +25,7 @@ export function ProjectSidebar({
 
   return (
     <aside className="w-full flex-shrink-0 lg:sticky lg:top-16 lg:w-[220px] lg:self-start">
-      <nav className="flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
+      <nav className="flex flex-wrap gap-1 lg:flex-col">
         {steps.map((step, i) => {
           const route = STEP_ROUTES[step.key];
           const href = route ? `/projects/${projectId}/${route}` : null;

@@ -111,8 +111,8 @@ export function IndustriesAdminView() {
   const categories = Array.from(new Set(industries.map((i) => i.category)));
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 p-8">
-      <header className="flex items-center justify-between">
+    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 p-5 sm:p-8">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-semibold">업종 카탈로그</h1>
           <p className="mt-1 text-sm text-muted">
@@ -128,7 +128,7 @@ export function IndustriesAdminView() {
       <section className="rounded-2xl border border-line bg-surface p-5">
         <h2 className="text-sm font-medium">{editingId ? "업종 수정" : "새 업종 추가"}</h2>
         {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-        <div className="mt-3 grid grid-cols-2 gap-3">
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className="flex flex-col gap-1 text-xs text-muted">
             이름 (인터뷰 답변으로 그대로 저장됨)
             <input

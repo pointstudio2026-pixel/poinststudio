@@ -65,7 +65,7 @@ export function TeamView({
   return (
     <div className="min-h-screen bg-paper">
       <AppHeader user={{ email, name }} planCode={planCode} />
-      <main className="mx-auto flex max-w-2xl flex-col gap-6 p-8">
+      <main className="mx-auto flex max-w-2xl flex-col gap-6 p-5 sm:p-8">
       <h1 className="text-xl font-semibold">{t("team.title")}</h1>
 
       <section className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-soft">
