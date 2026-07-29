@@ -1,0 +1,67 @@
+import type { MessageKey } from "@/shared/i18n/messages/types";
+
+// StandaloneMockupView(단독 목업 프로세스)에서만 쓰는 템플릿별 구체적 제목
+// lookup -- slug -> 메시지 키. MockupStudioView(프로젝트 흐름 마지막 목업
+// 단계)는 여전히 MOCKUP_CATEGORY_LABEL_KEYS + 인덱스 번호만 쓰고 이 파일과
+// 무관하다(관리용 원문 노출 금지 원칙 유지).
+export const MOCKUP_TEMPLATE_TITLE_KEYS: Record<string, MessageKey> = {
+  "business-card-ex1": "mockupTemplateTitles.businessCardEx1",
+  "business-card-ex2": "mockupTemplateTitles.businessCardEx2",
+  "business-card-ex3": "mockupTemplateTitles.businessCardEx3",
+  "business-card-ex4": "mockupTemplateTitles.businessCardEx4",
+  "business-card-ex5": "mockupTemplateTitles.businessCardEx5",
+  "signboard-ex1": "mockupTemplateTitles.signboardEx1",
+  "signboard-ex2": "mockupTemplateTitles.signboardEx2",
+  "signboard-ex3": "mockupTemplateTitles.signboardEx3",
+  "signboard-ex4": "mockupTemplateTitles.signboardEx4",
+  "signboard-ex5": "mockupTemplateTitles.signboardEx5",
+  "mobile-app-ex1": "mockupTemplateTitles.mobileAppEx1",
+  "mobile-app-ex2": "mockupTemplateTitles.mobileAppEx2",
+  "mobile-app-ex3": "mockupTemplateTitles.mobileAppEx3",
+  "mobile-app-ex4": "mockupTemplateTitles.mobileAppEx4",
+  "mobile-app-ex5": "mockupTemplateTitles.mobileAppEx5",
+  "website-hero-ex1": "mockupTemplateTitles.websiteHeroEx1",
+  "website-hero-ex2": "mockupTemplateTitles.websiteHeroEx2",
+  "website-hero-ex3": "mockupTemplateTitles.websiteHeroEx3",
+  "website-hero-ex4": "mockupTemplateTitles.websiteHeroEx4",
+  "website-hero-ex5": "mockupTemplateTitles.websiteHeroEx5",
+  "brochure-ex1": "mockupTemplateTitles.brochureEx1",
+  "brochure-ex2": "mockupTemplateTitles.brochureEx2",
+  "brochure-ex3": "mockupTemplateTitles.brochureEx3",
+  "brochure-ex4": "mockupTemplateTitles.brochureEx4",
+  "brochure-ex5": "mockupTemplateTitles.brochureEx5",
+  "brochure-ex6": "mockupTemplateTitles.brochureEx6",
+  "poster-ex1": "mockupTemplateTitles.posterEx1",
+  "poster-ex2": "mockupTemplateTitles.posterEx2",
+  "poster-ex3": "mockupTemplateTitles.posterEx3",
+  "poster-ex4": "mockupTemplateTitles.posterEx4",
+  "package-ex1": "mockupTemplateTitles.packageEx1",
+  "package-ex2": "mockupTemplateTitles.packageEx2",
+  "package-ex3": "mockupTemplateTitles.packageEx3",
+  "package-ex4": "mockupTemplateTitles.packageEx4",
+  "package-ex5": "mockupTemplateTitles.packageEx5",
+  "package-ex6": "mockupTemplateTitles.packageEx6",
+  "leaflet-ex1": "mockupTemplateTitles.leafletEx1",
+  "leaflet-ex2": "mockupTemplateTitles.leafletEx2",
+  "leaflet-ex3": "mockupTemplateTitles.leafletEx3",
+  "leaflet-ex4": "mockupTemplateTitles.leafletEx4",
+  "leaflet-ex5": "mockupTemplateTitles.leafletEx5",
+  "leaflet-ex6": "mockupTemplateTitles.leafletEx6",
+  "banner-ex1": "mockupTemplateTitles.bannerEx1",
+  "banner-ex2": "mockupTemplateTitles.bannerEx2",
+  "banner-ex3": "mockupTemplateTitles.bannerEx3",
+  "banner-ex4": "mockupTemplateTitles.bannerEx4",
+  "banner-ex5": "mockupTemplateTitles.bannerEx5",
+  "banner-ex6": "mockupTemplateTitles.bannerEx6",
+  "uniform-ex1": "mockupTemplateTitles.uniformEx1",
+  "uniform-ex2": "mockupTemplateTitles.uniformEx2",
+  "uniform-ex3": "mockupTemplateTitles.uniformEx3",
+  "uniform-ex4": "mockupTemplateTitles.uniformEx4",
+  "uniform-ex5": "mockupTemplateTitles.uniformEx5",
+  "uniform-ex6": "mockupTemplateTitles.uniformEx6",
+};
+
+/** slug가 매핑에 없으면(관리자가 나중에 새 템플릿을 추가한 경우) 카테고리 라벨로 안전하게 대체한다. */
+export function mockupTemplateTitleKey(slug: string, fallback: MessageKey): MessageKey {
+  return MOCKUP_TEMPLATE_TITLE_KEYS[slug] ?? fallback;
+}

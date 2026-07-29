@@ -16,6 +16,7 @@ import { Spinner } from "@/components/Spinner";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 import { MOCKUP_CATEGORY_LABEL_KEYS } from "@/features/mockups/mockupCategoryLabels";
+import { mockupTemplateTitleKey } from "@/features/mockups/mockupTemplateTitleLabels";
 
 type Step = "background" | "logo" | "result";
 type LogoSourceTab = "past" | "upload";
@@ -118,24 +119,24 @@ export function StandaloneMockupView({
             )}
             {templatesQuery.data && templatesQuery.data.templates.length > 0 && (
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {templatesQuery.data.templates.map((template) => (
-                  <button
-                    key={template.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedTemplate(template);
-                      setStep("logo");
-                    }}
-                    className="overflow-hidden rounded-2xl border border-line bg-surface text-left transition hover:border-ink"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={template.backgroundUrl}
-                      alt={t(MOCKUP_CATEGORY_LABEL_KEYS[template.category])}
-                      className="aspect-square w-full object-cover"
-                    />
-                  </button>
-                ))}
+                {templatesQuery.data.templates.map((template) => {
+                  const titleKey = mockupTemplateTitleKey(template.slug, MOCKUP_CATEGORY_LABEL_KEYS[template.category]);
+                  return (
+                    <button
+                      key={template.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedTemplate(template);
+                        setStep("logo");
+                      }}
+                      className="overflow-hidden rounded-2xl border border-line bg-surface text-left transition hover:border-ink"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={template.backgroundUrl} alt={t(titleKey)} className="aspect-square w-full object-cover" />
+                      <p className="truncate px-2 py-1.5 text-xs text-muted">{t(titleKey)}</p>
+                    </button>
+                  );
+                })}
               </div>
             )}
           </section>
@@ -147,12 +148,14 @@ export function StandaloneMockupView({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={selectedTemplate.backgroundUrl}
-                alt={t(MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category])}
+                alt={t(mockupTemplateTitleKey(selectedTemplate.slug, MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category]))}
                 className="h-16 w-16 rounded-xl object-cover"
               />
               <div className="flex-1">
                 <p className="text-xs text-muted">{t("dashboard.standaloneMockup.selectedBackgroundLabel")}</p>
-                <p className="text-sm font-medium">{t(MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category])}</p>
+                <p className="text-sm font-medium">
+                  {t(mockupTemplateTitleKey(selectedTemplate.slug, MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category]))}
+                </p>
               </div>
               <button
                 type="button"
@@ -268,7 +271,11 @@ export function StandaloneMockupView({
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={result.resultImageUrl}
-                alt={selectedTemplate ? t(MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category]) : ""}
+                alt={
+                  selectedTemplate
+                    ? t(mockupTemplateTitleKey(selectedTemplate.slug, MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category]))
+                    : ""
+                }
                 className="w-full max-w-md rounded-2xl border border-line object-contain shadow-soft"
               />
             )}
