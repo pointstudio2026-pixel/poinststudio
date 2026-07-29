@@ -30,7 +30,7 @@ export function StandaloneMockupView({
   name: string | null;
   planCode: PlanCode;
 }) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [step, setStep] = useState<Step>("background");
   const [search, setSearch] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState<MockupTemplateDto | null>(null);
@@ -61,8 +61,8 @@ export function StandaloneMockupView({
   }
 
   const templatesQuery = useQuery({
-    queryKey: ["standalone-mockup-templates", search],
-    queryFn: () => searchMockupTemplates(search),
+    queryKey: ["standalone-mockup-templates", search, locale],
+    queryFn: () => searchMockupTemplates(search, locale),
     enabled: step === "background",
   });
 

@@ -1,6 +1,13 @@
 import { prisma } from "@/shared/database/prisma";
 import type { MockupCategory, MockupTemplate } from "@/modules/mockups/domain/Mockup";
 import type { MockupTemplateRepository } from "@/modules/mockups/domain/MockupTemplateRepository";
+import type { Locale } from "@/shared/i18n/locale";
+
+/** locale이 "ko"가 아니면 배경 사진에 한글이 박힌 템플릿을 걸러낸다 -- 한국어
+ * 사용자는 한글+영어 둘 다, 그 외 언어 사용자는 영어(한글 없는) 템플릿만. */
+function koreanTextFilter(locale?: Locale) {
+  return locale && locale !== "ko" ? { containsKoreanText: false } : {};
+}
 
 function toTemplate(row: {
   id: string;
@@ -51,9 +58,9 @@ function toTemplate(row: {
 }
 
 export class PrismaMockupTemplateRepository implements MockupTemplateRepository {
-  async list(category?: MockupCategory): Promise<MockupTemplate[]> {
+  async list(category?: MockupCategory, locale?: Locale): Promise<MockupTemplate[]> {
     const rows = await prisma.mockupTemplate.findMany({
-      where: category ? { category } : undefined,
+      where: { ...(category ? { category } : {}), ...koreanTextFilter(locale) },
       orderBy: { name: "asc" },
     });
     return rows.map(toTemplate);
@@ -73,9 +80,9 @@ export class PrismaMockupTemplateRepository implements MockupTemplateRepository 
     return rows.map((r) => r.category as MockupCategory);
   }
 
-  async search(query: string): Promise<MockupTemplate[]> {
+  async search(query: string, locale?: Locale): Promise<MockupTemplate[]> {
     const trimmed = query.trim();
-    if (!trimmed) return this.list();
+    if (!trimmed) return this.list(undefined, locale);
     // "병원 유니폼"처럼 여러 단어로 검색해도 각 단어가 keywords 배열의
     // 원소 하나와 정확히 일치하면 매칭되도록 단어 단위로도 함께 본다
     // (keywords는 짧은 단일/복합 명사 시소러스라 "has"는 정확히 일치해야
@@ -84,11 +91,16 @@ export class PrismaMockupTemplateRepository implements MockupTemplateRepository 
     const words = trimmed.split(/\s+/).filter(Boolean);
     const rows = await prisma.mockupTemplate.findMany({
       where: {
-        OR: [
-          { name: { contains: trimmed, mode: "insensitive" } },
-          { description: { contains: trimmed, mode: "insensitive" } },
-          { keywords: { has: trimmed } },
-          { keywords: { hasSome: words } },
+        AND: [
+          {
+            OR: [
+              { name: { contains: trimmed, mode: "insensitive" } },
+              { description: { contains: trimmed, mode: "insensitive" } },
+              { keywords: { has: trimmed } },
+              { keywords: { hasSome: words } },
+            ],
+          },
+          koreanTextFilter(locale),
         ],
       },
       orderBy: { name: "asc" },

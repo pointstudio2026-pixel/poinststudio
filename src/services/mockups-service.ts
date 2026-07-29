@@ -1,4 +1,5 @@
 import { apiFetch } from "@/services/http-client";
+import type { Locale } from "@/shared/i18n/locale";
 
 export type MockupCategoryDto =
   | "business_card"
@@ -84,10 +85,11 @@ export interface MockupProjectDto {
   completedAt: string | null;
 }
 
-export function fetchMockupTemplates(category?: MockupCategoryDto) {
-  const qs = category ? `?category=${category}` : "";
+export function fetchMockupTemplates(category?: MockupCategoryDto, locale: Locale = "ko") {
+  const params = new URLSearchParams({ locale });
+  if (category) params.set("category", category);
   return apiFetch<{ templates: MockupTemplateDto[]; categories: MockupCategoryDto[] }>(
-    `/api/mockups/templates${qs}`,
+    `/api/mockups/templates?${params.toString()}`,
   );
 }
 
@@ -126,8 +128,10 @@ export function deleteMockup(mockupId: string) {
   return apiFetch<{ deleted: boolean }>(`/api/mockups/${mockupId}`, { method: "DELETE" });
 }
 
-export function searchMockupTemplates(query: string) {
-  return apiFetch<{ templates: MockupTemplateDto[] }>(`/api/mockups/templates/search?q=${encodeURIComponent(query)}`);
+export function searchMockupTemplates(query: string, locale: Locale = "ko") {
+  return apiFetch<{ templates: MockupTemplateDto[] }>(
+    `/api/mockups/templates/search?q=${encodeURIComponent(query)}&locale=${locale}`,
+  );
 }
 
 export function fetchPastGenerationImages() {

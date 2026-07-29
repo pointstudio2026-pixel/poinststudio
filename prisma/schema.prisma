@@ -631,6 +631,12 @@ model MockupTemplate {
   // 뭉뚱그리지 않고 "의사가운"처럼 구체적으로 검색되도록 하는 키워드.
   // styles 테이블의 keywords 컬럼과 같은 패턴.
   keywords String[] @default([]) @map("keywords")
+  // 배경 사진 안에(합성 영역이 아니라 사진 자체에) 한글 텍스트가 찍혀
+  // 있으면 true -- 한국어 사용자에게는 노출하지만, 외국어 사용자에게는
+  // 의미 없는 이미지이므로 목록/검색에서 제외한다(locale !== "ko"일 때
+  // PrismaMockupTemplateRepository가 이 값으로 필터링). 새 템플릿을 추가할
+  // 때 반드시 이미지를 직접 보고 정확히 설정할 것.
+  containsKoreanText Boolean @default(false) @map("contains_korean_text")
   createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
   mockups MockupProject[]

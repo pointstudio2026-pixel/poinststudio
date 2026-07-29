@@ -23,6 +23,13 @@ import { PrismaClient } from "../generated/prisma/client";
  * 톤이나 카테고리만 보고 이름을 추측하면 "레몬에이드 포스터"인데 실제로는
  * 가구 브랜드 광고가 그려진 것처럼 이름과 실제 이미지가 어긋난다(2026-07-29
  * 실제 발생 사례). 새 템플릿을 추가할 때마다 이 규칙을 반드시 지킬 것.
+ *
+ * 중요(2026-07-29): 배경 이미지 안에 박히는 텍스트(브랜드명, 문구 등)는
+ * 반드시 영어로만 생성할 것 -- 특정 업종에 국한되지 않는 범용성이 가장
+ * 넓기 때문. 그럼에도 한글이 조금이라도 찍힌 이미지가 생기면(과거 생성분
+ * 등) `containsKoreanText: true`를 반드시 표시할 것 -- 이 값이 true인
+ * 템플릿은 한국어 사용자에게만 노출되고, 그 외 언어 사용자에게는 검색/
+ * 목록에서 자동으로 제외된다(PrismaMockupTemplateRepository).
  */
 
 interface ManifestRow {
@@ -39,6 +46,7 @@ interface ManifestRow {
   visionSummary: string;
   visionEvaluation: unknown;
   keywords?: string[];
+  containsKoreanText?: boolean;
 }
 
 const ADMIN_EMAIL = "pointstudio2026@gmail.com";
@@ -69,6 +77,7 @@ async function main() {
         description: row.description,
         backgroundUrl: row.imagePath,
         keywords: row.keywords ?? [],
+        containsKoreanText: row.containsKoreanText ?? false,
         placementXPct: row.placement.xPct,
         placementYPct: row.placement.yPct,
         placementWidthPct: row.placement.widthPct,
@@ -84,6 +93,7 @@ async function main() {
         description: row.description,
         backgroundUrl: row.imagePath,
         keywords: row.keywords ?? [],
+        containsKoreanText: row.containsKoreanText ?? false,
       },
     });
     templatesUpserted++;

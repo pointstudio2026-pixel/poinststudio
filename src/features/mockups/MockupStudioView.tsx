@@ -31,7 +31,7 @@ export function MockupStudioView({
   projectId: string;
   deliverableType: string | null;
 }) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   // "완성된 결과물"(포스터/브로슈어 등) deliverableType은 대응하는 목업
   // 카테고리 하나로 고정한다 -- 명함 프로젝트에 웹사이트 목업이 뜰 이유가
   // 없다. 매핑이 없으면(브랜딩 & 로고, 레거시 null) 기존 그대로 전체
@@ -74,8 +74,8 @@ export function MockupStudioView({
   const activeCategory = lockedCategory ?? selectedCategory ?? orderedCategories[0] ?? null;
 
   const { data: templatesData } = useQuery({
-    queryKey: ["mockup-templates", activeCategory],
-    queryFn: () => fetchMockupTemplates(activeCategory ?? undefined),
+    queryKey: ["mockup-templates", activeCategory, locale],
+    queryFn: () => fetchMockupTemplates(activeCategory ?? undefined, locale),
     enabled: Boolean(activeCategory),
   });
 
