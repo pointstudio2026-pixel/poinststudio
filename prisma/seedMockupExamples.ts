@@ -30,6 +30,18 @@ import { PrismaClient } from "../generated/prisma/client";
  * 등) `containsKoreanText: true`를 반드시 표시할 것 -- 이 값이 true인
  * 템플릿은 한국어 사용자에게만 노출되고, 그 외 언어 사용자에게는 검색/
  * 목록에서 자동으로 제외된다(PrismaMockupTemplateRepository).
+ *
+ * 중요(2026-07-30, 최종 규칙 -- 위 텍스트 언어 규칙보다 우선): 로고 배치
+ * 영역이 아닌 곳에 들어가는 타이포(간판 옆 문구, 메뉴판, 패키지 라벨,
+ * 웹사이트 nav 등)에는 업체명/브랜드명을 절대 포함하지 않는다. 실제
+ * 업체명이든 가짜 placeholder 업체명("NEXORA", "AURORA STUDIO" 같은 것)이든
+ * 전부 금지 -- 사용자가 자기 로고를 합성했을 때 로고의 실제 상호명과
+ * 배경에 적힌 상호명이 달라 보이는 문제가 생기기 때문(2026-07-30 감사에서
+ * 66개 템플릿 중 65개가 이 문제로 발각되어 대량 정리함). 다른 타이포가
+ * 꼭 필요하면 업종/스타일에 어울리는 일반 문구(메뉴 항목, 원산지 표기,
+ * "OPEN"/"WELCOME" 같은 안내문, 장식적 슬로건 등 특정 상호를 가리키지
+ * 않는 텍스트)로만 채운다. 새 템플릿을 추가하기 전 이미지를 직접 보고
+ * 이 규칙을 반드시 확인할 것.
  */
 
 interface ManifestRow {
@@ -47,6 +59,9 @@ interface ManifestRow {
   visionEvaluation: unknown;
   keywords?: string[];
   containsKoreanText?: boolean;
+  /** 배경에 업체명이 박혀 로고와 상호명이 어긋나는 템플릿(2026-07-30 감사)을
+   * 목록/검색에서 숨긴다 -- 실사용 참조가 있어 행을 지울 수 없는 경우. */
+  hidden?: boolean;
 }
 
 const ADMIN_EMAIL = "pointstudio2026@gmail.com";
@@ -86,6 +101,7 @@ async function main() {
         fullDesignPlacementYPct: row.fullDesignPlacement.yPct,
         fullDesignPlacementWidthPct: row.fullDesignPlacement.widthPct,
         fullDesignPlacementHeightPct: row.fullDesignPlacement.heightPct,
+        hidden: row.hidden ?? false,
       },
       update: {
         category: row.category,
@@ -94,6 +110,7 @@ async function main() {
         backgroundUrl: row.imagePath,
         keywords: row.keywords ?? [],
         containsKoreanText: row.containsKoreanText ?? false,
+        hidden: row.hidden ?? false,
       },
     });
     templatesUpserted++;

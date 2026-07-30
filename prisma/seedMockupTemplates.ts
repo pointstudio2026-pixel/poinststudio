@@ -12,6 +12,12 @@ import { PrismaClient } from "../generated/prisma/client";
  * naturally. Re-run with `npm run prisma:seed-mockup-templates`; it upserts
  * by slug, so existing rows keep their id (mockup_projects references stay
  * valid) and just get their values refreshed.
+ *
+ * 중요(2026-07-30): 로고 배치 영역이 아닌 곳의 타이포에는 업체명/브랜드명을
+ * 절대 포함하지 않는다(실제든 가짜 placeholder든). 사용자가 자기 로고를
+ * 합성하면 배경에 적힌 상호명과 로고의 실제 상호명이 달라 보이는 문제가
+ * 생긴다 -- 자세한 배경은 prisma/seedMockupExamples.ts의 2026-07-30 코멘트
+ * 참고.
  */
 
 interface PlacementRect {
@@ -32,6 +38,11 @@ interface TemplateDef {
   fullDesignPlacement?: PlacementRect;
   /** 목업 단독 프로세스의 배경 검색용 키워드(동의어/업종 시소러스). */
   keywords: string[];
+  /** 배경 사진에 로고 배치 영역이 아닌 곳에 업체명이 박혀 있어 목록/검색에서
+   * 숨겨야 하지만(2026-07-30 감사), 실사용 참조가 있어 행을 지울 수는
+   * 없는 템플릿. 대체 이미지가 준비되면 이 플래그를 지우고 imagePath를
+   * 교체할 것. */
+  hidden?: boolean;
 }
 
 const TEMPLATES: TemplateDef[] = [
@@ -44,6 +55,7 @@ const TEMPLATES: TemplateDef[] = [
     placement: { xPct: 32, yPct: 22, widthPct: 20, heightPct: 20 },
     fullDesignPlacement: { xPct: 14, yPct: 12, widthPct: 56, heightPct: 60 },
     keywords: ["명함","비즈니스카드","카드","네임카드","business card","name card","calling card","visiting card","contact card","名刺","ビジネスカード","ネームカード","カード","名刺デザイン","carte de visite","carte professionnelle","carte d'affaires","carte","Visitenkarte","Geschäftskarte","Namenskarte","Kontaktkarte","Karte"],
+    hidden: true,
   },
   {
     category: "signboard",
@@ -53,6 +65,7 @@ const TEMPLATES: TemplateDef[] = [
     imagePath: "/mockup-templates/signboard.jpg",
     placement: { xPct: 41, yPct: 20, widthPct: 30, heightPct: 38 },
     keywords: ["간판","매장","상점","숍","외관","매장 외관","signboard","shop sign","storefront","store sign","shopfront","看板","店舗","ショップ","店頭","外観","enseigne","devanture","magasin","boutique","façade","Ladenschild","Schild","Ladenfront","Schaufenster","Geschäft"],
+    hidden: true,
   },
   {
     category: "mobile_app",
@@ -73,6 +86,7 @@ const TEMPLATES: TemplateDef[] = [
     placement: { xPct: 9, yPct: 12, widthPct: 12, heightPct: 5 },
     fullDesignPlacement: { xPct: 8, yPct: 19, widthPct: 55, heightPct: 56 },
     keywords: ["웹사이트","홈페이지","웹","사이트","노트북","온라인","website","homepage","web page","laptop","online","landing page","ウェブサイト","ホームページ","サイト","ノートパソコン","オンライン","site web","site internet","page d'accueil","ordinateur portable","en ligne","Webseite","Homepage","Website","Laptop","Startseite"],
+    hidden: true,
   },
   {
     category: "brochure",
@@ -83,27 +97,11 @@ const TEMPLATES: TemplateDef[] = [
     placement: { xPct: 66, yPct: 16, widthPct: 26, heightPct: 12 },
     fullDesignPlacement: { xPct: 58, yPct: 8, widthPct: 38, heightPct: 82 },
     keywords: ["브로슈어","카탈로그","팜플렛","소개서","brochure","catalog","catalogue","pamphlet","booklet","company profile","パンフレット","ブローシャー","カタログ","会社案内","冊子","dépliant","plaquette","livret","catalogue d'entreprise","Broschüre","Katalog","Prospekt","Firmenbroschüre","Werbeheft"],
+    hidden: true,
   },
-  {
-    category: "poster",
-    name: "포스터 (메디컬)",
-    slug: "poster-medical",
-    description: "포스터 목업 템플릿 -- 상단 브랜드 영역에 로고를 자동 배치합니다.",
-    imagePath: "/mockup-templates/poster-medical.jpg",
-    placement: { xPct: 28, yPct: 10, widthPct: 44, heightPct: 6 },
-    fullDesignPlacement: { xPct: 23, yPct: 8, widthPct: 60, heightPct: 82 },
-    keywords: ["포스터","벽보","홍보물","안내문","병원","의원","클리닉","의료","poster","wall poster","promotional poster","notice","hospital","clinic","medical","healthcare","ポスター","掲示","貼り紙","告知","病院","クリニック","医療","診療所","affiche","affichette","avis","hôpital","clinique","médical","santé","cabinet médical","Plakat","Wandplakat","Aushang","Krankenhaus","Klinik","medizinisch","Arztpraxis","Gesundheitswesen"],
-  },
-  {
-    category: "poster",
-    name: "포스터 (카페)",
-    slug: "poster-cafe",
-    description: "포스터 목업 템플릿 -- 상단 브랜드 영역에 로고를 자동 배치합니다.",
-    imagePath: "/mockup-templates/poster-cafe.jpg",
-    placement: { xPct: 43, yPct: 11, widthPct: 35, heightPct: 18 },
-    fullDesignPlacement: { xPct: 36, yPct: 2, widthPct: 46, heightPct: 82 },
-    keywords: ["포스터","벽보","홍보물","안내문","카페","커피","poster","wall poster","promotional poster","notice","cafe","coffee","coffee shop","ポスター","掲示","貼り紙","告知","カフェ","コーヒー","喫茶店","affiche","affichette","avis","café","cafétéria","salon de thé","Plakat","Wandplakat","Aushang","Kaffee","Café","Kaffeehaus"],
-  },
+  // poster-medical / poster-cafe: 2026-07-30 감사에서 배경에 업체명이 박혀
+  // 있고 실사용 참조가 없어 DB에서 완전히 삭제했다 -- 재실행해도 다시
+  // 만들어지지 않도록 여기서도 제거.
 ];
 
 async function main() {
@@ -129,6 +127,7 @@ async function main() {
       fullDesignPlacementYPct: t.fullDesignPlacement?.yPct,
       fullDesignPlacementWidthPct: t.fullDesignPlacement?.widthPct,
       fullDesignPlacementHeightPct: t.fullDesignPlacement?.heightPct,
+      hidden: t.hidden ?? false,
     };
     await prisma.mockupTemplate.upsert({
       where: { slug: t.slug },

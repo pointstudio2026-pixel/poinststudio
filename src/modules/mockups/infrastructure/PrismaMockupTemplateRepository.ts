@@ -9,6 +9,12 @@ function koreanTextFilter(locale?: Locale) {
   return locale && locale !== "ko" ? { containsKoreanText: false } : {};
 }
 
+// 실사용 참조가 있어 행을 지울 수 없는 템플릿(배경에 업체명이 박혀 로고와
+// 상호명이 어긋나는 것 등)을 목록/검색/카테고리에서 제외한다. findById는
+// 예외 -- 이미 생성된 목업이 자신의 템플릿을 참조 조회할 때는 숨김 여부와
+// 무관하게 계속 resolve되어야 한다.
+const HIDDEN_FILTER = { hidden: false };
+
 function toTemplate(row: {
   id: string;
   category: string;
@@ -60,7 +66,7 @@ function toTemplate(row: {
 export class PrismaMockupTemplateRepository implements MockupTemplateRepository {
   async list(category?: MockupCategory, locale?: Locale): Promise<MockupTemplate[]> {
     const rows = await prisma.mockupTemplate.findMany({
-      where: { ...(category ? { category } : {}), ...koreanTextFilter(locale) },
+      where: { ...(category ? { category } : {}), ...koreanTextFilter(locale), ...HIDDEN_FILTER },
       orderBy: { name: "asc" },
     });
     return rows.map(toTemplate);
@@ -73,6 +79,7 @@ export class PrismaMockupTemplateRepository implements MockupTemplateRepository 
 
   async listCategories(): Promise<MockupCategory[]> {
     const rows = await prisma.mockupTemplate.findMany({
+      where: HIDDEN_FILTER,
       select: { category: true },
       distinct: ["category"],
       orderBy: { category: "asc" },
@@ -101,6 +108,7 @@ export class PrismaMockupTemplateRepository implements MockupTemplateRepository 
             ],
           },
           koreanTextFilter(locale),
+          HIDDEN_FILTER,
         ],
       },
       orderBy: { name: "asc" },
