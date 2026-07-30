@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { LightboxImage } from "@/components/LightboxImage";
 import { Header } from "@/features/landing/Header";
 import { AppHeader } from "@/features/navigation/AppHeader";
 import { Footer } from "@/features/landing/Footer";
@@ -135,15 +135,13 @@ function FaqBody({
             if (!image) return null;
             return (
               <div key={index} className="flex flex-col gap-4">
-                <div className="relative aspect-[16/10] w-full">
-                  <Image
-                    src={image.url}
-                    alt={image.alt}
-                    fill
-                    sizes="(max-width: 640px) 100vw, 672px"
-                    className="rounded-2xl border border-line object-cover shadow-soft"
-                  />
-                </div>
+                <LightboxImage
+                  src={image.url}
+                  alt={image.alt}
+                  sizes="(max-width: 640px) 100vw, 672px"
+                  containerClassName="aspect-[16/10]"
+                  imageClassName="rounded-2xl border border-line object-cover shadow-soft"
+                />
                 <p className="text-sm text-muted">{paragraph}</p>
               </div>
             );
@@ -154,15 +152,14 @@ function FaqBody({
           {content.images && content.images.length > 0 && (
             <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {content.images.map((image, index) => (
-                <div key={`${image.url}-${index}`} className="relative aspect-[4/3] w-full">
-                  <Image
-                    src={image.url}
-                    alt={image.alt}
-                    fill
-                    sizes="(max-width: 640px) 100vw, 50vw"
-                    className="rounded-2xl border border-line object-cover shadow-soft"
-                  />
-                </div>
+                <LightboxImage
+                  key={`${image.url}-${index}`}
+                  src={image.url}
+                  alt={image.alt}
+                  sizes="(max-width: 640px) 100vw, 50vw"
+                  containerClassName="aspect-[4/3]"
+                  imageClassName="rounded-2xl border border-line object-cover shadow-soft"
+                />
               ))}
             </section>
           )}
@@ -290,15 +287,14 @@ function StyleGuideBody({
       {content.images && content.images.length > 0 && (
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {content.images.map((image, index) => (
-            <div key={`${image.url}-${index}`} className="relative aspect-[4/3] w-full">
-              <Image
-                src={image.url}
-                alt={image.alt}
-                fill
-                sizes="(max-width: 640px) 100vw, 50vw"
-                className="rounded-2xl border border-line object-cover shadow-soft"
-              />
-            </div>
+            <LightboxImage
+              key={`${image.url}-${index}`}
+              src={image.url}
+              alt={image.alt}
+              sizes="(max-width: 640px) 100vw, 50vw"
+              containerClassName="aspect-[4/3]"
+              imageClassName="rounded-2xl border border-line object-cover shadow-soft"
+            />
           ))}
         </section>
       )}
