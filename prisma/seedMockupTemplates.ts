@@ -17,7 +17,9 @@ import { PrismaClient } from "../generated/prisma/client";
  * 절대 포함하지 않는다(실제든 가짜 placeholder든). 사용자가 자기 로고를
  * 합성하면 배경에 적힌 상호명과 로고의 실제 상호명이 달라 보이는 문제가
  * 생긴다 -- 자세한 배경은 prisma/seedMockupExamples.ts의 2026-07-30 코멘트
- * 참고.
+ * 참고. 같은 코멘트에 로고 자리 자체를 글자 없는 placeholder 마크로 명확히
+ * 그려 넣어야 한다는 규칙도 함께 있음 -- placement 좌표만 잡아두고 배경
+ * 이미지 자체는 빈 공간으로 두면 안 된다.
  */
 
 interface PlacementRect {
