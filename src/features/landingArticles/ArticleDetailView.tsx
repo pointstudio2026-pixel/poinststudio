@@ -126,27 +126,54 @@ function FaqBody({
     <>
       <p className="-mt-8 text-lg text-muted">{content.summary}</p>
 
-      {content.images.length > 0 && (
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {content.images.map((image, index) => (
-            <div key={`${image.url}-${index}`} className="relative aspect-[4/3] w-full">
-              <Image
-                src={image.url}
-                alt={image.alt}
-                fill
-                sizes="(max-width: 640px) 100vw, 50vw"
-                className="rounded-2xl border border-line object-cover shadow-soft"
-              />
-            </div>
-          ))}
+      {content.images && content.images.length > 0 && content.images.length === content.body.length ? (
+        // 이미지 개수가 문단 개수와 정확히 같을 때만 짝지어 보여준다 (예: 툴 5개 소개 글) --
+        // 개수가 안 맞는 일반 FAQ는 예전처럼 이미지 그리드 + 문단 목록으로 분리해서 보여준다.
+        <section className="flex flex-col gap-10">
+          {content.body.map((paragraph, index) => {
+            const image = content.images[index];
+            if (!image) return null;
+            return (
+              <div key={index} className="flex flex-col gap-4">
+                <div className="relative aspect-[16/10] w-full">
+                  <Image
+                    src={image.url}
+                    alt={image.alt}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 672px"
+                    className="rounded-2xl border border-line object-cover shadow-soft"
+                  />
+                </div>
+                <p className="text-sm text-muted">{paragraph}</p>
+              </div>
+            );
+          })}
         </section>
-      )}
+      ) : (
+        <>
+          {content.images && content.images.length > 0 && (
+            <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {content.images.map((image, index) => (
+                <div key={`${image.url}-${index}`} className="relative aspect-[4/3] w-full">
+                  <Image
+                    src={image.url}
+                    alt={image.alt}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                    className="rounded-2xl border border-line object-cover shadow-soft"
+                  />
+                </div>
+              ))}
+            </section>
+          )}
 
-      <section className="flex flex-col gap-4 text-sm text-muted">
-        {content.body.map((paragraph, index) => (
-          <p key={index}>{paragraph}</p>
-        ))}
-      </section>
+          <section className="flex flex-col gap-4 text-sm text-muted">
+            {content.body.map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
+            ))}
+          </section>
+        </>
+      )}
 
       {content.table && (
         <section className="flex flex-col gap-4">
@@ -260,7 +287,7 @@ function StyleGuideBody({
     <>
       <p className="-mt-8 text-lg text-muted">{content.definition}</p>
 
-      {content.images.length > 0 && (
+      {content.images && content.images.length > 0 && (
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {content.images.map((image, index) => (
             <div key={`${image.url}-${index}`} className="relative aspect-[4/3] w-full">
