@@ -1,8 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getOAuthProvider } from "@/shared/oauth/oauthRegistry";
-import { OAUTH_INTENT_COOKIE, OAUTH_STATE_COOKIE } from "@/shared/auth/cookies";
+import { OAUTH_INTENT_COOKIE, OAUTH_REDIRECT_COOKIE, OAUTH_STATE_COOKIE } from "@/shared/auth/cookies";
 import { generateOpaqueToken } from "@/shared/auth/opaqueToken";
 import { resolveAppOrigin } from "@/shared/http/appOrigin";
+import { safeRelativeRedirect } from "@/shared/auth/oauthRedirect";
 
 const STATE_TTL_SECONDS = 600;
 
@@ -22,8 +23,10 @@ export async function GET(
   // 기존 계정 로그인 전용(새 계정을 만들지 않음), 회원가입 페이지만 신규
   // 가입 절차(consent 화면)로 이어진다 -- 콜백 시점에 원래 어느 페이지였는지
   // 알아야 하므로 state와 함께 짧은 쿠키로 들고 간다.
-  const intentParam = new URL(request.url).searchParams.get("intent");
+  const searchParams = new URL(request.url).searchParams;
+  const intentParam = searchParams.get("intent");
   const intent = intentParam === "login" ? "login" : "register";
+  const redirectTo = safeRelativeRedirect(searchParams.get("redirect"));
 
   const state = generateOpaqueToken();
   const res = NextResponse.redirect(oauthProvider.getAuthorizationUrl(state));
@@ -36,5 +39,8 @@ export async function GET(
   };
   res.cookies.set(OAUTH_STATE_COOKIE, state, cookieOptions);
   res.cookies.set(OAUTH_INTENT_COOKIE, intent, cookieOptions);
+  if (redirectTo) {
+    res.cookies.set(OAUTH_REDIRECT_COOKIE, redirectTo, cookieOptions);
+  }
   return res;
 }

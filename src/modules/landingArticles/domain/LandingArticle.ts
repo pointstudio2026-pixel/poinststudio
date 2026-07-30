@@ -24,6 +24,8 @@ export interface StyleGuideContent {
 export interface FaqArticleContent {
   summary: string;
   body: string[];
+  /** 스타일 가이드(StyleGuideContent.images)와 동일한 패턴 -- 빈 배열이면 이미지 섹션 자체를 렌더링하지 않는다. */
+  images: { url: string; alt: string }[];
   keyPoints: { label: string; value: string }[];
   relatedQuestions: { slug: string; label: string }[];
   ctaLabel: string;

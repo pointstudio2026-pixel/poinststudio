@@ -12,6 +12,13 @@ export interface PromptLayers {
   styleContext: string;
   /** 작업물 유형 × 스타일 대분류 조합 고정 뼈대(트렌드 리서치 반영). */
   baseTemplateContext: string;
+  /**
+   * 업종 상징 요소(무엇을 담을지) + 렌더링 방식(사진/일러스트/패턴+사진/
+   * 단색+타이포 중 스타일에 맞는 것) + 업종 무드 보정을 조합한 지침 --
+   * 매칭되는 게 없으면 빈 문자열. 로고는 실사 금지, 상징 요소가 있어도
+   * 아이콘/심볼 모티프로만 참고하도록 다르게 표현된다.
+   */
+  contentGuidanceContext: string;
   /** "내 스타일"에서 선택한 카테고리의 비전 분석 설명. 선택 안 했으면 빈 문자열. */
   userStyleContext: string;
   /** 관리자가 등록한 학습 자료(TrainingExample) 중 매칭된 프롬프트 발췌. 매칭 없으면 빈 문자열. */

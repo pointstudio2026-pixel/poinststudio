@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
-export function OAuthButtons({ intent }: { intent: "login" | "register" }) {
+export function OAuthButtons({ intent, redirectTo }: { intent: "login" | "register"; redirectTo?: string }) {
   const { t } = useTranslation();
   // 카카오 로그인은 정식 출시 전까지 비활성화 -- 실제 OAuth로 이동하지
   // 않고 안내 문구만 보여준다 (결제 수단 모달의 "정식 서비스 출시 이후"
@@ -26,7 +26,7 @@ export function OAuthButtons({ intent }: { intent: "login" | "register" }) {
       )}
 
       <a
-        href={`/api/auth/oauth/google/start?intent=${intent}`}
+        href={`/api/auth/oauth/google/start?intent=${intent}${redirectTo ? `&redirect=${encodeURIComponent(redirectTo)}` : ""}`}
         className="flex items-center justify-center gap-2 rounded-full border border-line bg-paper px-4 py-2.5 text-sm font-medium transition hover:border-ink"
       >
         <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden>

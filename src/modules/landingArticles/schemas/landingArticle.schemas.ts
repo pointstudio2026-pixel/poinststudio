@@ -45,6 +45,7 @@ const landingArticleTableSchema = z.object({
 const faqArticleContentSchema = z.object({
   summary: z.string().min(1),
   body: z.array(z.string().min(1)).min(1),
+  images: z.array(landingArticleImageSchema).default([]),
   keyPoints: z.array(landingArticleDetailSpecSchema),
   relatedQuestions: z.array(landingArticleComboSchema),
   ctaLabel: z.string().min(1),

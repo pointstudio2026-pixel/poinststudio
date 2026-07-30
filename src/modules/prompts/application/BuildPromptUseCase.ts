@@ -16,7 +16,7 @@ import type { TrainingExampleRepository } from "@/modules/trainingExamples/domai
 import type { IndustryRepository } from "@/modules/industries/domain/IndustryRepository";
 import { TRAINING_EXAMPLE_CATEGORY_IMAGE_GENERATION } from "@/modules/trainingExamples/domain/TrainingExample";
 import { rankTrainingExamples } from "@/modules/trainingExamples/domain/trainingExampleRules";
-import { buildPromptLayers, composePrompt } from "@/modules/prompts/domain/promptBuilder";
+import { buildPromptLayers, composePrompt, pickIndustrySymbol, pickRenderingMode } from "@/modules/prompts/domain/promptBuilder";
 import { computePromptHash } from "@/modules/prompts/domain/promptHash";
 import { DEFAULT_PROVIDER, formatForProvider } from "@/modules/prompts/domain/providerFormatters";
 import { resolveSizePreset } from "@/modules/prompts/domain/sizePresetRules";
@@ -228,6 +228,14 @@ export class BuildPromptUseCase {
         }
       : undefined;
 
+    // 축1(업종 상징 요소)/축2(렌더링 방식) 랜덤 선택은 여기(호출부)에서 한
+    // 번만 뽑는다 -- buildPromptLayers는 순수 함수로 유지해야 "동일 입력 ->
+    // 동일 출력"이 보장된다(promptBuilder.test.ts). 로고는 렌더링 방식을
+    // 아예 뽑지 않는다(항상 일러스트/아이콘 고정, 실사 금지).
+    const isLogo = isBrandingDeliverableType(project.deliverableType);
+    const industrySymbol = answers.industry ? pickIndustrySymbol(answers.industry) : undefined;
+    const renderingMode = isLogo ? undefined : pickRenderingMode(primaryStyle.category);
+
     const layers = buildPromptLayers({
       brandName: answers.brandName ?? "",
       industry: answers.industry ?? "",
@@ -245,6 +253,8 @@ export class BuildPromptUseCase {
       additionalNotes: answers.additionalNotes,
       hardConstraints,
       industryMetadata,
+      industrySymbol,
+      renderingMode,
     });
     const { systemPrompt, userPrompt, flaggedTerms, contentOnlyUserPrompt } = composePrompt(layers);
     const complianceCheck = checkPromptCompliance(contentOnlyUserPrompt, hardConstraints);

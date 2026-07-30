@@ -6,7 +6,7 @@ import { OAuthButtons } from "@/features/auth/OAuthButtons";
 import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
-export function RegisterView() {
+export function RegisterView({ redirectTo }: { redirectTo?: string } = {}) {
   const { t } = useTranslation();
 
   return (
@@ -21,7 +21,7 @@ export function RegisterView() {
         <p className="eyebrow text-sm text-muted">{t("register.getStarted")}</p>
         <h1 className="mt-1 text-xl font-semibold">{t("register.title")}</h1>
         <div className="mt-6">
-          <OAuthButtons intent="register" />
+          <OAuthButtons intent="register" redirectTo={redirectTo} />
         </div>
       </div>
       <p className="text-sm text-muted">

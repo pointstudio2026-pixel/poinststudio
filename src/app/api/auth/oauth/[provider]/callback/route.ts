@@ -4,6 +4,7 @@ import { authContainer } from "@/modules/auth/container";
 import { OAuthConsentRequiredError } from "@/modules/auth/application/OAuthLoginUseCase";
 import {
   OAUTH_INTENT_COOKIE,
+  OAUTH_REDIRECT_COOKIE,
   OAUTH_STATE_COOKIE,
   setAuthCookies,
   setOAuthPendingSignupCookie,
@@ -12,10 +13,12 @@ import { signOAuthPendingSignupToken } from "@/shared/auth/jwt";
 import { logger } from "@/shared/logging/logger";
 import { resolveAppOrigin } from "@/shared/http/appOrigin";
 import { AppError } from "@/shared/errors/AppError";
+import { safeRelativeRedirect } from "@/shared/auth/oauthRedirect";
 
 function clearRoundTripCookies(res: NextResponse): void {
   res.cookies.set(OAUTH_STATE_COOKIE, "", { path: "/", maxAge: 0 });
   res.cookies.set(OAUTH_INTENT_COOKIE, "", { path: "/", maxAge: 0 });
+  res.cookies.set(OAUTH_REDIRECT_COOKIE, "", { path: "/", maxAge: 0 });
 }
 
 export async function GET(
@@ -42,6 +45,7 @@ export async function GET(
   // /login의 버튼은 로그인 전용, /register의 버튼만 신규 가입(consent 화면)으로
   // 이어진다 -- start route가 남긴 이 쿠키로 원래 어느 페이지였는지 구분한다.
   const intent = request.cookies.get(OAUTH_INTENT_COOKIE)?.value === "login" ? "login" : "register";
+  const redirectTo = safeRelativeRedirect(request.cookies.get(OAUTH_REDIRECT_COOKIE)?.value);
 
   if (!code || !state || !expectedState || state !== expectedState) {
     return loginErrorRedirect("invalid_request");
@@ -57,8 +61,10 @@ export async function GET(
     // 기존 계정 로그인(재로그인 또는 인증된 이메일로 자동 연결)만 여기에
     // 도달한다 -- 진짜 신규 가입은 OAuthConsentRequiredError로 빠져나가
     // 아래 catch에서 별도 처리된다. "로그인하면 프로젝트가 아니라 로그인된
-    // 상태로 메인페이지로" 요구사항에 맞춰 /projects가 아닌 /로 보낸다.
-    const res = NextResponse.redirect(new URL("/", origin));
+    // 상태로 메인페이지로" 요구사항에 맞춰 기본은 /projects가 아닌 /로
+    // 보내되, 가이드 글의 "무료로 시작하기" 버튼처럼 명시적으로 목적지가
+    // 지정된 경우(redirectTo)는 그 목적지를 우선한다.
+    const res = NextResponse.redirect(new URL(redirectTo ?? "/", origin));
     setAuthCookies(res, result);
     clearRoundTripCookies(res);
     return res;
@@ -77,7 +83,9 @@ export async function GET(
         emailVerified: err.profile.emailVerified,
         name: err.profile.name,
       });
-      const res = NextResponse.redirect(new URL("/oauth/consent", origin));
+      const consentUrl = new URL("/oauth/consent", origin);
+      if (redirectTo) consentUrl.searchParams.set("redirect", redirectTo);
+      const res = NextResponse.redirect(consentUrl);
       setOAuthPendingSignupCookie(res, pendingToken);
       clearRoundTripCookies(res);
       return res;

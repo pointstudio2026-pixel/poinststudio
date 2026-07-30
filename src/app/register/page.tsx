@@ -1,5 +1,11 @@
 import { RegisterView } from "@/features/auth/RegisterView";
+import { safeRelativeRedirect } from "@/shared/auth/oauthRedirect";
 
-export default function RegisterPage() {
-  return <RegisterView />;
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ redirect?: string }>;
+}) {
+  const { redirect } = await searchParams;
+  return <RegisterView redirectTo={safeRelativeRedirect(redirect) ?? undefined} />;
 }

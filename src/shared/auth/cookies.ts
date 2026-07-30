@@ -7,6 +7,8 @@ export const REFRESH_TOKEN_COOKIE = "aster_refresh_token";
 export const OAUTH_STATE_COOKIE = "aster_oauth_state";
 /** Remembers whether the OAuth button was clicked from /login or /register, across the redirect round-trip. */
 export const OAUTH_INTENT_COOKIE = "aster_oauth_intent";
+/** Optional post-auth destination (e.g. a guide article's "시작하기" CTA wants /projects even for a returning user), carried across the redirect round-trip the same way as intent/state. */
+export const OAUTH_REDIRECT_COOKIE = "aster_oauth_redirect";
 /** Holds the signed OAuthPendingSignupPayload while a new sign-up is on /oauth/consent. */
 export const OAUTH_PENDING_SIGNUP_COOKIE = "aster_oauth_pending_signup";
 const OAUTH_PENDING_SIGNUP_TTL_SECONDS = 10 * 60;

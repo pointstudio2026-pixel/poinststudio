@@ -35,6 +35,11 @@ export async function ArticleDetailView({ locale, article }: { locale: string; a
   const availableLocales = await landingArticlesContainer.listAvailableLocalesUseCase.execute({ slug: article.slug });
 
   const faqJsonLd = buildFaqPageJsonLd(article);
+  // 로그인 상태면 무조건 /projects로, 아니면 회원가입->(신규면 consent,
+  // 기존 계정이면 콜백에서 그대로) /projects로 도착하도록 유도한다 -- 각
+  // 글의 content.ctaHref는 더 이상 이동 목적지로 쓰지 않고, 버튼 문구
+  // (content.ctaLabel)만 그대로 존중한다.
+  const startHref = user ? "/projects" : "/register?redirect=%2Fprojects";
 
   return (
     <div className="flex min-h-screen flex-col bg-paper">
@@ -93,11 +98,11 @@ export async function ArticleDetailView({ locale, article }: { locale: string; a
         </div>
 
         {article.category === "faq" ? (
-          <FaqBody content={article.content as FaqArticleContent} locale={locale} labels={labels} />
+          <FaqBody content={article.content as FaqArticleContent} locale={locale} labels={labels} startHref={startHref} />
         ) : article.category === "why-aster" ? (
-          <WhyAsterBody content={article.content as WhyAsterPageContent} />
+          <WhyAsterBody content={article.content as WhyAsterPageContent} startHref={startHref} />
         ) : (
-          <StyleGuideBody content={article.content as StyleGuideContent} locale={locale} labels={labels} />
+          <StyleGuideBody content={article.content as StyleGuideContent} locale={locale} labels={labels} startHref={startHref} />
         )}
       </main>
 
@@ -110,14 +115,32 @@ function FaqBody({
   content,
   locale,
   labels,
+  startHref,
 }: {
   content: FaqArticleContent;
   locale: string;
   labels: ReturnType<typeof getLandingArticleLabels>;
+  startHref: string;
 }) {
   return (
     <>
       <p className="-mt-8 text-lg text-muted">{content.summary}</p>
+
+      {content.images.length > 0 && (
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {content.images.map((image, index) => (
+            <div key={`${image.url}-${index}`} className="relative aspect-[4/3] w-full">
+              <Image
+                src={image.url}
+                alt={image.alt}
+                fill
+                sizes="(max-width: 640px) 100vw, 50vw"
+                className="rounded-2xl border border-line object-cover shadow-soft"
+              />
+            </div>
+          ))}
+        </section>
+      )}
 
       <section className="flex flex-col gap-4 text-sm text-muted">
         {content.body.map((paragraph, index) => (
@@ -188,7 +211,7 @@ function FaqBody({
 
       <section className="flex justify-center">
         <Link
-          href={content.ctaHref}
+          href={startHref}
           className="rounded-full bg-ink px-8 py-3 text-center text-sm text-paper transition hover:opacity-90"
         >
           {content.ctaLabel}
@@ -198,7 +221,7 @@ function FaqBody({
   );
 }
 
-function WhyAsterBody({ content }: { content: WhyAsterPageContent }) {
+function WhyAsterBody({ content, startHref }: { content: WhyAsterPageContent; startHref: string }) {
   return (
     <>
       <p className="-mt-8 text-lg text-muted">{content.intro}</p>
@@ -212,7 +235,7 @@ function WhyAsterBody({ content }: { content: WhyAsterPageContent }) {
       </section>
       <section className="flex justify-center">
         <Link
-          href={content.ctaHref}
+          href={startHref}
           className="rounded-full bg-ink px-8 py-3 text-center text-sm text-paper transition hover:opacity-90"
         >
           {content.ctaLabel}
@@ -226,10 +249,12 @@ function StyleGuideBody({
   content,
   locale,
   labels,
+  startHref,
 }: {
   content: StyleGuideContent;
   locale: string;
   labels: ReturnType<typeof getLandingArticleLabels>;
+  startHref: string;
 }) {
   return (
     <>
@@ -315,7 +340,7 @@ function StyleGuideBody({
 
       <section className="flex justify-center">
         <Link
-          href={content.ctaHref}
+          href={startHref}
           className="rounded-full bg-ink px-8 py-3 text-center text-sm text-paper transition hover:opacity-90"
         >
           {content.ctaLabel}

@@ -6,7 +6,15 @@ import { OAuthConsentForm } from "@/features/auth/OAuthConsentForm";
 import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
-export function OAuthConsentView({ email, providerLabel }: { email: string; providerLabel: string }) {
+export function OAuthConsentView({
+  email,
+  providerLabel,
+  redirectTo,
+}: {
+  email: string;
+  providerLabel: string;
+  redirectTo?: string;
+}) {
   const { t } = useTranslation();
 
   return (
@@ -24,7 +32,7 @@ export function OAuthConsentView({ email, providerLabel }: { email: string; prov
           {t("oauthConsent.description", { provider: providerLabel, email })}
         </p>
         <div className="mt-6">
-          <OAuthConsentForm />
+          <OAuthConsentForm redirectTo={redirectTo} />
         </div>
       </div>
     </main>

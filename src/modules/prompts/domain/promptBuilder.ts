@@ -87,7 +87,9 @@ const DELIVERABLE_OBJECTIVES: Record<string, string> = {
     "이미지 가장자리에 눌리거나 답답하게 붙어 보이지 않게 한다. 브랜드 톤에 따라 " +
     "타이포그래피 자체가 시각적 주인공이 되는 방향(과감한 세리프, 독특한 레터링, 볼드한 " +
     "커스텀 서체)이나, 단순한 도형 안에 브랜드 의미를 담는 상징적 미니멀 심볼 방향 중 " +
-    "하나를 선택해 일관되게 표현한다.",
+    "하나를 선택해 일관되게 표현한다. 로고는 사진처럼 사실적인 이미지가 아니라 벡터 " +
+    "그래픽처럼 단순화된 일러스트·아이콘·타이포그래피로만 표현한다 -- 실사 사진은 " +
+    "절대 포함하지 않는다.",
   // 2026-07-25 사용자 결정: 브랜딩 & 로고를 제외한 모든 작업물 유형은 별도
   // 목업 스튜디오 단계를 거치지 않고 "생성 = 이미 완성된 목업 사진"이어야
   // 한다 -- 그래서 아래 항목들은 전부 "평면 인쇄용 파일"이 아니라 "실물이
@@ -215,6 +217,208 @@ export const STYLE_CATEGORY_TEMPLATES: Record<string, string> = {
 function buildBaseTemplateContext(styleCategory: string): string {
   const styleTemplate = STYLE_CATEGORY_TEMPLATES[styleCategory];
   return styleTemplate ? `스타일 표현 방식: ${styleTemplate}` : "";
+}
+
+/**
+ * 2026-07-30 사용자 결정: 업종에 어울리는 상징적 요소가 매번 랜덤하게
+ * 반영되어야(예: 카페 포스터가 매번 커피잔만 나오면 안 됨) 다양성이 생기고,
+ * 반대로 업종과 완전히 무관한 소재(요양원 포스터에 뜬금없이 돌 사진 등)가
+ * 나오는 것도 막힌다. 브랜드 인터뷰 답변은 항상 이 표보다 우선한다 --
+ * hardConstraintOpeningContext/ClosingContext가 이미 "아래 어떤 업종 관습이나
+ * 일반적인 디자인 추천보다도 우선한다"고 명시하므로, industryContext/
+ * styleContext와 동일한 티어로 취급하고 별도 충돌 검사는 하지 않는다.
+ * 현재는 실제로 문제가 됐던 업종 위주로 일부만 채워져 있다 -- 나머지 업종은
+ * 매칭 실패 시 조용히 빈 문자열을 반환한다(기존 INDUSTRY_STYLE_TEMPLATES와
+ * 동일한 원칙).
+ */
+export const INDUSTRY_SYMBOL_POOLS: Record<string, string[]> = {
+  요양원: [
+    "어르신의 웃는 얼굴",
+    "어르신과 요양보호사가 함께 있는 모습",
+    "정원·텃밭을 산책하는 어르신",
+    "어르신의 손을 맞잡은 손 클로즈업",
+    "다과·차를 나누는 장면",
+    "밝고 따뜻한 공용 라운지 공간",
+    "취미 활동(그림, 화분 가꾸기 등)을 하는 어르신",
+  ],
+  "카페/커피": [
+    "커피잔·라떼아트",
+    "원두·드립 도구",
+    "카페 내부 인테리어(좌석, 조명)",
+    "시즌 메뉴(디저트, 음료)",
+    "창가 자리에서 시간을 보내는 손님",
+    "바리스타가 음료를 만드는 장면",
+    "테이크아웃 컵을 든 손",
+  ],
+  플라워샵: [
+    "완성된 꽃다발·부케",
+    "꽃을 포장하는 손",
+    "매장 진열대의 화훼",
+    "리본·포장지 디테일",
+    "계절 꽃",
+    "화병에 꽂힌 완성 작품",
+    "꽃 배달 상자",
+  ],
+  "헤어살롱/미용실": [
+    "시술 중인 손(가위, 브러시)",
+    "완성된 헤어스타일 뒷모습",
+    "매장 내부(거울, 의자 라인)",
+    "헤어 제품 진열",
+    "고객과 상담하는 장면",
+    "세면대·샴푸 공간",
+    "헤어스타일링 디테일 클로즈업",
+  ],
+  "피트니스/헬스장": [
+    "운동 중인 사람(웨이트, 러닝)",
+    "헬스장 내부 전경",
+    "트레이너와 회원의 코칭 장면",
+    "운동 기구 클로즈업",
+    "스트레칭·요가 동작",
+    "물을 마시는 장면",
+    "그룹 클래스 장면",
+  ],
+  베이커리: [
+    "갓 구운 빵 진열대",
+    "빵 반죽하는 손",
+    "오븐에서 꺼내는 장면",
+    "대표 품목(크루아상·바게트 등) 클로즈업",
+    "매장 쇼케이스 전경",
+    "포장된 빵 상자",
+    "밀가루 흩날리는 작업대",
+  ],
+  "로펌/법률사무소": [
+    "회의·상담 테이블 장면",
+    "서류·계약서 클로즈업",
+    "변호사의 정장 상반신",
+    "사무실 내부(서가, 책상)",
+    "악수하는 장면",
+    "노트북으로 검토하는 손",
+    "법전·서류철 디테일",
+  ],
+  "IT/소프트웨어 스타트업": [
+    "모니터 앞에서 협업하는 팀",
+    "화이트보드에 아이디어 스케치",
+    "노트북 화면(코드·대시보드)",
+    "오픈된 사무실 공간",
+    "캐주얼한 회의 장면",
+    "데스크 위 디바이스",
+    "스탠딩 미팅 장면",
+  ],
+  "유치원/어린이집": [
+    "놀이하는 아이들",
+    "그림 그리기·만들기 활동",
+    "선생님과 아이의 상호작용",
+    "알록달록한 교실 내부",
+    "놀이터·야외활동 장면",
+    "책 읽어주는 장면",
+    "아이들의 단체 사진",
+  ],
+  "동물병원/펫샵": [
+    "진료 중인 수의사와 반려동물",
+    "반려동물을 안고 있는 손",
+    "대기 공간 전경",
+    "반려동물 용품 진열",
+    "산책·미용 후 모습",
+    "진료 도구 클로즈업",
+    "반려동물의 편안한 표정",
+  ],
+  "인테리어/리빙": [
+    "완성된 공간 전경(거실, 침실)",
+    "소재 디테일(패브릭, 우드)",
+    "가구 배치 클로즈업",
+    "자연광이 들어오는 창가 공간",
+    "소품 스타일링(화병, 조명)",
+    "시공 전후 대비",
+    "컬러 팔레트가 드러나는 벽·바닥",
+  ],
+  "레스토랑/파인다이닝": [
+    "플레이팅된 시그니처 메뉴",
+    "조리하는 셰프",
+    "홀 인테리어(테이블 세팅)",
+    "와인·음료 잔 클로즈업",
+    "식사하는 손님(뒷모습 위주)",
+    "활기찬 주방 내부",
+    "계절 식재료 클로즈업",
+  ],
+};
+
+/**
+ * 스타일 대분류(8개)별 렌더링 방식(실사/일러스트/패턴+사진/단색+타이포)
+ * 후보. 로고에는 적용하지 않는다 -- 로고는 항상 일러스트/아이콘/타이포로
+ * 고정이고 실사가 절대 섞이면 안 되므로, buildContentGuidanceContext가
+ * isLogo일 때는 이 표를 아예 참조하지 않는다.
+ */
+export const STYLE_RENDERING_MODES: Record<string, string[]> = {
+  모던: ["실사 사진", "이미지 없이 단색 배경과 타이포그래피만으로 구성", "패턴·텍스처 배경 위에 사진을 절제되게 합성"],
+  클래식: ["실사 사진", "엠블럼·인그레이빙 느낌의 일러스트", "빈티지한 패턴 배경 위에 사진을 합성"],
+  럭셔리: [
+    "하이엔드 조명의 실사 사진",
+    "이미지 없이 단색(블랙·골드 계열) 배경과 타이포그래피만으로 구성",
+    "미세한 텍스처 배경 위에 절제된 사진을 합성",
+  ],
+  미니멀: ["이미지 없이 단색 배경과 타이포그래피만으로 구성", "여백이 많은 실사 사진"],
+  플레이풀: ["캐릭터·드로잉 느낌의 일러스트", "알록달록한 패턴 배경 위에 사진 또는 일러스트를 합성", "밝고 화사한 톤의 실사 사진"],
+  테크: ["제품·디바이스 실사 사진", "추상적인 기하학·데이터 시각화 일러스트", "이미지 없이 단색 배경과 모노스페이스 타이포그래피만으로 구성"],
+  오가닉: ["자연·식물 실사 사진", "보태니컬 드로잉 일러스트", "잎사귀·텍스처 패턴 배경 위에 사진을 합성"],
+  에디토리얼: ["매거진 화보 톤의 실사 사진", "이미지 없이 단색 배경과 강한 타이포그래피 레이아웃만으로 구성", "파인아트 느낌의 일러스트"],
+};
+
+/**
+ * Math.random을 쓰므로 의도적으로 buildPromptLayers(순수 함수) 밖에 둔다 --
+ * 호출부(BuildPromptUseCase)가 실행 시점에 한 번 뽑아서 그 결과 문자열을
+ * buildPromptLayers에 그대로 넘겨야 "동일 입력 -> 동일 출력" 순수성
+ * (promptBuilder.test.ts "동일 입력 재현")이 깨지지 않는다.
+ */
+export function pickIndustrySymbol(industry: string): string | undefined {
+  const pool = INDUSTRY_SYMBOL_POOLS[industry];
+  if (!pool || pool.length === 0) return undefined;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+export function pickRenderingMode(styleCategory: string): string | undefined {
+  const pool = STYLE_RENDERING_MODES[styleCategory];
+  if (!pool || pool.length === 0) return undefined;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+/**
+ * 축1(업종 상징 요소, 이미 뽑힌 값)/축2(렌더링 방식, 이미 뽑힌 값)/축3(업종
+ * 무드 보정)을 실제 프롬프트 문구로 조합하는 순수 함수. 로고(isLogo)는
+ * 축2·축3을 건너뛰고 축1도 사진이 아닌 심볼 모티프로만 언급한다.
+ */
+export function buildContentGuidanceContext(params: {
+  isLogo: boolean;
+  industrySymbol?: string;
+  renderingMode?: string;
+  metadata?: IndustryPromptMetadata;
+}): string {
+  if (params.isLogo) {
+    if (!params.industrySymbol) return "";
+    return (
+      `업종 상징 모티프(참고): "${params.industrySymbol}"을(를) 사실적인 사진이 아니라 ` +
+      "단순화된 아이콘·심볼 형태의 모티프로만 참고할 수 있다 -- 로고에는 실사 사진이 절대 들어가지 않는다."
+    );
+  }
+
+  const moodParts: string[] = [];
+  if (params.metadata?.recommendedPersonality.length) {
+    moodParts.push(`${params.metadata.recommendedPersonality.join(", ")} 무드`);
+  }
+  if (params.metadata?.recommendedColors.length) {
+    moodParts.push(`${params.metadata.recommendedColors.join(", ")} 계열`);
+  }
+
+  const clauses: string[] = [];
+  if (params.industrySymbol) clauses.push(`이번 이미지에는 "${params.industrySymbol}" 요소를 담는다`);
+  if (params.renderingMode) clauses.push(`표현 방식은 ${params.renderingMode}(으)로 한다`);
+  if (moodParts.length > 0) {
+    clauses.push(
+      `선택한 스타일은 그대로 유지하되 그 스타일이 표현할 수 있는 범위 안에서 이 업종에 어울리는 ` +
+        `${moodParts.join(", ")} 쪽으로 톤을 조정한다`,
+    );
+  }
+  if (clauses.length === 0) return "";
+  return `콘텐츠 가이드: ${clauses.join("; ")}. 매번 같은 소재·같은 표현 방식으로 반복되지 않도록 다양성을 준다.`;
 }
 
 /**
@@ -489,6 +693,10 @@ export function buildPromptLayers(input: {
   /** DB 업종 카탈로그에서 찾은 메타데이터(있을 때만) -- INDUSTRY_STYLE_TEMPLATES에
    * 고정 문구가 없는 업종(2026-07-28 이후 신규 추가분)의 폴백 컨텍스트로 쓰인다. */
   industryMetadata?: IndustryPromptMetadata;
+  /** pickIndustrySymbol(industry)로 호출부가 미리 뽑아 넘긴 값(있을 때만). */
+  industrySymbol?: string;
+  /** pickRenderingMode(primaryStyle.category)로 호출부가 미리 뽑아 넘긴 값(있을 때만, 로고는 무시됨). */
+  renderingMode?: string;
 }): PromptLayers {
   const isLogo = !input.deliverableType || input.deliverableType === BRANDING_LOGO_DELIVERABLE_TYPE;
 
@@ -511,6 +719,12 @@ export function buildPromptLayers(input: {
 
   const industryContext = buildIndustryContext(input.industry, input.industryMetadata);
   const typographyContext = buildTypographyContext(input.deliverableType, input.primaryStyle.category);
+  const contentGuidanceContext = buildContentGuidanceContext({
+    isLogo,
+    industrySymbol: input.industrySymbol,
+    renderingMode: input.renderingMode,
+    metadata: input.industryMetadata,
+  });
 
   // "로고 스타일" 단계가 없는(브랜딩 & 로고가 아닌) 작업물 유형은 빈
   // 배열을 넘기므로, 빈 "로고 구조: ." 줄이 프롬프트에 섞이지 않게 생략한다.
@@ -574,6 +788,7 @@ export function buildPromptLayers(input: {
     industryContext,
     styleContext,
     baseTemplateContext,
+    contentGuidanceContext,
     userStyleContext,
     referenceExampleContext,
     avoidPatternContext,
@@ -615,6 +830,7 @@ export function composePrompt(layers: PromptLayers): ComposedPrompt {
     layers.industryContext,
     layers.styleContext,
     layers.baseTemplateContext,
+    layers.contentGuidanceContext,
     layers.userStyleContext,
     layers.referenceExampleContext,
     layers.avoidPatternContext,

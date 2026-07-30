@@ -8,7 +8,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import { Spinner } from "@/components/Spinner";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
-export function OAuthConsentForm() {
+export function OAuthConsentForm({ redirectTo }: { redirectTo?: string }) {
   const router = useRouter();
   const setUser = useAuthStore((s) => s.setUser);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
@@ -32,7 +32,7 @@ export function OAuthConsentForm() {
     try {
       const { user } = await completeOAuthSignup({ agreedToTerms, name: name.trim(), birthDate });
       setUser(user);
-      router.push("/projects");
+      router.push(redirectTo || "/projects");
     } catch (err) {
       setServerError(err instanceof Error ? err.message : t("oauthConsent.genericError"));
       setIsSubmitting(false);

@@ -7,7 +7,7 @@ import { oauthErrorMessage } from "@/features/auth/oauthErrorMessage";
 import { LanguageSwitcher } from "@/features/navigation/LanguageSwitcher";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 
-export function LoginView({ oauthErrorCode }: { oauthErrorCode?: string }) {
+export function LoginView({ oauthErrorCode, redirectTo }: { oauthErrorCode?: string; redirectTo?: string }) {
   const { t } = useTranslation();
   const errorKey = oauthErrorMessage(oauthErrorCode);
 
@@ -28,7 +28,7 @@ export function LoginView({ oauthErrorCode }: { oauthErrorCode?: string }) {
           </p>
         )}
         <div className="mt-6">
-          <OAuthButtons intent="login" />
+          <OAuthButtons intent="login" redirectTo={redirectTo} />
         </div>
       </div>
       <p className="text-sm text-muted">
