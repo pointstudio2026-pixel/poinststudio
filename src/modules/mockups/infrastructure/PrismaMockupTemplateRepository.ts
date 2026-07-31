@@ -67,7 +67,7 @@ export class PrismaMockupTemplateRepository implements MockupTemplateRepository 
   async list(category?: MockupCategory, locale?: Locale): Promise<MockupTemplate[]> {
     const rows = await prisma.mockupTemplate.findMany({
       where: { ...(category ? { category } : {}), ...koreanTextFilter(locale), ...HIDDEN_FILTER },
-      orderBy: { name: "asc" },
+      orderBy: [{ isGeneric: "desc" }, { name: "asc" }],
     });
     return rows.map(toTemplate);
   }
@@ -111,7 +111,7 @@ export class PrismaMockupTemplateRepository implements MockupTemplateRepository 
           HIDDEN_FILTER,
         ],
       },
-      orderBy: { name: "asc" },
+      orderBy: [{ isGeneric: "desc" }, { name: "asc" }],
     });
     return rows.map(toTemplate);
   }

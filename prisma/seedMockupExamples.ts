@@ -75,6 +75,9 @@ interface ManifestRow {
   /** 배경에 업체명이 박혀 로고와 상호명이 어긋나는 템플릿(2026-07-30 감사)을
    * 목록/검색에서 숨긴다 -- 실사용 참조가 있어 행을 지울 수 없는 경우. */
   hidden?: boolean;
+  /** 특정 업종/분야에 치우치지 않고 분위기·스타일 위주로 만든 배경(2026-07-31)
+   * -- 목업 데시보드 기본 목록/검색 결과 상단에 먼저 뜨도록 true로 표시. */
+  isGeneric?: boolean;
 }
 
 const ADMIN_EMAIL = "pointstudio2026@gmail.com";
@@ -115,6 +118,7 @@ async function main() {
         fullDesignPlacementWidthPct: row.fullDesignPlacement?.widthPct,
         fullDesignPlacementHeightPct: row.fullDesignPlacement?.heightPct,
         hidden: row.hidden ?? false,
+        isGeneric: row.isGeneric ?? false,
       },
       update: {
         category: row.category,
@@ -124,6 +128,7 @@ async function main() {
         keywords: row.keywords ?? [],
         containsKoreanText: row.containsKoreanText ?? false,
         hidden: row.hidden ?? false,
+        isGeneric: row.isGeneric ?? false,
       },
     });
     templatesUpserted++;

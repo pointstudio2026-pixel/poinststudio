@@ -644,6 +644,11 @@ model MockupTemplate {
   // 실사용 참조(mockup_projects/standalone_mockups)가 있어 행 자체를 지울
   // 수 없는 경우에 쓴다 -- 참조가 없는 행은 그냥 삭제한다.
   hidden             Boolean @default(false) @map("hidden")
+  // 특정 업종/분야에 치우치지 않고 분위기·스타일 위주로 만든 배경 이미지
+  // (예: "웜톤 미니멀 명함")는 true -- 특정 업종 배경(예: "치과 명함")보다
+  // 목업 데시보드 기본 목록/검색 결과 상단에 먼저 뜨도록
+  // PrismaMockupTemplateRepository의 orderBy에서 이 값을 우선 정렬한다.
+  isGeneric          Boolean @default(false) @map("is_generic")
   createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
   mockups MockupProject[]
