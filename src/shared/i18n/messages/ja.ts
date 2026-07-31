@@ -803,6 +803,7 @@ export const ja: Messages = {
       errorGeneric: "モックアップの作成に失敗しました。",
       selectedBackgroundLabel: "選択した背景",
       download: "ダウンロード",
+      viewMyWork: "マイ作品を見る",
       guest: {
         limitReachedTitle: "ゲストで作成できるモックアップをすべて使い切りました",
         limitReachedMessage: "会員登録すると、引き続き無料でモックアップを作成できます。",

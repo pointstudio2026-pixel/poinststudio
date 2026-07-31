@@ -803,6 +803,7 @@ export const de: Messages = {
       errorGeneric: "Mockup konnte nicht erstellt werden.",
       selectedBackgroundLabel: "Ausgewählter Hintergrund",
       download: "Herunterladen",
+      viewMyWork: "Meine Arbeiten ansehen",
       guest: {
         limitReachedTitle: "Sie haben alle kostenlosen Gast-Mockups aufgebraucht",
         limitReachedMessage: "Registrieren Sie sich, um weiterhin kostenlos Mockups zu erstellen.",

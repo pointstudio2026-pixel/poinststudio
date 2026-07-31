@@ -802,6 +802,7 @@ export const ko = {
       errorGeneric: "목업 생성에 실패했습니다.",
       selectedBackgroundLabel: "선택한 배경",
       download: "다운로드",
+      viewMyWork: "내 작업물 보러가기",
       guest: {
         limitReachedTitle: "게스트로 만들 수 있는 목업을 모두 사용했어요",
         limitReachedMessage: "회원가입하면 계속해서 무료로 목업을 만들 수 있어요.",

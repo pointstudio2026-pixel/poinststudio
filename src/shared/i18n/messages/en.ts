@@ -803,6 +803,7 @@ export const en: Messages = {
       errorGeneric: "Failed to create the mockup.",
       selectedBackgroundLabel: "Selected background",
       download: "Download",
+      viewMyWork: "View my work",
       guest: {
         limitReachedTitle: "You've used all your free guest mockups",
         limitReachedMessage: "Sign up to keep making mockups for free.",

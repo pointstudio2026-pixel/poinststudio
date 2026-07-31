@@ -803,6 +803,7 @@ export const fr: Messages = {
       errorGeneric: "Échec de la création de la maquette.",
       selectedBackgroundLabel: "Fond sélectionné",
       download: "Télécharger",
+      viewMyWork: "Voir mes créations",
       guest: {
         limitReachedTitle: "Vous avez utilisé tous vos mockups gratuits en tant qu'invité",
         limitReachedMessage: "Inscrivez-vous pour continuer à créer des mockups gratuitement.",

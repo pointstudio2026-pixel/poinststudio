@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   searchMockupTemplates,
@@ -40,6 +41,7 @@ export function StandaloneMockupView({
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [result, setResult] = useState<StandaloneMockupDto | null>(null);
   const [previewBackgroundUrl, setPreviewBackgroundUrl] = useState<string | null>(null);
+  const [previewResultUrl, setPreviewResultUrl] = useState<string | null>(null);
 
   // 배경 선택/로고 첨부/결과는 실제 URL 이동 없이 같은 페이지 안에서 단계만
   // 바뀌는 구조라, 브라우저 뒤로가기를 누르면 이 단계들을 건너뛰고 곧장
@@ -328,18 +330,24 @@ export function StandaloneMockupView({
           <section className="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 text-center">
             <h2 className="text-lg font-semibold">{t("dashboard.standaloneMockup.resultTitle")}</h2>
             {result.resultImageUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={result.resultImageUrl}
-                alt={
-                  selectedTemplate
-                    ? t(mockupTemplateTitleKey(selectedTemplate.slug, MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category]))
-                    : ""
-                }
-                className="w-full max-w-md rounded-2xl border border-line object-contain shadow-soft"
-              />
+              <button
+                type="button"
+                onClick={() => setPreviewResultUrl(result.resultImageUrl)}
+                className="overflow-hidden rounded-2xl border border-line shadow-soft transition hover:opacity-90"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={result.resultImageUrl}
+                  alt={
+                    selectedTemplate
+                      ? t(mockupTemplateTitleKey(selectedTemplate.slug, MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category]))
+                      : ""
+                  }
+                  className="w-full max-w-md object-contain"
+                />
+              </button>
             )}
-            <div className="flex gap-2">
+            <div className="flex flex-wrap justify-center gap-2">
               {result.resultImageUrl && (
                 <a
                   href={result.resultImageUrl}
@@ -356,6 +364,16 @@ export function StandaloneMockupView({
               >
                 {t("dashboard.standaloneMockup.makeAnother")}
               </button>
+              {/* 게스트는 계정이 없어 "내 작업물"이 존재하지 않는다(과거
+                  이미지 탭을 숨긴 것과 동일한 이유). */}
+              {user && (
+                <Link
+                  href="/my-work"
+                  className="rounded-full border border-line px-5 py-2.5 text-sm transition hover:border-ink"
+                >
+                  {t("dashboard.standaloneMockup.viewMyWork")}
+                </Link>
+              )}
             </div>
           </section>
         )}
@@ -366,6 +384,18 @@ export function StandaloneMockupView({
           src={previewBackgroundUrl}
           alt={t(mockupTemplateTitleKey(selectedTemplate.slug, MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category]))}
           onClose={() => setPreviewBackgroundUrl(null)}
+        />
+      )}
+
+      {previewResultUrl && (
+        <ImageLightbox
+          src={previewResultUrl}
+          alt={
+            selectedTemplate
+              ? t(mockupTemplateTitleKey(selectedTemplate.slug, MOCKUP_CATEGORY_LABEL_KEYS[selectedTemplate.category]))
+              : ""
+          }
+          onClose={() => setPreviewResultUrl(null)}
         />
       )}
     </div>
