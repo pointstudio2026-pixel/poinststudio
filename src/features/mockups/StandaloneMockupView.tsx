@@ -114,8 +114,8 @@ export function StandaloneMockupView({
     <div className="min-h-screen bg-paper">
       <AppHeader user={user} planCode={planCode} />
 
-      <main className="mx-auto flex max-w-3xl flex-col gap-8 px-5 py-8 sm:px-8 sm:py-10">
-        <div>
+      <main className="mx-auto flex max-w-7xl flex-col gap-8 px-5 py-8 sm:px-8 sm:py-10">
+        <div className="mx-auto w-full max-w-3xl">
           <button
             type="button"
             onClick={() => setStep("background")}
@@ -129,25 +129,30 @@ export function StandaloneMockupView({
 
         {step === "background" && (
           <section className="flex flex-col gap-4">
-            <h2 className="text-sm font-medium text-ink">{t("dashboard.standaloneMockup.step1Title")}</h2>
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={t("dashboard.standaloneMockup.searchPlaceholder")}
-              autoFocus
-              className="rounded-full border border-line px-4 py-2.5 text-sm outline-none transition focus:border-ink"
-            />
+            <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+              <h2 className="text-sm font-medium text-ink">{t("dashboard.standaloneMockup.step1Title")}</h2>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={t("dashboard.standaloneMockup.searchPlaceholder")}
+                autoFocus
+                className="rounded-full border border-line px-4 py-2.5 text-sm outline-none transition focus:border-ink"
+              />
 
-            {templatesQuery.isLoading && (
-              <div className="flex justify-center py-8">
-                <Spinner />
-              </div>
-            )}
-            {templatesQuery.isError && <p className="text-sm text-red-600">{t("dashboard.standaloneMockup.loadFailed")}</p>}
-            {templatesQuery.data && templatesQuery.data.templates.length === 0 && (
-              <p className="py-8 text-center text-sm text-muted">{t("dashboard.standaloneMockup.searchEmpty")}</p>
-            )}
+              {templatesQuery.isLoading && (
+                <div className="flex justify-center py-8">
+                  <Spinner />
+                </div>
+              )}
+              {templatesQuery.isError && (
+                <p className="text-sm text-red-600">{t("dashboard.standaloneMockup.loadFailed")}</p>
+              )}
+              {templatesQuery.data && templatesQuery.data.templates.length === 0 && (
+                <p className="py-8 text-center text-sm text-muted">{t("dashboard.standaloneMockup.searchEmpty")}</p>
+              )}
+            </div>
+
             {templatesQuery.data && templatesQuery.data.templates.length > 0 && (
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
                 {templatesQuery.data.templates.map((template) => {
@@ -173,7 +178,7 @@ export function StandaloneMockupView({
         )}
 
         {step === "logo" && selectedTemplate && (
-          <section className="flex flex-col gap-4">
+          <section className="mx-auto flex w-full max-w-3xl flex-col gap-4">
             <div className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3">
               <button
                 type="button"
@@ -320,7 +325,7 @@ export function StandaloneMockupView({
         )}
 
         {step === "result" && result && (
-          <section className="flex flex-col items-center gap-4 text-center">
+          <section className="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 text-center">
             <h2 className="text-lg font-semibold">{t("dashboard.standaloneMockup.resultTitle")}</h2>
             {result.resultImageUrl && (
               // eslint-disable-next-line @next/next/no-img-element
