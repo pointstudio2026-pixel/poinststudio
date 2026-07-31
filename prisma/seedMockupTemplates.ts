@@ -78,6 +78,9 @@ const TEMPLATES: TemplateDef[] = [
     placement: { xPct: 40, yPct: 18, widthPct: 8, heightPct: 8 },
     fullDesignPlacement: { xPct: 20, yPct: 17, widthPct: 22, heightPct: 56 },
     keywords: ["모바일 앱","앱","어플","스마트폰","휴대폰","mobile app","app","smartphone","phone screen","mobile","モバイルアプリ","アプリ","スマホ","スマートフォン","携帯","application mobile","appli","téléphone","écran mobile","mobile App","Handy","Anwendung","Smartphone-App"],
+    // 2026-07-31: 폰 2대가 나란히 나오는 구도라 로고 자리가 명확하지 않고
+    // (로고 규칙 #1 위반), 그마저도 어느 화면이 로고 자리인지 애매해서 숨김.
+    hidden: true,
   },
   {
     category: "website_hero",

@@ -84,7 +84,13 @@ export class CreateStandaloneMockupUseCase {
     const project = {
       id: crypto.randomUUID(),
       userId: input.userId,
-      name: `목업 - ${template.name}`,
+      // template.name은 관리용 원문 라벨이라 배경 선택 단계에서만 보여야
+      // 하는데, 예전엔 여기서 Project.name에 그대로 박아 넣어서 대시보드
+      // 카드 제목이나 "과거 이미지에서 선택" 캡션 등 프로젝트 이름이
+      // 노출되는 모든 곳에 새어나갔다(2026-07-31 발견). MyWorkView가 이미
+      // standalone_mockup 항목을 항상 번역된 일반 라벨("목업")로 보여주고
+      // 있어서, 저장하는 이름 자체도 그 관례를 따른다.
+      name: "목업",
       status: "completed",
       deliverableType: null,
       currentStep: "mockup",
