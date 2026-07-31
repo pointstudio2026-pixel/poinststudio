@@ -143,12 +143,12 @@ export function HomeView({ user, planCode }: { user: HomeViewUser | null; planCo
               <a href="#preview" className={BTN_SECONDARY}>
                 {t("home.hero.seeExample")}
               </a>
+              {/* 로그인 여부와 무관하게 항상 /mockups/new로 이동 -- 게스트도
+                  3회까지 목업을 만들 수 있어서 href를 user로 분기하지 않는다. */}
+              <Link href="/mockups/new" className={BTN_SECONDARY}>
+                {t("home.hero.mockupShortcut")}
+              </Link>
             </div>
-            {/* 로그인 여부와 무관하게 항상 /mockups/new로 이동 -- 게스트도
-                3회까지 목업을 만들 수 있어서 href를 user로 분기하지 않는다. */}
-            <Link href="/mockups/new" className="text-sm text-muted underline underline-offset-4 transition hover:text-ink">
-              {t("home.hero.mockupShortcut")}
-            </Link>
             <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted">
               <span>{t("home.hero.badgeFree")}</span>
               <span>{t("home.hero.badgeNoCard")}</span>

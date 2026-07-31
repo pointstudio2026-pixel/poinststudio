@@ -22,8 +22,11 @@ import type { PrimaryNavUser } from "@/features/navigation/PrimaryNav";
 import { MOCKUP_CATEGORY_LABEL_KEYS } from "@/features/mockups/mockupCategoryLabels";
 import { mockupTemplateTitleKey } from "@/features/mockups/mockupTemplateTitleLabels";
 
-type Step = "background" | "logo" | "result";
+type Step = "category" | "background" | "logo" | "result";
 type LogoSourceTab = "past" | "upload";
+type MockupCategoryOption = "logo" | "poster" | "package" | "businessCard";
+
+const COMING_SOON_CATEGORIES: MockupCategoryOption[] = ["poster", "package", "businessCard"];
 
 export function StandaloneMockupView({
   user,
@@ -33,7 +36,8 @@ export function StandaloneMockupView({
   planCode: PlanCode | null;
 }) {
   const { t, locale } = useTranslation();
-  const [step, setStep] = useState<Step>("background");
+  const [step, setStep] = useState<Step>("category");
+  const [comingSoonCategory, setComingSoonCategory] = useState<MockupCategoryOption | null>(null);
   const [search, setSearch] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState<MockupTemplateDto | null>(null);
   const [logoSourceTab, setLogoSourceTab] = useState<LogoSourceTab>(user ? "past" : "upload");
@@ -49,10 +53,10 @@ export function StandaloneMockupView({
   // 단계가 앞으로 넘어갈 때마다 history entry를 하나씩 쌓아서, 뒤로가기가
   // "목업 만들기" 안의 이전 단계(배경 선택 화면)로 먼저 돌아오게 한다.
   useEffect(() => {
-    window.history.replaceState({ step: "background" }, "", window.location.href);
+    window.history.replaceState({ step: "category" }, "", window.location.href);
     function onPopState(e: PopStateEvent) {
       const state = e.state as { step?: Step } | null;
-      setStep(state?.step ?? "background");
+      setStep(state?.step ?? "category");
     }
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
@@ -120,14 +124,48 @@ export function StandaloneMockupView({
         <div className="mx-auto w-full max-w-3xl">
           <button
             type="button"
-            onClick={() => setStep("background")}
+            onClick={() => setStep("category")}
             className="text-sm text-muted underline underline-offset-4"
           >
             {t("nav.mockup")}
           </button>
-          <h1 className="mt-2 text-2xl font-semibold">{t("dashboard.standaloneMockup.pageTitle")}</h1>
-          <p className="mt-1 text-sm text-muted">{t("dashboard.standaloneMockup.pageSubtitle")}</p>
+          <h1 className="mt-2 text-2xl font-semibold">
+            {step === "category" ? t("dashboard.standaloneMockup.pageTitle") : t("dashboard.standaloneMockup.logoMockupTitle")}
+          </h1>
+          <p className="mt-1 text-sm text-muted">
+            {step === "category" ? t("dashboard.standaloneMockup.pageSubtitle") : t("dashboard.standaloneMockup.logoMockupSubtitle")}
+          </p>
         </div>
+
+        {step === "category" && (
+          <section className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setComingSoonCategory(null);
+                  pushStep("background");
+                }}
+                className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface p-6 text-center transition hover:border-ink"
+              >
+                <span className="text-sm font-medium text-ink">{t("dashboard.standaloneMockup.category.logo")}</span>
+              </button>
+              {COMING_SOON_CATEGORIES.map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() => setComingSoonCategory(category)}
+                  className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface p-6 text-center text-muted transition hover:border-ink"
+                >
+                  <span className="text-sm font-medium">{t(`dashboard.standaloneMockup.category.${category}`)}</span>
+                </button>
+              ))}
+            </div>
+            {comingSoonCategory && (
+              <p className="text-center text-sm text-muted">{t("dashboard.standaloneMockup.comingSoon")}</p>
+            )}
+          </section>
+        )}
 
         {step === "background" && (
           <section className="flex flex-col gap-4">
