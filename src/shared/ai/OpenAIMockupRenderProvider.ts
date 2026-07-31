@@ -105,6 +105,21 @@ const LOGO_REPLACEMENT_QUALITY_CLAUSE =
   `필요하면 로고 전체를 비율 그대로 축소해서라도 재봉선을 넘지 않게 ` +
   `하세요. 가독성을 이유로 이 경계보다 크게 그리면 안 됩니다.`;
 
+// 2026-07-31 사용자 지적: 명함이 테이블 위에 비스듬히(원근감 있게) 놓인
+// 배경 사진에 로고를 합성했더니, 카드 자체는 기울어져 보이는데 로고
+// 텍스트/심볼은 마치 정면에서 평평하게 오려붙인 것처럼 그 기울기·원근
+// 왜곡을 따라가지 않고 뻣뻣하게 얹혀서 부자연스러웠다. 배치 위치/크기
+// 규칙(LOGO_REPLACEMENT_QUALITY_CLAUSE)만으로는 이 문제를 못 잡는다 --
+// 별도로 표면의 각도·원근을 로고에도 똑같이 적용하라고 명시해야 한다.
+const PERSPECTIVE_MATCH_CLAUSE =
+  ` 로고(또는 디자인)를 배경 사진 위에 평평하게 오려붙인 스티커처럼 보이게 ` +
+  `하면 안 됩니다 -- 로고가 놓이는 실제 표면(명함, 간판, 앞치마, 포장 상자 ` +
+  `등)이 사진 속에서 카메라를 정면으로 바라보지 않고 기울어지거나, 회전되어 ` +
+  `있거나, 원근감(perspective)이 있게 찍혀 있다면, 로고의 형태도 그 표면의 ` +
+  `기울기·회전·원근 왜곡을 똑같이 따라가도록 자연스럽게 변형해서 그 표면에 ` +
+  `실제로 인쇄되거나 새겨진 것처럼 보이게 하세요. 로고를 정면 형태 그대로 ` +
+  `유지하기 위해 표면의 각도를 무시하면 안 됩니다.`;
+
 function buildPrompt(request: MockupRenderRequest, contrastCheck: LogoContrastCheckResult | null): string {
   const base =
     request.compositingMode === "fullDesign"
@@ -154,7 +169,7 @@ function buildPrompt(request: MockupRenderRequest, contrastCheck: LogoContrastCh
   const isLogoOnlyMode = request.compositingMode !== "fullDesign";
   const contrastClause = isLogoOnlyMode ? buildContrastClause(contrastCheck) : "";
   const replacementQualityClause = isLogoOnlyMode ? LOGO_REPLACEMENT_QUALITY_CLAUSE : "";
-  return `${base}${sceneClause}${styleClause}${referenceClause}${avoidClause}${contrastClause}${replacementQualityClause}`;
+  return `${base}${sceneClause}${styleClause}${referenceClause}${avoidClause}${contrastClause}${replacementQualityClause}${PERSPECTIVE_MATCH_CLAUSE}`;
 }
 
 export class OpenAIMockupRenderProvider implements MockupRenderProvider {
