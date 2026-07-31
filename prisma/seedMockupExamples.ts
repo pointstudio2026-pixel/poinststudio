@@ -60,7 +60,11 @@ interface ManifestRow {
   description: string;
   imagePath: string;
   placement: { xPct: number; yPct: number; widthPct: number; heightPct: number };
-  fullDesignPlacement: { xPct: number; yPct: number; widthPct: number; heightPct: number };
+  // 완성된 결과물 전체를 크게 합성할 영역 -- DELIVERABLE_TYPE_TO_MOCKUP_CATEGORY에
+  // 매핑된 카테고리(명함/웹사이트/앱 디자인/포스터/브로슈어/패키지/리플렛)만
+  // 채운다. 간판/배너/유니폼처럼 "브랜딩 & 로고"로 묶이는 카테고리는 로고
+  // 마크 하나만 합성하므로 null.
+  fullDesignPlacement: { xPct: number; yPct: number; widthPct: number; heightPct: number } | null;
   prompt: string;
   deliverableType: string;
   visionScore: number;
@@ -106,10 +110,10 @@ async function main() {
         placementYPct: row.placement.yPct,
         placementWidthPct: row.placement.widthPct,
         placementHeightPct: row.placement.heightPct,
-        fullDesignPlacementXPct: row.fullDesignPlacement.xPct,
-        fullDesignPlacementYPct: row.fullDesignPlacement.yPct,
-        fullDesignPlacementWidthPct: row.fullDesignPlacement.widthPct,
-        fullDesignPlacementHeightPct: row.fullDesignPlacement.heightPct,
+        fullDesignPlacementXPct: row.fullDesignPlacement?.xPct,
+        fullDesignPlacementYPct: row.fullDesignPlacement?.yPct,
+        fullDesignPlacementWidthPct: row.fullDesignPlacement?.widthPct,
+        fullDesignPlacementHeightPct: row.fullDesignPlacement?.heightPct,
         hidden: row.hidden ?? false,
       },
       update: {
