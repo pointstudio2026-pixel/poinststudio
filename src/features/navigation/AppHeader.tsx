@@ -27,8 +27,8 @@ export function AppHeader({
   planCode,
   children,
 }: {
-  user: PrimaryNavUser;
-  planCode: PlanCode;
+  user: PrimaryNavUser | null;
+  planCode: PlanCode | null;
   children?: React.ReactNode;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -154,21 +154,42 @@ export function AppHeader({
               {t("nav.support")}
             </Link>
 
-            <Link
-              href="/my-info"
-              className="rounded-full border border-line px-4 py-3 text-center text-sm"
-              onClick={() => setMobileOpen(false)}
-            >
-              {t("nav.myInfo")}
-            </Link>
-            <Link
-              href="/subscription"
-              className="rounded-full border border-line px-4 py-3 text-center text-sm"
-              onClick={() => setMobileOpen(false)}
-            >
-              {t("nav.subscription")}
-            </Link>
-            <LogoutButton className="rounded-full border border-line px-4 py-3 text-center text-sm" />
+            {user ? (
+              <>
+                <Link
+                  href="/my-info"
+                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {t("nav.myInfo")}
+                </Link>
+                <Link
+                  href="/subscription"
+                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {t("nav.subscription")}
+                </Link>
+                <LogoutButton className="rounded-full border border-line px-4 py-3 text-center text-sm" />
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="rounded-full border border-line px-4 py-3 text-center text-sm"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {t("home.header.login")}
+                </Link>
+                <Link
+                  href="/register"
+                  className="rounded-full bg-ink px-4 py-3 text-center text-sm text-paper"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {t("home.header.getStarted")}
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

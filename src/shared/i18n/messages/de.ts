@@ -544,6 +544,7 @@ export const de: Messages = {
       body: "Von KI-Logo-Design bis zur kompletten Markenidentität — gutes Design beginnt mit einer Richtung. Die von Aster erstellten Bilder sind kein fertiges Werk, sondern eine Referenz, die den Weg zum nächsten Design weist.",
       cta: "Kostenlos starten",
       seeExample: "Ergebnisse ansehen",
+      mockupShortcut: "Mockup sofort ausprobieren, ohne Anmeldung",
       badgeFree: "Kostenloser Plan verfügbar",
       badgeNoCard: "Keine Kreditkarte nötig",
       badgeAutosave: "Projekte werden automatisch gespeichert",
@@ -802,6 +803,10 @@ export const de: Messages = {
       errorGeneric: "Mockup konnte nicht erstellt werden.",
       selectedBackgroundLabel: "Ausgewählter Hintergrund",
       download: "Herunterladen",
+      guest: {
+        limitReachedTitle: "Sie haben alle kostenlosen Gast-Mockups aufgebraucht",
+        limitReachedMessage: "Registrieren Sie sich, um weiterhin kostenlos Mockups zu erstellen.",
+      },
     },
     myWork: {
       pageTitle: "Meine Werke",

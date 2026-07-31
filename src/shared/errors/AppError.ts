@@ -59,8 +59,8 @@ export class ConflictError extends AppError {
 }
 
 export class UsageLimitError extends AppError {
-  constructor(message = "Usage limit reached") {
-    super({ code: "USAGE_LIMIT_REACHED", message, httpStatus: 429 });
+  constructor(message = "Usage limit reached", code = "USAGE_LIMIT_REACHED") {
+    super({ code, message, httpStatus: 429 });
   }
 }
 

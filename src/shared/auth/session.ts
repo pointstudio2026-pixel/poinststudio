@@ -19,6 +19,23 @@ export function requireUser(request: NextRequest): AccessTokenPayload {
 }
 
 /**
+ * Non-throwing variant of requireUser for Route Handlers that must serve
+ * both authenticated and anonymous callers (게스트 목업 플로우 등) --
+ * mirrors getCurrentSession()'s try/catch shape but reads from
+ * NextRequest's cookies directly since Route Handlers don't have
+ * next/headers의 cookies().
+ */
+export function getOptionalUser(request: NextRequest): AccessTokenPayload | null {
+  const token = request.cookies.get(ACCESS_TOKEN_COOKIE)?.value;
+  if (!token) return null;
+  try {
+    return verifyAccessToken(token);
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Admin-only Route Handler guard (Task-020): "관리자 권한 검증" -- every
  * /api/admin/* route calls this instead of requireUser, so a non-admin
  * (or unauthenticated) request gets a clear 401/403 before touching any

@@ -543,6 +543,7 @@ export const ko = {
       body: "AI 로고 제작부터 브랜드 디자인까지 — 좋은 디자인은 방향에서 시작됩니다. Aster가 만든 이미지는 완성본이 아니라, 다음 디자인으로 나아갈 방향을 보여주는 참고 레퍼런스입니다.",
       cta: "무료로 시작하기",
       seeExample: "결과 예시 보기",
+      mockupShortcut: "로그인 없이 목업 바로 만들어보기",
       badgeFree: "무료 플랜 제공",
       badgeNoCard: "카드 등록 없이 시작",
       badgeAutosave: "프로젝트 자동 저장",
@@ -801,6 +802,10 @@ export const ko = {
       errorGeneric: "목업 생성에 실패했습니다.",
       selectedBackgroundLabel: "선택한 배경",
       download: "다운로드",
+      guest: {
+        limitReachedTitle: "게스트로 만들 수 있는 목업을 모두 사용했어요",
+        limitReachedMessage: "회원가입하면 계속해서 무료로 목업을 만들 수 있어요.",
+      },
     },
     myWork: {
       pageTitle: "내 작업물",

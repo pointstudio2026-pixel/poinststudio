@@ -37,6 +37,9 @@ export function resolveNavGate(
   planCode: PlanCode | null,
   t: (key: MessageKey) => string,
 ): Gate | null {
+  // "목업" 단독 프로세스는 게스트도 3회까지 쓸 수 있게 열려 있어서(2026-07-31)
+  // 로그인 여부와 무관하게 항상 실제 링크로 뜬다.
+  if (key === "mockup") return null;
   if (!user) {
     return { message: t("nav.gate.loginMessage"), ctaLabel: t("nav.gate.loginCta"), ctaHref: "/login" };
   }

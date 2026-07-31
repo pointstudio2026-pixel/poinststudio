@@ -14,6 +14,7 @@ import { logger } from "@/shared/logging/logger";
 import { resolveAppOrigin } from "@/shared/http/appOrigin";
 import { AppError } from "@/shared/errors/AppError";
 import { safeRelativeRedirect } from "@/shared/auth/oauthRedirect";
+import { claimGuestMockupsIfPresent } from "@/shared/guest/claimGuestMockups";
 
 function clearRoundTripCookies(res: NextResponse): void {
   res.cookies.set(OAUTH_STATE_COOKIE, "", { path: "/", maxAge: 0 });
@@ -67,6 +68,7 @@ export async function GET(
     const res = NextResponse.redirect(new URL(redirectTo ?? "/", origin));
     setAuthCookies(res, result);
     clearRoundTripCookies(res);
+    await claimGuestMockupsIfPresent(request, res, result.user.id);
     return res;
   } catch (err) {
     if (err instanceof OAuthConsentRequiredError) {

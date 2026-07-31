@@ -13,8 +13,11 @@ import {
 import { AppHeader } from "@/features/navigation/AppHeader";
 import { Spinner } from "@/components/Spinner";
 import { ImageLightbox } from "@/components/ImageLightbox";
+import { OAuthButtons } from "@/features/auth/OAuthButtons";
+import { ApiError } from "@/services/http-client";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
+import type { PrimaryNavUser } from "@/features/navigation/PrimaryNav";
 import { MOCKUP_CATEGORY_LABEL_KEYS } from "@/features/mockups/mockupCategoryLabels";
 import { mockupTemplateTitleKey } from "@/features/mockups/mockupTemplateTitleLabels";
 
@@ -22,19 +25,17 @@ type Step = "background" | "logo" | "result";
 type LogoSourceTab = "past" | "upload";
 
 export function StandaloneMockupView({
-  email,
-  name,
+  user,
   planCode,
 }: {
-  email: string;
-  name: string | null;
-  planCode: PlanCode;
+  user: PrimaryNavUser | null;
+  planCode: PlanCode | null;
 }) {
   const { t, locale } = useTranslation();
   const [step, setStep] = useState<Step>("background");
   const [search, setSearch] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState<MockupTemplateDto | null>(null);
-  const [logoSourceTab, setLogoSourceTab] = useState<LogoSourceTab>("past");
+  const [logoSourceTab, setLogoSourceTab] = useState<LogoSourceTab>(user ? "past" : "upload");
   const [selectedPastImage, setSelectedPastImage] = useState<PastGenerationImageDto | null>(null);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [result, setResult] = useState<StandaloneMockupDto | null>(null);
@@ -69,7 +70,7 @@ export function StandaloneMockupView({
   const pastImagesQuery = useQuery({
     queryKey: ["standalone-mockup-past-images"],
     queryFn: fetchPastGenerationImages,
-    enabled: step === "logo" && logoSourceTab === "past",
+    enabled: !!user && step === "logo" && logoSourceTab === "past",
   });
 
   const createMutation = useMutation({
@@ -97,16 +98,21 @@ export function StandaloneMockupView({
     pushStep("background");
     setSearch("");
     setSelectedTemplate(null);
-    setLogoSourceTab("past");
+    setLogoSourceTab(user ? "past" : "upload");
     setSelectedPastImage(null);
     setUploadFile(null);
     setResult(null);
     createMutation.reset();
   }
 
+  const guestLimitError =
+    createMutation.error instanceof ApiError && createMutation.error.code === "GUEST_MOCKUP_LIMIT_REACHED"
+      ? createMutation.error
+      : null;
+
   return (
     <div className="min-h-screen bg-paper">
-      <AppHeader user={{ email, name }} planCode={planCode} />
+      <AppHeader user={user} planCode={planCode} />
 
       <main className="mx-auto flex max-w-3xl flex-col gap-8 px-5 py-8 sm:px-8 sm:py-10">
         <div>
@@ -143,7 +149,7 @@ export function StandaloneMockupView({
               <p className="py-8 text-center text-sm text-muted">{t("dashboard.standaloneMockup.searchEmpty")}</p>
             )}
             {templatesQuery.data && templatesQuery.data.templates.length > 0 && (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
                 {templatesQuery.data.templates.map((template) => {
                   const titleKey = mockupTemplateTitleKey(template.slug, MOCKUP_CATEGORY_LABEL_KEYS[template.category]);
                   return (
@@ -198,28 +204,32 @@ export function StandaloneMockupView({
 
             <h2 className="text-sm font-medium text-ink">{t("dashboard.standaloneMockup.step2Title")}</h2>
 
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setLogoSourceTab("past")}
-                className={`rounded-full px-4 py-2 text-sm transition ${
-                  logoSourceTab === "past" ? "bg-ink text-paper" : "border border-line text-muted hover:border-ink"
-                }`}
-              >
-                {t("dashboard.standaloneMockup.sourceTabPast")}
-              </button>
-              <button
-                type="button"
-                onClick={() => setLogoSourceTab("upload")}
-                className={`rounded-full px-4 py-2 text-sm transition ${
-                  logoSourceTab === "upload" ? "bg-ink text-paper" : "border border-line text-muted hover:border-ink"
-                }`}
-              >
-                {t("dashboard.standaloneMockup.sourceTabUpload")}
-              </button>
-            </div>
+            {/* 게스트는 계정 이력이 없어 "과거 이미지" 탭 자체를 숨긴다(비어있는
+                화면을 보여주는 대신 처음부터 업로드만 가능하게). */}
+            {user && (
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setLogoSourceTab("past")}
+                  className={`rounded-full px-4 py-2 text-sm transition ${
+                    logoSourceTab === "past" ? "bg-ink text-paper" : "border border-line text-muted hover:border-ink"
+                  }`}
+                >
+                  {t("dashboard.standaloneMockup.sourceTabPast")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLogoSourceTab("upload")}
+                  className={`rounded-full px-4 py-2 text-sm transition ${
+                    logoSourceTab === "upload" ? "bg-ink text-paper" : "border border-line text-muted hover:border-ink"
+                  }`}
+                >
+                  {t("dashboard.standaloneMockup.sourceTabUpload")}
+                </button>
+              </div>
+            )}
 
-            {logoSourceTab === "past" && (
+            {user && logoSourceTab === "past" && (
               <div>
                 {pastImagesQuery.isLoading && (
                   <div className="flex justify-center py-8">
@@ -280,17 +290,32 @@ export function StandaloneMockupView({
               </div>
             )}
 
-            {createMutation.isError && <p className="text-sm text-red-600">{t("dashboard.standaloneMockup.errorGeneric")}</p>}
-
-            <button
-              type="button"
-              disabled={!canExecute || createMutation.isPending}
-              onClick={() => createMutation.mutate()}
-              className="flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-medium text-paper transition hover:opacity-90 disabled:opacity-50"
-            >
-              {createMutation.isPending && <Spinner />}
-              {createMutation.isPending ? t("dashboard.standaloneMockup.generating") : t("dashboard.standaloneMockup.executeButton")}
-            </button>
+            {guestLimitError ? (
+              <div className="rounded-2xl border border-line bg-surface p-5 text-center">
+                <p className="text-sm font-medium">{t("dashboard.standaloneMockup.guest.limitReachedTitle")}</p>
+                <p className="mt-1 text-xs text-muted">{t("dashboard.standaloneMockup.guest.limitReachedMessage")}</p>
+                <div className="mt-4">
+                  <OAuthButtons intent="register" redirectTo="/mockups/new" />
+                </div>
+              </div>
+            ) : (
+              <>
+                {createMutation.isError && (
+                  <p className="text-sm text-red-600">{t("dashboard.standaloneMockup.errorGeneric")}</p>
+                )}
+                <button
+                  type="button"
+                  disabled={!canExecute || createMutation.isPending}
+                  onClick={() => createMutation.mutate()}
+                  className="flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-medium text-paper transition hover:opacity-90 disabled:opacity-50"
+                >
+                  {createMutation.isPending && <Spinner />}
+                  {createMutation.isPending
+                    ? t("dashboard.standaloneMockup.generating")
+                    : t("dashboard.standaloneMockup.executeButton")}
+                </button>
+              </>
+            )}
           </section>
         )}
 

@@ -1,8 +1,11 @@
 import { PrismaMockupRepository } from "@/modules/mockups/infrastructure/PrismaMockupRepository";
 import { PrismaMockupTemplateRepository } from "@/modules/mockups/infrastructure/PrismaMockupTemplateRepository";
 import { PrismaStandaloneMockupRepository } from "@/modules/mockups/infrastructure/PrismaStandaloneMockupRepository";
+import { PrismaGuestMockupUsageRepository } from "@/modules/mockups/infrastructure/PrismaGuestMockupUsageRepository";
 import { CreateMockupUseCase } from "@/modules/mockups/application/CreateMockupUseCase";
 import { CreateStandaloneMockupUseCase } from "@/modules/mockups/application/CreateStandaloneMockupUseCase";
+import { CheckGuestMockupLimitUseCase } from "@/modules/mockups/application/CheckGuestMockupLimitUseCase";
+import { ClaimGuestMockupsUseCase } from "@/modules/mockups/application/ClaimGuestMockupsUseCase";
 import { GetMockupsUseCase } from "@/modules/mockups/application/GetMockupsUseCase";
 import { GetMockupTemplatesUseCase } from "@/modules/mockups/application/GetMockupTemplatesUseCase";
 import { SearchMockupTemplatesUseCase } from "@/modules/mockups/application/SearchMockupTemplatesUseCase";
@@ -28,6 +31,8 @@ const mockupRepository = mockupRepositoryInstance;
 export const mockupTemplateRepositoryInstance = new PrismaMockupTemplateRepository();
 const templateRepository = mockupTemplateRepositoryInstance;
 export const standaloneMockupRepositoryInstance = new PrismaStandaloneMockupRepository();
+export const guestMockupUsageRepositoryInstance = new PrismaGuestMockupUsageRepository();
+const checkGuestMockupLimitUseCaseInstance = new CheckGuestMockupLimitUseCase(guestMockupUsageRepositoryInstance);
 const queue = new BullMqMockupRenderQueue();
 const standaloneMockupFileStorage = resolveFileStorage();
 
@@ -51,6 +56,8 @@ export const mockupsContainer = {
   searchMockupTemplatesUseCase: new SearchMockupTemplatesUseCase(templateRepository),
   listPastGenerationImagesUseCase: new ListPastGenerationImagesUseCase(generationRepositoryInstance),
   listMyWorkUseCase: new ListMyWorkUseCase(generationRepositoryInstance, standaloneMockupRepositoryInstance),
+  checkGuestMockupLimitUseCase: checkGuestMockupLimitUseCaseInstance,
+  claimGuestMockupsUseCase: new ClaimGuestMockupsUseCase(guestMockupUsageRepositoryInstance),
   createStandaloneMockupUseCase: new CreateStandaloneMockupUseCase(
     projectRepositoryInstance,
     templateRepository,
@@ -59,6 +66,8 @@ export const mockupsContainer = {
     resolveMockupRenderProvider(),
     subscriptionsContainer.checkPlanUseCase,
     subscriptionsContainer.recordUsageUseCase,
+    checkGuestMockupLimitUseCaseInstance,
+    guestMockupUsageRepositoryInstance,
   ),
 };
 

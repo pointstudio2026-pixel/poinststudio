@@ -12,6 +12,13 @@ export const OAUTH_REDIRECT_COOKIE = "aster_oauth_redirect";
 /** Holds the signed OAuthPendingSignupPayload while a new sign-up is on /oauth/consent. */
 export const OAUTH_PENDING_SIGNUP_COOKIE = "aster_oauth_pending_signup";
 const OAUTH_PENDING_SIGNUP_TTL_SECONDS = 10 * 60;
+/**
+ * 비로그인 "목업" 단독 프로세스용 게스트 상관관계 ID -- 인증 쿠키와
+ * 완전히 별개(로그인 상태를 뜻하지 않음, 그냥 crypto.randomUUID() 값
+ * 하나). 3회 무료 한도 카운팅과 회원가입 시 이전(claim)에만 쓰인다.
+ */
+export const GUEST_ID_COOKIE = "aster_guest_id";
+const GUEST_ID_TTL_SECONDS = 60 * 60 * 24 * 365;
 
 function baseCookieOptions() {
   return {
@@ -50,4 +57,12 @@ export function setOAuthPendingSignupCookie(res: NextResponse, token: string): v
 
 export function clearOAuthPendingSignupCookie(res: NextResponse): void {
   res.cookies.set(OAUTH_PENDING_SIGNUP_COOKIE, "", { ...baseCookieOptions(), maxAge: 0 });
+}
+
+export function setGuestIdCookie(res: NextResponse, guestId: string): void {
+  res.cookies.set(GUEST_ID_COOKIE, guestId, { ...baseCookieOptions(), maxAge: GUEST_ID_TTL_SECONDS });
+}
+
+export function clearGuestIdCookie(res: NextResponse): void {
+  res.cookies.set(GUEST_ID_COOKIE, "", { ...baseCookieOptions(), maxAge: 0 });
 }

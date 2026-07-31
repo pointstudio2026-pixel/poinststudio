@@ -4,6 +4,7 @@ import { setAuthCookies } from "@/shared/auth/cookies";
 import { ValidationError } from "@/shared/errors/AppError";
 import { loginSchema } from "@/modules/auth/schemas/auth.schemas";
 import { authContainer } from "@/modules/auth/container";
+import { claimGuestMockupsIfPresent } from "@/shared/guest/claimGuestMockups";
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,6 +18,7 @@ export async function POST(request: NextRequest) {
 
     const res = apiSuccess({ user: result.user });
     setAuthCookies(res, result);
+    await claimGuestMockupsIfPresent(request, res, result.user.id);
     return res;
   } catch (err) {
     return toApiError(err);

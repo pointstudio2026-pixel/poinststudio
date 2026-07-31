@@ -14,6 +14,11 @@ import type {
   CreateStandaloneMockupInput,
   StandaloneMockupRepository,
 } from "@/modules/mockups/domain/StandaloneMockupRepository";
+import type {
+  ClaimGuestMockupsResult,
+  GuestMockupUsageRepository,
+  RecordGuestMockupUsageInput,
+} from "@/modules/mockups/domain/GuestMockupUsageRepository";
 
 export class FakeMockupTemplateRepository implements MockupTemplateRepository {
   templates: MockupTemplate[] = [];
@@ -141,6 +146,27 @@ export class FakeStandaloneMockupRepository implements StandaloneMockupRepositor
       .filter((m) => m.userId === userId)
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .slice(0, limit);
+  }
+}
+
+export class FakeGuestMockupUsageRepository implements GuestMockupUsageRepository {
+  records: (RecordGuestMockupUsageInput & { claimedAt: Date | null; claimedByUserId: string | null })[] = [];
+
+  async countByGuestId(guestId: string): Promise<number> {
+    return this.records.filter((r) => r.guestId === guestId).length;
+  }
+
+  async create(input: RecordGuestMockupUsageInput): Promise<void> {
+    this.records.push({ ...input, claimedAt: null, claimedByUserId: null });
+  }
+
+  async claimAllForGuest(guestId: string, userId: string): Promise<ClaimGuestMockupsResult> {
+    const unclaimed = this.records.filter((r) => r.guestId === guestId && r.claimedAt === null);
+    for (const r of unclaimed) {
+      r.claimedAt = new Date();
+      r.claimedByUserId = userId;
+    }
+    return { claimedCount: unclaimed.length };
   }
 }
 

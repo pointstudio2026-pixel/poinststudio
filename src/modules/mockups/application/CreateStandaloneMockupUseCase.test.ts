@@ -1,6 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 import { CreateStandaloneMockupUseCase } from "@/modules/mockups/application/CreateStandaloneMockupUseCase";
-import { FakeMockupTemplateRepository, FakeStandaloneMockupRepository } from "@/modules/mockups/testing/fakes";
+import { CheckGuestMockupLimitUseCase } from "@/modules/mockups/application/CheckGuestMockupLimitUseCase";
+import {
+  FakeGuestMockupUsageRepository,
+  FakeMockupTemplateRepository,
+  FakeStandaloneMockupRepository,
+} from "@/modules/mockups/testing/fakes";
+import { GUEST_MOCKUP_LIFETIME_LIMIT, SYSTEM_GUEST_USER_ID } from "@/modules/mockups/domain/guestMockup";
 import type { MockupTemplate } from "@/modules/mockups/domain/Mockup";
 import { FakeProjectRepository } from "@/modules/projects/testing/fakes";
 import { CheckPlanUseCase } from "@/modules/subscriptions/application/CheckPlanUseCase";
@@ -36,6 +42,8 @@ function setup() {
   const checkPlan = new CheckPlanUseCase(subs, usage);
   const recordUsage = new RecordUsageUseCase(usage);
   const provider = new MockMockupRenderProvider();
+  const guestUsage = new FakeGuestMockupUsageRepository();
+  const checkGuestLimit = new CheckGuestMockupLimitUseCase(guestUsage);
 
   templates.templates = [TEMPLATE];
 
@@ -47,9 +55,11 @@ function setup() {
     provider,
     checkPlan,
     recordUsage,
+    checkGuestLimit,
+    guestUsage,
   );
 
-  return { projects, templates, standaloneMockups, fileStorage, subs, usage, useCase };
+  return { projects, templates, standaloneMockups, fileStorage, subs, usage, guestUsage, useCase };
 }
 
 describe("CreateStandaloneMockupUseCase", () => {
@@ -57,7 +67,7 @@ describe("CreateStandaloneMockupUseCase", () => {
     const { projects, standaloneMockups, usage, useCase } = setup();
 
     const result = await useCase.execute({
-      userId: "user-1",
+      caller: { kind: "user", userId: "user-1" },
       templateId: TEMPLATE.id,
       source: { type: "upload", data: Buffer.from("fake-png"), contentType: "image/png" },
     });
@@ -79,7 +89,7 @@ describe("CreateStandaloneMockupUseCase", () => {
     const readSpy = vi.spyOn(fileStorage, "read");
 
     const result = await useCase.execute({
-      userId: "user-1",
+      caller: { kind: "user", userId: "user-1" },
       templateId: TEMPLATE.id,
       source: { type: "past_generation", imageUrl: "data:image/svg+xml;base64,LOGO" },
     });
@@ -97,7 +107,7 @@ describe("CreateStandaloneMockupUseCase", () => {
 
     await expect(
       useCase.execute({
-        userId: "user-1",
+        caller: { kind: "user", userId: "user-1" },
         templateId: TEMPLATE.id,
         source: { type: "past_generation", imageUrl: "data:image/svg+xml;base64,LOGO" },
       }),
@@ -108,7 +118,7 @@ describe("CreateStandaloneMockupUseCase", () => {
     const { useCase } = setup();
     await expect(
       useCase.execute({
-        userId: "user-1",
+        caller: { kind: "user", userId: "user-1" },
         templateId: "does-not-exist",
         source: { type: "past_generation", imageUrl: "data:image/svg+xml;base64,LOGO" },
       }),
@@ -121,7 +131,7 @@ describe("CreateStandaloneMockupUseCase", () => {
 
     await expect(
       useCase.execute({
-        userId: "user-1",
+        caller: { kind: "user", userId: "user-1" },
         templateId: TEMPLATE.id,
         source: { type: "past_generation", imageUrl: "data:image/svg+xml;base64,LOGO" },
       }),
@@ -130,5 +140,57 @@ describe("CreateStandaloneMockupUseCase", () => {
     expect(standaloneMockups.mockups).toHaveLength(1);
     expect(standaloneMockups.mockups[0]?.status).toBe("failed");
     expect(standaloneMockups.mockups[0]?.errorMessage).toBeTruthy();
+  });
+
+  it("lets a guest create mockups under the SYSTEM_GUEST_USER_ID owner and counts them per guestId", async () => {
+    const { projects, standaloneMockups, guestUsage, useCase } = setup();
+
+    const result = await useCase.execute({
+      caller: { kind: "guest", guestId: "guest-1" },
+      templateId: TEMPLATE.id,
+      source: { type: "upload", data: Buffer.from("fake-png"), contentType: "image/png" },
+    });
+
+    expect(result.status).toBe("completed");
+    expect(result.userId).toBe(SYSTEM_GUEST_USER_ID);
+    expect(standaloneMockups.mockups[0]?.userId).toBe(SYSTEM_GUEST_USER_ID);
+    const [project] = await projects.listForUser(SYSTEM_GUEST_USER_ID);
+    expect(project).toBeUndefined(); // isStandaloneMockup projects never show up in listForUser
+    expect(await guestUsage.countByGuestId("guest-1")).toBe(1);
+  });
+
+  it("throws GUEST_MOCKUP_LIMIT_REACHED once a guest hits the lifetime limit, without wasting a paid render", async () => {
+    const { standaloneMockups, guestUsage, useCase } = setup();
+    for (let i = 0; i < GUEST_MOCKUP_LIFETIME_LIMIT; i++) {
+      await guestUsage.create({ guestId: "guest-1", projectId: `p-${i}`, standaloneMockupId: `m-${i}` });
+    }
+
+    await expect(
+      useCase.execute({
+        caller: { kind: "guest", guestId: "guest-1" },
+        templateId: TEMPLATE.id,
+        source: { type: "past_generation", imageUrl: "data:image/svg+xml;base64,LOGO" },
+      }),
+    ).rejects.toMatchObject({ code: "GUEST_MOCKUP_LIMIT_REACHED" });
+
+    // the limit check must reject before ever calling the render provider /
+    // creating a StandaloneMockup row -- confirms no cost was spent on the
+    // blocked attempt.
+    expect(standaloneMockups.mockups).toHaveLength(0);
+  });
+
+  it("does not count a failed guest attempt toward the lifetime limit", async () => {
+    const { templates, guestUsage, useCase } = setup();
+    templates.templates = [{ ...TEMPLATE, name: `${TEMPLATE.name} ${FORCE_FAILURE_MARKER}` }];
+
+    await expect(
+      useCase.execute({
+        caller: { kind: "guest", guestId: "guest-1" },
+        templateId: TEMPLATE.id,
+        source: { type: "past_generation", imageUrl: "data:image/svg+xml;base64,LOGO" },
+      }),
+    ).rejects.toThrow();
+
+    expect(await guestUsage.countByGuestId("guest-1")).toBe(0);
   });
 });

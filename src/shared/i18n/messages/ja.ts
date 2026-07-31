@@ -544,6 +544,7 @@ export const ja: Messages = {
       body: "AIロゴ制作からブランドデザインまで — 良いデザインは方向性から始まります。Asterが作る画像は完成品ではなく、次のデザインへ進むための参考レファレンスです。",
       cta: "無料で始める",
       seeExample: "制作例を見る",
+      mockupShortcut: "ログイン不要でモックアップをすぐに試す",
       badgeFree: "無料プランあり",
       badgeNoCard: "クレジットカード登録不要",
       badgeAutosave: "プロジェクト自動保存",
@@ -802,6 +803,10 @@ export const ja: Messages = {
       errorGeneric: "モックアップの作成に失敗しました。",
       selectedBackgroundLabel: "選択した背景",
       download: "ダウンロード",
+      guest: {
+        limitReachedTitle: "ゲストで作成できるモックアップをすべて使い切りました",
+        limitReachedMessage: "会員登録すると、引き続き無料でモックアップを作成できます。",
+      },
     },
     myWork: {
       pageTitle: "マイ作品",

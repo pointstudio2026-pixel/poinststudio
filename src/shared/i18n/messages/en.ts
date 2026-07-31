@@ -544,6 +544,7 @@ export const en: Messages = {
       body: "From AI logo design to full brand identity -- good design starts with direction. What Aster creates isn't a finished piece, it's a reference that points you toward your next design.",
       cta: "Start for free",
       seeExample: "See results",
+      mockupShortcut: "Try a mockup instantly, no sign-in needed",
       badgeFree: "Free plan available",
       badgeNoCard: "No card required",
       badgeAutosave: "Projects auto-save",
@@ -802,6 +803,10 @@ export const en: Messages = {
       errorGeneric: "Failed to create the mockup.",
       selectedBackgroundLabel: "Selected background",
       download: "Download",
+      guest: {
+        limitReachedTitle: "You've used all your free guest mockups",
+        limitReachedMessage: "Sign up to keep making mockups for free.",
+      },
     },
     myWork: {
       pageTitle: "My Work",

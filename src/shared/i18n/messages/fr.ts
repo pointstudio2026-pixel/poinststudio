@@ -544,6 +544,7 @@ export const fr: Messages = {
       body: "De la création de logo IA à l'identité de marque complète — un bon design commence par une direction. Les images créées par Aster ne sont pas des pièces finales, mais des références qui indiquent la voie à suivre pour votre prochain design.",
       cta: "Commencer gratuitement",
       seeExample: "Voir des exemples",
+      mockupShortcut: "Essayez un mockup sans connexion",
       badgeFree: "Offre gratuite disponible",
       badgeNoCard: "Aucune carte requise",
       badgeAutosave: "Sauvegarde automatique",
@@ -802,6 +803,10 @@ export const fr: Messages = {
       errorGeneric: "Échec de la création de la maquette.",
       selectedBackgroundLabel: "Fond sélectionné",
       download: "Télécharger",
+      guest: {
+        limitReachedTitle: "Vous avez utilisé tous vos mockups gratuits en tant qu'invité",
+        limitReachedMessage: "Inscrivez-vous pour continuer à créer des mockups gratuitement.",
+      },
     },
     myWork: {
       pageTitle: "Mes créations",

@@ -7,6 +7,7 @@ import { authContainer } from "@/modules/auth/container";
 import { AuthenticationError, ValidationError } from "@/shared/errors/AppError";
 import { LOCALE_COOKIE, parseLocaleCookie } from "@/shared/i18n/cookie";
 import { MESSAGES } from "@/shared/i18n/messages";
+import { claimGuestMockupsIfPresent } from "@/shared/guest/claimGuestMockups";
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,6 +39,7 @@ export async function POST(request: NextRequest) {
     const res = apiSuccess({ user: result.user }, { status: 201 });
     setAuthCookies(res, result);
     clearOAuthPendingSignupCookie(res);
+    await claimGuestMockupsIfPresent(request, res, result.user.id);
     return res;
   } catch (err) {
     return toApiError(err);

@@ -58,6 +58,7 @@ model User {
   redeemedGiftCodes  GiftCode[] @relation("GiftCodeRedeemedBy")
   createdGiftCodes   GiftCode[] @relation("GiftCodeCreatedBy")
   giftCodeRedemptions GiftCodeRedemption[]
+  claimedGuestMockupUsages GuestMockupUsage[]
 
   @@map("users")
 }
@@ -200,6 +201,7 @@ model Project {
   colorPaletteSelections ColorPaletteSelection[]
   logoAsset       ProjectLogoAsset?
   standaloneMockups StandaloneMockup[]
+  guestMockupUsage GuestMockupUsage?
 
   @@index([userId, updatedAt(sort: Desc)])
   @@map("projects")
@@ -672,9 +674,41 @@ model StandaloneMockup {
   errorMessage   String?   @map("error_message")
   costAmount     Decimal?  @map("cost_amount") @db.Decimal(12, 6)
   createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  guestMockupUsage GuestMockupUsage?
 
   @@index([userId, createdAt(sort: Desc)])
   @@map("standalone_mockups")
+}
+
+// 비로그인 "목업" 단독 프로세스 게스트 사용 기록. GENERATION_EVENT_TYPE의
+// checkPlanUseCase/PLAN_LIMITS(월간, 실제 로그인 유저 전용)와는 완전히
+// 별개 카운팅 축이다 -- 여기는 guestId당 평생 3회, 성공한 합성만 기록한다
+// (실패 시도는 실제 유저의 checkPlanUseCase가 UsageLog를 성공 시에만
+// 적는 것과 동일하게 카운트하지 않는다). 게스트가 만든 Project/
+// StandaloneMockup은 고정 시스템 게스트 User(SYSTEM_GUEST_USER_ID,
+// src/modules/mockups/domain/guestMockup.ts)가 FK 소유자로 붙는다 --
+// claimedAt/claimedByUserId는 게스트가 나중에 회원가입/로그인하면
+// ClaimGuestMockupsUseCase가 채운다(실제 소유권 이전의 ground truth는
+// Project.userId/StandaloneMockup.userId 재할당 쪽이고, 이 두 칼럼은
+// 감사/전환율 추적용 보조 기록).
+model GuestMockupUsage {
+  id                 String            @id @default(uuid()) @db.Uuid
+  guestId            String            @map("guest_id") @db.Uuid
+  projectId          String            @unique @map("project_id") @db.Uuid
+  project            Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  standaloneMockupId String            @unique @map("standalone_mockup_id") @db.Uuid
+  standaloneMockup   StandaloneMockup  @relation(fields: [standaloneMockupId], references: [id], onDelete: Cascade)
+  // 쿠키 삭제 이외의 트리비얼 어뷰징(같은 IP에서 guestId를 계속 새로
+  // 발급)을 나중에 IP 단위로도 걸 수 있도록 값만 미리 적재해둔다 -- v1은
+  // 조회에 안 쓴다.
+  requestIp          String?           @map("request_ip") @db.VarChar(64)
+  claimedAt          DateTime?         @map("claimed_at") @db.Timestamptz()
+  claimedByUserId    String?           @map("claimed_by_user_id") @db.Uuid
+  claimedByUser      User?             @relation(fields: [claimedByUserId], references: [id])
+  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@index([guestId, claimedAt])
+  @@map("guest_mockup_usage")
 }
 
 // Each render is its own row (not a single versioned document like Brand
