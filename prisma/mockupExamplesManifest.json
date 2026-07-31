@@ -171,7 +171,8 @@
       "Grains de Café",
       "Café",
       "Kaffeerösterei",
-      "Kaffeebohnen"
+      "Kaffeebohnen",
+      "Kaffee"
     ],
     "hidden": true
   },
@@ -250,7 +251,11 @@
       "Application Financière",
       "Budget Personnel",
       "Finanz-App",
-      "Haushaltsbuch"
+      "Haushaltsbuch",
+      "자산관리",
+      "budgeting app",
+      "資産管理",
+      "Finanzen"
     ],
     "hidden": true
   },
@@ -566,7 +571,9 @@
       "house model",
       "maison miniature",
       "Hausmodell",
-      "家の模型"
+      "家の模型",
+      "不動産屋",
+      "Makler"
     ],
     "containsKoreanText": false
   },
@@ -939,7 +946,9 @@
       "baby's breath flowers",
       "lotus icon",
       "gypsophile",
-      "Schleierkraut"
+      "Schleierkraut",
+      "Hochzeit",
+      "結婚式"
     ],
     "containsKoreanText": false
   },
@@ -1013,7 +1022,12 @@
       "dumbbell",
       "weight prop",
       "haltère",
-      "Hantel"
+      "Hantel",
+      "트레이너",
+      "trainer",
+      "トレーナー",
+      "entraîneur",
+      "Trainer"
     ],
     "containsKoreanText": false
   },
@@ -1090,7 +1104,9 @@
       "sprout icon",
       "leaf logo",
       "pousse",
-      "Sprössling"
+      "Sprössling",
+      "상담사",
+      "カウンセラー"
     ],
     "containsKoreanText": false
   },
@@ -1165,7 +1181,9 @@
       "skyline icon",
       "building icon",
       "gratte-ciel",
-      "Skyline-Symbol"
+      "Skyline-Symbol",
+      "不動産屋",
+      "Makler"
     ],
     "containsKoreanText": true
   },
@@ -1241,7 +1259,10 @@
       "hairbrush prop",
       "hair silhouette icon",
       "brosse à cheveux",
-      "Haarbürste"
+      "Haarbürste",
+      "salon",
+      "美容院",
+      "Frisör"
     ],
     "containsKoreanText": true
   },
@@ -1311,7 +1332,13 @@
       "burlap sack",
       "bags of coffee beans",
       "machine à torréfier",
-      "Röstmaschine"
+      "Röstmaschine",
+      "카페",
+      "cafe",
+      "カフェ",
+      "Café",
+      "Kaffee",
+      "원두"
     ],
     "containsKoreanText": false
   },
@@ -1456,7 +1483,9 @@
       "salon chairs",
       "round mirrors",
       "fauteuils de coiffure",
-      "Stylingstühle"
+      "Stylingstühle",
+      "美容院",
+      "Frisör"
     ],
     "containsKoreanText": false
   },
@@ -1746,7 +1775,10 @@
       "table setting",
       "evening exterior",
       "verres à vin",
-      "Weingläser"
+      "Weingläser",
+      "음식점",
+      "식당",
+      "飲食店"
     ],
     "containsKoreanText": false
   },
@@ -1892,7 +1924,8 @@
       "pastry case",
       "coffee grinder",
       "intérieur en bois",
-      "Holzinterieur"
+      "Holzinterieur",
+      "Kaffee"
     ],
     "containsKoreanText": true
   },
@@ -1965,7 +1998,9 @@
       "medical cross",
       "service signage board",
       "icône chien chat",
-      "Hund-Katze-Symbol"
+      "Hund-Katze-Symbol",
+      "vet",
+      "Tierarzt"
     ],
     "containsKoreanText": true
   },
@@ -2038,7 +2073,12 @@
       "salle de sport",
       "podomètre",
       "Fitnessstudio",
-      "Schrittzähler"
+      "Schrittzähler",
+      "exercise",
+      "トレーニング",
+      "exercice",
+      "Fitness",
+      "Training"
     ],
     "containsKoreanText": false
   },
@@ -2108,7 +2148,12 @@
       "commande de nourriture",
       "Essenslieferung",
       "Restaurant",
-      "Essensbestellung"
+      "Essensbestellung",
+      "배달",
+      "음식점",
+      "식당",
+      "配達",
+      "Lieferung"
     ],
     "containsKoreanText": false
   },
@@ -2183,7 +2228,12 @@
       "Bank",
       "Finanzen",
       "Kontostand",
-      "Überweisung"
+      "Überweisung",
+      "모바일뱅킹",
+      "online banking",
+      "オンラインバンキング",
+      "banque en ligne",
+      "Online-Banking"
     ],
     "containsKoreanText": false
   },
@@ -2333,7 +2383,12 @@
       "Reise",
       "Flugbuchung",
       "Hotelbuchung",
-      "Urlaub"
+      "Urlaub",
+      "예약",
+      "booking",
+      "予約",
+      "réservation",
+      "Buchung"
     ],
     "containsKoreanText": false
   },
@@ -2407,7 +2462,10 @@
       "articles lifestyle",
       "Einkaufen",
       "Onlineshop",
-      "Lifestyle-Produkte"
+      "Lifestyle-Produkte",
+      "쇼핑앱",
+      "온라인쇼핑",
+      "boutique en ligne"
     ],
     "containsKoreanText": false
   },
@@ -2557,7 +2615,13 @@
       "calendrier",
       "Produktivität",
       "Aufgabenliste",
-      "Terminplaner"
+      "Terminplaner",
+      "할일",
+      "투두리스트",
+      "task",
+      "やることリスト",
+      "tâche",
+      "Aufgabe"
     ],
     "containsKoreanText": false
   },
@@ -2631,7 +2695,12 @@
       "commande",
       "Essenslieferung",
       "koreanischer Text",
-      "koreanisches Essen"
+      "koreanisches Essen",
+      "배달",
+      "delivery",
+      "配達",
+      "livraison",
+      "Lieferung"
     ],
     "containsKoreanText": true
   },
@@ -2705,7 +2774,12 @@
       "suivi d'entraînement",
       "Fitness",
       "koreanischer Text",
-      "dunkles UI"
+      "dunkles UI",
+      "헬스",
+      "gym",
+      "ジム",
+      "salle de sport",
+      "Fitnessstudio"
     ],
     "containsKoreanText": true
   },
@@ -2919,7 +2993,9 @@
       "Innenarchitektur",
       "Möbel",
       "Wohnzimmer",
-      "Wohndesign"
+      "Wohndesign",
+      "インテリア",
+      "Inneneinrichtung"
     ],
     "containsKoreanText": false
   },
@@ -2992,7 +3068,11 @@
       "Hochzeitsfotografie",
       "Brautpaar",
       "Fotostudio",
-      "Hochzeit"
+      "Hochzeit",
+      "사진작가",
+      "웨딩사진",
+      "photography",
+      "Fotograf"
     ],
     "containsKoreanText": false
   },
@@ -3063,7 +3143,11 @@
       "CrossFit",
       "Fitnessstudio",
       "Hochintensitätstraining",
-      "dunkles Design"
+      "dunkles Design",
+      "운동",
+      "피트니스",
+      "fitness",
+      "フィットネス"
     ],
     "containsKoreanText": false
   },
@@ -3209,7 +3293,8 @@
       "Mode",
       "Online-Shop",
       "Bekleidung",
-      "Accessoires"
+      "Accessoires",
+      "옷"
     ],
     "containsKoreanText": false
   },
@@ -3425,7 +3510,9 @@
       "e-commerce",
       "Online-Shop",
       "Modeaccessoires",
-      "koreanischer Text"
+      "koreanischer Text",
+      "쇼핑몰",
+      "オンラインショップ"
     ],
     "containsKoreanText": true
   },
@@ -3491,7 +3578,17 @@
       "promotion immobilière",
       "Immobilienbroschüre",
       "Neubauwohnung",
-      "Wohnanlage"
+      "Wohnanlage",
+      "부동산",
+      "아파트",
+      "real estate",
+      "apartment",
+      "不動産",
+      "マンション",
+      "immobilier",
+      "appartement",
+      "Immobilie",
+      "Wohnung"
     ],
     "containsKoreanText": false
   },
@@ -3561,7 +3658,16 @@
       "Spa-Broschüre",
       "Wellness",
       "Meditation",
-      "Zen-Steine"
+      "Zen-Steine",
+      "스파",
+      "명상",
+      "리조트",
+      "spa",
+      "resort",
+      "スパ",
+      "リゾート",
+      "bien-être",
+      "Spa"
     ],
     "containsKoreanText": false
   },
@@ -3628,7 +3734,16 @@
       "services juridiques",
       "Anwaltskanzlei",
       "Rechtsberatung",
-      "Kanzleibroschüre"
+      "Kanzleibroschüre",
+      "변호사",
+      "로펌",
+      "law firm",
+      "lawyer",
+      "attorney",
+      "法律事務所",
+      "弁護士",
+      "avocat",
+      "Anwalt"
     ],
     "containsKoreanText": false
   },
@@ -3695,7 +3810,13 @@
       "restaurant gastronomique",
       "Restaurantbroschüre",
       "Fine Dining",
-      "gehobene Küche"
+      "gehobene Küche",
+      "레스토랑",
+      "음식점",
+      "식당",
+      "restaurant",
+      "レストラン",
+      "Restaurant"
     ],
     "containsKoreanText": false
   },
@@ -3762,7 +3883,16 @@
       "maquette architecturale",
       "Architekturbüro",
       "Architekturmodell",
-      "minimalistische Broschüre"
+      "minimalistische Broschüre",
+      "건축",
+      "건축가",
+      "architecture",
+      "architect",
+      "建築",
+      "建築家",
+      "architecte",
+      "Architektur",
+      "Architekt"
     ],
     "containsKoreanText": false
   },
@@ -3832,7 +3962,17 @@
       "coucher de soleil",
       "Reisebüro-Broschüre",
       "Santorin-Sonnenuntergang",
-      "Griechenlandreise"
+      "Griechenlandreise",
+      "여행사",
+      "여행",
+      "travel agency",
+      "travel",
+      "旅行代理店",
+      "旅行",
+      "agence de voyage",
+      "voyage",
+      "Reisebüro",
+      "Reise"
     ],
     "containsKoreanText": false
   },
@@ -3902,7 +4042,14 @@
       "soins de santé",
       "Arztpraxis-Broschüre",
       "Klinik",
-      "Gesundheitswesen"
+      "Gesundheitswesen",
+      "병원",
+      "클리닉",
+      "clinic",
+      "病院",
+      "クリニック",
+      "hôpital",
+      "Krankenhaus"
     ],
     "containsKoreanText": false
   },
@@ -3971,7 +4118,13 @@
       "académique",
       "Universitätsbroschüre",
       "Bildungsbroschüre",
-      "Bibliothek"
+      "Bibliothek",
+      "대학교",
+      "대학",
+      "university",
+      "大学",
+      "université",
+      "Universität"
     ],
     "containsKoreanText": false
   },
@@ -4041,7 +4194,17 @@
       "immobilier de luxe",
       "Immobilienbroschüre",
       "Hochhaus",
-      "Skyline bei Nacht"
+      "Skyline bei Nacht",
+      "부동산",
+      "아파트",
+      "real estate",
+      "apartment",
+      "不動産",
+      "マンション",
+      "immobilier",
+      "appartement",
+      "Immobilie",
+      "Wohnung"
     ],
     "containsKoreanText": true
   },
@@ -4111,7 +4274,17 @@
       "bougainvillier",
       "Reisebroschüre",
       "griechische Inseln",
-      "Sommerurlaub"
+      "Sommerurlaub",
+      "여행사",
+      "여행",
+      "travel agency",
+      "travel",
+      "旅行代理店",
+      "旅行",
+      "agence de voyage",
+      "voyage",
+      "Reisebüro",
+      "Reise"
     ],
     "containsKoreanText": true
   },
@@ -4182,7 +4355,12 @@
       "bien-être",
       "Yoga-Poster",
       "Meditation",
-      "Wellness-Studio"
+      "Wellness-Studio",
+      "요가",
+      "요가원",
+      "yoga",
+      "ヨガ",
+      "Yoga"
     ],
     "containsKoreanText": false
   },
@@ -4252,7 +4430,12 @@
       "guitariste",
       "Konzertposter",
       "Rockkonzert",
-      "Live-Musik"
+      "Live-Musik",
+      "콘서트",
+      "공연",
+      "concert",
+      "コンサート",
+      "Konzert"
     ],
     "containsKoreanText": false
   },
@@ -4318,7 +4501,13 @@
       "ouverture de restaurant",
       "Eröffnungsposter",
       "Neueröffnung",
-      "Restauranteröffnung"
+      "Restauranteröffnung",
+      "레스토랑",
+      "음식점",
+      "식당",
+      "restaurant",
+      "レストラン",
+      "Restaurant"
     ],
     "containsKoreanText": false
   },
@@ -4388,7 +4577,18 @@
       "crossfit",
       "Fitnessstudio-Poster",
       "Battle Ropes",
-      "Krafttraining"
+      "Krafttraining",
+      "헬스장",
+      "운동",
+      "피트니스",
+      "gym",
+      "fitness",
+      "workout",
+      "ジム",
+      "フィットネス",
+      "sport",
+      "Fitnessstudio",
+      "Fitness"
     ],
     "containsKoreanText": false
   },
@@ -4458,7 +4658,16 @@
       "exposition d'art contemporain",
       "Kunstausstellungsposter",
       "Galerie",
-      "abstrakte Kunst"
+      "abstrakte Kunst",
+      "전시",
+      "전시회",
+      "exhibition",
+      "gallery",
+      "展示会",
+      "ギャラリー",
+      "exposition",
+      "galerie",
+      "Ausstellung"
     ],
     "containsKoreanText": false
   },
@@ -4528,7 +4737,16 @@
       "dessin botanique",
       "Café-Poster",
       "Latte-Art-Illustration",
-      "Kaffee-Illustration"
+      "Kaffee-Illustration",
+      "카페",
+      "커피",
+      "cafe",
+      "coffee",
+      "カフェ",
+      "コーヒー",
+      "café",
+      "Café",
+      "Kaffee"
     ],
     "containsKoreanText": false
   },
@@ -4598,7 +4816,20 @@
       "marché local",
       "Bauernmarkt-Poster",
       "Gemüsekorb",
-      "Bio-Produkte"
+      "Bio-Produkte",
+      "시장",
+      "채소",
+      "농산물",
+      "farmers market",
+      "market",
+      "vegetables",
+      "市場",
+      "野菜",
+      "marché",
+      "légumes",
+      "Bauernmarkt",
+      "Markt",
+      "Gemüse"
     ],
     "containsKoreanText": false
   },
@@ -4668,7 +4899,20 @@
       "photo éditoriale noir et blanc",
       "Modeplakat",
       "Rabattaktion",
-      "Schwarzweißfoto"
+      "Schwarzweißfoto",
+      "세일",
+      "패션",
+      "할인",
+      "fashion",
+      "sale",
+      "discount",
+      "セール",
+      "ファッション",
+      "割引",
+      "mode",
+      "solde",
+      "Mode",
+      "Rabatt"
     ],
     "containsKoreanText": false
   },
@@ -4738,7 +4982,16 @@
       "café filtre",
       "Café-Poster",
       "Kaffeeposter",
-      "Kaffeebohnen-Info"
+      "Kaffeebohnen-Info",
+      "카페",
+      "커피",
+      "cafe",
+      "coffee",
+      "カフェ",
+      "コーヒー",
+      "café",
+      "Café",
+      "Kaffee"
     ],
     "containsKoreanText": true
   },
@@ -4808,7 +5061,17 @@
       "design à l'encre",
       "Aufführungsposter",
       "traditioneller Tanz",
-      "Tuschekunst"
+      "Tuschekunst",
+      "공연",
+      "무용",
+      "dance",
+      "performance",
+      "公演",
+      "舞踊",
+      "danse",
+      "spectacle",
+      "Tanz",
+      "Aufführung"
     ],
     "containsKoreanText": true
   },
@@ -4881,7 +5144,16 @@
       "Verpackung",
       "Box",
       "Kosmetik",
-      "Jade-Roller"
+      "Jade-Roller",
+      "미용",
+      "선물",
+      "gift",
+      "美容",
+      "ギフト",
+      "beauté",
+      "cadeau",
+      "Beauty",
+      "Geschenk"
     ],
     "containsKoreanText": false
   },
@@ -5100,7 +5372,9 @@
       "fruits secs",
       "Snack",
       "Nüsse",
-      "Trockenfrüchte"
+      "Trockenfrüchte",
+      "Verpackung",
+      "Box"
     ],
     "containsKoreanText": false
   },
@@ -5317,7 +5591,12 @@
       "Schokolade",
       "Pralinen",
       "Verpackung",
-      "Kakao"
+      "Kakao",
+      "선물",
+      "gift",
+      "ギフト",
+      "cadeau",
+      "Geschenk"
     ],
     "containsKoreanText": false
   },
@@ -5390,7 +5669,12 @@
       "Honig",
       "Honigglas",
       "Verpackung",
-      "Imkerei"
+      "Imkerei",
+      "선물",
+      "gift",
+      "ギフト",
+      "cadeau",
+      "Geschenk"
     ],
     "containsKoreanText": false
   },
@@ -5463,7 +5747,14 @@
       "Feuchtigkeitscreme",
       "Kosmetik",
       "Verpackung",
-      "koreanischer Text"
+      "koreanischer Text",
+      "cream",
+      "美容",
+      "クリーム",
+      "beauté",
+      "crème",
+      "Creme",
+      "Beauty"
     ],
     "containsKoreanText": true
   },
@@ -5537,7 +5828,10 @@
       "Grüntee",
       "Bio",
       "Teebeutel",
-      "koreanischer Text"
+      "koreanischer Text",
+      "ボックス",
+      "thé",
+      "Tee"
     ],
     "containsKoreanText": true
   },
@@ -5610,7 +5904,8 @@
       "Zahnarzt",
       "Zahnklinik",
       "Flyer",
-      "Zähne"
+      "Zähne",
+      "dentiste"
     ],
     "containsKoreanText": false
   },
@@ -5681,7 +5976,8 @@
       "Mitgliedschaft",
       "Flyer",
       "Krafttraining",
-      "Gewichtheben"
+      "Gewichtheben",
+      "헬스"
     ],
     "containsKoreanText": false
   },
@@ -5969,7 +6265,9 @@
       "Friseursalon",
       "Haarsalon",
       "Flyer",
-      "Haarfärbung"
+      "Haarfärbung",
+      "salon",
+      "Friseur"
     ],
     "containsKoreanText": false
   },
@@ -6188,7 +6486,8 @@
       "Klinik",
       "Innere Medizin",
       "Flyer",
-      "koreanischer Text"
+      "koreanischer Text",
+      "Krankenhaus"
     ],
     "containsKoreanText": true
   },
@@ -6261,7 +6560,8 @@
       "Fitnessstudio",
       "Bodybuilding",
       "Flyer",
-      "koreanischer Text"
+      "koreanischer Text",
+      "헬스"
     ],
     "containsKoreanText": true
   },
@@ -6328,7 +6628,16 @@
       "Sale-Banner",
       "Rabatt-Banner",
       "Einzelhandelsbanner",
-      "Modegeschäft"
+      "Modegeschäft",
+      "세일",
+      "할인",
+      "sale",
+      "discount",
+      "セール",
+      "割引",
+      "soldes",
+      "réduction",
+      "Rabatt"
     ],
     "containsKoreanText": false
   },
@@ -6393,7 +6702,15 @@
       "Rollup-Banner",
       "Ladeneröffnung",
       "Neueröffnung",
-      "Eröffnungsfeier"
+      "Eröffnungsfeier",
+      "오픈",
+      "개업",
+      "opening",
+      "grand opening",
+      "オープン",
+      "開店",
+      "ouverture",
+      "Eröffnung"
     ],
     "containsKoreanText": false
   },
@@ -6458,7 +6775,14 @@
       "Banner",
       "Restaurantbanner",
       "Steak-Werbung",
-      "Speisekarte"
+      "Speisekarte",
+      "음식점",
+      "식당",
+      "레스토랑",
+      "restaurant",
+      "レストラン",
+      "飲食店",
+      "Restaurant"
     ],
     "containsKoreanText": false
   },
@@ -6523,7 +6847,15 @@
       "Banner",
       "Fitnessbanner",
       "Kettlebell-Challenge",
-      "Sportevent"
+      "Sportevent",
+      "헬스장",
+      "피트니스",
+      "gym",
+      "fitness",
+      "ジム",
+      "フィットネス",
+      "salle de sport",
+      "Fitnessstudio"
     ],
     "containsKoreanText": false
   },
@@ -6589,7 +6921,14 @@
       "Banner",
       "Buchhandlungsbanner",
       "Lesung",
-      "Buchclub-Event"
+      "Buchclub-Event",
+      "서점",
+      "책방",
+      "bookstore",
+      "書店",
+      "本屋",
+      "librairie",
+      "Buchhandlung"
     ],
     "containsKoreanText": false
   },
@@ -6654,7 +6993,14 @@
       "Banner",
       "Café-Banner",
       "Hängebanner",
-      "Kaffeebohne"
+      "Kaffeebohne",
+      "카페",
+      "cafe",
+      "coffee shop",
+      "カフェ",
+      "café",
+      "Café",
+      "Kaffee"
     ],
     "containsKoreanText": false
   },
@@ -6719,7 +7065,12 @@
       "Banner",
       "Immobilienbanner",
       "Tag der offenen Tür",
-      "Hausbesichtigung"
+      "Hausbesichtigung",
+      "부동산",
+      "real estate",
+      "不動産",
+      "immobilier",
+      "Immobilien"
     ],
     "containsKoreanText": false
   },
@@ -6787,7 +7138,14 @@
       "Banner",
       "Hochzeitsbanner",
       "Hochzeitsmesse",
-      "Blumendesign"
+      "Blumendesign",
+      "웨딩",
+      "결혼식",
+      "wedding",
+      "ウェディング",
+      "結婚式",
+      "mariage",
+      "Hochzeit"
     ],
     "containsKoreanText": false
   },
@@ -6852,7 +7210,14 @@
       "Banner",
       "Neueröffnung",
       "Eröffnungsglückwunsch",
-      "koreanischer Text"
+      "koreanischer Text",
+      "오픈",
+      "개업",
+      "opening",
+      "オープン",
+      "開店",
+      "ouverture",
+      "Eröffnung"
     ],
     "containsKoreanText": true
   },
@@ -6917,7 +7282,15 @@
       "Banner",
       "Sale-Event",
       "Schuhgeschäft",
-      "koreanischer Text"
+      "koreanischer Text",
+      "세일",
+      "할인",
+      "sale",
+      "discount",
+      "セール",
+      "割引",
+      "soldes",
+      "Rabatt"
     ],
     "containsKoreanText": true
   },
@@ -6984,7 +7357,16 @@
       "Schürze",
       "Barista-Schürze",
       "Café-Schürze",
-      "Leinenschürze"
+      "Leinenschürze",
+      "카페",
+      "바리스타",
+      "barista",
+      "cafe",
+      "カフェ",
+      "バリスタ",
+      "café",
+      "Barista",
+      "Café"
     ],
     "containsKoreanText": false
   },
@@ -7050,7 +7432,16 @@
       "Uniform",
       "Kochjacke",
       "Küchenuniform",
-      "Restaurantküche"
+      "Restaurantküche",
+      "셰프",
+      "요리사",
+      "chef",
+      "cook",
+      "シェフ",
+      "コック",
+      "cuisinier",
+      "Koch",
+      "Chefkoch"
     ],
     "containsKoreanText": false
   },
@@ -7121,7 +7512,15 @@
       "Tunika",
       "Spa-Uniform",
       "Massagetherapeutin",
-      "Wellness-Uniform"
+      "Wellness-Uniform",
+      "스파",
+      "마사지",
+      "spa",
+      "massage",
+      "スパ",
+      "マッサージ",
+      "Spa",
+      "Massage"
     ],
     "containsKoreanText": false
   },
@@ -7192,7 +7591,12 @@
       "Jacke",
       "Hoteluniform",
       "Concierge",
-      "Portier"
+      "Portier",
+      "호텔",
+      "hotel",
+      "ホテル",
+      "hôtel",
+      "Hotel"
     ],
     "containsKoreanText": false
   },
@@ -7263,7 +7667,16 @@
       "Schürze",
       "Ladenschürze",
       "Wohnaccessoires-Geschäft",
-      "Lifestyle-Boutique"
+      "Lifestyle-Boutique",
+      "매장",
+      "리테일",
+      "retail",
+      "store",
+      "店舗",
+      "boutique",
+      "magasin",
+      "Laden",
+      "Geschäft"
     ],
     "containsKoreanText": false
   },
@@ -7330,7 +7743,17 @@
       "Uniform",
       "Poloshirt",
       "Fitnesstrainer",
-      "Sportbekleidung"
+      "Sportbekleidung",
+      "헬스장",
+      "체육관",
+      "트레이너",
+      "gym",
+      "trainer",
+      "ジム",
+      "salle de sport",
+      "coach",
+      "Fitnessstudio",
+      "Trainer"
     ],
     "containsKoreanText": false
   },
@@ -7398,7 +7821,17 @@
       "Kasack",
       "Krankenschwesteruniform",
       "Klinikuniform",
-      "Praxisuniform"
+      "Praxisuniform",
+      "병원",
+      "간호사",
+      "hospital",
+      "nurse",
+      "病院",
+      "看護師",
+      "hôpital",
+      "infirmier",
+      "Krankenhaus",
+      "Klinik"
     ],
     "containsKoreanText": false
   },
@@ -7468,7 +7901,13 @@
       "Schürze",
       "Friseursalon",
       "Stylistin",
-      "Schönheitssalon"
+      "Schönheitssalon",
+      "미용실",
+      "salon",
+      "hair salon",
+      "美容室",
+      "coiffure",
+      "Salon"
     ],
     "containsKoreanText": false
   },
@@ -7536,7 +7975,15 @@
       "Schürze",
       "Café-Personal",
       "Speisekarte",
-      "koreanisches Menü"
+      "koreanisches Menü",
+      "카페",
+      "바리스타",
+      "cafe",
+      "カフェ",
+      "バリスタ",
+      "café",
+      "Café",
+      "Barista"
     ],
     "containsKoreanText": true
   },
@@ -7606,7 +8053,16 @@
       "Schürze",
       "Friseursalon",
       "Stylist-Schürze",
-      "Barbershop"
+      "Barbershop",
+      "미용실",
+      "스타일리스트",
+      "salon",
+      "stylist",
+      "美容室",
+      "スタイリスト",
+      "coiffeur",
+      "Salon",
+      "Stylist"
     ],
     "containsKoreanText": true
   }
