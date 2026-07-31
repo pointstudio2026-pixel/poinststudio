@@ -15,6 +15,27 @@ function koreanTextFilter(locale?: Locale) {
 // 무관하게 계속 resolve되어야 한다.
 const HIDDEN_FILTER = { hidden: false };
 
+function shuffle<T>(arr: T[]): T[] {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j]!, copy[i]!];
+  }
+  return copy;
+}
+
+/**
+ * 목업 데시보드 기본 목록/검색 결과가 매번 똑같은 (이름 가나다순) 순서로
+ * 뜨지 않도록, isGeneric 우선순위(범용 배경 먼저)는 그대로 지키되 그
+ * 그룹 안에서는 요청마다 무작위 순서로 섞는다 -- rows는 이미 isGeneric
+ * desc로 정렬돼 들어오므로 true 구간/false 구간이 항상 연속돼 있다.
+ */
+function shuffleWithinGenericGroups<T extends { isGeneric: boolean }>(rows: T[]): T[] {
+  const splitIndex = rows.findIndex((r) => !r.isGeneric);
+  if (splitIndex === -1) return shuffle(rows);
+  return [...shuffle(rows.slice(0, splitIndex)), ...shuffle(rows.slice(splitIndex))];
+}
+
 function toTemplate(row: {
   id: string;
   category: string;
@@ -67,9 +88,9 @@ export class PrismaMockupTemplateRepository implements MockupTemplateRepository 
   async list(category?: MockupCategory, locale?: Locale): Promise<MockupTemplate[]> {
     const rows = await prisma.mockupTemplate.findMany({
       where: { ...(category ? { category } : {}), ...koreanTextFilter(locale), ...HIDDEN_FILTER },
-      orderBy: [{ isGeneric: "desc" }, { name: "asc" }],
+      orderBy: { isGeneric: "desc" },
     });
-    return rows.map(toTemplate);
+    return shuffleWithinGenericGroups(rows).map(toTemplate);
   }
 
   async findById(id: string): Promise<MockupTemplate | null> {
@@ -111,8 +132,8 @@ export class PrismaMockupTemplateRepository implements MockupTemplateRepository 
           HIDDEN_FILTER,
         ],
       },
-      orderBy: [{ isGeneric: "desc" }, { name: "asc" }],
+      orderBy: { isGeneric: "desc" },
     });
-    return rows.map(toTemplate);
+    return shuffleWithinGenericGroups(rows).map(toTemplate);
   }
 }
