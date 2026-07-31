@@ -4,7 +4,11 @@ import type {
   MockupRenderResult,
 } from "@/shared/ai/MockupRenderProvider";
 import { resolveBackgroundDataUri, resolveImageBuffer } from "@/shared/ai/mockupAssets";
-import { checkLogoBackgroundContrast, type LogoContrastCheckResult } from "@/shared/ai/logoContrastCheck";
+import {
+  checkLogoBackgroundContrast,
+  padLogoForCompactSizing,
+  type LogoContrastCheckResult,
+} from "@/shared/ai/logoContrastCheck";
 import { ProviderError } from "@/shared/errors/AppError";
 import { logger } from "@/shared/logging/logger";
 import { isHealthEndpointReachable } from "@/shared/ai/providerHealthCheck";
@@ -105,6 +109,38 @@ const LOGO_REPLACEMENT_QUALITY_CLAUSE =
   `필요하면 로고 전체를 비율 그대로 축소해서라도 재봉선을 넘지 않게 ` +
   `하세요. 가독성을 이유로 이 경계보다 크게 그리면 안 됩니다.`;
 
+// 2026-08-01 사용자 지적: 실제로 목업을 여러 번 만들어보니 로고가 중앙이
+// 아니라 아래쪽으로 살짝 처진 위치에 들어가고, 크기도 전반적으로 큰
+// 편이었다 -- 특히 명함, 웹사이트 상단 코너 로고, 포스터처럼 로고를
+// 작게 두고 여백을 넉넉히 남기는 게 요즘 브랜딩 트렌드인 카테고리에서
+// 두드러졌다. 위 LOGO_REPLACEMENT_QUALITY_CLAUSE의 "표면 전체를 채우는"
+// 기준은 상한선(이 이상 커지면 안 된다)일 뿐 목표 크기가 아닌데, 실제
+// 결과물은 그 상한에 가깝게 크게 나오는 경향이 있어 별도로 목표 크기를
+// 명시한다.
+// 2026-08-01 추가 발견(사용자 가설, 실측으로 확인됨): 위
+// LOGO_REPLACEMENT_QUALITY_CLAUSE의 "형태가 비슷하면 자리표시자 마크
+// 크기를 그대로 따르라"는 지시가, 뒤에 붙는 "더 작게 하라"는 지시보다
+// 실제로 더 강하게 작동했다 -- 모델이 사진 속에 실제로 보이는
+// 자리표시자 도형의 시각적 크기를 이미지 편집 작업의 강한 기준점으로
+// 삼기 때문. 이 우선순위를 명시적으로 뒤집어야 효과가 있었다(A/B 실측:
+// 이 문장을 넣은 뒤에야 결과물 로고 크기가 실제로 작아짐).
+const LOGO_WHITESPACE_TREND_CLAUSE =
+  ` 중요: 바로 위에서 "첨부된 로고 형태가 자리표시자 마크와 비슷하면 ` +
+  `그 마크의 크기를 그대로 따르라"고 했는데, 그 지시보다 이 지시를 ` +
+  `우선하세요 -- 사진 속에 원래 보이는 자리표시자 마크의 시각적 크기를 ` +
+  `기준으로 삼지 마세요. 그 마크는 일부러 눈에 띄게 크게 그려진 임시 ` +
+  `표시일 뿐이고, 실제 로고는 그보다 훨씬 작게 들어가야 합니다. 로고는 ` +
+  `표면을 최대한 채우기보다 작게, 주변 여백을 넉넉하게 두는 편이 최근 ` +
+  `브랜딩 트렌드에 더 맞습니다 -- 특히 명함, 웹사이트 상단 코너에 ` +
+  `들어가는 로고, 포스터에서는 더욱 그렇습니다. 구체적인 수치 기준: ` +
+  `최종 결과 이미지 전체의 가로 폭을 100%라고 할 때, 로고(텍스트 포함 ` +
+  `전체)의 가로 폭이 전체 이미지 가로 폭의 12%를 넘지 않아야 합니다. ` +
+  `로고의 세로 높이도 전체 이미지 세로 높이의 12%를 넘지 않아야 ` +
+  `합니다. 이 12%는 상한선이 아니라 목표치이니 이보다 크게 그리지 ` +
+  `마세요 -- 자리표시자 마크가 이보다 훨씬 크게 보이더라도 무시하고 ` +
+  `이 수치를 따르세요. 로고의 중심은 자리표시자가 있던 자리의 정중앙에 ` +
+  `정확히 맞추고, 아래나 위로 치우쳐 처지듯 배치되지 않도록 하세요.`;
+
 // 2026-07-31 사용자 지적: 명함이 테이블 위에 비스듬히(원근감 있게) 놓인
 // 배경 사진에 로고를 합성했더니, 카드 자체는 기울어져 보이는데 로고
 // 텍스트/심볼은 마치 정면에서 평평하게 오려붙인 것처럼 그 기울기·원근
@@ -169,7 +205,8 @@ function buildPrompt(request: MockupRenderRequest, contrastCheck: LogoContrastCh
   const isLogoOnlyMode = request.compositingMode !== "fullDesign";
   const contrastClause = isLogoOnlyMode ? buildContrastClause(contrastCheck) : "";
   const replacementQualityClause = isLogoOnlyMode ? LOGO_REPLACEMENT_QUALITY_CLAUSE : "";
-  return `${base}${sceneClause}${styleClause}${referenceClause}${avoidClause}${contrastClause}${replacementQualityClause}${PERSPECTIVE_MATCH_CLAUSE}`;
+  const whitespaceTrendClause = isLogoOnlyMode ? LOGO_WHITESPACE_TREND_CLAUSE : "";
+  return `${base}${sceneClause}${styleClause}${referenceClause}${avoidClause}${contrastClause}${replacementQualityClause}${whitespaceTrendClause}${PERSPECTIVE_MATCH_CLAUSE}`;
 }
 
 export class OpenAIMockupRenderProvider implements MockupRenderProvider {
@@ -181,8 +218,13 @@ export class OpenAIMockupRenderProvider implements MockupRenderProvider {
   ) {}
 
   async render(request: MockupRenderRequest): Promise<MockupRenderResult> {
-    const design = await resolveImageBuffer(request.logoImageUrl);
+    const resolvedDesign = await resolveImageBuffer(request.logoImageUrl);
     const background = await resolveImageBuffer(await resolveBackgroundDataUri(request.backgroundUrl));
+    // fullDesign은 이미 완성된 지면(포스터 시안 등)이라 패딩 대상이 아니다 --
+    // 로고 마크 하나만 배치하는 두 모드에서만, 텍스트 지시(LOGO_WHITESPACE_
+    // TREND_CLAUSE)에 더해 픽셀 단위로 여백을 보장한다.
+    const design =
+      request.compositingMode === "fullDesign" ? resolvedDesign : await padLogoForCompactSizing(resolvedDesign.buffer);
     const contrastCheck = await checkLogoBackgroundContrast(design.buffer, background.buffer, request.placementArea);
 
     const form = new FormData();

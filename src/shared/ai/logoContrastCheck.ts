@@ -225,6 +225,49 @@ function findAccentCandidate(clusters: ColorCluster[], dominant: ColorCluster): 
 }
 
 /**
+ * 2026-08-01 사용자 지적: LOGO_WHITESPACE_TREND_CLAUSE(프롬프트 텍스트로
+ * "더 작게, 여백 넉넉하게" 지시)만으로는 gpt-image-2가 숫자 비율 지시를
+ * 안정적으로 따르지 않았다(실측: 프롬프트만 바꾼 전/후 결과물 로고 크기가
+ * 육안으로 거의 동일) -- 텍스트 지시에만 기대지 말고, 로고 원본 이미지
+ * 자체를 합성 전에 물리적으로 캔버스 확장(패딩)해서 "로고가 차지하는
+ * 실제 픽셀 비율"을 기계적으로 줄인다. 원본 로고를 가로·세로 각각 2배
+ * 캔버스 중앙에 배치 -> 로고 자체의 점유 비율이 가로/세로 각 50%, 면적
+ * 기준 약 25%로 줄어든다(사용자가 명시한 수치와 동일). 이렇게 하면
+ * "로고가 이만큼 작게 보여야 한다"는 판단을 모델의 지시 이행 능력에
+ * 맡기지 않고 픽셀 단위로 보장한다.
+ */
+export async function padLogoForCompactSizing(logoBuffer: Buffer): Promise<{ buffer: Buffer; mimeType: string }> {
+  const image = sharp(logoBuffer);
+  const metadata = await image.metadata();
+  const width = metadata.width ?? 0;
+  const height = metadata.height ?? 0;
+  if (!width || !height) return { buffer: logoBuffer, mimeType: "image/png" };
+
+  const padX = Math.round(width / 2);
+  const padY = Math.round(height / 2);
+
+  const hasAlpha = metadata.hasAlpha ?? false;
+  let background: { r: number; g: number; b: number; alpha: number };
+  if (hasAlpha) {
+    background = { r: 255, g: 255, b: 255, alpha: 0 };
+  } else {
+    const raw = await decodeRaw(logoBuffer);
+    const corner = detectCornerBackground(raw);
+    background = corner
+      ? { r: Math.round(corner.r), g: Math.round(corner.g), b: Math.round(corner.b), alpha: 1 }
+      : { r: 255, g: 255, b: 255, alpha: 1 };
+  }
+
+  const buffer = await sharp(logoBuffer)
+    .ensureAlpha()
+    .extend({ top: padY, bottom: padY, left: padX, right: padX, background })
+    .png()
+    .toBuffer();
+
+  return { buffer, mimeType: "image/png" };
+}
+
+/**
  * 로고와 배경 사진의 지배색 사이 명도 대비를 계산해, 로고가 배경에
  * 묻힐 정도로 대비가 부족한 경우에만 색상 조정을 지시할 수 있게 판단
  * 결과를 반환한다. AI 판단이 아니라 실제 픽셀 계산(sharp)이라 비용이
