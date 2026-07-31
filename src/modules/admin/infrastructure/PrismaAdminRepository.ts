@@ -13,6 +13,7 @@ import type { AdminRepository, AuditLogFilter } from "@/modules/admin/domain/Adm
 import type { PlanCode } from "@/modules/subscriptions/domain/planLimits";
 import { GENERATION_EVENT_TYPE } from "@/modules/subscriptions/domain/planLimits";
 import type { AdminTier, UserRole } from "@/shared/auth/jwt";
+import { SYSTEM_GUEST_USER_ID } from "@/modules/mockups/domain/guestMockup";
 
 function dateKey(date: Date): string {
   return date.toISOString().slice(0, 10);
@@ -169,9 +170,13 @@ export class PrismaAdminRepository implements AdminRepository {
   async searchUsers(query: string, limit: number): Promise<AdminUserSearchResult[]> {
     // 삭제된 계정은 더 이상 관리할 대상이 아니므로 기본 검색에서 제외한다
     // (완전히 지우진 않고 소프트 삭제라 필요하면 DB에서 직접 확인 가능).
+    // 게스트 목업 FK 앵커용 시스템 계정(SYSTEM_GUEST_USER_ID)도 실제
+    // 가입자가 아니라 목록/최근가입 정렬에 계속 최신으로 걸려 혼란을 주므로
+    // 제외한다 -- 2026-07-31, 관리자가 "가입 메일이 왜 없냐"고 물어서 발견.
     const users = await prisma.user.findMany({
       where: {
         deletedAt: null,
+        id: { not: SYSTEM_GUEST_USER_ID },
         ...(query ? { email: { contains: query, mode: "insensitive" } } : {}),
       },
       include: { subscription: true, _count: { select: { projects: true } } },
