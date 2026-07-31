@@ -34,9 +34,22 @@ const ESTIMATED_COST_PER_IMAGE_USD = 0.053;
  * `image[]` order: [design/logo image, template background] (매핑된
  * 순서 -- 첫 번째가 실제 참조해야 할 대상, 두 번째가 합성될 배경).
  */
+// 2026-07-31 사용자 지적: 로고가 배경에 묻힐 때 무조건 흰색/검정으로
+// 바꾸면 "센스 없이" 튀어 보인다 -- 예를 들어 검정 글씨 로고를 어두운
+// 금색 트림 간판에 합성할 때는 그 간판의 실제 금색/베이지 톤으로
+// 바뀌는 게 자연스럽다. checkLogoBackgroundContrast가 배경 사진에서
+// 실제로 쓰인 강조색을 픽셀 단위로 찾아주므로(sharp, AI 비용 없음),
+// 그 강조색이 있으면 흰/검 대신 그 색을 구체적으로(HEX) 지정한다 --
+// 강조색이 없는 배경에서만 흰/검 최후 수단으로 폴백.
 function buildContrastClause(contrastCheck: LogoContrastCheckResult | null): string {
-  if (!contrastCheck?.needsAdjustment) return "";
-  const toneKo = contrastCheck.recommendedTone === "white" ? "흰색 단색" : "검정색 단색";
+  if (!contrastCheck?.needsAdjustment || !contrastCheck.recommendedTone) return "";
+  const tone = contrastCheck.recommendedTone;
+  const toneKo =
+    tone.kind === "accent"
+      ? `이 배경 사진에 실제로 쓰인 강조색(HEX ${tone.hex} 계열의 톤)`
+      : tone.kind === "white"
+        ? "흰색 단색"
+        : "검정색 단색";
   return (
     ` 다만 로고 색상이 배경과 명도 대비가 부족해 로고가 배경 속에 묻혀 잘 안 보일 ` +
     `수 있습니다 -- 이 경우에 한해 로고의 형태·텍스트·구성 비율은 절대 바꾸지 말고, ` +
