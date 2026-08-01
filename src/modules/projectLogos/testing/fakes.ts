@@ -16,6 +16,7 @@ export class FakeProjectLogoAssetRepository implements ProjectLogoAssetRepositor
       existing.storageKey = input.storageKey;
       existing.contentType = input.contentType;
       existing.originalFileName = input.originalFileName ?? null;
+      existing.confirmed = false;
       return existing;
     }
     const asset: ProjectLogoAsset = {
@@ -24,6 +25,7 @@ export class FakeProjectLogoAssetRepository implements ProjectLogoAssetRepositor
       storageKey: input.storageKey,
       contentType: input.contentType,
       originalFileName: input.originalFileName ?? null,
+      confirmed: false,
       createdAt: new Date(),
     };
     this.assets.push(asset);
@@ -36,5 +38,10 @@ export class FakeProjectLogoAssetRepository implements ProjectLogoAssetRepositor
 
   async deleteByProjectId(projectId: string): Promise<void> {
     this.assets = this.assets.filter((a) => a.projectId !== projectId);
+  }
+
+  async markConfirmed(projectId: string): Promise<void> {
+    const asset = this.assets.find((a) => a.projectId === projectId);
+    if (asset) asset.confirmed = true;
   }
 }

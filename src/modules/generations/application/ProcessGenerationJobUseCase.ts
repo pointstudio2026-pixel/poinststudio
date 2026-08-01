@@ -57,17 +57,26 @@ export class ProcessGenerationJobUseCase {
     }
 
     try {
-      // 프로젝트에 실제 로고가 첨부돼 있으면(브랜딩 & 로고 외 유형에서
-      // "로고 직접 첨부"를 선택한 경우) AI가 텍스트만으로 로고를 상상해
-      // 그리는 대신, 그 로고를 그대로 목업 템플릿에 합성한다
-      // (GenerateFromLogoAssetUseCase). 반환 형태가 일반 이미지 생성과
-      // 동일해서 이 아래 로직(Vision 평가/사용량 기록/currentStep 전진/최종
-      // 완료 처리)은 어느 경로든 손댈 필요가 없다.
+      // 프로젝트에 실제 로고가 첨부·확정돼 있으면(브랜딩 & 로고 외 유형에서
+      // "로고 직접 첨부" 후 "첨부하기"까지 눌러 확정한 경우) AI가 텍스트만
+      // 으로 로고를 상상해 그리는 대신, 로고 없는 경우와 동일한 프롬프트로
+      // 매번 새 장면을 생성하되 그 로고만 실제 그대로 보존한다
+      // (GenerateFromLogoAssetUseCase). confirmed가 아니면(드롭존에
+      // 파일만 올려두고 확정 없이 이동한 경우) 로고가 없을 때와 완전히
+      // 동일하게 취급한다 -- 2026-08-01 버그 수정, confirmed 없이 자산
+      // 존재만으로 분기하면 안 됨. 반환 형태가 일반 이미지 생성과 동일해서
+      // 이 아래 로직(Vision 평가/사용량 기록/currentStep 전진/최종 완료
+      // 처리)은 어느 경로든 손댈 필요가 없다.
       const project = await this.projectRepository.findById(generation.projectId);
       const logoAsset = project ? await this.projectLogoAssetRepository.findByProjectId(project.id) : null;
       const result =
-        project && logoAsset
-          ? await this.generateFromLogoAssetUseCase.execute({ project, logoAsset })
+        project && logoAsset?.confirmed
+          ? await this.generateFromLogoAssetUseCase.execute({
+              logoAsset,
+              systemPrompt: promptVersion.systemPrompt,
+              userPrompt: promptVersion.userPrompt,
+              sizePreset: promptVersion.payload.sizePreset,
+            })
           : await resolveImageGenerationProvider(version.providerPreference).generate({
               systemPrompt: promptVersion.systemPrompt,
               userPrompt: promptVersion.userPrompt,

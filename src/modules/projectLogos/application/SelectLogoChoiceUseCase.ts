@@ -35,6 +35,10 @@ export class SelectLogoChoiceUseCase {
       if (!asset) {
         throw new ValidationError("먼저 로고 이미지를 첨부해주세요.", undefined, "PROJECT_LOGO-003");
       }
+      // "첨부하기"를 실제로 눌러야만 확정된다 -- 드롭존에 파일만 올려두고
+      // 확정 없이 다른 단계로 이동한 경우 confirmed:false로 남아, 생성
+      // 파이프라인이 이 자산을 참조하지 않는다(2026-08-01 버그 수정).
+      await this.logoAssetRepository.markConfirmed(project.id);
     } else {
       const existing = await this.logoAssetRepository.findByProjectId(project.id);
       if (existing) {

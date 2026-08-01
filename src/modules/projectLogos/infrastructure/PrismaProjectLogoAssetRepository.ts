@@ -8,6 +8,7 @@ function toAsset(row: {
   storageKey: string;
   contentType: string;
   originalFileName: string | null;
+  confirmed: boolean;
   createdAt: Date;
 }): ProjectLogoAsset {
   return {
@@ -16,6 +17,7 @@ function toAsset(row: {
     storageKey: row.storageKey,
     contentType: row.contentType,
     originalFileName: row.originalFileName,
+    confirmed: row.confirmed,
     createdAt: row.createdAt,
   };
 }
@@ -39,6 +41,7 @@ export class PrismaProjectLogoAssetRepository implements ProjectLogoAssetReposit
         storageKey: input.storageKey,
         contentType: input.contentType,
         originalFileName: input.originalFileName ?? null,
+        confirmed: false,
       },
     });
     return toAsset(row);
@@ -51,5 +54,9 @@ export class PrismaProjectLogoAssetRepository implements ProjectLogoAssetReposit
 
   async deleteByProjectId(projectId: string): Promise<void> {
     await prisma.projectLogoAsset.deleteMany({ where: { projectId } });
+  }
+
+  async markConfirmed(projectId: string): Promise<void> {
+    await prisma.projectLogoAsset.update({ where: { projectId }, data: { confirmed: true } });
   }
 }

@@ -16,13 +16,7 @@ import { interviewRepositoryInstance } from "@/modules/interviews/container";
 import { subscriptionsContainer } from "@/modules/subscriptions/container";
 import { authContainer } from "@/modules/auth/container";
 import { projectLogoAssetRepositoryInstance } from "@/modules/projectLogos/container";
-import { styleRepositoryInstance, styleSelectionRepositoryInstance } from "@/modules/styles/container";
-// mockups/container.ts를 직접 import하지 않는다 -- 그 파일이 이미
-// generations/container.ts를 import해서 순환 참조가 생긴다. 리포지토리
-// 클래스와 provider 라우터만 직접 가져와 새 인스턴스를 만든다(둘 다
-// 상태 없는 얇은 Prisma/HTTP 래퍼라 인스턴스가 여러 개여도 문제없음).
-import { PrismaMockupTemplateRepository } from "@/modules/mockups/infrastructure/PrismaMockupTemplateRepository";
-import { resolveMockupRenderProvider } from "@/shared/ai/mockupRenderRouter";
+import { resolveLogoPreservingImageProvider } from "@/shared/ai/logoPreservingImageRouter";
 import { resolveVisionEvaluationProvider } from "@/shared/ai/visionEvaluationRouter";
 import { resolveFileStorage } from "@/shared/storage/fileStorageRouter";
 import { BullMqImageGenerationQueue } from "@/shared/queue/imageGenerationQueue";
@@ -69,11 +63,7 @@ const evaluateGenerationVisionUseCase = new EvaluateGenerationVisionUseCase(
 
 const generateFromLogoAssetUseCase = new GenerateFromLogoAssetUseCase(
   resolveFileStorage(),
-  new PrismaMockupTemplateRepository(),
-  interviewRepositoryInstance,
-  styleSelectionRepositoryInstance,
-  styleRepositoryInstance,
-  resolveMockupRenderProvider(),
+  resolveLogoPreservingImageProvider(),
 );
 
 const processGenerationJobUseCase = new ProcessGenerationJobUseCase(

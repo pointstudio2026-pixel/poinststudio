@@ -218,6 +218,12 @@ model ProjectLogoAsset {
   storageKey       String   @map("storage_key") @db.VarChar(255)
   contentType      String   @map("content_type") @db.VarChar(50)
   originalFileName String?  @map("original_file_name") @db.VarChar(255)
+  /** 업로드만 하고 "첨부하기"로 확정하지 않은 자산은 실제 생성 파이프라인이
+   * 절대 참조하면 안 된다(2026-08-01 버그: 드롭존에 파일만 올려두고 확정
+   * 없이 다른 단계로 이동해도 이 행이 남아, 생성 시 "로고 있음"으로 오판해
+   * 로고 합성 경로를 잘못 타는 문제가 있었다). SelectLogoChoiceUseCase의
+   * "upload" 선택에서만 true로 바뀐다. */
+  confirmed        Boolean  @default(false)
   createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
   @@map("project_logo_assets")

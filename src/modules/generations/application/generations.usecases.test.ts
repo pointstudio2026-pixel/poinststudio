@@ -8,8 +8,7 @@ import { EvaluateGenerationVisionUseCase } from "@/modules/generations/applicati
 import { GenerateFromLogoAssetUseCase } from "@/modules/generations/application/GenerateFromLogoAssetUseCase";
 import { MockVisionEvaluationProvider } from "@/shared/ai/MockVisionEvaluationProvider";
 import { FakeProjectLogoAssetRepository } from "@/modules/projectLogos/testing/fakes";
-import { FakeMockupTemplateRepository } from "@/modules/mockups/testing/fakes";
-import { MockMockupRenderProvider } from "@/shared/ai/MockMockupRenderProvider";
+import { MockLogoPreservingImageProvider } from "@/shared/ai/MockLogoPreservingImageProvider";
 import { FakeFileStorage } from "@/shared/storage/testing/FakeFileStorage";
 import {
   FakeGenerationRepository,
@@ -194,14 +193,7 @@ async function setup() {
         new MockVisionEvaluationProvider(),
       ),
       new FakeProjectLogoAssetRepository(),
-      new GenerateFromLogoAssetUseCase(
-        new FakeFileStorage(),
-        new FakeMockupTemplateRepository(),
-        interviews,
-        selections,
-        styles,
-        new MockMockupRenderProvider(),
-      ),
+      new GenerateFromLogoAssetUseCase(new FakeFileStorage(), new MockLogoPreservingImageProvider()),
     ),
   };
 }
