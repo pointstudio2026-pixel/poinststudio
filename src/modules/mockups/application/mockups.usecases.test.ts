@@ -34,6 +34,9 @@ const TEMPLATE: MockupTemplate = {
   backgroundUrl: "data:image/svg+xml;base64,AAA",
   placementArea: { xPct: 30, yPct: 35, widthPct: 40, heightPct: 30 },
   keywords: [],
+  containsKoreanText: false,
+  hidden: false,
+  isGeneric: false,
 };
 
 async function setup() {

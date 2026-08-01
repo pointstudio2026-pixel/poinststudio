@@ -27,6 +27,9 @@ export interface MockupTemplate {
   fullDesignPlacementArea?: { xPct: number; yPct: number; widthPct: number; heightPct: number } | null;
   /** "목업" 단독 프로세스의 배경 검색용 키워드(예: "의사가운", "셰프복"). */
   keywords: string[];
+  containsKoreanText: boolean;
+  hidden: boolean;
+  isGeneric: boolean;
 }
 
 export interface MockupProject {

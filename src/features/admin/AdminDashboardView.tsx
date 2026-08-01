@@ -161,6 +161,9 @@ export function AdminDashboardView() {
           <Link href="/ops-portal-7x2q/industries" className="text-sm underline">
             업종 카탈로그
           </Link>
+          <Link href="/ops-portal-7x2q/mockup-templates" className="text-sm underline">
+            목업 배경 이미지 관리
+          </Link>
           <Link href="/ops-portal-7x2q/training-examples" className="text-sm underline">
             작업물 스타일 학습 자료
           </Link>

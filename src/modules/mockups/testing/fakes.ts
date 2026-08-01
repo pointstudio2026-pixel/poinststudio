@@ -4,7 +4,7 @@ import type {
   MockupRepository,
   UpdateMockupResultInput,
 } from "@/modules/mockups/domain/MockupRepository";
-import type { MockupTemplateRepository } from "@/modules/mockups/domain/MockupTemplateRepository";
+import type { CreateMockupTemplateInput, MockupTemplateRepository } from "@/modules/mockups/domain/MockupTemplateRepository";
 import type {
   EnqueueMockupRenderInput,
   MockupRenderQueuePort,
@@ -44,6 +44,42 @@ export class FakeMockupTemplateRepository implements MockupTemplateRepository {
         t.description.toLowerCase().includes(trimmed) ||
         t.keywords.some((k) => k.toLowerCase() === trimmed),
     );
+  }
+
+  async listAll(): Promise<MockupTemplate[]> {
+    return this.templates;
+  }
+
+  async create(input: CreateMockupTemplateInput): Promise<MockupTemplate> {
+    const template: MockupTemplate = {
+      id: `template-${this.templates.length + 1}`,
+      category: input.category,
+      name: input.name,
+      slug: input.slug,
+      description: input.description,
+      backgroundUrl: input.backgroundUrl,
+      placementArea: input.placementArea,
+      fullDesignPlacementArea: input.fullDesignPlacementArea ?? null,
+      keywords: input.keywords,
+      containsKoreanText: input.containsKoreanText,
+      hidden: false,
+      isGeneric: input.isGeneric,
+    };
+    this.templates.push(template);
+    return template;
+  }
+
+  async countUsages(): Promise<number> {
+    return 0;
+  }
+
+  async hide(id: string): Promise<void> {
+    const index = this.templates.findIndex((t) => t.id === id);
+    if (index !== -1) this.templates[index] = { ...this.templates[index]!, hidden: true };
+  }
+
+  async hardDelete(id: string): Promise<void> {
+    this.templates = this.templates.filter((t) => t.id !== id);
   }
 }
 

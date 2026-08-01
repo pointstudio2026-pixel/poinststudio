@@ -1,6 +1,6 @@
 import { prisma } from "@/shared/database/prisma";
 import type { MockupCategory, MockupTemplate } from "@/modules/mockups/domain/Mockup";
-import type { MockupTemplateRepository } from "@/modules/mockups/domain/MockupTemplateRepository";
+import type { CreateMockupTemplateInput, MockupTemplateRepository } from "@/modules/mockups/domain/MockupTemplateRepository";
 import type { Locale } from "@/shared/i18n/locale";
 
 /** locale이 "ko"가 아니면 배경 사진에 한글이 박힌 템플릿을 걸러낸다 -- 한국어
@@ -36,6 +36,9 @@ function toTemplate(row: {
   fullDesignPlacementWidthPct: number | null;
   fullDesignPlacementHeightPct: number | null;
   keywords: string[];
+  containsKoreanText: boolean;
+  hidden: boolean;
+  isGeneric: boolean;
 }): MockupTemplate {
   const hasFullDesignArea =
     row.fullDesignPlacementXPct != null &&
@@ -65,6 +68,9 @@ function toTemplate(row: {
         }
       : null,
     keywords: row.keywords,
+    containsKoreanText: row.containsKoreanText,
+    hidden: row.hidden,
+    isGeneric: row.isGeneric,
   };
 }
 
@@ -119,5 +125,50 @@ export class PrismaMockupTemplateRepository implements MockupTemplateRepository 
       orderBy: [{ isGeneric: "desc" }, { id: "asc" }],
     });
     return rows.map(toTemplate);
+  }
+
+  async listAll(): Promise<MockupTemplate[]> {
+    const rows = await prisma.mockupTemplate.findMany({ orderBy: [{ category: "asc" }, { createdAt: "desc" }] });
+    return rows.map(toTemplate);
+  }
+
+  async create(input: CreateMockupTemplateInput): Promise<MockupTemplate> {
+    const row = await prisma.mockupTemplate.create({
+      data: {
+        category: input.category,
+        name: input.name,
+        slug: input.slug,
+        description: input.description,
+        backgroundUrl: input.backgroundUrl,
+        placementXPct: input.placementArea.xPct,
+        placementYPct: input.placementArea.yPct,
+        placementWidthPct: input.placementArea.widthPct,
+        placementHeightPct: input.placementArea.heightPct,
+        fullDesignPlacementXPct: input.fullDesignPlacementArea?.xPct ?? null,
+        fullDesignPlacementYPct: input.fullDesignPlacementArea?.yPct ?? null,
+        fullDesignPlacementWidthPct: input.fullDesignPlacementArea?.widthPct ?? null,
+        fullDesignPlacementHeightPct: input.fullDesignPlacementArea?.heightPct ?? null,
+        keywords: input.keywords,
+        containsKoreanText: input.containsKoreanText,
+        isGeneric: input.isGeneric,
+      },
+    });
+    return toTemplate(row);
+  }
+
+  async countUsages(id: string): Promise<number> {
+    const [mockupCount, standaloneCount] = await Promise.all([
+      prisma.mockupProject.count({ where: { templateId: id } }),
+      prisma.standaloneMockup.count({ where: { templateId: id } }),
+    ]);
+    return mockupCount + standaloneCount;
+  }
+
+  async hide(id: string): Promise<void> {
+    await prisma.mockupTemplate.update({ where: { id }, data: { hidden: true } });
+  }
+
+  async hardDelete(id: string): Promise<void> {
+    await prisma.mockupTemplate.delete({ where: { id } });
   }
 }

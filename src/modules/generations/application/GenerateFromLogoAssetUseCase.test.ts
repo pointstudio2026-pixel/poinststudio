@@ -55,6 +55,9 @@ const TEMPLATE_A: MockupTemplate = {
   placementArea: { xPct: 30, yPct: 35, widthPct: 40, heightPct: 30 },
   fullDesignPlacementArea: { xPct: 10, yPct: 10, widthPct: 80, heightPct: 80 },
   keywords: [],
+  containsKoreanText: false,
+  hidden: false,
+  isGeneric: false,
 };
 
 const TEMPLATE_B: MockupTemplate = { ...TEMPLATE_A, id: "template-b", name: "Poster B", slug: "poster-b" };

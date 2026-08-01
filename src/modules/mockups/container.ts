@@ -15,6 +15,12 @@ import { ProcessMockupJobUseCase } from "@/modules/mockups/application/ProcessMo
 import { RecommendMockupCategoriesUseCase } from "@/modules/mockups/application/RecommendMockupCategoriesUseCase";
 import { ListPastGenerationImagesUseCase } from "@/modules/mockups/application/ListPastGenerationImagesUseCase";
 import { ListMyWorkUseCase } from "@/modules/mockups/application/ListMyWorkUseCase";
+import { GenerateMockupBackgroundImageUseCase } from "@/modules/mockups/application/GenerateMockupBackgroundImageUseCase";
+import {
+  ListAllMockupTemplatesUseCase,
+  CreateMockupTemplateUseCase,
+  DeleteMockupTemplateUseCase,
+} from "@/modules/mockups/application/AdminMockupTemplateUseCases";
 import { projectRepositoryInstance } from "@/modules/projects/container";
 import { interviewRepositoryInstance } from "@/modules/interviews/container";
 import { generationRepositoryInstance } from "@/modules/generations/container";
@@ -69,6 +75,10 @@ export const mockupsContainer = {
     checkGuestMockupLimitUseCaseInstance,
     guestMockupUsageRepositoryInstance,
   ),
+  generateMockupBackgroundImageUseCase: new GenerateMockupBackgroundImageUseCase(),
+  listAllMockupTemplatesUseCase: new ListAllMockupTemplatesUseCase(templateRepository),
+  createMockupTemplateUseCase: new CreateMockupTemplateUseCase(templateRepository),
+  deleteMockupTemplateUseCase: new DeleteMockupTemplateUseCase(templateRepository),
 };
 
 const processMockupJobUseCase = new ProcessMockupJobUseCase(
