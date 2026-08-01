@@ -35,11 +35,21 @@ export async function ArticleDetailView({ locale, article }: { locale: string; a
   const availableLocales = await landingArticlesContainer.listAvailableLocalesUseCase.execute({ slug: article.slug });
 
   const faqJsonLd = buildFaqPageJsonLd(article);
-  // 로그인 상태면 무조건 /projects로, 아니면 회원가입->(신규면 consent,
-  // 기존 계정이면 콜백에서 그대로) /projects로 도착하도록 유도한다 -- 각
-  // 글의 content.ctaHref는 더 이상 이동 목적지로 쓰지 않고, 버튼 문구
-  // (content.ctaLabel)만 그대로 존중한다.
-  const startHref = user ? "/projects" : "/register?redirect=%2Fprojects";
+  // 2026-08-01 사용자 지시로 예외 추가: 원래는 로그인 상태면 무조건
+  // /projects로, 아니면 회원가입 유도로 보내고 각 글의 content.ctaHref는
+  // 이동 목적지로 쓰지 않았다(가입 유도가 우선이라는 의도적 결정). 하지만
+  // "목업 바로가기" 같은 글은 CTA가 로그인이 필요 없는 실제 기능(/mockups/
+  // new)을 가리키는데 그걸 무시하고 회원가입으로 보내면 버튼 문구와 실제
+  // 동작이 어긋나 사용자가 혼란스럽다 -- ctaHref가 명시적으로 /mockups로
+  // 시작할 때만 그 값을 그대로 존중하고, 그 외 글은 기존 가입 유도 동작을
+  // 그대로 유지한다.
+  const contentCtaHref = (article.content as { ctaHref?: string }).ctaHref;
+  const startHref =
+    contentCtaHref && contentCtaHref.startsWith("/mockups")
+      ? contentCtaHref
+      : user
+        ? "/projects"
+        : "/register?redirect=%2Fprojects";
 
   return (
     <div className="flex min-h-screen flex-col bg-paper">
@@ -122,6 +132,36 @@ function FaqBody({
   labels: ReturnType<typeof getLandingArticleLabels>;
   startHref: string;
 }) {
+  function renderInlineLinksAfter(index: number) {
+    const links = content.inlineLinks?.filter((l) => l.afterParagraphIndex === index) ?? [];
+    if (links.length === 0) return null;
+    return (
+      <div className="flex flex-wrap justify-center gap-3">
+        {links.map((link, linkIndex) =>
+          link.external ? (
+            <a
+              key={`${link.href}-${linkIndex}`}
+              href={link.href}
+              target="_blank"
+              rel="nofollow noopener noreferrer"
+              className="rounded-full border border-line px-6 py-2 text-center text-sm text-ink transition hover:border-ink"
+            >
+              {link.label}
+            </a>
+          ) : (
+            <Link
+              key={`${link.href}-${linkIndex}`}
+              href={link.href}
+              className="rounded-full border border-ink px-6 py-2 text-center text-sm text-ink transition hover:bg-ink hover:text-paper"
+            >
+              {link.label}
+            </Link>
+          ),
+        )}
+      </div>
+    );
+  }
+
   return (
     <>
       <p className="-mt-8 text-lg text-muted">{content.summary}</p>
@@ -143,6 +183,7 @@ function FaqBody({
                   imageClassName="rounded-2xl border border-line object-cover shadow-soft"
                 />
                 <p className="text-sm text-muted">{paragraph}</p>
+                {renderInlineLinksAfter(index)}
               </div>
             );
           })}
@@ -164,9 +205,12 @@ function FaqBody({
             </section>
           )}
 
-          <section className="flex flex-col gap-4 text-sm text-muted">
+          <section className="flex flex-col gap-6 text-sm text-muted">
             {content.body.map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
+              <div key={index} className="flex flex-col gap-4">
+                <p>{paragraph}</p>
+                {renderInlineLinksAfter(index)}
+              </div>
             ))}
           </section>
         </>

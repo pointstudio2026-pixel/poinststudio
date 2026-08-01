@@ -35,6 +35,17 @@ export interface FaqArticleContent {
    * 콘텐츠에서 쓰인다. 일반 FAQ 질문 글은 비워도 된다.
    */
   table?: { caption: string; headers: string[]; rows: string[][] };
+  /**
+   * 2026-08-01 추가: 본문 문단 하나가 끝난 직후에 링크 하나씩 끼워 넣을 때
+   * 쓴다 -- 예: 경쟁 사이트 비교 글에서 각 사이트 소개 문단 뒤에 그
+   * 사이트로 가는 링크를 하나씩 붙이는 경우. afterParagraphIndex는
+   * body 배열의 0-based 인덱스(그 문단 바로 다음에 렌더링). external이
+   * true면 새 탭 + rel="nofollow noopener noreferrer"로 열어 검색엔진에
+   * 순위 가치를 넘기지 않는다(외부/경쟁 사이트 링크용) -- Aster 등 내부
+   * 링크는 external을 생략하거나 false로 둔다. 없으면(대부분의 일반
+   * FAQ) 렌더링 자체를 생략한다.
+   */
+  inlineLinks?: { afterParagraphIndex: number; label: string; href: string; external?: boolean }[];
 }
 
 /** category === "why-aster" 전용 콘텐츠 구조 -- 강점/혜택 나열 + CTA. */
