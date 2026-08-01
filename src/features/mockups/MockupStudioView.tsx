@@ -16,7 +16,6 @@ import {
 } from "@/services/mockups-service";
 import { fetchGenerationHistory } from "@/services/generations-service";
 import { Spinner } from "@/components/Spinner";
-import { ImageLightbox } from "@/components/ImageLightbox";
 import { useTranslation } from "@/shared/i18n/LocaleProvider";
 import { DELIVERABLE_TYPE_TO_MOCKUP_CATEGORY } from "@/modules/mockups/domain/mockupRules";
 import { isBrandingDeliverableType } from "@/modules/projects/domain/deliverableTypes";
@@ -43,7 +42,6 @@ export function MockupStudioView({
   const [selectedCategory, setSelectedCategory] = useState<MockupCategoryDto | null>(null);
   const [creatingTemplateId, setCreatingTemplateId] = useState<string | null>(null);
   const [createError, setCreateError] = useState<string | null>(null);
-  const [previewTemplateUrl, setPreviewTemplateUrl] = useState<string | null>(null);
 
   const { data: mockupsData } = useQuery({
     queryKey: ["mockups", projectId],
@@ -73,6 +71,14 @@ export function MockupStudioView({
   const orderedCategories = recommendData?.recommendations.map((r) => r.category) ?? ALL_CATEGORIES;
   const activeCategory = lockedCategory ?? selectedCategory ?? orderedCategories[0] ?? null;
 
+  // 2026-08-01 사용자 결정: batch-3로 카테고리당 템플릿이 40개 넘게
+  // 늘어나면서, 아래에서 예시 이미지를 그리드로 죽 나열하던 화면이 지저분해
+  // 졌다 -- 그런데 그 그리드는 어차피 둘러보기용일 뿐 클릭해도 실제 생성엔
+  // 전혀 영향이 없었다(항상 templates[0]만 사용, handleCreateMockup 참고).
+  // 그래서 예시 그리드 자체를 없애고 이 쿼리는 카테고리에 템플릿이 있는지
+  // (버튼 활성화 여부)와 templates[0] id를 얻는 용도로만 남긴다. 목업
+  // 대시보드(/mockups/new, ops-portal 관리 화면)는 실제 배경을 고르는
+  // 화면이라 여기 해당 안 되고 그대로 둔다.
   const { data: templatesData } = useQuery({
     queryKey: ["mockup-templates", activeCategory, locale],
     queryFn: () => fetchMockupTemplates(activeCategory ?? undefined, locale),
@@ -227,37 +233,6 @@ export function MockupStudioView({
 
             {createError && <p className="text-sm text-red-600">{createError}</p>}
 
-            {/* 예시 이미지는 둘러보기용일 뿐 -- 클릭하면 확대만 되고, 실제 생성은
-                아래 카테고리 단위 버튼으로만 트리거된다(이미지를 눌렀는데 바로
-                비용이 발생하는 걸 막기 위해 2026-07-25 분리). */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {(templatesData?.templates ?? []).map((template, index) => {
-                // DB의 template.name(예: "명함 예시 3")은 관리용 한글 원문이라 그대로
-                // 노출하면 안 된다 -- 이미 번역된 카테고리 라벨 + 목록 내 순번으로
-                // 대체한다. 카테고리당 템플릿 개수가 늘어나도(현재도 시드 파일보다
-                // 실제 DB가 더 많음) 매번 번역을 추가할 필요가 없는 방식.
-                const label = `${t(MOCKUP_CATEGORY_LABEL_KEYS[template.category])} ${index + 1}`;
-                return (
-                  <button
-                    key={template.id}
-                    type="button"
-                    onClick={() => setPreviewTemplateUrl(template.backgroundUrl)}
-                    className="group relative overflow-hidden rounded-xl border border-line text-left transition hover:border-ink"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={template.backgroundUrl}
-                      alt={label}
-                      className="aspect-square w-full object-cover"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 bg-black/50 px-2 py-1 text-xs text-paper">
-                      {label}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
             {activeCategory && (
               <button
                 type="button"
@@ -275,10 +250,6 @@ export function MockupStudioView({
           </div>
         )}
       </section>
-
-      {previewTemplateUrl && (
-        <ImageLightbox src={previewTemplateUrl} alt={t("mockupStudio.exampleAlt")} onClose={() => setPreviewTemplateUrl(null)} />
-      )}
 
       {previewMockup?.resultImageUrl && (
         <div
