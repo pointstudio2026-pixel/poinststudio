@@ -8,7 +8,6 @@ import type { ImageGenerationQueuePort } from "@/modules/generations/domain/Imag
 import type { GenerationVersion } from "@/modules/generations/domain/Generation";
 import type { UserRole } from "@/shared/auth/jwt";
 import { GENERATION_EVENT_TYPE } from "@/modules/subscriptions/domain/planLimits";
-import { hasReachedResultCap, MAX_PROJECT_RESULTS } from "@/modules/generations/domain/resultCap";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { NotFoundError, UsageLimitError } from "@/shared/errors/AppError";
 
@@ -58,12 +57,6 @@ export class CreateGenerationUseCase {
     }
 
     const existing = await this.generationRepository.findByProjectId(input.projectId);
-    if (existing) {
-      const versions = await this.generationRepository.listVersions(existing.id);
-      if (hasReachedResultCap(versions)) {
-        throw new UsageLimitError(`이 프로젝트에서 생성 가능한 결과는 최대 ${MAX_PROJECT_RESULTS}개입니다.`);
-      }
-    }
 
     const generation = existing
       ? await this.generationRepository.addVersion(existing.id, {

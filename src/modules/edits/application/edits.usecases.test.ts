@@ -5,15 +5,19 @@ import { GetEditHistoryUseCase } from "@/modules/edits/application/GetEditHistor
 import { ProcessEditJobUseCase } from "@/modules/edits/application/ProcessEditJobUseCase";
 import { FakeEditHistoryRepository, FakeImageEditQueue } from "@/modules/edits/testing/fakes";
 import { FakeGenerationRepository } from "@/modules/generations/testing/fakes";
+import { GenerateFromLogoAssetUseCase } from "@/modules/generations/application/GenerateFromLogoAssetUseCase";
 import { FakePromptRepository } from "@/modules/prompts/testing/fakes";
 import type { PromptVersionInput } from "@/modules/prompts/domain/PromptRepository";
 import { CreateProjectUseCase } from "@/modules/projects/application/CreateProjectUseCase";
 import { FakeProjectRepository } from "@/modules/projects/testing/fakes";
+import { FakeProjectLogoAssetRepository } from "@/modules/projectLogos/testing/fakes";
 import { CheckPlanUseCase } from "@/modules/subscriptions/application/CheckPlanUseCase";
 import { RecordUsageUseCase } from "@/modules/subscriptions/application/RecordUsageUseCase";
 import { FakeSubscriptionRepository, FakeUsageRepository } from "@/modules/subscriptions/testing/fakes";
 import { GENERATION_EVENT_TYPE, PLAN_LIMITS } from "@/modules/subscriptions/domain/planLimits";
 import { MockImageGenerationProvider, FORCE_FAILURE_MARKER } from "@/shared/ai/MockImageGenerationProvider";
+import { FakeFileStorage } from "@/shared/storage/testing/FakeFileStorage";
+import type { LogoPreservingImageProvider } from "@/shared/ai/LogoPreservingImageProvider";
 import { ConflictError, NotFoundError, UsageLimitError, ValidationError } from "@/shared/errors/AppError";
 
 vi.mock("@/shared/activity/activityLogger", () => ({
@@ -47,6 +51,22 @@ async function setup() {
   const checkPlan = new CheckPlanUseCase(subs, usage);
   const recordUsage = new RecordUsageUseCase(usage);
   const provider = new MockImageGenerationProvider();
+  const logoAssets = new FakeProjectLogoAssetRepository();
+  const fileStorage = new FakeFileStorage();
+  let logoPreservingCalls = 0;
+  const logoPreservingProvider: LogoPreservingImageProvider = {
+    name: "capturing-logo-preserving",
+    async generate() {
+      logoPreservingCalls++;
+      return {
+        images: [{ url: "data:image/svg+xml;base64,LOGO", thumbnailUrl: "data:image/svg+xml;base64,logo" }],
+        provider: "capturing-logo-preserving",
+        model: "capturing-model",
+        costAmount: 0.053,
+      };
+    },
+  };
+  const generateFromLogoAssetUseCase = new GenerateFromLogoAssetUseCase(fileStorage, logoPreservingProvider);
 
   const { projectId } = await new CreateProjectUseCase(projects).execute({ userId: "user-1", name: "Bakery" });
   const prompt = await prompts.createWithFirstVersion(projectId, PROMPT_INPUT);
@@ -75,10 +95,22 @@ async function setup() {
     subs,
     usage,
     provider,
+    logoAssets,
+    fileStorage,
+    logoPreservingCallsRef: () => logoPreservingCalls,
     create: new CreateEditUseCase(projects, generations, checkPlan, edits, queue),
     retry: new RetryEditUseCase(projects, generations, checkPlan, edits, queue),
     getHistory: new GetEditHistoryUseCase(projects, generations, edits),
-    process: new ProcessEditJobUseCase(projects, prompts, generations, edits, recordUsage, provider),
+    process: new ProcessEditJobUseCase(
+      projects,
+      prompts,
+      generations,
+      edits,
+      recordUsage,
+      provider,
+      logoAssets,
+      generateFromLogoAssetUseCase,
+    ),
   };
 }
 
@@ -165,22 +197,21 @@ describe("CreateEditUseCase", () => {
     ).rejects.toBeInstanceOf(UsageLimitError);
   });
 
-  it("rejects a new edit once the project already has 3 results (프로젝트당 결과 3개 캡)", async () => {
+  it("allows a new edit past the old 3-per-project cap (2026-08-02: cap removed)", async () => {
     const ctx = await setup();
     ctx.generations.versions.push(
       { ...ctx.sourceVersion, id: "v-extra-1", versionNumber: 2, status: "completed" },
       { ...ctx.sourceVersion, id: "v-extra-2", versionNumber: 3, status: "completed" },
     );
 
-    await expect(
-      ctx.create.execute({
-        projectId: ctx.projectId,
-        userId: "user-1",
-        sourceVersionId: ctx.sourceVersion.id,
-        sourceImageIndex: 0,
-        presetKey: "simpler",
-      }),
-    ).rejects.toBeInstanceOf(UsageLimitError);
+    const edit = await ctx.create.execute({
+      projectId: ctx.projectId,
+      userId: "user-1",
+      sourceVersionId: ctx.sourceVersion.id,
+      sourceImageIndex: 0,
+      presetKey: "simpler",
+    });
+    expect(edit.status).toBe("pending");
   });
 
   it("rejects when neither presetKey nor customInstruction is given (대화형 입력 XOR)", async () => {
@@ -223,22 +254,6 @@ describe("CreateEditUseCase", () => {
     expect(edit.customInstruction).toBe("로고를 더 둥글게 만들어줘");
   });
 
-  it("does not count a failed result against the 3-result cap (실패는 캡에 안 잡힘)", async () => {
-    const ctx = await setup();
-    ctx.generations.versions.push(
-      { ...ctx.sourceVersion, id: "v-extra-1", versionNumber: 2, status: "completed" },
-      { ...ctx.sourceVersion, id: "v-extra-2", versionNumber: 3, status: "failed" },
-    );
-
-    const edit = await ctx.create.execute({
-      projectId: ctx.projectId,
-      userId: "user-1",
-      sourceVersionId: ctx.sourceVersion.id,
-      sourceImageIndex: 0,
-      presetKey: "simpler",
-    });
-    expect(edit.status).toBe("pending");
-  });
 });
 
 describe("ProcessEditJobUseCase", () => {
@@ -316,6 +331,50 @@ describe("ProcessEditJobUseCase", () => {
       expect.objectContaining({ editInstruction: expect.stringContaining("로고를 더 둥글게 만들어줘") }),
     );
   });
+
+  it("uses the logo-preserving provider instead of plain edit() when a confirmed logo asset exists (2026-08-02 버그 수정)", async () => {
+    const ctx = await setup();
+    const editSpy = vi.spyOn(ctx.provider, "edit");
+    const saved = await ctx.fileStorage.save(`project-logos/${ctx.projectId}/logo`, Buffer.from("logo-bytes"), "image/png");
+    await ctx.logoAssets.save({ projectId: ctx.projectId, storageKey: saved.key, contentType: "image/png" });
+    await ctx.logoAssets.markConfirmed(ctx.projectId);
+
+    const edit = await ctx.create.execute({
+      projectId: ctx.projectId,
+      userId: "user-1",
+      sourceVersionId: ctx.sourceVersion.id,
+      sourceImageIndex: 0,
+      presetKey: "regenerate",
+    });
+
+    await ctx.process.execute({ editHistoryId: edit.id, requestedByUserId: "user-1", isFinalAttempt: true });
+
+    expect(ctx.logoPreservingCallsRef()).toBe(1);
+    expect(editSpy).not.toHaveBeenCalled();
+    const resultVersion = await ctx.generations.getVersionById(edit.resultVersionId);
+    expect(resultVersion?.provider).toBe("capturing-logo-preserving");
+  });
+
+  it("falls back to plain edit() when the logo asset was uploaded but never confirmed", async () => {
+    const ctx = await setup();
+    const editSpy = vi.spyOn(ctx.provider, "edit");
+    const saved = await ctx.fileStorage.save(`project-logos/${ctx.projectId}/logo`, Buffer.from("logo-bytes"), "image/png");
+    await ctx.logoAssets.save({ projectId: ctx.projectId, storageKey: saved.key, contentType: "image/png" });
+    // Not confirmed -- must behave exactly like no logo attached at all.
+
+    const edit = await ctx.create.execute({
+      projectId: ctx.projectId,
+      userId: "user-1",
+      sourceVersionId: ctx.sourceVersion.id,
+      sourceImageIndex: 0,
+      presetKey: "regenerate",
+    });
+
+    await ctx.process.execute({ editHistoryId: edit.id, requestedByUserId: "user-1", isFinalAttempt: true });
+
+    expect(ctx.logoPreservingCallsRef()).toBe(0);
+    expect(editSpy).toHaveBeenCalled();
+  });
 });
 
 describe("RetryEditUseCase / GetEditHistoryUseCase", () => {
@@ -370,7 +429,7 @@ describe("RetryEditUseCase / GetEditHistoryUseCase", () => {
     );
   });
 
-  it("rejects retry once the project already has 3 results (프로젝트당 결과 3개 캡)", async () => {
+  it("allows retrying an edit past the old 3-per-project cap (2026-08-02: cap removed)", async () => {
     const ctx = await setup();
     const edit = await ctx.create.execute({
       projectId: ctx.projectId,
@@ -381,9 +440,8 @@ describe("RetryEditUseCase / GetEditHistoryUseCase", () => {
     });
     ctx.generations.versions.push({ ...ctx.sourceVersion, id: "v-extra-1", versionNumber: 3, status: "completed" });
 
-    await expect(ctx.retry.execute({ editHistoryId: edit.id, userId: "user-1" })).rejects.toBeInstanceOf(
-      UsageLimitError,
-    );
+    const retried = await ctx.retry.execute({ editHistoryId: edit.id, userId: "user-1" });
+    expect(retried.id).not.toBe(edit.id);
   });
 
   it("returns each entry with its resolved result version (버전 비교)", async () => {

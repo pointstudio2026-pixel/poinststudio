@@ -3,12 +3,16 @@ import { CreateEditUseCase } from "@/modules/edits/application/CreateEditUseCase
 import { RetryEditUseCase } from "@/modules/edits/application/RetryEditUseCase";
 import { GetEditHistoryUseCase } from "@/modules/edits/application/GetEditHistoryUseCase";
 import { ProcessEditJobUseCase } from "@/modules/edits/application/ProcessEditJobUseCase";
+import { GenerateFromLogoAssetUseCase } from "@/modules/generations/application/GenerateFromLogoAssetUseCase";
 import { projectRepositoryInstance } from "@/modules/projects/container";
 import { promptRepositoryInstance } from "@/modules/prompts/container";
 import { generationRepositoryInstance } from "@/modules/generations/container";
 import { subscriptionsContainer } from "@/modules/subscriptions/container";
+import { projectLogoAssetRepositoryInstance } from "@/modules/projectLogos/container";
 import { BullMqImageEditQueue } from "@/shared/queue/imageEditQueue";
 import { resolveImageGenerationProvider } from "@/shared/ai/imageGenerationRouter";
+import { resolveLogoPreservingImageProvider } from "@/shared/ai/logoPreservingImageRouter";
+import { resolveFileStorage } from "@/shared/storage/fileStorageRouter";
 import { startImageEditWorker } from "@/workers/imageEditWorker";
 
 const editHistoryRepository = new PrismaEditHistoryRepository();
@@ -43,6 +47,8 @@ const processEditJobUseCase = new ProcessEditJobUseCase(
   editHistoryRepository,
   subscriptionsContainer.recordUsageUseCase,
   resolveImageGenerationProvider(),
+  projectLogoAssetRepositoryInstance,
+  new GenerateFromLogoAssetUseCase(resolveFileStorage(), resolveLogoPreservingImageProvider()),
 );
 
 // Same MVP monolith auto-start pattern as generations/container.ts.

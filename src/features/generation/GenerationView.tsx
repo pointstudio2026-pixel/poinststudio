@@ -7,7 +7,6 @@ import {
   fetchGenerationHistory,
   fetchGenerationStatus,
   retryGeneration,
-  MAX_PROJECT_RESULTS,
   type AiImageProvider,
   type GenerationVersionDto,
 } from "@/services/generations-service";
@@ -89,8 +88,7 @@ export function GenerationView({ projectId }: { projectId: string }) {
   });
 
   const isPending = current?.status === "pending" || current?.status === "processing";
-  const capReached = versions.filter((v) => v.status !== "failed").length >= MAX_PROJECT_RESULTS;
-  const actionsDisabled = isSubmitting || isPending || capReached;
+  const actionsDisabled = isSubmitting || isPending;
 
   async function handleGenerate() {
     setIsSubmitting(true);
@@ -239,10 +237,6 @@ export function GenerationView({ projectId }: { projectId: string }) {
         </div>
       )}
 
-      {capReached && (
-        <p className="text-xs text-muted">{t("generation.capReached", { max: String(MAX_PROJECT_RESULTS) })}</p>
-      )}
-
       {versions.length === 0 && (
         <div className="mt-8 rounded-2xl border border-dashed border-line bg-surface p-8 text-center text-sm text-muted">
           {t("generation.noResultsYet")}
@@ -252,7 +246,7 @@ export function GenerationView({ projectId }: { projectId: string }) {
       {completedVersions.length > 0 && (
         <section>
           <div className="mb-2 text-xs text-muted">
-            {t("generation.resultCount", { count: String(completedVersions.length), max: String(MAX_PROJECT_RESULTS) })}
+            {t("generation.resultCount", { count: String(completedVersions.length) })}
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {completedVersions.map((version, i) => (
@@ -295,46 +289,44 @@ export function GenerationView({ projectId }: { projectId: string }) {
             ))}
           </div>
 
-          {!capReached && (
-            <div className="mt-4 rounded-2xl border border-line bg-surface p-4 shadow-soft">
-              <p className="text-sm font-medium text-ink">{t("generation.tryMore")}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {EDIT_PRESET_OPTIONS.map((preset) => (
-                  <button
-                    key={preset.key}
-                    type="button"
-                    onClick={() => handlePreset(preset.key)}
-                    disabled={actionsDisabled}
-                    className="rounded-full border border-line px-3 py-1 text-xs disabled:opacity-50"
-                  >
-                    {t(EDIT_PRESET_LABEL_KEYS[preset.key])}
-                  </button>
-                ))}
-              </div>
-
-              <p className="mt-4 text-xs text-muted">{t("generation.customEditPrompt")}</p>
-              <div className="mt-2 flex flex-col gap-2">
-                <textarea
-                  value={customInstructionDraft}
-                  onChange={(e) => setCustomInstructionDraft(e.target.value)}
-                  disabled={actionsDisabled}
-                  rows={2}
-                  maxLength={500}
-                  placeholder={t("generation.customEditPlaceholder")}
-                  className="rounded-xl border border-line px-3 py-2 text-sm disabled:opacity-50"
-                />
+          <div className="mt-4 rounded-2xl border border-line bg-surface p-4 shadow-soft">
+            <p className="text-sm font-medium text-ink">{t("generation.tryMore")}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {EDIT_PRESET_OPTIONS.map((preset) => (
                 <button
+                  key={preset.key}
                   type="button"
-                  onClick={handleCustomEdit}
-                  disabled={actionsDisabled || !customInstructionDraft.trim()}
-                  className="flex w-fit items-center gap-2 rounded-full border border-line px-3 py-1.5 text-xs disabled:opacity-50"
+                  onClick={() => handlePreset(preset.key)}
+                  disabled={actionsDisabled}
+                  className="rounded-full border border-line px-3 py-1 text-xs disabled:opacity-50"
                 >
-                  {isSubmitting && <Spinner />}
-                  {t("generation.requestEdit")}
+                  {t(EDIT_PRESET_LABEL_KEYS[preset.key])}
                 </button>
-              </div>
+              ))}
             </div>
-          )}
+
+            <p className="mt-4 text-xs text-muted">{t("generation.customEditPrompt")}</p>
+            <div className="mt-2 flex flex-col gap-2">
+              <textarea
+                value={customInstructionDraft}
+                onChange={(e) => setCustomInstructionDraft(e.target.value)}
+                disabled={actionsDisabled}
+                rows={2}
+                maxLength={500}
+                placeholder={t("generation.customEditPlaceholder")}
+                className="rounded-xl border border-line px-3 py-2 text-sm disabled:opacity-50"
+              />
+              <button
+                type="button"
+                onClick={handleCustomEdit}
+                disabled={actionsDisabled || !customInstructionDraft.trim()}
+                className="flex w-fit items-center gap-2 rounded-full border border-line px-3 py-1.5 text-xs disabled:opacity-50"
+              >
+                {isSubmitting && <Spinner />}
+                {t("generation.requestEdit")}
+              </button>
+            </div>
+          </div>
         </section>
       )}
 

@@ -13,8 +13,9 @@ import { getWorkspaceSteps } from "@/modules/projects/domain/Project";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { logger } from "@/shared/logging/logger";
 
-// 로딩 시간을 줄이기 위해 한 번에 1장만 생성한다 -- 대신 프로젝트당 최대
-// 3개까지 "원클릭 수정" 프리셋으로 결과를 누적할 수 있다(resultCap.ts).
+// 로딩 시간을 줄이기 위해 한 번에 1장만 생성한다 -- 대신 "원클릭 수정"
+// 프리셋으로 결과를 계속 누적할 수 있다(2026-08-02: 프로젝트당 3개 상한은
+// 사용자 요청으로 제거했다 -- 실제 비용 통제는 월간 플랜 한도가 담당).
 const IMAGES_PER_GENERATION = 1;
 
 /**

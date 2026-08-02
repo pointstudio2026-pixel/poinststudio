@@ -295,29 +295,13 @@ describe("CreateGenerationUseCase", () => {
     expect(second.versionNumber).toBe(2);
   });
 
-  it("rejects a 4th result once the project already has 3 (프로젝트당 결과 3개 캡)", async () => {
+  it("allows accumulating results past the old 3-per-project cap (2026-08-02: cap removed)", async () => {
     const ctx = await setup();
     await fullyReady(ctx);
     const first = await ctx.create.execute({ projectId: ctx.projectId, userId: "user-1" });
-    // "실패"만 캡에서 제외되므로 completed 2개를 더 채우면(첫 pending 포함
-    // 총 3개) 다음 시도는 완료 여부와 무관하게 막혀야 한다.
     ctx.generations.versions.push(
       { ...first, id: "v-extra-1", versionNumber: 2, status: "completed" },
       { ...first, id: "v-extra-2", versionNumber: 3, status: "completed" },
-    );
-
-    await expect(
-      ctx.create.execute({ projectId: ctx.projectId, userId: "user-1" }),
-    ).rejects.toBeInstanceOf(UsageLimitError);
-  });
-
-  it("does not count a failed result against the 3-result cap (실패는 캡에 안 잡힘)", async () => {
-    const ctx = await setup();
-    await fullyReady(ctx);
-    const first = await ctx.create.execute({ projectId: ctx.projectId, userId: "user-1" });
-    ctx.generations.versions.push(
-      { ...first, id: "v-extra-1", versionNumber: 2, status: "completed" },
-      { ...first, id: "v-extra-2", versionNumber: 3, status: "failed" },
     );
 
     const fourth = await ctx.create.execute({ projectId: ctx.projectId, userId: "user-1" });
@@ -396,7 +380,7 @@ describe("RetryGenerationUseCase", () => {
     ).rejects.toBeInstanceOf(NotFoundError);
   });
 
-  it("rejects retry once the project already has 3 results (프로젝트당 결과 3개 캡)", async () => {
+  it("allows retrying past the old 3-per-project cap (2026-08-02: cap removed)", async () => {
     const ctx = await setup();
     await fullyReady(ctx);
     const first = await ctx.create.execute({ projectId: ctx.projectId, userId: "user-1" });
@@ -406,9 +390,8 @@ describe("RetryGenerationUseCase", () => {
       { ...first, id: "v-extra-2", versionNumber: 3, status: "completed" },
     );
 
-    await expect(
-      ctx.retry.execute({ generationVersionId: first.id, userId: "user-1" }),
-    ).rejects.toBeInstanceOf(UsageLimitError);
+    const retried = await ctx.retry.execute({ generationVersionId: first.id, userId: "user-1" });
+    expect(retried.versionNumber).toBe(4);
   });
 });
 

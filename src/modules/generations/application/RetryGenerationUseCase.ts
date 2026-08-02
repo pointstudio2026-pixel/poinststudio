@@ -6,7 +6,6 @@ import type { ImageGenerationQueuePort } from "@/modules/generations/domain/Imag
 import type { GenerationVersion } from "@/modules/generations/domain/Generation";
 import type { UserRole } from "@/shared/auth/jwt";
 import { GENERATION_EVENT_TYPE } from "@/modules/subscriptions/domain/planLimits";
-import { hasReachedResultCap, MAX_PROJECT_RESULTS } from "@/modules/generations/domain/resultCap";
 import { recordActivity } from "@/shared/activity/activityLogger";
 import { NotFoundError, UsageLimitError } from "@/shared/errors/AppError";
 
@@ -47,11 +46,6 @@ export class RetryGenerationUseCase {
       throw new UsageLimitError(
         `이번 달 이미지 생성 한도(${plan.limit}회)를 모두 사용했습니다. (${plan.used}/${plan.limit})`,
       );
-    }
-
-    const versions = await this.generationRepository.listVersions(generation.id);
-    if (hasReachedResultCap(versions)) {
-      throw new UsageLimitError(`이 프로젝트에서 생성 가능한 결과는 최대 ${MAX_PROJECT_RESULTS}개입니다.`);
     }
 
     // 재시도 시점의 최신 Prompt를 다시 조회한다 -- 원래 생성 이후 브랜드

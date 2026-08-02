@@ -4,6 +4,8 @@ import type { GenerationRepository } from "@/modules/generations/domain/Generati
 import type { EditHistoryRepository } from "@/modules/edits/domain/EditHistoryRepository";
 import type { RecordUsageUseCase } from "@/modules/subscriptions/application/RecordUsageUseCase";
 import type { ImageGenerationProvider } from "@/shared/ai/ImageGenerationProvider";
+import type { ProjectLogoAssetRepository } from "@/modules/projectLogos/domain/ProjectLogoAssetRepository";
+import type { GenerateFromLogoAssetUseCase } from "@/modules/generations/application/GenerateFromLogoAssetUseCase";
 import { EDIT_PRESETS } from "@/modules/edits/domain/EditPresets";
 import { GENERATION_EVENT_TYPE } from "@/modules/subscriptions/domain/planLimits";
 import { recordActivity } from "@/shared/activity/activityLogger";
@@ -22,6 +24,8 @@ export class ProcessEditJobUseCase {
     private readonly editHistoryRepository: EditHistoryRepository,
     private readonly recordUsageUseCase: RecordUsageUseCase,
     private readonly imageGenerationProvider: ImageGenerationProvider,
+    private readonly projectLogoAssetRepository: ProjectLogoAssetRepository,
+    private readonly generateFromLogoAssetUseCase: GenerateFromLogoAssetUseCase,
   ) {}
 
   async execute(input: {
@@ -62,11 +66,28 @@ export class ProcessEditJobUseCase {
       const instructionText = editEntry.customInstruction ?? EDIT_PRESETS[editEntry.presetKey!].instruction;
       const editInstruction = `${promptVersion.userPrompt}\n\n추가 수정 지시: ${instructionText}`;
 
-      const result = await this.imageGenerationProvider.edit({
-        sourceImageUrl: sourceImage.url,
-        systemPrompt: promptVersion.systemPrompt,
-        editInstruction,
-      });
+      // 2026-08-02 버그 수정: "다시 생성"/프리셋 버튼/자유 텍스트 수정 요청이
+      // 전부 이 경로를 타는데, 실제 로고가 첨부·확정된 프로젝트에서도 항상
+      // 직전 결과 이미지(이미 AI가 상상해 그린 로고가 픽셀로 박힌 상태)를
+      // 텍스트 지시만 덧붙여 다시 편집했다 -- 최초 생성 때만 실제 로고를
+      // 반영하고 그 이후 모든 수정에서는 반영이 끊기는 문제였다.
+      // ProcessGenerationJobUseCase와 동일한 게이트(confirmed된 자산만)로
+      // 분기하고, 소스 이미지 대신 실제 로고 파일을 다시 첨부해 매번
+      // 로고만은 원본 그대로 유지한다.
+      const project = await this.projectRepository.findById(generation.projectId);
+      const logoAsset = project ? await this.projectLogoAssetRepository.findByProjectId(project.id) : null;
+      const result = logoAsset?.confirmed
+        ? await this.generateFromLogoAssetUseCase.execute({
+            logoAsset,
+            systemPrompt: promptVersion.systemPrompt,
+            userPrompt: editInstruction,
+            sizePreset: promptVersion.payload.sizePreset,
+          })
+        : await this.imageGenerationProvider.edit({
+            sourceImageUrl: sourceImage.url,
+            systemPrompt: promptVersion.systemPrompt,
+            editInstruction,
+          });
 
       await this.generationRepository.updateVersionResult(editEntry.resultVersionId, {
         status: "completed",
@@ -77,7 +98,6 @@ export class ProcessEditJobUseCase {
       });
       await this.editHistoryRepository.update(editEntry.id, { status: "completed", completedAt: new Date() });
 
-      const project = await this.projectRepository.findById(generation.projectId);
       if (project) {
         await this.recordUsageUseCase.execute({
           userId: input.requestedByUserId,
